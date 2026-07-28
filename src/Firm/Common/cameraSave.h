@@ -1,0 +1,417 @@
+//**********************************************************************************
+//
+//                           Camera Header
+//
+//      Copyright (c) 2014 - 2026 AVAL DATA Corporation All Right Reserved.
+//
+// The distribution policy is described in the file "COPYING"
+// furnished with this package.
+// 
+// cameraSave.h - Camera Save Header
+//**********************************************************************************
+
+#ifndef __CAMERA_SAVE_H__
+#define __CAMERA_SAVE_H__
+
+//----------------------------------------------------------------------------------
+// Parameter Size
+//----------------------------------------------------------------------------------
+// Temp Unit
+#define CAMERA_SAVE_TEMP_UNIT								(100)
+
+
+//----------------------------------------------------------------------------------
+// パラメータ保存動作モード
+//----------------------------------------------------------------------------------
+#define CAMERA_SAVE_MODE_NONE								(0)		// 未使用
+#define CAMERA_SAVE_MODE_REG_REF							(1)		// Default値はレジスタを参照する
+#define CAMERA_SAVE_MODE_DATA								(2)		// Default値はデータ領域/Save時はレジスタから読み込み
+#define CAMERA_SAVE_MODE_WRITE_OTHER						(3)		// Default値はデータ領域/Save時は別の箇所で設定
+
+
+//----------------------------------------------------------------------------------
+// Camera Parameter Save Address Map
+//----------------------------------------------------------------------------------
+extern unsigned int *gpCameraCommonParameter;
+#define CAMERA_SAVE_USER_NUM (gpCameraCommonParameter[(CAMERA_SAVE_COMMON_USER_PARAM_MODE_ADRS/4)])
+
+
+//----------------------------------------------------------------------------------
+// User Parameter Address
+//----------------------------------------------------------------------------------
+
+// Size
+#define CAMERA_SAVE_COMMON_SIZE								(0x200)								// 共通領域サイズ
+
+#define CAMERA_SAVE_UINT_SIZE								(0x10000)							// Flashセクタサイズ
+#define CAMERA_SAVE_NUM										(3)									// User Parameter Number
+
+#define CAMERA_SAVE_SPECTRUM_COMMON_SIZE					(0x10000)							// Spectrum関連領域サイズ64k
+
+// User Parameter Mode
+#define CAMERA_USER0_MODE									(0)									// User0
+#define CAMERA_USER1_MODE									(1)									// User1
+#define CAMERA_USER2_MODE									(2)									// User2
+#define CAMERA_FACTORY_NUM									(CAMERA_USER0_MODE)					// Factory
+
+#define CAMERA_USER_MODE_MIN								(0)									// Min
+#define CAMERA_USER_MODE_MAX								(2)									// Max
+
+// Reserve
+#define CAMERA_SAVE_RESERVE									(0)
+
+
+//----------------------------------------------------------------------------------
+// Spectrum Parameter Address Map
+//----------------------------------------------------------------------------------
+#define CAMERA_PARAM_SPECTRUM_GAIN_OFFSET					(8)
+
+
+//----------------------------------------------------------------------------------
+// Common Address Map
+//----------------------------------------------------------------------------------
+
+// Debug Mode
+#define CAMERA_SAVE_COMMON_MARK_ADRS						(0x00)	// マークデータ
+#define CAMERA_SAVE_COMMON_USER_PARAM_MODE_ADRS				(0x04)	// User Parameter0/1/2 どちらを使用するかを判断
+#define CAMERA_SAVE_COMMON_CONSOLE_MODE_ADRS				(0x08)	// Console ON/OFF
+#define CAMERA_SAVE_COMMON_BAUDRATE							(0x0c)	// Baudrate
+
+#define CAMERA_SAVE_BAUD_DEFAULT							(115200)// ボーレートデフォルト
+
+
+//----------------------------------------------------------------------------------
+// User Parameter Address Map
+//----------------------------------------------------------------------------------
+
+// User Parameter Mark
+#define CAMERA_SAVE_MARK_ADRS								(0x0000)							// パラメータ保存マーク
+#define CAMERA_SAVE_USERID_ADRS								(0x0010)							// ユーザーID
+	#define CAMERA_SAVE_USERID_SIZE							(0x10)								// ユーザーIDサイズ
+
+// Peltier
+#define CAMERA_SAVE_PELTIER_ADRS							(0x0080)
+#define CAMERA_SAVE_PERTIER_SIZE							(0x80)
+	#define CAMERA_SAVE_SENSOR_TARGET_TEMP_ADRS				(CAMERA_SAVE_PELTIER_ADRS + 0x00)	// センサターゲット温度
+	#define CAMERA_SAVE_SENSOR_LIMIT_TEMP_ADRS				(CAMERA_SAVE_PELTIER_ADRS + 0x08)	// センサ温度リミット
+	#define CAMERA_SAVE_CASE_LIMIT_TEMP_ADRS				(CAMERA_SAVE_PELTIER_ADRS + 0x10)	// ケース温度リミット
+	#define CAMERA_SAVE_PELTIER_MODE_TEMP_ADRS				(CAMERA_SAVE_PELTIER_ADRS + 0x18)	// ペルチェモード
+	
+	#define CAMERA_SAVE_PELTIER_POWER_MODE_ADRS				(CAMERA_SAVE_PELTIER_ADRS + 0x20)	// ペルチェパワーモード
+	#define CAMERA_SAVE_PELTIER_POWER_LEVEL					(CAMERA_SAVE_PELTIER_ADRS + 0x28)	// ペルチェパワーレベル
+	#define CAMERA_SAVE_PELTIER_HIGH_CLIP					(CAMERA_SAVE_PELTIER_ADRS + 0x30)	// ペルチェパワーレベル
+
+// FFC
+#define CAMERA_SAVE_FFC_ADRS								(0x0100)
+#define CAMERA_SAVE_FFC_SIZE								(0x80)
+	#define CAMERA_SAVE_FFC_ENABLE_ADRS						(CAMERA_SAVE_FFC_ADRS + 0x00)		// FFCイネーブル
+	#define CAMERA_SAVE_FFC_FLASH_ADRS						(CAMERA_SAVE_FFC_ADRS + 0x18)		// FFC Flashアドレス
+	#define CAMERA_SAVE_FFC_NUMBER_ADRS						(CAMERA_SAVE_FFC_ADRS + 0x20)		// FFC番号
+	#define CAMERA_SAVE_FFC_COR_MODE_ADRS					(CAMERA_SAVE_FFC_ADRS + 0x28)		// FFC補正モード
+
+// DPC
+#define CAMERA_SAVE_DPC_ADRS								(0x0180)
+#define CAMERA_SAVE_DPC_SIZE								(0x80)
+	#define CAMERA_SAVE_DPC_ENABLE_ADRS						(CAMERA_SAVE_DPC_ADRS + 0x00)		// DPCイネーブル
+	#define CAMERA_SAVE_DPC_MEM_ADRS						(CAMERA_SAVE_DPC_ADRS + 0x08)		// DPCアドレス
+	#define CAMERA_SAVE_DPC_MEM_SIZE						(CAMERA_SAVE_DPC_ADRS + 0x10)		// DPCサイズ
+	#define CAMERA_SAVE_DPC_FLASH_ADRS						(CAMERA_SAVE_DPC_ADRS + 0x18)		// DPC Flashアドレス
+	#define CAMERA_SAVE_DPC_NUMBER_ADRS						(CAMERA_SAVE_DPC_ADRS + 0x20)		// DPC番号
+
+// LUT
+#define CAMERA_SAVE_LUT_ADRS								(0x0200)
+#define CAMERA_SAVE_LUT_SIZE								(0x80)
+	#define CAMERA_SAVE_LUT_ENABLE_ADRS						(CAMERA_SAVE_LUT_ADRS + 0x00)		// LUTイネーブル
+	#define CAMERA_SAVE_LUT1_BIN_THRESHOLD_ADRS				(CAMERA_SAVE_LUT_ADRS + 0x08)		// LUT1 2値化しきい値
+	#define CAMERA_SAVE_LUT2_BIN_THRESHOLD_ADRS				(CAMERA_SAVE_LUT_ADRS + 0x10)		// LUT2 2値化しきい値
+	#define CAMERA_SAVE_LUT1_FORMAT_ADRS					(CAMERA_SAVE_LUT_ADRS + 0x18)		// LUT1 Format
+	#define CAMERA_SAVE_LUT2_FORMAT_ADRS					(CAMERA_SAVE_LUT_ADRS + 0x20)		// LUT2 Format
+	#define CAMERA_SAVE_LUT1_GAMMA_ADRS						(CAMERA_SAVE_LUT_ADRS + 0x28)		// LUT1 ガンマ値
+	#define CAMERA_SAVE_LUT2_GAMMA_ADRS						(CAMERA_SAVE_LUT_ADRS + 0x30)		// LUT2 ガンマ値
+
+// AOI
+#define CAMERA_SAVE_AOI_ADRS								(0x0280)
+#define CAMERA_SAVE_AOI_SIZE								(0x80)
+	#define CAMERA_SAVE_AOI_BIT_ADRS						(CAMERA_SAVE_AOI_ADRS + 0x00)		// Bit幅
+	#define CAMERA_SAVE_AOI_XSIZE_ADRS						(CAMERA_SAVE_AOI_ADRS + 0x08)		// Xサイズ
+	#define CAMERA_SAVE_AOI_YSIZE_ADRS						(CAMERA_SAVE_AOI_ADRS + 0x10)		// Yサイズ
+	#define CAMERA_SAVE_AOI_8BIT_MODE_ADRS					(CAMERA_SAVE_AOI_ADRS + 0x18)		// 8bit変換モード
+
+// Acquisition Control
+#define CAMERA_SAVE_ACQUISITION_ADRS						(0x0300)
+#define CAMERA_SAVE_ACQUISITION_SIZE						(0x200)
+	#define CAMERA_SAVE_ACQUISITION_MODE_ADRS				(CAMERA_SAVE_ACQUISITION_ADRS + 0x00)	// Mode
+	#define CAMERA_SAVE_ACQUISITION_FRAME_CNT_ADRS			(CAMERA_SAVE_ACQUISITION_ADRS + 0x08)	// フレームレートカウント
+	#define CAMERA_SAVE_ACQUISITION_FRAME_ADRS				(CAMERA_SAVE_ACQUISITION_ADRS + 0x10)	// フレームレート
+	#define CAMERA_SAVE_ACQUISITION_EXP_MODE_ADRS			(CAMERA_SAVE_ACQUISITION_ADRS + 0x18)	// Exposure Mode
+	#define CAMERA_SAVE_ACQUISITION_EXP_TIME_ADRS			(CAMERA_SAVE_ACQUISITION_ADRS + 0x20)	// Exposure Time
+
+	#define CAMERA_SAVE_ACQUISITION_EXP_TIME_DDR_ADRS		(CAMERA_SAVE_ACQUISITION_ADRS + 0x28)	// Exposure Time(DDR)
+	#define CAMERA_SAVE_ACQUISITION_FRAME_TIME_DDR_ADRS		(CAMERA_SAVE_ACQUISITION_ADRS + 0x30)	// フレームレート(DDR)
+	#define CAMERA_SAVE_TRG_RESERVED_ADRS					(CAMERA_SAVE_ACQUISITION_ADRS + 0x38)	// Trg Reserved Mode
+
+	#define CAMERA_SAVE_ACQUISITION_START_TRG_MODE_ADRS		(CAMERA_SAVE_ACQUISITION_ADRS + 0x80)	// Acquisition Start Trg Mode
+	#define CAMERA_SAVE_ACQUISITION_START_TRG_SOURCE_ADRS	(CAMERA_SAVE_ACQUISITION_ADRS + 0x88)	// Acquisition Start Trg Source
+	#define CAMERA_SAVE_ACQUISITION_START_TRG_ACTIVE_ADRS	(CAMERA_SAVE_ACQUISITION_ADRS + 0x90)	// Acquisition Start Trg Activation
+	#define CAMERA_SAVE_ACQUISITION_START_TRG_DELAY_ADRS	(CAMERA_SAVE_ACQUISITION_ADRS + 0x98)	// Acquisition Start Trg Delay
+
+	#define CAMERA_SAVE_ACQUISITION_END_TRG_MODE_ADRS		(CAMERA_SAVE_ACQUISITION_ADRS + 0xa0)	// Acquisition End Trg Mode
+	#define CAMERA_SAVE_ACQUISITION_END_TRG_SOURCE_ADRS		(CAMERA_SAVE_ACQUISITION_ADRS + 0xa8)	// Acquisition End Trg Source
+	#define CAMERA_SAVE_ACQUISITION_END_TRG_ACTIVE_ADRS		(CAMERA_SAVE_ACQUISITION_ADRS + 0xb0)	// Acquisition End Trg Activation
+	#define CAMERA_SAVE_ACQUISITION_END_TRG_DELAY_ADRS		(CAMERA_SAVE_ACQUISITION_ADRS + 0xb8)	// Acquisition End Trg Delay
+
+	#define CAMERA_SAVE_ACQUISITION_ACTIVE_TRG_MODE_ADRS	(CAMERA_SAVE_ACQUISITION_ADRS + 0xc0)	// Acquisition Active Trg Mode
+	#define CAMERA_SAVE_ACQUISITION_ACTIVE_TRG_SOURCE_ADRS	(CAMERA_SAVE_ACQUISITION_ADRS + 0xc8)	// Acquisition Active Trg Source
+	#define CAMERA_SAVE_ACQUISITION_ACTIVE_TRG_ACTIVE_ADRS	(CAMERA_SAVE_ACQUISITION_ADRS + 0xd0)	// Acquisition Active Trg Activation
+	#define CAMERA_SAVE_ACQUISITION_ACTIVE_TRG_DELAY_ADRS	(CAMERA_SAVE_ACQUISITION_ADRS + 0xd8)	// Acquisition Active Trg Delay
+
+	#define CAMERA_SAVE_EXPOSURE_ACTIVE_TRG_MODE_ADRS		(CAMERA_SAVE_ACQUISITION_ADRS + 0xe0)	// Exposure Active Trg Mode
+	#define CAMERA_SAVE_EXPOSURE_ACTIVE_TRG_SOURCE_ADRS		(CAMERA_SAVE_ACQUISITION_ADRS + 0xe8)	// Exposure Active Trg Source
+	#define CAMERA_SAVE_EXPOSURE_ACTIVE_TRG_ACTIVE_ADRS		(CAMERA_SAVE_ACQUISITION_ADRS + 0xf0)	// Exposure Active Trg Activation
+	#define CAMERA_SAVE_EXPOSURE_ACTIVE_TRG_DELAY_ADRS		(CAMERA_SAVE_ACQUISITION_ADRS + 0xf8)	// Exposure Active Trg Delay
+
+// Counter Control
+#define CAMERA_SAVE_COUNTER_ADRS							(0x0500)
+#define CAMERA_SAVE_COUNTER_SIZE							(0x100)
+	#define CAMERA_SAVE_COUNTER0_EVENT_SOURCE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x00)		// Counter0 Event Source
+	#define CAMERA_SAVE_COUNTER0_EVENT_ACTIVE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x08)		// Counter0 Event Activation
+	#define CAMERA_SAVE_COUNTER0_RESET_SOURCE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x10)		// Counter0 Reset Source
+	#define CAMERA_SAVE_COUNTER0_RESET_ACTIVE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x18)		// Counter0 Reset Activation
+	#define CAMERA_SAVE_COUNTER0_DURATION_ADRS				(CAMERA_SAVE_COUNTER_ADRS + 0x20)		// Counter0 Duration
+	#define CAMERA_SAVE_COUNTER0_TRG_SOURCE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x28)		// Counter0 Trg Source
+	#define CAMERA_SAVE_COUNTER0_TRG_ACTIVE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x30)		// Counter0 Trg Activation
+
+	#define CAMERA_SAVE_COUNTER1_EVENT_SOURCE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x38)		// Counter1 Event Source
+	#define CAMERA_SAVE_COUNTER1_EVENT_ACTIVE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x40)		// Counter1 Event Activation
+	#define CAMERA_SAVE_COUNTER1_RESET_SOURCE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x48)		// Counter1 Reset Source
+	#define CAMERA_SAVE_COUNTER1_RESET_ACTIVE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x50)		// Counter1 Reset Activation
+	#define CAMERA_SAVE_COUNTER1_DURATION_ADRS				(CAMERA_SAVE_COUNTER_ADRS + 0x58)		// Counter1 Duration
+	#define CAMERA_SAVE_COUNTER1_TRG_SOURCE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x60)		// Counter1 Trg Source
+	#define CAMERA_SAVE_COUNTER1_TRG_ACTIVE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x68)		// Counter1 Trg Activation
+
+	#define CAMERA_SAVE_COUNTER2_EVENT_SOURCE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x70)		// Counter2 Event Source
+	#define CAMERA_SAVE_COUNTER2_EVENT_ACTIVE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x78)		// Counter2 Event Activation
+	#define CAMERA_SAVE_COUNTER2_RESET_SOURCE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x80)		// Counter2 Reset Source
+	#define CAMERA_SAVE_COUNTER2_RESET_ACTIVE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x88)		// Counter2 Reset Activation
+	#define CAMERA_SAVE_COUNTER2_DURATION_ADRS				(CAMERA_SAVE_COUNTER_ADRS + 0x90)		// Counter2 Duration
+	#define CAMERA_SAVE_COUNTER2_TRG_SOURCE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0x98)		// Counter2 Trg Source
+	#define CAMERA_SAVE_COUNTER2_TRG_ACTIVE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0xa0)		// Counter2 Trg Activation
+
+	#define CAMERA_SAVE_COUNTER3_EVENT_SOURCE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0xa8)		// Counter3 Event Source
+	#define CAMERA_SAVE_COUNTER3_EVENT_ACTIVE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0xb0)		// Counter3 Event Activation
+	#define CAMERA_SAVE_COUNTER3_RESET_SOURCE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0xb8)		// Counter3 Reset Source
+	#define CAMERA_SAVE_COUNTER3_RESET_ACTIVE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0xc0)		// Counter3 Reset Activation
+	#define CAMERA_SAVE_COUNTER3_DURATION_ADRS				(CAMERA_SAVE_COUNTER_ADRS + 0xc8)		// Counter3 Duration
+	#define CAMERA_SAVE_COUNTER3_TRG_SOURCE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0xd0)		// Counter3 Trg Source
+	#define CAMERA_SAVE_COUNTER3_TRG_ACTIVE_ADRS			(CAMERA_SAVE_COUNTER_ADRS + 0xd8)		// Counter3 Trg Activation
+
+// Timer Control
+#define CAMERA_SAVE_TIMER_ADRS								(0x0600)
+#define CAMERA_SAVE_TIMER_SIZE								(0x80)
+	#define CAMERA_SAVE_TIMER0_DURATION_ADRS				(CAMERA_SAVE_TIMER_ADRS + 0x00)			// Timer0 Duration
+	#define CAMERA_SAVE_TIMER0_DELAY_ADRS					(CAMERA_SAVE_TIMER_ADRS + 0x08)			// Timer0 Delay
+	#define CAMERA_SAVE_TIMER0_SOURCE_ADRS					(CAMERA_SAVE_TIMER_ADRS + 0x10)			// Timer0 Source
+	#define CAMERA_SAVE_TIMER0_ACTIVE_ADRS					(CAMERA_SAVE_TIMER_ADRS + 0x18)			// Timer0 Activation
+
+	#define CAMERA_SAVE_TIMER1_DURATION_ADRS				(CAMERA_SAVE_TIMER_ADRS + 0x20)			// Timer1 Duration
+	#define CAMERA_SAVE_TIMER1_DELAY_ADRS					(CAMERA_SAVE_TIMER_ADRS + 0x28)			// Timer1 Delay
+	#define CAMERA_SAVE_TIMER1_SOURCE_ADRS					(CAMERA_SAVE_TIMER_ADRS + 0x30)			// Timer1 Source
+	#define CAMERA_SAVE_TIMER1_ACTIVE_ADRS					(CAMERA_SAVE_TIMER_ADRS + 0x38)			// Timer1 Activation
+
+	#define CAMERA_SAVE_TIMER2_DURATION_ADRS				(CAMERA_SAVE_TIMER_ADRS + 0x40)			// Timer2 Duration
+	#define CAMERA_SAVE_TIMER2_DELAY_ADRS					(CAMERA_SAVE_TIMER_ADRS + 0x48)			// Timer2 Delay
+	#define CAMERA_SAVE_TIMER2_SOURCE_ADRS					(CAMERA_SAVE_TIMER_ADRS + 0x50)			// Timer2 Source
+	#define CAMERA_SAVE_TIMER2_ACTIVE_ADRS					(CAMERA_SAVE_TIMER_ADRS + 0x58)			// Timer2 Activation
+
+	#define CAMERA_SAVE_TIMER3_DURATION_ADRS				(CAMERA_SAVE_TIMER_ADRS + 0x60)			// Timer3 Duration
+	#define CAMERA_SAVE_TIMER3_DELAY_ADRS					(CAMERA_SAVE_TIMER_ADRS + 0x68)			// Timer3 Delay
+	#define CAMERA_SAVE_TIMER3_SOURCE_ADRS					(CAMERA_SAVE_TIMER_ADRS + 0x70)			// Timer3 Source
+	#define CAMERA_SAVE_TIMER3_ACTIVE_ADRS					(CAMERA_SAVE_TIMER_ADRS + 0x78)			// Timer3 Activation
+
+// Encoder Control
+#define CAMERA_SAVE_ENCODER_ADRS							(0x0680)
+#define CAMERA_SAVE_ENCODER_SIZE							(0x80)
+	#define CAMERA_SAVE_ENCODER_PHASEA_TRG_SOURCE_ADRS		(CAMERA_SAVE_ENCODER_ADRS + 0x00)		// PhaseA Trg Source
+	#define CAMERA_SAVE_ENCODER_PHASEB_TRG_SOURCE_ADRS		(CAMERA_SAVE_ENCODER_ADRS + 0x08)		// PhaseB Trg Source
+	#define CAMERA_SAVE_ENCODER_MODE_ADRS					(CAMERA_SAVE_ENCODER_ADRS + 0x10)		// Mode
+	#define CAMERA_SAVE_ENCODER_DVIDER_ADRS					(CAMERA_SAVE_ENCODER_ADRS + 0x18)		// Divider
+	#define CAMERA_SAVE_ENCODER_OUTPUT_MODE_ADRS			(CAMERA_SAVE_ENCODER_ADRS + 0x20)		// Output Mode
+	#define CAMERA_SAVE_ENCODER_TIMEOUT_ADRS				(CAMERA_SAVE_ENCODER_ADRS + 0x28)		// Timeout
+	#define CAMERA_SAVE_ENCODER_RESET_TRG_SOURCE_ADRS		(CAMERA_SAVE_ENCODER_ADRS + 0x30)		// Reset Trg Source
+	#define CAMERA_SAVE_ENCODER_RESET_TRG_ACTIVATION_ADRS	(CAMERA_SAVE_ENCODER_ADRS + 0x38)		// Reset Trg Activation
+
+// Digital IO Control
+#define CAMERA_SAVE_DIGITAL_LINE_VERSION2_ADRS				(0x0700)
+#define CAMERA_SAVE_DIGITAL_LINE_VERSION2_SIZE				(0x100)
+
+	#define CAMERA_SAVE_DIGITAL_LINE0_MODE_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x00)		// Line0 Mode
+	#define CAMERA_SAVE_DIGITAL_LINE0_INVERT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x08)		// Line0 Inverter
+	#define CAMERA_SAVE_DIGITAL_LINE0_SOURCE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x10)		// Line0 Source
+	#define CAMERA_SAVE_DIGITAL_LINE0_FORMAT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x18)		// Line0 Format
+	#define CAMERA_SAVE_DIGITAL_LINE0_DNF_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x20)		// Line0 Dnf
+
+	#define CAMERA_SAVE_DIGITAL_LINE1_MODE_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x40)		// Line1 Mode
+	#define CAMERA_SAVE_DIGITAL_LINE1_INVERT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x48)		// Line1 Inverter
+	#define CAMERA_SAVE_DIGITAL_LINE1_SOURCE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x50)		// Line1 Source
+	#define CAMERA_SAVE_DIGITAL_LINE1_FORMAT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x58)		// Line1 Format
+	#define CAMERA_SAVE_DIGITAL_LINE1_DNF_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x60)		// Line1 Dnf
+
+	#define CAMERA_SAVE_DIGITAL_LINE2_MODE_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x80)		// Line2 Mode
+	#define CAMERA_SAVE_DIGITAL_LINE2_INVERT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x88)		// Line2 Inverter
+	#define CAMERA_SAVE_DIGITAL_LINE2_SOURCE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x90)		// Line2 Source
+	#define CAMERA_SAVE_DIGITAL_LINE2_FORMAT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x98)		// Line2 Format
+	#define CAMERA_SAVE_DIGITAL_LINE2_DNF_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0xa0)		// Line2 Dnf
+
+	#define CAMERA_SAVE_DIGITAL_LINE3_MODE_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0xc0)		// Line3 Mode
+	#define CAMERA_SAVE_DIGITAL_LINE3_INVERT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0xc8)		// Line3 Inverter
+	#define CAMERA_SAVE_DIGITAL_LINE3_SOURCE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0xc0)		// Line3 Source
+	#define CAMERA_SAVE_DIGITAL_LINE3_FORMAT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0xc8)		// Line3 Format
+	#define CAMERA_SAVE_DIGITAL_LINE3_DNF_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0xc0)		// Line3 Dnf
+
+	#define CAMERA_SAVE_DIGITAL_LINE4_MODE_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x100)		// Line4 Mode
+	#define CAMERA_SAVE_DIGITAL_LINE4_INVERT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x108)		// Line4 Inverter
+	#define CAMERA_SAVE_DIGITAL_LINE4_SOURCE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x110)		// Line4 Source
+	#define CAMERA_SAVE_DIGITAL_LINE4_FORMAT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x118)		// Line4 Format
+	#define CAMERA_SAVE_DIGITAL_LINE4_DNF_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x120)		// Line4 Dnf
+
+	#define CAMERA_SAVE_DIGITAL_LINE5_MODE_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x140)		// Line5 Mode
+	#define CAMERA_SAVE_DIGITAL_LINE5_INVERT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x148)		// Line5 Inverter
+	#define CAMERA_SAVE_DIGITAL_LINE5_SOURCE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x150)		// Line5 Source
+	#define CAMERA_SAVE_DIGITAL_LINE5_FORMAT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x158)		// Line5 Format
+	#define CAMERA_SAVE_DIGITAL_LINE5_DNF_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x160)		// Line5 Dnf
+
+	#define CAMERA_SAVE_DIGITAL_LINE6_MODE_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x180)		// Line6 Mode
+	#define CAMERA_SAVE_DIGITAL_LINE6_INVERT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x188)		// Line6 Inverter
+	#define CAMERA_SAVE_DIGITAL_LINE6_SOURCE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x190)		// Line6 Source
+	#define CAMERA_SAVE_DIGITAL_LINE6_FORMAT_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x198)		// Line6 Format
+	#define CAMERA_SAVE_DIGITAL_LINE6_DNF_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x1a0)		// Line6 Dnf
+
+	#define CAMERA_SAVE_DIGITAL_CC1_INVERT_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x208)		// CC1 Inverter
+	#define CAMERA_SAVE_DIGITAL_CC1_SOURCE_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x210)		// CC1 Source
+
+	#define CAMERA_SAVE_DIGITAL_CC2_INVERT_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x228)		// CC2 Inverter
+	#define CAMERA_SAVE_DIGITAL_CC2_SOURCE_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x230)		// CC2 Source
+
+	#define CAMERA_SAVE_DIGITAL_CC3_INVERT_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x248)		// CC3 Inverter
+	#define CAMERA_SAVE_DIGITAL_CC3_SOURCE_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x250)		// CC3 Source
+
+	#define CAMERA_SAVE_DIGITAL_CC4_INVERT_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x268)		// CC4 Inverter
+	#define CAMERA_SAVE_DIGITAL_CC4_SOURCE_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x270)		// CC4 Source
+
+	#define CAMERA_SAVE_DIGITAL_MASK_ADRS_ADRS				(CAMERA_SAVE_DIGITAL_ADRS + 0x280)		// User Mask
+	#define CAMERA_SAVE_DIGITAL_USER0_VALUE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x288)		// User0 Value
+	#define CAMERA_SAVE_DIGITAL_USER1_VALUE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x290)		// User1 Value
+	#define CAMERA_SAVE_DIGITAL_USER2_VALUE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x298)		// User2 Value
+	#define CAMERA_SAVE_DIGITAL_USER3_VALUE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x2a0)		// User3 Value
+	#define CAMERA_SAVE_DIGITAL_USER4_VALUE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x2a8)		// User4 Value
+	#define CAMERA_SAVE_DIGITAL_USER5_VALUE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x2b0)		// User5 Value
+	#define CAMERA_SAVE_DIGITAL_USER6_VALUE_ADRS			(CAMERA_SAVE_DIGITAL_ADRS + 0x2b8)		// User6 Value
+
+// ROI(Height)
+#define CAMERA_SAVE_ROI_HEIGHT_ADRS							(0x0A00)
+#define CAMERA_SAVE_ROI_HEIGHT_SIZE							(0x80)
+#define CAMERA_SAVE_ROI_HEIGHT_FPGA_SIZE					(0x40)
+    #define CAMERA_SAVE_ROI_HEIGHT0_ADRS					(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x00)	// Height0(FPGA/Sensor)
+    #define CAMERA_SAVE_ROI_HEIGHT1_ADRS					(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x08)	// Height1(FPGA/Sensor)
+    #define CAMERA_SAVE_ROI_HEIGHT2_ADRS					(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x10)	// Height2(FPGA/Sensor)
+    #define CAMERA_SAVE_ROI_HEIGHT3_ADRS					(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x18)	// Height3(FPGA/Sensor)
+    #define CAMERA_SAVE_ROI_HEIGHT4_ADRS					(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x20)	// Height4(FPGA/Sensor)
+    #define CAMERA_SAVE_ROI_HEIGHT5_ADRS					(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x28)	// Height5(FPGA/Sensor)
+    #define CAMERA_SAVE_ROI_HEIGHT6_ADRS					(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x30)	// Height6(FPGA/Sensor)
+    #define CAMERA_SAVE_ROI_HEIGHT7_ADRS					(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x38)	// Height7(FPGA/Sensor)
+	#define CAMERA_SAVE_ROI_HEIGHT0_MEM_ADRS				(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x40)	// Height0(Memory)
+	#define CAMERA_SAVE_ROI_HEIGHT1_MEM_ADRS				(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x48)	// Height1(Memory)
+	#define CAMERA_SAVE_ROI_HEIGHT2_MEM_ADRS				(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x50)	// Height2(Memory)
+	#define CAMERA_SAVE_ROI_HEIGHT3_MEM_ADRS				(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x58)	// Height3(Memory)
+	#define CAMERA_SAVE_ROI_HEIGHT4_MEM_ADRS				(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x60)	// Height4(Memory)
+	#define CAMERA_SAVE_ROI_HEIGHT5_MEM_ADRS				(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x68)	// Height5(Memory)
+	#define CAMERA_SAVE_ROI_HEIGHT6_MEM_ADRS				(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x70)	// Height6(Memory)
+	#define CAMERA_SAVE_ROI_HEIGHT7_MEM_ADRS				(CAMERA_SAVE_ROI_HEIGHT_ADRS + 0x78)	// Height7(Memory)
+
+// ROI(Width)
+#define CAMERA_SAVE_ROI_WIDTH_ADRS							(0x0A80)
+#define CAMERA_SAVE_ROI_WIDTH_SIZE							(0x80)
+#define CAMERA_SAVE_ROI_WIDTH_FPGA_SIZE						(0x40)
+    #define CAMERA_SAVE_ROI_WIDTH0_ADRS						(CAMERA_SAVE_ROI_WIDTH_ADRS + 0x00)		// Width0(FPGA/Sensor)
+	#define CAMERA_SAVE_ROI_WIDTH0_MEM_ADRS					(CAMERA_SAVE_ROI_WIDTH_ADRS + 0x40)		// Width0(Memory)
+
+// Auto Bright
+#define CAMERA_SAVE_AUTO_BRIGHT_ADRS						(0x0B00)
+#define CAMERA_SAVE_AUTO_BRIGHT_SIZE						(0x80)
+	#define CAMERA_SAVE_AUTO_BRIGHT_MODE_ADRS				(CAMERA_SAVE_AUTO_BRIGHT_ADRS + 0x00)	// Exposyre Mode
+	#define CAMERA_SAVE_AUTO_BRIGHT_TARGET_ADRS				(CAMERA_SAVE_AUTO_BRIGHT_ADRS + 0x08)	// Target
+	#define CAMERA_SAVE_AUTO_BRIGHT_OFFSET_ADRS				(CAMERA_SAVE_AUTO_BRIGHT_ADRS + 0x10)	// Offset
+	#define CAMERA_SAVE_AUTO_BRIGHT_SIZE_ADRS				(CAMERA_SAVE_AUTO_BRIGHT_ADRS + 0x18)	// Size
+	#define CAMERA_SAVE_AUTO_BRIGHT_EXPOSURE_MIN_ADRS		(CAMERA_SAVE_AUTO_BRIGHT_ADRS + 0x20)	// Exposure Min
+	#define CAMERA_SAVE_AUTO_BRIGHT_EXPOSURE_MAX_ADRS		(CAMERA_SAVE_AUTO_BRIGHT_ADRS + 0x28)	// Exposure Max
+	#define CAMERA_SAVE_AUTO_BRIGHT_GAIN_MODE_ADRS			(CAMERA_SAVE_AUTO_BRIGHT_ADRS + 0x30)	// Gain Mode
+	#define CAMERA_SAVE_AUTO_BRIGHT_GAIN_MIN_ADRS			(CAMERA_SAVE_AUTO_BRIGHT_ADRS + 0x38)	// Gain Min
+	#define CAMERA_SAVE_AUTO_BRIGHT_GAIN_MAX_ADRS			(CAMERA_SAVE_AUTO_BRIGHT_ADRS + 0x3C)	// Gain Max
+	#define CAMERA_SAVE_AUTO_BRIGHT_TARGET_AREA_ADRS		(CAMERA_SAVE_AUTO_BRIGHT_ADRS + 0x40)	// Target Area
+	#define CAMERA_SAVE_AUTO_BRIGHT_USER_SIZE_ADRS			(CAMERA_SAVE_AUTO_BRIGHT_ADRS + 0x48)	// User Size
+	#define CAMERA_SAVE_AUTO_BRIGHT_USER_OFFSET_ADRS		(CAMERA_SAVE_AUTO_BRIGHT_ADRS + 0x50)	// User Offset
+
+// Offset/Gain
+#define CAMERA_SAVE_OG_ADRS									(0x0b80)
+#define CAMERA_SAVE_OG_SIZE									(0x40)
+	#define CAMERA_SAVE_OG_ENABLE_ADRS						(CAMERA_SAVE_OG_ADRS + 0x00)			// Offset/Gainイネーブル
+	#define CAMERA_SAVE_OG_OFFSET1_ADRS						(CAMERA_SAVE_OG_ADRS + 0x08)			// Offset 1st
+	#define CAMERA_SAVE_OG_GAIN_ADRS						(CAMERA_SAVE_OG_ADRS + 0x10)			// Gain
+	#define CAMERA_SAVE_OG_OFFSET2_ADRS						(CAMERA_SAVE_OG_ADRS + 0x18)			// Offset 2nd
+
+// Timing Generator Version2
+#define CAMERA_SAVE_TG_VERSION2_ADRS						(0x0BC0)
+#define CAMERA_SAVE_TG_VERSION2_SIZE						(0x40)
+    #define CAMERA_SAVE_TG_VERSION2_TGSE_ADRS				(CAMERA_SAVE_TG_VERSION2_ADRS + 0x00)	// TGSE
+	#define CAMERA_SAVE_TG_VERSION2_TGES_ADRS				(CAMERA_SAVE_TG_VERSION2_ADRS + 0x08)	// TGES
+	#define CAMERA_SAVE_TG_VERSION2_TGPD_ADRS				(CAMERA_SAVE_TG_VERSION2_ADRS + 0x10)	// TGPD
+
+// Bining
+#define CAMERA_BINING_ADRS									(0x0C00)
+#define CAMERA_BINING_SIZE									(0x40)
+	#define CAMERA_BINING_CTRL_ADRS							(CAMERA_BINING_ADRS + 0x00)				// Bining Ctrl
+	#define CAMERA_BINING_DIVIDER_ADRS						(CAMERA_BINING_ADRS + 0x04)				// Bining Divider
+
+// Gradation Compress
+#define CAMERA_GRADATION_COMPRESS_REG_ADRS					(0x0C40)
+#define CAMERA_GRADATION_COMPRESS_REG_SIZE					(0x40)
+	#define CAMERA_GRADATION_COMPRESS_POS_FIRST				(CAMERA_GRADATION_COMPRESS_REG_ADRS + 0x00)		// Gradation Compress Position First
+	#define CAMERA_GRADATION_COMPRESS_POS_SECOND			(CAMERA_GRADATION_COMPRESS_REG_ADRS + 0x08)		// Gradation Compress Position Second
+	#define CAMERA_GRADATION_COMPRESS_GAIN_FIRST			(CAMERA_GRADATION_COMPRESS_REG_ADRS + 0x10)		// Gradation Compress Gain First
+	#define CAMERA_GRADATION_COMPRESS_GAIN_SECOND			(CAMERA_GRADATION_COMPRESS_REG_ADRS + 0x18)		// Gradation Compress Gain Second
+	#define CAMERA_GRADATION_COMPRESS_MODE					(CAMERA_GRADATION_COMPRESS_REG_ADRS + 0x20)		// Gradation Compress Gain Mode
+
+// Sensor
+#define CAMERA_SENSOR_ADRS									(0x0C80)
+#define CAMERA_SENSOR_SIZE									(0x40)
+	#define CAMERA_SENSOR_CONVERSION_GAIN_ADRS				(CAMERA_SENSOR_ADRS + 0x00)
+	#define CAMERA_SENSOR_DRRS_MODE_ADRS					(CAMERA_SENSOR_ADRS + 0x04)
+
+// Frame Rate High Speed Mode
+#define FRAME_RATE_HIGH_SPEED_ADRS							(0x0CC0)
+#define FRAME_RATE_HIGH_SPEED_SIZE							(0x40)
+    #define FRAME_RATE_HIGH_SPEED_MODE_ADRS					(FRAME_RATE_HIGH_SPEED_ADRS + 0x00)		// High Speed Mode
+    #define FRAME_RATE_HIGH_SPEED_VIRTUAL_HEIGHT_ADRS		(FRAME_RATE_HIGH_SPEED_ADRS + 0x08)		// Virtual Height
+
+// GE
+#define CAMERA_GEV_PARAM_ADRS								(0x0D00)
+#define CAMERA_GEV_PARAM_SIZE								(0x20)
+	#define CAMERA_GEV_SPEED_ADRS							(CAMERA_GEV_PARAM_ADRS + 0x00)			// Gev Speed
+
+// CXP
+#define CAMERA_CXP_ADRS										(0x0D20)
+#define CAMERA_CXP_SIZE										(0x20)
+	#define CAMERA_COMPLIANCE_TEST_MODE_ADRS				(CAMERA_CXP_ADRS + 0x00)				// Complaiance Test Mode
+	#define CAMERA_CONNECTION_CONFIG_ADRS					(CAMERA_CXP_ADRS + 0x08)				// Connection Config
+
+// Spectrum
+#define CAMERA_SAVE_SPECTRUM_ADRS							(0x0D80)
+#define CAMERA_SAVE_SPECTRUM_SIZE							(0x80)
+	#define CAMERA_SAVE_SPECTRUM_CTRL_ADRS					(CAMERA_SAVE_SPECTRUM_ADRS + 0x00)		// Spectrum CTRL
+	#define CAMERA_SAVE_SPECTRUM_LPF_ADRS					(CAMERA_SAVE_SPECTRUM_ADRS + 0x08)		// Spectrum Line Per Frame
+	#define CAMERA_SAVE_SPECTRUM_BAND_COUNT_ADRS			(CAMERA_SAVE_SPECTRUM_ADRS + 0x10)		// Spectrum Band Count
+	#define CAMERA_SAVE_SPECTRUM_BAND_GAIN_FL_ADRS			(CAMERA_SAVE_SPECTRUM_ADRS + 0x18)		// Spectrum Band Gain Filter
+
+#endif  // __CAMERA_SAVE_H__
+
+// eof
