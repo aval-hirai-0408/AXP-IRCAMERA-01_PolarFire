@@ -216,7 +216,6 @@ int cxpMain (void)
 	//------------------------------------------------------------
 	linkStatus = MODE_LINK_DOWN;
 
-	
 	//------------------------------------------------------------
 	// Main Loop
 	//------------------------------------------------------------
@@ -477,9 +476,8 @@ int cxpUserInit (void)
 		memcpy((void*) xmlURLSecond, (void*) xmlURL, 512);
 
 		// XML Data Read
-		DEBUG_PRINT ("XML File Name : %s\n", gXmlFileName1);
-		DEBUG_PRINT ("XML File Adrs : 0x%x\n", xmlStartAddress);
-		DEBUG_PRINT ("XML File Size : 0x%x\n", xmlSize);
+		sprintf (gLogMsgBuff, "XML File Name : %s / Adrs : 0x%08x / Size : 0x%08x\n", gXmlFileName1, xmlStartAddress, xmlSize);
+		cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 	}
 	else
 	{
@@ -518,17 +516,7 @@ int cxpUserInit (void)
 			// LUT
 			//------------------------------------------------------------
 			case FileSelector_LUTLuminance0:
-				fileBuffer[i] = (u32*) malloc(LUT_DATA_SIZE);
-				if (fileBuffer[i] != 0)
-				{
-					// Success
-					memset((void*) fileBuffer[i], 0, LUT_DATA_SIZE);
-				}
-				else
-				{
-					status = AVAL_STATUS_RESOURCE_EXHAUSTED;
-					DEBUG_PRINT("Allocating LUT's memory was failed 0x%08X\n",status);
-				}
+				fileBuffer[i] = fileBuffer[FileSelector_FPGA];	// FileSelector_FPGAで確保した領域を使用
 				break;
 
 			//------------------------------------------------------------
@@ -734,14 +722,14 @@ int cxpLedLinkState (unsigned int *pLinkStatus)
 		{
 			if (linkStatusCurrent == MODE_LINK_UP)
 			{
-				DEBUG_PRINT("[LED] ch%d Link UP\n", port + 1);
+				cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "CXP Link UP\n");
 
 				// コネクション確立
 			    cxpSetLed (port, LED_PATTERN5); // solid green;
 			}
 			else
 			{
-				DEBUG_PRINT("[LED] ch%d Link Down\n", port + 1);
+				cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "CXP Link Down\n");
 
 				// Abort the previous acquisition
 				acquisitionAbort();

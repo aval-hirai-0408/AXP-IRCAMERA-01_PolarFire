@@ -557,5 +557,4 @@ int cmdCameraFactoryClearHelp (void *str)
 	return (AVAL_STATUS_SUCCESS);
 }
 
-
 // eof

@@ -49,7 +49,7 @@ int lutInitialize (void)
 	unsigned int adrs, data;
 	int select, format;
 
-	DEBUG_PRINT ("LUT Initialize\n");
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "LUT Initialize\n");
 
 	// LUT Disable
 	lutSetEnable (LUT_SELECT1, LUT_DISABLE);
@@ -1055,18 +1055,17 @@ int lutGetTable (int select, unsigned char *pBuff, int count, int bit)
 	// Check select Parameter
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
-		DEBUG_PRINT_FORCE ("LUT Get Table select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "LUT Get Table select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
 	// Check pBuff Parameter
 	if (pBuff == NULL)
 	{
-		DEBUG_PRINT_FORCE ("LUT Get Table pBuffer NULL Parameter Error\n");
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Get Table pBuffer NULL Parameter Error\n");
 		goto _DONE;
 	}
 
@@ -1081,18 +1080,18 @@ int lutGetTable (int select, unsigned char *pBuff, int count, int bit)
 		maxCount = PIXEL_14_SIZE;
 	else
 	{
-		DEBUG_PRINT_FORCE ("LUT Get Table Bit(%d) Parameter Error. (Min:%d / Max:%d)\n", bit, PIXEL_BIT_MIN, PIXEL_BIT_MAX);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "LUT Get Table Bit(%d) Parameter Error. (Min:%d / Max:%d)\n", bit, PIXEL_BIT_MIN, PIXEL_BIT_MAX);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
 	// Check count Parameter
 	if ((count <= 0) || (count > maxCount))
 	{
-		DEBUG_PRINT_FORCE ("LUT Get Table Count(%d) Parameter Error. (Min:1 / Max:%d)\n", count, maxCount);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "LUT Get Table Count(%d) Parameter Error. (Min:1 / Max:%d)\n", count, maxCount);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
@@ -1156,17 +1155,16 @@ int lutSetTableData (int select, unsigned int offset, unsigned int data)
 	// Check select Parameter
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
-		DEBUG_PRINT_FORCE ("LUT Table select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "LUT Table select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
 	// データサイズ取得
 	if ((status = lutGetTableSize (&dataSize)) != AVAL_STATUS_SUCCESS)
 	{
-		DEBUG_PRINT_FORCE ("LUT Table Parameter Error. \n");
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table Parameter Error. \n");
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
 		goto _DONE;
 	}
@@ -1174,18 +1172,18 @@ int lutSetTableData (int select, unsigned int offset, unsigned int data)
 	// Check offset Parameter
 	if (offset >= dataSize)
 	{
-		DEBUG_PRINT_FORCE ("LUT Table Data offset(%d) Parameter Error. (Min:0 / Max:%d)\n", offset, dataSize-1);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "LUT Table Data offset(%d) Parameter Error. (Min:0 / Max:%d)\n", offset, dataSize-1);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
 	// Check data Parameter
 	if (data >= dataSize)
 	{
-		DEBUG_PRINT_FORCE ("LUT Table Data data(%d) Parameter Error. (Min:0 / Max:%d)\n", data, dataSize-1);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "LUT Table Data data(%d) Parameter Error. (Min:0 / Max:%d)\n", data, dataSize-1);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
@@ -1246,36 +1244,34 @@ int lutGetTableData (int select, unsigned int offset, unsigned int *pData)
 	// Check select Parameter
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
-		DEBUG_PRINT_FORCE ("LUT Table select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "LUT Table select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
 	// データサイズ取得
 	if ((status = lutGetTableSize (&dataSize)) != AVAL_STATUS_SUCCESS)
 	{
-		DEBUG_PRINT_FORCE ("LUT Table Parameter Error. \n");
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table Parameter Error. \n");
 		goto _DONE;
 	}
 
 	// Check offset Parameter
 	if (offset >= dataSize)
 	{
-		DEBUG_PRINT_FORCE ("LUT Table Data offset(%d) Parameter Error. (Min:0 / Max:%d)\n", offset, dataSize-1);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "LUT Table Data offset(%d) Parameter Error. (Min:0 / Max:%d)\n", offset, dataSize-1);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
 	// Check pData Parameter
 	if (pData == NULL)
 	{
-		DEBUG_PRINT_FORCE ("LUT Table pData NULL Parameter Error\n");
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table pData NULL Parameter Error\n");
 		goto _DONE;
 	}
 

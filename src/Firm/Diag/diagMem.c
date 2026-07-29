@@ -19,8 +19,7 @@
 //----------------------------------------------------------------------------------
 // defines
 //----------------------------------------------------------------------------------
-#define MEMORY_DISPLAY_COUNT (0x100000)
-#define	TIME_OUT_MAX	(5000)				//5000us
+#define MEMORY_DISPLAY_COUNT (0x20000)
 
 
 //----------------------------------------------------------------------------------
@@ -119,9 +118,6 @@ int cmdDiagMem2 (void *str)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int addr;
 	unsigned int loop;
-#if defined (MODE_DIAG_DDR_VERSION2)
-	int timeout;
-#endif
 	int mode = 1;
 
 	// 検査回数取得
@@ -148,117 +144,43 @@ int cmdDiagMem2 (void *str)
 		gTestMemReqSize = 32*1024*1024;
 	}
 
-	while (1)
-	{
-		if ((gTestMemBase = (unsigned int)malloc (gTestMemReqSize+32)) == (unsigned int)NULL)
-		{
-			if (gTestMemReqSize <= TEST_MEM_MIN_SIZE)
-			{
-				status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_RESOURCE_EXHAUSTED);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DDR Memory Request Error\n");
-				goto _DONE;
-			}
+	//--------------------------------------------------------------------------------
+	// Test1
+	//--------------------------------------------------------------------------------
 
-			gTestMemReqSize -= TEST_SIZE_B;
-		}
-		else
-			break;
-	}
+	// アドレス取得
+	addr = DIAG_DDR_BASE1_ADRS;
 
-	// Align Adjust
-	addr = (gTestMemBase + 32) & ~0x1f;
-
+	// DDR検査
 	if ((status = cmdDiagMemRW (loop, addr, gTestMemReqSize)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 
-#if defined (MODE_DIAG_DDR_VERSION2)
+	//--------------------------------------------------------------------------------
+	// Test2
+	//--------------------------------------------------------------------------------
 
 	// Check DDR Mode
 	if (mode != 0)
 		goto _DONE;
 
-	//サイズ設定
+	// アドレス取得
+	addr = DIAG_DDR_BASE2_ADRS;
+
+	// サイズ設定
 	gTestMemReqSize = TEST_MEM_MAX_SIZE_VERSION2;
 
-	//サイズ格納
-	OUT32(FIRM_DATA_DDR_DIAG_SIZE, gTestMemReqSize);
-
-	//フラグ切り替え
-	OUT32(FIRM_DATA_DDR_DIAG_FLAG, FIRM_DATA_DDR_DIAG_FLAG_MALLOC);
-
-	//メモリ確保待ち
-	for(timeout = 0; timeout < TIME_OUT_MAX; timeout++)
-	{
-		//完了待ち
-		if(IN32(FIRM_DATA_DDR_DIAG_FLAG) == FIRM_DATA_DDR_DIAG_FLAG_MALLOC_DONE)
-		{
-			break;
-		}
-
-		usDelay(1);
-	}
-
-	//タイムアウト
-	if(timeout >= TIME_OUT_MAX)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CPU1 DDR Memory Request Error\n");
-		goto _DONE;
-	}
-
-	//アドレス取得
-	addr = IN32(FIRM_DATA_DDR_DIAG_ADRS);
-
-	//サイズ取得
-	gTestMemReqSize = IN32(FIRM_DATA_DDR_DIAG_SIZE);
-
-	//DDR検査
+	// DDR検査
 	if ((status = cmdDiagMemRW (loop, addr, gTestMemReqSize)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-#endif
 
 _DONE:
-	if (gTestMemBase != (unsigned int)NULL)
-		free ((void *)gTestMemBase);
-
-#if defined (MODE_DIAG_DDR_VERSION2)
-	if (mode == 0)
-	{
-		//メモリ解放
-		OUT32(FIRM_DATA_DDR_DIAG_FLAG, FIRM_DATA_DDR_DIAG_FLAG_FREE);
-
-		//メモリ解放待ち
-		for(timeout = 0; timeout < TIME_OUT_MAX; timeout++)
-		{
-			//完了待ち
-			if(IN32(FIRM_DATA_DDR_DIAG_FLAG) == FIRM_DATA_DDR_DIAG_FLAG_FREE_DONE)
-			{
-				break;
-			}
-
-			usDelay(1);
-		}
-
-		//タイムアウト
-		if(timeout >= TIME_OUT_MAX)
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_RESOURCE_EXHAUSTED);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CPU1 DDR Memory Release Error\n");
-			goto _DONE;
-		}
-
-		//フラグ初期化
-		OUT32(FIRM_DATA_DDR_DIAG_FLAG, FIRM_DATA_DDR_DIAG_FLAG_NONE);
-	}
-#endif
-
 	return (status);
 }
 
 
 //**********************************************************************************
-//	メモリ評価 ARM0
+//	メモリ評価
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		loop					：テスト回数
@@ -313,7 +235,6 @@ MORE_MEM:
 			goto _DONE;
 
 
-#if defined (MODE_DIAG_DDR_VERSION2)
 		/*---------------------------*/
 		/* Data Line評価             */
 		/*---------------------------*/
@@ -353,8 +274,6 @@ MORE_MEM:
 
 		if ((status = cmdDiagMemBank (NT5AD_DDR_BANK)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-
-#endif // #if defined (MODE_DIAG_DDR_VERSION2)
 	}
 
 	DEBUG_PRINT ("\n");
@@ -384,6 +303,7 @@ int cmdDiagMemLong (unsigned int tloop, unsigned int addr, unsigned int size)
 	int loop, loopBase;
 	unsigned int readData1, readData2;
 	int status = AVAL_STATUS_SUCCESS;
+	int iii=0;
 
 	pBase1   = (volatile unsigned int *)addr;
 	pBase2   = (volatile unsigned int *)(addr + (size/2));
@@ -1117,7 +1037,6 @@ _DONE:
 }
 
 
-#if defined (MODE_DIAG_DDR_VERSION2)
 //**********************************************************************************
 //	DataLine検査
 //----------------------------------------------------------------------------------
@@ -1126,7 +1045,7 @@ _DONE:
 //		AVAL_STATUS_SUCCESS		：正常終了
 //		上記以外					：異常終了
 //==================================================================================
-int cmdDiagMemDataLine(unsigned int bus)
+int cmdDiagMemDataLine (unsigned int bus)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int i;
@@ -1137,7 +1056,6 @@ int cmdDiagMemDataLine(unsigned int bus)
 
 	for(i = 0; i < bus; i++)
 	{
-
 		DEBUG_PRINT("BAS:%d Address=0x%lx\n", i, baseAddr + addr);
 
 		// テストデータ作成
@@ -1177,7 +1095,7 @@ _DONE:
 //		AVAL_STATUS_SUCCESS		：正常終了
 //		上記以外					：異常終了
 //==================================================================================
-int cmdDiagMemCAS(unsigned int cas)
+int cmdDiagMemCAS (unsigned int cas)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int i;
@@ -1315,7 +1233,7 @@ _DONE:
 //		AVAL_STATUS_SUCCESS		：正常終了
 //		上記以外					：異常終了
 //==================================================================================
-int cmdDiagMemBank(unsigned int bank)
+int cmdDiagMemBank (unsigned int bank)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int i;
@@ -1372,14 +1290,11 @@ int cmdDiagMemBank(unsigned int bank)
 
 		// 総サイズ / 総バンク数
 		addr = ((0x80000000/4) * checkBank);
-
 	}
 
 _DONE:
 	return (status);
 }
-
-#endif // #if defined (MODE_DIAG_DDR_VERSION2)
 
 
 //**********************************************************************************
@@ -1429,108 +1344,5 @@ int diagDdrGetMode (int *pMode)
 _DONE:
 	return (status);
 }
-
-
-#if defined (MODE_DIAG_DDR_VERSION2)
-unsigned int gCpu1TestMemBase = (unsigned int)NULL;
-unsigned int gCpu1TestMemReqSize;
-
-//**********************************************************************************
-//	CXP DDR Diag Malloc
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int cmdDiagDdrCpu1Malloc(void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int flag;
-	unsigned long addr;
-
-	//mallocフラグ取得
-	flag = IN32(FIRM_DATA_DDR_DIAG_FLAG);
-
-	if (flag == FIRM_DATA_DDR_DIAG_FLAG_MALLOC)
-	{
-		//サイズ取得
-		gCpu1TestMemReqSize = IN32(FIRM_DATA_DDR_DIAG_SIZE);
-
-		while (1)
-		{
-			//メモリ確保
-			if ((gCpu1TestMemBase = (unsigned long)malloc (gCpu1TestMemReqSize+32)) == (unsigned long)NULL)
-			{
-				if (gCpu1TestMemReqSize <= TEST_MEM_MIN_SIZE)
-				{
-					status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_RESOURCE_EXHAUSTED);
-					cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DDR Memory Request Error\n");
-					goto _DONE;
-				}
-
-				gCpu1TestMemReqSize -= TEST_SIZE_B;
-			}
-			else
-				break;
-		}
-
-		// Align Adjust
-		addr = (gCpu1TestMemBase + 32) & ~0x1f;
-
-		// Align Adjust
-		addr = (gCpu1TestMemBase + 32) & ~0x1f;
-
-		//アドレス格納
-		OUT32(FIRM_DATA_DDR_DIAG_ADRS, addr);
-
-		//サイズ格納
-		OUT32(FIRM_DATA_DDR_DIAG_SIZE, gCpu1TestMemReqSize);
-
-		//完了通知
-		OUT32(FIRM_DATA_DDR_DIAG_FLAG, FIRM_DATA_DDR_DIAG_FLAG_MALLOC_DONE);
-
-	}
-	else if(flag == FIRM_DATA_DDR_DIAG_FLAG_FREE)
-	{
-		//メモリ解放
-		if(gCpu1TestMemBase != (unsigned long)NULL)
-		{
-			free((void *)gCpu1TestMemBase);
-			gCpu1TestMemBase = (unsigned long)NULL;
-		}
-
-		//サイズ初期化
-		gCpu1TestMemReqSize = 0;
-
-		//アドレス初期化
-		OUT32(FIRM_DATA_DDR_DIAG_ADRS, 0x00);
-
-		//サイズ初期化
-		OUT32(FIRM_DATA_DDR_DIAG_SIZE, 0x00);
-
-		//解放完了フラグ
-		OUT32(FIRM_DATA_DDR_DIAG_FLAG, FIRM_DATA_DDR_DIAG_FLAG_FREE_DONE);
-	}
-	else
-	{
-		//正常
-		return (status);
-	}
-
-_DONE:
-	//メモリ解放
-	if(gCpu1TestMemBase != (unsigned long)NULL)
-	{
-		free((void *)gCpu1TestMemBase);
-		gCpu1TestMemBase = (unsigned long)NULL;
-	}
-
-
-	return (status);
-}
-#endif // #if defined (MODE_DIAG_DDR_VERSION2)
-
 
 // eof

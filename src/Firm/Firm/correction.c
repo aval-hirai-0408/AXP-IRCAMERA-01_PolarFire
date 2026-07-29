@@ -358,7 +358,8 @@ int dpc_threshold (double* sd, double* nonuniformity, double sd_thre, double non
 		{
 			if ((sd_thre <= sd[col + row * IMG_STRIDE]) || (nonuniformity_thre <= nonuniformity[col + row * IMG_STRIDE]))
 			{
-				DEBUG_PRINT ("row = %d / col = %d / sd = %.2f / non = %.2f \n", row, col, sd[col + row * IMG_STRIDE], nonuniformity[col + row * IMG_STRIDE]);
+				sprintf (gLogMsgBuff, "row = %d / col = %d / sd = %.2f / non = %.2f \n", row, col, sd[col + row * IMG_STRIDE], nonuniformity[col + row * IMG_STRIDE]);
+				cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				detect_map[col + row * IMG_STRIDE] = 1;
 			}
 			else
@@ -899,7 +900,8 @@ int get_correct_coord (unsigned char *detect, DEFECTIONINFO *defection_info, int
 			// 欠陥画素の場合、座標とフィルタインデックスを取得する
 			if (detect[x + y * IMG_WIDTH] == 1)	// 欠陥画素あり
 			{
-				DEBUG_PRINT ("Normal detect x = %d / y= %d\n", x, y);
+				sprintf (gLogMsgBuff, "Normal detect x = %d / y= %d\n", x, y);
+				cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 				defectivePixelCount = 0;
 
@@ -981,7 +983,9 @@ int get_correct_coord (unsigned char *detect, DEFECTIONINFO *defection_info, int
 				if (pixelCount == defectivePixelCount)
 				{
 					// 欠陥補正不可座標
-					DEBUG_PRINT_FORCE ("Impossible detect x = %d / y= %d\n", x, y);
+					sprintf (gLogMsgBuff, "Impossible detect x = %d / y= %d\n", x, y);
+					cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+
 					//pDpcImpossibleGrid[gDpcImpGridCount].x = x;
 					//pDpcImpossibleGrid[gDpcImpGridCount].y = y;
 					gDpcImpGridCount++;

@@ -132,8 +132,6 @@ int dpcInitializeMain (unsigned int flashAdrs, unsigned int memAdrs, int mode, i
 		}
 	}
 
-	DEBUG_PRINT ("DPC MARK Check..");
-
 	// メモリFill
 	memset ((void *)DPC_MEMORY_ADRS, 0xff, DPC_MEMORY_NEW_ALL_SIZE);
 
@@ -142,7 +140,6 @@ int dpcInitializeMain (unsigned int flashAdrs, unsigned int memAdrs, int mode, i
 	{
 		if ((status = dpcGetMarkFlash (dpcNum, &mark)) != AVAL_STATUS_SUCCESS)
 		{
-			DEBUG_PRINT ("\n");
 			gDpcStatus = status;
 			goto _DONE;
 		}
@@ -151,13 +148,13 @@ int dpcInitializeMain (unsigned int flashAdrs, unsigned int memAdrs, int mode, i
 	{
 		if ((status = dpcGetMarkFlashAdmin (dpcNum, &mark)) != AVAL_STATUS_SUCCESS)
 		{
-			DEBUG_PRINT ("\n");
 			gDpcStatus = status;
 			goto _DONE;
 		}
 	}
 	
-	DEBUG_PRINT ("0x%x\n", mark);
+	sprintf (gLogMsgBuff, "DPC MARK Check..0x%x\n", mark);
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 	// DPCマークは有効?
 	if ((mark == DPC_NO_DATA) || (mark == 0))
@@ -191,8 +188,9 @@ int dpcInitializeMain (unsigned int flashAdrs, unsigned int memAdrs, int mode, i
 
 	// DPCパラメータ初期化 & Enable
 	dpcRegInit (memAdrs, DPC_MEMORY_NEW_SIZE, mode);
-	DEBUG_PRINT ("DPC Initialize Flash = 0x%x, Memory = 0x%x, Size = 0x%x, Mode = %d\n", flashAdrs, memAdrs, DPC_MEMORY_NEW_SIZE, mode);
-
+	sprintf (gLogMsgBuff, "DPC Initialize Flash = 0x%x, Memory = 0x%x, Size = 0x%x, Mode = %d\n", flashAdrs, memAdrs, DPC_MEMORY_NEW_SIZE, mode);
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	
 	// DPC情報読み込み
 	if ((status = dpcAdjustInfoRead (dpcNum, userMode, &gDpcInfo)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
@@ -740,7 +738,6 @@ int dpcSaveMain (int dpcNum, int userMode)
 	//--------------------------------------------------
 	// DPCデータをFlashに書き込み
 	//--------------------------------------------------
-	DEBUG_PRINT ("DPC Flash Data Write..\n");
 	if (userMode == DPC_USER)
 	{
 		if ((status = dpcToFlash (flashAdrs, memAdrs)) != AVAL_STATUS_SUCCESS)
@@ -768,7 +765,6 @@ int dpcSaveMain (int dpcNum, int userMode)
 	//--------------------------------------------------
 	// Mark情報をFlashに書き込み
 	//--------------------------------------------------
-	DEBUG_PRINT ("DPC Flash Mark Write..\n");
 
 	// 欠陥画素補正数設定
 	dpcCount = IN32 (FIRM_DATA_DPC_NUM_ADRS);
@@ -3530,9 +3526,6 @@ _NEXT:
 	dpcSetDefectionCountVersion2 (count);
 #endif
 
-
-	DEBUG_PRINT ("DPC .. OK\n");
-
 _DONE:
 	if (acquisitionFlag == 1)
 		acquisitionStart ();
@@ -3760,13 +3753,9 @@ int dpcGridLineMain (int x, int mode)
 		}
 	}
 
-	// インデックス設定
-	DEBUG_PRINT ("index = %d\n", (unsigned int)index);
-
 	//------------------------------------------------------------
 	// 補正データをメモリへ配置
 	//------------------------------------------------------------
-	DEBUG_PRINT ("DPC Data Memory Write..\n");
 	dpcSetMemory (dpcNo, pImageDefectionInfo, index);
 
 
@@ -3783,8 +3772,6 @@ int dpcGridLineMain (int x, int mode)
 	// DPCパラメータ初期化 & Enable
 	size = DPC_MEMORY_NEW_SIZE;
 	dpcRegInit (dpcAdrs, size, FPGA_DPC_CTRL_ENABLE_BIT);
-
-	DEBUG_PRINT ("DPC .. OK\n");
 
 	// 欠陥画素補正数設定
 	OUT32 (FIRM_DATA_DPC_NUM_ADRS, dpcCount2);
@@ -3945,7 +3932,6 @@ int dpcMapInfoFlash (int dpcNum, int userMode)
 	// 欠陥補正なし
 	if ((mark == DPC_NO_DATA) || (mark == 0))
 	{
-		//DEBUG_PRINT_FORCE ("None\n");
 		goto _DONE;
 	}
 

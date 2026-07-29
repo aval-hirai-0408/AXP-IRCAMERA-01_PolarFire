@@ -1108,9 +1108,7 @@ _DONE:
 	if (pBuff != NULL)
 		free (pBuff);
 
-
 	return (status);
 }
-
 
 // eof

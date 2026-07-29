@@ -595,16 +595,16 @@ int cmdAcesDumpMain (void *str, int mode)
 
 	if (argc != 2)
 	{
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_ARG);
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
 		goto _DONE;
 	}
 
 	// アドレス取得
 	if (sscanf (gCmdArg[1], "%lx", &adrs) != 1)
 	{
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
 		goto _DONE;
 	}
 

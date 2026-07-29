@@ -328,13 +328,6 @@ typedef struct
 #define DeviceIndicatorMode_Active								(          1)
 #define DeviceIndicatorMode_ErrorStatus							(          2)
 
-#define DeviceTemperature_Sensor_Float							( 0x0000A26C)  // RW; 4 bytes
-#define DeviceTemperature_Case_Float							( 0x0000A270)  // RW; 4 bytes
-#define DeviceTemperature_FPGA_Float							( 0x0000A274)  // RW; 4 bytes
-
-#define DevicePeltierVolt										( 0x0000A278)  // RW; 4 bytes
-#define DevicePeltierCurrent									( 0x0000A27C)  // RW; 4 bytes
-
 #define DeviceScanType											( 0x0000A280 ) // RO; 4 bytes
 #define   DeviceScanType_Areascan								( 0 ) // RO; 4 bytes
 #define   DeviceScanType_Linescan								( 1 ) // RO; 4 bytes
@@ -757,9 +750,15 @@ typedef struct
 // Group: DeviceControl
 //
 //====================================================================================
-#define DeviceVariant											( 0x0000D3E8 )
-#define DeviceXMLSchmaVersionMode								( 0x0000D3EC )
-#define DeviceIfFpgaSelector									( 0x0000D3F8 )
+#define DeviceTemperature_Sensor_Float							( 0x0000D3D4)  // RW; 4 bytes
+#define DeviceTemperature_Case_Float							( 0x0000D3D8)  // RW; 4 bytes
+#define DeviceTemperature_FPGA_Float							( 0x0000D3DC)  // RW; 4 bytes
+
+#define DevicePeltierVolt										( 0x0000D3E0 )  // RW; 4 bytes
+#define DevicePeltierCurrent									( 0x0000D3E4 )  // RW; 4 bytes
+#define DeviceVariant											( 0x0000D3E8 )  // RW; 4 bytes
+#define DeviceXMLSchmaVersionMode								( 0x0000D3EC )  // RW; 4 bytes
+#define DeviceIfFpgaSelector									( 0x0000D3F8 )  // RW; 4 bytes
 
 
 //====================================================================================

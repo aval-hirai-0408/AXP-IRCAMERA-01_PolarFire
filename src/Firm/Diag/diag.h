@@ -98,7 +98,6 @@ int cmdDiagMemRAS(unsigned int cas, unsigned int ras);
 int cmdDiagMemBank(unsigned int bank);
 int diagDdrSetMode (int mode);
 int diagDdrGetMode (int *pMode);
-int cmdDiagDdrCpu1Malloc(void);
 
 // diagQspi.c
 int cmdDiagQspiErase (void *str);

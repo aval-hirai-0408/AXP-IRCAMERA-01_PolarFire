@@ -51,8 +51,7 @@ int cmdPhyCount (void *str)
 		if (sscanf (gCmdArg[1], "%x", &speed) != 1)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status);
-			DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
 			goto _DONE;
 		}
 
@@ -60,8 +59,7 @@ int cmdPhyCount (void *str)
 		if (sscanf (gCmdArg[2], "%x", &selector) != 1)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status);
-			DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
 			goto _DONE;
 		}
 
@@ -74,8 +72,7 @@ int cmdPhyCount (void *str)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_ARG);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
 		goto _DONE;
 	}
 
@@ -163,8 +160,7 @@ int cmdPhySpeed (void *str)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_ARG);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
 		goto _DONE;
 	}
 
@@ -249,8 +245,7 @@ int cmdGevSpeedConfig (void *str)
 		if (sscanf (gCmdArg[1], "%x", &speed) != 1)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status);
-			DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
 			goto _DONE;
 		}
 
@@ -261,8 +256,7 @@ int cmdGevSpeedConfig (void *str)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_ARG);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
 		goto _DONE;
 	}
 
@@ -351,8 +345,7 @@ int cmdGigEPacketDelayCalc (void *str)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_ARG);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
 		goto _DONE;
 
 _DONE:
@@ -422,8 +415,7 @@ int cmdPhyFirmVersion (void *str)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_ARG);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
 		goto _DONE;
 	}
 
@@ -494,8 +486,7 @@ int cmdPhyApiVersion (void *str)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_ARG);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
 		goto _DONE;
 	}
 
@@ -566,8 +557,7 @@ int cmdPhyTemp (void *str)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_ARG);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
 		goto _DONE;
 	}
 

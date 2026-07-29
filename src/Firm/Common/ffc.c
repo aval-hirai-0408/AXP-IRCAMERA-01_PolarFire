@@ -107,8 +107,6 @@ int ffcInitializeMain (unsigned int flashAdrs, unsigned int memAdrs, int mode, i
 		}
 	}
 
-	DEBUG_PRINT ("FFC First Initialize Get Mark..\n");
-
 _RETRY:
 	// Get Black Target
 	if (userMode == FFC_USER)
@@ -133,8 +131,9 @@ _RETRY:
 	{
 		if (ffcNum != FFC_FACTORY_NUMBER)
 		{
-			DEBUG_PRINT ("FFC Black Target(%d) Parameter Error. FFC = %d\n", blackTarget, ffcNum);
-			DEBUG_PRINT ("Change FFC FFC_FACTORY_NUMBER Mode!\n");
+			sprintf (gLogMsgBuff, "FFC Black Target(%d) Parameter Error. FFC = %d\nChange FFC FFC_FACTORY_NUMBER Mode!\n", blackTarget, ffcNum);
+			cameraLogMsg (MSG_LEVEL_WARNING, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+
 			ffcNum = FFC_FACTORY_NUMBER;
 
 			// FFC Flashアドレス取得
@@ -144,8 +143,8 @@ _RETRY:
 			goto _RETRY;
 		}
 
-		DEBUG_PRINT ("FFC Black Target(%d) Parameter Error. FFC = %d\n", blackTarget, ffcNum);
-		DEBUG_PRINT ("FFC Mode Off\n");
+		sprintf (gLogMsgBuff, "FFC Black Target(%d) Parameter Error. FFC = %d\nFFC Mode Off\n", blackTarget, ffcNum);
+		cameraLogMsg (MSG_LEVEL_WARNING, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 	
 		// FFC黒レベルが無効な為、FFC OFF
 		mode = 0;

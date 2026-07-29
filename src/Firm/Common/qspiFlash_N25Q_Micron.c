@@ -797,9 +797,10 @@ int qspiFlashWriteProtect_N25Q (unsigned int address)
 	// Check address parameter
 	if ((address > QSPI_FLASH_SIZE) && (address != 0xffffffff))
 	{
-		DEBUG_PRINT_FORCE ("QSPI Flash Write Protect Address(0x%x) Parameter Error. (Min:0 - Max:0x%x)\n", address, QSPI_FLASH_SIZE);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
-		return (MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER));
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "QSPI Flash Write Protect Address(0x%x) Parameter Error. (Min:0 - Max:0x%x)\n", address, QSPI_FLASH_SIZE);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
 	}
 
 #if !defined (MODE_FLASH_PROTECT_SIMPLE)
@@ -850,9 +851,8 @@ int qspiFlashWriteProtect_N25Q (unsigned int address)
 	// コマンド発行
 	if (XQspiPsu_PolledTransfer (&QspiFlashInstance, FlashMsg, 2) != XST_SUCCESS)
 	{
-		DEBUG_PRINT_FORCE ("QSPI Flash Read Status Command Error\n");
-		DEBUG_PRINT_FORCE (CMD_ERROR_DEVICE);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Read Status Command Error\n");
 		goto _DONE;
 	}
 
@@ -880,9 +880,8 @@ int qspiFlashWriteProtect_N25Q (unsigned int address)
 	// コマンド発行
 	if (XQspiPsu_PolledTransfer (&QspiFlashInstance, FlashMsg, 1) != XST_SUCCESS)
 	{
-		DEBUG_PRINT_FORCE ("QSPI Flash Write Status Command Error\n");
-		DEBUG_PRINT_FORCE (CMD_ERROR_DEVICE);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Write Status Command Error\n");
 		goto _DONE;
 	}
 
@@ -891,8 +890,7 @@ int qspiFlashWriteProtect_N25Q (unsigned int address)
 	//------------------------------------------------------------
 	if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
 	{
-		DEBUG_PRINT ("QSPI Flash Write Status Check Error.\n");
-		DEBUG_PRINT_FORCE (CMD_ERROR_DEVICE);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Write Status Check Error.\n");
 		goto _DONE;
 	}
 
@@ -1044,9 +1042,9 @@ int qspiFlashWriteProtectRead_N25Q (int *pStatus)
 	// Check pStatus Parameter
 	if (pStatus == NULL)
 	{
-		DEBUG_PRINT_FORCE ("QSPI Flash Write Protect Status Command Error\n");
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
-		return (MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER));
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER));
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Write Protect Status Command Error\n");
+		goto _DONE;
 	}
 
 	// Top/Bottomの両方のプロテクト状態を確認
@@ -1076,9 +1074,8 @@ int qspiFlashWriteProtectRead_N25Q (int *pStatus)
 		// コマンド発行
 		if (XQspiPsu_PolledTransfer (&QspiFlashInstance, FlashMsg, 2) != XST_SUCCESS)
 		{
-			DEBUG_PRINT_FORCE ("QSPI Flash Read Status Command Error\n");
-			DEBUG_PRINT_FORCE (CMD_ERROR_DEVICE);
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Read Status Command Error\n");
 			goto _DONE;
 		}
 
@@ -1108,17 +1105,15 @@ int qspiFlashWriteProtectRead_N25Q (int *pStatus)
 		// コマンド発行
 		if (XQspiPsu_PolledTransfer (&QspiFlashInstance, FlashMsg, 1) != XST_SUCCESS)
 		{
-			DEBUG_PRINT_FORCE ("QSPI Flash Write Status Command Error\n");
-			DEBUG_PRINT_FORCE (CMD_ERROR_DEVICE);
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Write Status Command Error\n");
 			goto _DONE;
 		}
 
 		// ステータスCheck
 		if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
 		{
-			DEBUG_PRINT ("QSPI Flash Status Check Error.\n");
-			DEBUG_PRINT_FORCE (CMD_ERROR_DEVICE);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Status Check Error.\n");
 			goto _DONE;
 		}
 
@@ -1146,9 +1141,8 @@ int qspiFlashWriteProtectRead_N25Q (int *pStatus)
 		// コマンド発行
 		if (XQspiPsu_PolledTransfer (&QspiFlashInstance, FlashMsg, 2) != XST_SUCCESS)
 		{
-			DEBUG_PRINT_FORCE ("QSPI Flash Read Status Command Error\n");
-			DEBUG_PRINT_FORCE (CMD_ERROR_DEVICE);
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Read Status Command Error\n");
 			goto _DONE;
 		}
 

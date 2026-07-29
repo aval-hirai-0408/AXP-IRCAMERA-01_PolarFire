@@ -100,7 +100,7 @@ int sensorTimingInitialize (void)
 	double rateMaxD;
 	int bitSave = -1;
 
-	DEBUG_PRINT ("Sensor Timing Initialize\n");
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, 0, "Sensor Timing Initialize\n");
 
 	//------------------------------------------------------------
 	// 1hの時間取得
@@ -451,9 +451,9 @@ int sensorTimingInitialize (void)
 			if ((gLvdsInfo[signal].onOff[MODE_OFF].length[0] == 0) && (gLvdsInfo[signal].onOff[MODE_OFF].length[1] == 0) &&
 	            (gLvdsInfo[signal].onOff[MODE_OFF].length[2] == 0) && (gLvdsInfo[signal].onOff[MODE_OFF].length[3] == 0))
 			{
-				DEBUG_PRINT ("Sensor Tmg Delay Data Invalid. Signal = %d\n", signal);
-				//DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 				gSensorTmgStatus = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
+				sprintf (gLogMsgBuff, "Sensor Tmg Delay Data Invalid. Signal = %d\n", signal);
+				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, gSensorTmgStatus, gLogMsgBuff);
 				//goto _DONE;
 			}
 
@@ -3027,9 +3027,9 @@ int sensorHIntervalData (int bit, unsigned int *pData)
 		}
 		else
 		{
-			DEBUG_PRINT_FORCE ("Rate(0x%x) Parameter Error\n", rate);
-			DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
+			sprintf (gLogMsgBuff, "Rate(0x%x) Parameter Error\n", rate);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
 #endif // #if defined (IF_CXP)
@@ -14837,9 +14837,9 @@ int sensorSetSHS_H (unsigned int expTime)
 	shsMax = vMax - SENSOR_SHS_MIN;
 	if ((shs < shsMin) || (shs > shsMax))
 	{
-		DEBUG_PRINT_FORCE ("Sensor Set SHS(%d) Parameter Error. (Min:%d / Max:%d)\n", shs, shsMin, shsMax);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Sensor Set SHS(%d) Parameter Error. (Min:%d / Max:%d)\n", shs, shsMin, shsMax);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 

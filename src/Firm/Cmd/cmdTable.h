@@ -565,10 +565,10 @@ CMD_TBL mainCmdTbl [] =
 // FPGA Update
 //============================================================================================================================================
 #if defined (MODE_UPDATE_INTERFACE)
-	{ (char *)"update-if",					(CMDFUNC)cmdFpgaUpdateInterface,		(CMDFUNC)cmdFpgaUpdateInterfaceHelp, 			OPT_NONE},
-	{ (char *)"update-if-admin",			(CMDFUNC)cmdFpgaUpdateInterfaceAdmin,	(CMDFUNC)cmdFpgaUpdateInterfaceHelpAdmin, 		OPT_NONE},
-	{ (char *)"download-if",				(CMDFUNC)cmdFpgaDownloadInterface,		(CMDFUNC)cmdFpgaDownloadInterfaceHelp, 			OPT_NONE},
-	{ (char *)"iffpgacopy",					(CMDFUNC)cmdFpgaCopyInterface,			(CMDFUNC)cmdFpgaCopyInterfaceHelp, 				OPT_NONE},
+	//@@@1{ (char *)"update-if",					(CMDFUNC)cmdFpgaUpdateInterface,		(CMDFUNC)cmdFpgaUpdateInterfaceHelp, 			OPT_NONE},
+	//@@@1{ (char *)"update-if-admin",			(CMDFUNC)cmdFpgaUpdateInterfaceAdmin,	(CMDFUNC)cmdFpgaUpdateInterfaceHelpAdmin, 		OPT_NONE},
+	//@@@1{ (char *)"download-if",				(CMDFUNC)cmdFpgaDownloadInterface,		(CMDFUNC)cmdFpgaDownloadInterfaceHelp, 			OPT_NONE},
+	//@@@1{ (char *)"iffpgacopy",					(CMDFUNC)cmdFpgaCopyInterface,			(CMDFUNC)cmdFpgaCopyInterfaceHelp, 				OPT_NONE},
 #endif // #if defined (MODE_UPDATE_INTERFACE)
 
 	

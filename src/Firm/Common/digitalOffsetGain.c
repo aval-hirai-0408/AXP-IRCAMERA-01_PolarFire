@@ -43,8 +43,8 @@ int dogInitialize (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	DEBUG_PRINT ("Digital Offset Gain Initialize\n");
-
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "Digital Offset Gain Initialize\n");
+	
 	// Disable
 	dogSetUpdate (DOG_DISABLE);
 

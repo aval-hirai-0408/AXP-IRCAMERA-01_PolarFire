@@ -62,7 +62,7 @@ int peltierInitialize (void)
 	int powerLevel;
 #endif
 
-	DEBUG_PRINT ("Peltier Initialize\n");
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "Peltier Initialize\n");
 
 	// 個別割り込み無効
 	peltierSetIntEnable (0);

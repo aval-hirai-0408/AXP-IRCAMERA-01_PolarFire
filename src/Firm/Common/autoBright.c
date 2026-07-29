@@ -82,7 +82,7 @@ int autoBrightInitialize (void)
 	int status = AVAL_STATUS_SUCCESS;
 	int type;
 
-	DEBUG_PRINT ("Auto Bright Initialize\n");
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "Auto Bright Initialize\n");
 
 	// Auto機能取得
 	if ((status = autoBrightGetFunctionValid (&type)) != AVAL_STATUS_SUCCESS)
@@ -280,7 +280,8 @@ int autoExposureControl (int average, int target)
 	if((status = autoExposurePid(average, target, &pid)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	//DEBUG_PRINT ("Auto Exp PID value = %lf \n", pid);
+	//sprintf (gLogMsgBuff, "Auto Exp PID value = %lf \n", pid);
+	//cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 	//PIDの値が閾値異常なら
 	if(pid > AUTO_BRIGHT_EXP_PID_VALUE_MAX || pid < AUTO_BRIGHT_EXP_PID_VALUE_MIN)
@@ -314,8 +315,9 @@ int autoExposureControl (int average, int target)
 		//goto _DONE;
 	}
 
-	DEBUG_PRINT ("Auto Exp value = %d \n", newExpTime);
-
+	//sprintf (gLogMsgBuff, "Auto Exp value = %d \n", newExpTime);
+	//cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	
 	// 露光時間設定
 	if ((status = acquisitionSetExposureSimple (newExpTime)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
@@ -352,7 +354,8 @@ int autoGainControl (int average, int target)
 	if((status = autoGainPid(average, target, &pid)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	DEBUG_PRINT ("Auto Gain PID value = %lf \n", pid);
+	//sprintf (gLogMsgBuff, "Auto Gain PID value = %lf \n", pid);
+	//cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 	//PIDの値が閾値異常なら
 	if(pid > AUTO_BRIGHT_GAIN_PID_VALUE_MAX || pid < AUTO_BRIGHT_GAIN_PID_VALUE_MIN)
@@ -388,8 +391,9 @@ int autoGainControl (int average, int target)
 		//goto _DONE;
 	}
 
-	DEBUG_PRINT ("Auto Gain value = %f \n", newGainF);
-
+	//sprintf (gLogMsgBuff,  "Auto Gain value = %f \n", newGainF);
+	//cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	
 	// Digital Offset Gain設定
 	if ((status = digitalSetGainX (newGainF)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;

@@ -38,10 +38,10 @@ int acquisitionInit (void)
 	int status;
 	unsigned int adrs, data;
 
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "Acquisition Initialize\n");
+
 	// 取り込み停止
 	acquisitionAbort ();
-
-	DEBUG_PRINT ("Acquisition Initialize\n");
 
 	// Register Data Restore
 	if ((status = cameraParamWriteRegister (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_ACQUISITION_ADRS, CAMERA_SAVE_ACQUISITION_SIZE)) != AVAL_STATUS_SUCCESS)

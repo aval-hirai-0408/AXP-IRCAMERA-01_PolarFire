@@ -288,12 +288,17 @@ void *framebuf_init(int low_latency, int deinterlace, int gev1mode, uint64_t siz
     //framebuf_control = framebuf_control | FRAMEBUF_C_DYNTRAIL;
 
     // Print IP core information
-    DEBUG_PRINT_FORCE("[UU] Framebuffer version %" PRIu32 ".%" PRIu32 ".%" PRIu32 " (%04" PRIX32 "-%02" PRIX32 "-%02" PRIX32 ")\r\n",
+    sprintf (gLogMsgBuff, "[UU] Framebuffer version %" PRIu32 ".%" PRIu32 ".%" PRIu32 " (%04" PRIX32 "-%02" PRIX32 "-%02" PRIX32 ")\r\n",
            framebuf_version >> 24, (framebuf_version >> 16) & 0xFF, framebuf_version & 0xFFFF,
            framebuf_date >> 16, (framebuf_date >> 8) & 0xFF, framebuf_date & 0xFF);
-    DEBUG_PRINT_FORCE("     0x%016" PRIX64 " bytes at 0x%016" PRIX64 ", alignment %" PRIu64 " bytes\r\n",
-           fb_len, fb_bot, align + 1);
+	cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
+    sprintf (gLogMsgBuff, "     0x%016" PRIX64 " bytes at 0x%016" PRIX64 ", alignment %" PRIu64 " bytes\r\n",
+           fb_len, fb_bot, align + 1);
+	cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+
+
+	
     return fb;
 }
 

@@ -62,14 +62,12 @@ int gigeCmdFirmUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned 
 		// 解凍データサイズを格納するポインタ
 		*pUncomprLen = FIRM_UPDATE_UNCOMP_SIZE;
 
-		#if 0	//@@@1
 		// Uncompress
 		if ((status = gzipUncomp ((unsigned char *)FIRM_UPDATE_UNCOMP_ADRS, pUncomprLen, (unsigned char *)FIRM_UPDATE_ADRS, size)) != 0)
 		{
-			DEBUG_PRINT_FORCE ("Uncompress Error. Status = %d\n", status);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Uncompress Error.");
 			goto _DONE;
 		}
-		#endif //#if 0	//@@@1
 
 		// バッファ&サイズ更新
 		pUpdatePtr = (unsigned char *)FIRM_UPDATE_UNCOMP_ADRS;

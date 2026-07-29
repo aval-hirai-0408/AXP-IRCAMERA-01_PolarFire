@@ -274,7 +274,7 @@ MORE:
 	gAgingLoop = 0;
 	for (tloop=0; tloop<loop; tloop++, gAgingLoop++)
 	{
-		DEBUG_PRINT("\n=====================Aging Loop = %d / %d====================\n", tloop, loop);
+		cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "=====================Aging Loop = %d / %d====================\n");
 
 		// Memory
 		if ((status = cmdDiagMem2 ("1")) != AVAL_STATUS_SUCCESS)

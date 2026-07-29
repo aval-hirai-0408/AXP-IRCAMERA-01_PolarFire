@@ -40,7 +40,7 @@ int aoiInitialize (void)
 	unsigned int data32;
 #endif
 
-	DEBUG_PRINT ("AOI Initialize\n");
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "AOI Initialize\n");
 
 #if !defined (MODE_ROI_VERSION2)
 	// AOI Disable
@@ -1539,9 +1539,9 @@ int aoiSetBinningX (int mode)
 	// Check mode Parameter
 	if ((status = aoiBinninCheckParam (mode)) != AVAL_STATUS_SUCCESS)
 	{
-		DEBUG_PRINT_FORCE ("Binning x(%d) Set Parameter Error. (Min:%d / Max:%d)\n", mode, BINNING_MIN, BINNING_MAX);
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Binning x(%d) Set Parameter Error. (Min:%d / Max:%d)\n", mode, BINNING_MIN, BINNING_MAX);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 

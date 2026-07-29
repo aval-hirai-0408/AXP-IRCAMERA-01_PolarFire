@@ -35,7 +35,7 @@ int timerControlInitialize (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	DEBUG_PRINT ("Timer Control Initialize\n");
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "Timer Control Initialize\n");
 
 	// Register Data Restore
 	if ((status = cameraParamWriteRegister (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_TIMER_ADRS, CAMERA_SAVE_TIMER_SIZE)) != AVAL_STATUS_SUCCESS)

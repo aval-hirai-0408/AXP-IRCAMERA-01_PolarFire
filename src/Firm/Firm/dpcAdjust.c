@@ -110,9 +110,9 @@ int dpcGetBatchCountGlobal (int *pCount)
 	// Check pCount Parameter
 	if (pCount == NULL)
 	{
-		DEBUG_PRINT_FORCE ("DPC Get Count pMode NULL Parameter Error\n");
-		DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "DPC Get Count pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
@@ -337,7 +337,8 @@ int dpcMainBatch2 (DPC_PARAM dpcParam)
 
 	// カウント取得
 	count = dpcGetBatchCount ();
-	DEBUG_PRINT ("dpcMainBatch2 : count = %d, FFC Loop = %d, Bright Loop = %d\n", count+1, gDPCLoopFfc, gDpcBrightCount+1);
+	sprintf (gLogMsgBuff, "dpcMainBatch2 : count = %d, FFC Loop = %d, Bright Loop = %d\n", count+1, gDPCLoopFfc, gDpcBrightCount+1);
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 	//----------------------------------------------------------------------
 	// 欠陥検出
@@ -671,7 +672,8 @@ int dpcSetParam (DPC_PARAM *pDpcParam)
 
 	if (peltierState == MODE_ENABLE)
 	{
-		DEBUG_PRINT ("Sensor Target = %.2f\n", pDpcParam->sensorTemp);
+		sprintf (gLogMsgBuff, "Sensor Target = %.2f\n", pDpcParam->sensorTemp);
+		cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 		// 温度設定
 		if ((status = peltierSetTarget (pDpcParam->sensorTemp)) != AVAL_STATUS_SUCCESS)
@@ -707,7 +709,8 @@ MORE:
 
 		// コマンドラインクリア
 		cmdBackspaceLine ();
-		DEBUG_PRINT ("Temp = %.2f  ", getTemp);
+		sprintf (gLogMsgBuff, "Temp = %.2f  ", getTemp);
+		cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		fflush (stdout);
 
 		// 温度は範囲内？
@@ -867,7 +870,8 @@ int lfDefectMain (DPC_PARAM *pDpcParam, int loopTotal, int loopBri)
 	// Delay
 	msDelay (100);
 
-	DEBUG_PRINT ("Sd = %f / Nu = %f\n", sdParam, nonuniformityParam);
+	sprintf (gLogMsgBuff, "Sd = %f / Nu = %f\n", sdParam, nonuniformityParam);
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 	// 欠陥検出マップ作成
 	if ((status = lfDefect (loopTotal, sdParam, nonuniformityParam)) != AVAL_STATUS_SUCCESS)
@@ -987,8 +991,6 @@ int lfDpcPxelCorrection (int *pIndex, int loop)
 	int index;
 	int i;
 
-	DEBUG_PRINT ("Correct Coord..\n");
-
 	// Check pIndex Parameter
 	if (pIndex == NULL)
 	{
@@ -1016,8 +1018,7 @@ int lfDpcPxelCorrection (int *pIndex, int loop)
 
 	// インデックス設定
 	*pIndex = index;
-	DEBUG_PRINT ("index = %d\n", (unsigned int)index);
-	
+
 _DONE:
 	return (status);
 }
@@ -1707,7 +1708,9 @@ int dpcAdjustThreshold (double *pData, double threshold)
 					data8 &= ~xBit;
 					OUT8 (adrs, data8);
 					dpcCountNew++;
-					DEBUG_PRINT ("x = %d / y = %d / Threshold = %.2f\n",  x, y, pData[x + y * IMG_STRIDE]);
+					
+					sprintf (gLogMsgBuff, "x = %d / y = %d / Threshold = %.2f\n",  x, y, pData[x + y * IMG_STRIDE]);
+					cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				}
 				
 				// 欠陥画素オーバー?
@@ -1757,7 +1760,9 @@ int dpcAdjustThreshold (double *pData, double threshold)
 						// 欠陥座標追加
 						data8 &= ~(1<<xBit);
 						OUT8 ((dpcAdrs + offsetTemp), data8);
-						DEBUG_PRINT ("x = %d / y = %d / Threshold = %.2f\n",  x, y,  pData[x + y * IMG_STRIDE]);
+
+						sprintf (gLogMsgBuff, "x = %d / y = %d / Threshold = %.2f\n",  x, y,  pData[x + y * IMG_STRIDE]);
+						cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 						dpcCountNew++;
 					}
 					
@@ -1813,8 +1818,6 @@ int dpcMapAdd (int dpcCountNew)
 #if defined (MODE_DPC_GRID_UPDATE)
 	int count;
 #endif
-
-	DEBUG_PRINT ("DPC Count = %d\n", dpcCountNew);
 
 	//------------------------------------------------------------
 	// 新規追加なし

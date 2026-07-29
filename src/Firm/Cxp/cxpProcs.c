@@ -870,10 +870,11 @@ _NEXT_NOTAG:
 		//------------------------------------------------------------
 		// IF Fpga Reconfig制御
 		//------------------------------------------------------------
+	#if 0	//@@@1
 	#if defined (MODE_FPGA_PF)
 		if ((gIfFpgaReConfig == 1) && (cxpPaket.adrs == FileOperationExecute))
 		{
-			DEBUG_PRINT_FORCE("IF FPGA ReConfig Start\n");
+			cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "IF FPGA ReConfig Start\n");
 
 			// Debug Mode
 			ledSetDebugMode (LED_DEBUG_MODE_DISABLE);
@@ -895,9 +896,11 @@ _NEXT_NOTAG:
 			gIfFpgaReConfig = 0;
 			PolarFireSpiMode (MODE_DISABLE);
 
-			DEBUG_PRINT_FORCE("IF FPGA ReConfig End\n");
+			cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "IF FPGA ReConfig End\n");
+
 		}
 	#endif
+	#endif //@@@1
 	}
 	//------------------------------------------------------------
 	// Read
@@ -959,6 +962,9 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned int ix, iy;
 	unsigned char *ptrSrc8, *ptrDes8, *ptrDes8_DDR;
 	unsigned int *ptrL;
+
+	sprintf (gLogMsgBuff,"Set User Start : adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size, status);
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -1797,12 +1803,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 	}
 
-	DEBUG_PRINT_FORCE ("[W]:port=%d, adrs=0x%08x, size=0x%08x, status=0x%08x, ", port, adrs, pCxpSt->size, status);
-
-	if (pCxpSt->ackSize == 8)
-		DEBUG_PRINT_FORCE ("data=0x%08x 0x%08x\n", *pCxpSt->pData, *(pCxpSt->pData+1));
-	else
-		DEBUG_PRINT_FORCE ("data=0x%08x\n", *pCxpSt->pData);
+	sprintf (gLogMsgBuff,"Set User End : adrs=0x%08x, size=0x%08x, data=0x%08x, status =0x%08x\n", pCxpSt->adrs, pCxpSt->size, *pCxpSt->pData, status);
 
 _DONE:
 	return (status);
@@ -1830,6 +1831,9 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned int data1, data2;
 	unsigned int ix;
 
+	sprintf (gLogMsgBuff,"Get User Start : adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size);
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
 	{
@@ -2620,12 +2624,8 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 		if ((adrs >= 0x61000000) && (adrs < 0x61800000))
 			goto _DONE;
 
-		DEBUG_PRINT_FORCE ("[R]:port=%d, adrs=0x%08x, size=0x%08x, status=0x%08x, ", port, adrs, pCxpSt->ackSize, status);
-
-		if (pCxpSt->ackSize == 8)
-			DEBUG_PRINT_FORCE ("data=0x%08x 0x%08x\n", *pData2, *(pData2+1));
-		else
-			DEBUG_PRINT_FORCE ("data=0x%08x\n", *pData2);
+		sprintf (gLogMsgBuff,"Get User End : adrs=0x%08x, size=0x%08x, data=0x%08x, status=0x%08x\n", adrs, pCxpSt->ackSize, *pData2, status);
+		cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 _DONE:
 	return (status);
@@ -2665,10 +2665,7 @@ int cxpGetCmdPacket (int port, unsigned int *pData)
 	for (i=0; i<4; i++, ptr8--)
 	{
 		if ((status = cxpReadFifo (port, ptr8, &kCode)) != AVAL_STATUS_SUCCESS)
-		{
-			//DEBUG_PRINT_FORCE ("CXP FIFO Read Error. Count = %d\n", i);
 			goto _DONE;
-		}
 	}
 
 _DONE:
@@ -2995,7 +2992,6 @@ int cxpSendTestPacketAckCmd (unsigned int size)
 	int port = 0;
 
 	TestPacketCountTx_st++;;
-	DEBUG_PRINT("[%d]Test Send Packet\n", TestPacketCountTx_st);
 
 	// Connection Test Packet
 	cxpPaket.pData = (unsigned int *)(FIRM_CXP_SEND_DATA_CMD_ADRS + CXP_SEND_DATA_OFFSET);
@@ -3082,10 +3078,7 @@ int cxpReadFifo (int port, unsigned char *pData, int *pKcode)
 
 		// カウントCheck
 		if (count >= 1)
-		{
-			//DEBUG_PRINT ("[%d]count = %d\n", loop, count);
 			break;
-		}
 
 		loop++;
 
@@ -3173,7 +3166,6 @@ int cxpGetFifoSizeCount (int port, unsigned int *pCount)
 	if (data != 0)
 	{
 		*pCount = data;
-		//DEBUG_PRINT_FORCE("[%d]New1 Read Count = %d\n", loop++,data);
 	}
 	else
 	{
@@ -3214,8 +3206,6 @@ int cxpGetFifoSizeCount (int port, unsigned int *pCount)
 
 				// メモリへ保存
 				OUT32 ((FIRM_DATA_CXP_DATA_COUNT_MULTI_ADRS + port * 4), *pCount);
-
-				//DEBUG_PRINT_FORCE("[%d]New2 Read Count = %d. count = %d\n", loop++,*pCount, data);
 			}
 			else
 			{
@@ -3374,10 +3364,7 @@ int cxpFifoToDdr (int port, unsigned int adrs, unsigned int size)
 	for (i=0; i<size; i++, adrs2++)
 	{
 		if ((status = cxpReadFifo (port, (unsigned char *)adrs2, &kCode)) != AVAL_STATUS_SUCCESS)
-		{
-			DEBUG_PRINT_FORCE (CMD_ERROR_INVALID_PARAM);
 			goto _DONE;
-		}
 	}
 
 _DONE:

@@ -55,7 +55,7 @@ int cameraLogMsg (int level, const char *fileName, const char *funcName, unsigne
 
 	// Checl Error Level & dipsw mode
 	if ((level != MSG_LEVEL_ERROR) && (dipsw != 0x3))
-		goto _DONE;
+		goto _NEXT;
 	
 	// count
 	counter = cameraGetCounter ();
@@ -167,11 +167,17 @@ int cameraLogMsg (int level, const char *fileName, const char *funcName, unsigne
 	// Message
 	DEBUG_PRINT_FORCE ("%-192.192s", msg);
 
-	if ((status = consoleGetMode (&consoleMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+_NEXT:
+	if (level == MSG_LEVEL_ERROR)
+	{
+		if ((status = consoleGetMode (&consoleMode)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
 
-	if (consoleMode == 1)
-		DEBUG_PRINT_FORCE("%010d : Level=%d : Dev=%d : Err=%d : Line=%d : %s : %s", counter, level, devCode, errCode, fileLine, funcName, msg);
+		if (consoleMode == 1)
+		{
+			DEBUG_PRINT_FORCE("%010d : Level=%d : Dev=%d : Err=%d : Line=%d : %s : %s", counter, level, devCode, errCode, fileLine, funcName, msg);
+		}
+	}
 	
 _DONE:
 	return (status);

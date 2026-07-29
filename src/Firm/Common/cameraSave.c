@@ -178,7 +178,8 @@ int cameraParamSetDefault (int userNum)
 			// Set Register Address
 			pSaveparam[i].regAdrs = saveParamDataList[i].regAdrs;
 
-			DEBUG_PRINT ("index=%d / Reg = 0x%x / Data = 0x%x\n", i, saveParamDataList[i].regAdrs, saveParamDataList[i].data);
+			//sprintf (gLogMsgBuff, "index=%d / Reg = 0x%x / Data = 0x%x\n", i, saveParamDataList[i].regAdrs, saveParamDataList[i].data);
+			//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 			// Get Register Data
 			if (saveParamDataList[i].mode == CAMERA_SAVE_MODE_NONE)							// 未使用		=> 未使用なので0
@@ -1133,7 +1134,8 @@ int cameraParamWriteRegister (int userNum, unsigned int offset, unsigned int siz
 			data = pSave[index + i];
 			i++;
 
-			//DEBUG_PRINT_FORCE("[%d]adrs=0x%08x/data=0x%08x\n", i, adrs, data);
+			//sprintf (gLogMsgBuff, "[%d]adrs=0x%08x/data=0x%08x\n", i, adrs, data);
+			//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 			// 0が設定されている場合は未設定と判断し何もしない
 			if (adrs != 0)
@@ -1250,7 +1252,8 @@ int cameraParamWriteRegisterOffsetAdrs (int userNum, unsigned int offset, unsign
 			data = pSave[index + i];
 			i++;
 
-			//DEBUG_PRINT_FORCE("[%d]adrs=0x%08x/data=0x%08x\n", i, adrs, data);
+			//sprintf (gLogMsgBuff, [%d]adrs=0x%08x/data=0x%08x\n", i, adrs, data);
+			//cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 			// 0が設定されている場合は未設定と判断し何もしない
 			if (adrs != 0)
@@ -1362,7 +1365,8 @@ int cameraParamSpectrumWriteRegister (int userNum, unsigned int offset, unsigned
 			data = pSave[index + i];
 			i++;
 
-			//DEBUG_PRINT_FORCE("[%d]adrs=0x%08x/data=0x%08x\n", i, adrs, data);
+			//sprintf (gLogMsgBuff, "[%d]adrs=0x%08x/data=0x%08x\n", i, adrs, data);
+			//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 			// 0が設定されている場合は未設定と判断し何もしない
 			if (adrs != 0)
@@ -1712,7 +1716,8 @@ int cameraParamSaveRegister (int userNum)
 			}
 
 			pSaveparam[i].data = data;
-			//DEBUG_PRINT ("Adrs = 0x%x / Data = 0x%x\n", pSaveparam[i].regAdrs,  pSaveparam[i].data);
+			//sprintf (gLogMsgBuff, "Adrs = 0x%x / Data = 0x%x\n", pSaveparam[i].regAdrs,  pSaveparam[i].data);
+			//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		}
 		else if (saveParamDataList[i].mode == CAMERA_SAVE_MODE_DATA)
 		{
@@ -1878,7 +1883,8 @@ int cameraParamSaveSpectrumRegister (int userNum)
 		}
 		
 		ptrL++;
-		//DEBUG_PRINT_FORCE ("Adrs = 0x%08x / Data = 0x%08x / ptrL = 0x%08x\n", adrs,  data, ptrL);
+		//sprintf (gLogMsgBuff, "Adrs = 0x%08x / Data = 0x%08x / ptrL = 0x%08x\n", adrs,  data, ptrL);
+		//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 	}
 
 	// 書き込み

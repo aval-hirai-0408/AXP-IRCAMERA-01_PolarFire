@@ -35,7 +35,7 @@ int counterInitialize (void)
 {
 	int status;
 
-	DEBUG_PRINT ("Counter Initialize\n");
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "Counter Initialize\n");
 
 	// Register Data Restore
 	if ((status = cameraParamWriteRegister (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_COUNTER_ADRS, CAMERA_SAVE_COUNTER_SIZE)) != AVAL_STATUS_SUCCESS)

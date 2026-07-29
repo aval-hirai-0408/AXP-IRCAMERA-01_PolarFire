@@ -115,8 +115,8 @@ int roiInitialize (void)
 	int spectrumOffset = 0;
 #endif
 
-	DEBUG_PRINT ("ROI Initialize\n");
-
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "ROI Initialize\n");
+	
 	// セレクタ初期化
 	OUT32 (FIRM_DATA_ROI_SELECTOR_ADRS, ROI_SELECTOR_MIN);
 

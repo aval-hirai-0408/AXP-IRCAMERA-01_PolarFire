@@ -176,6 +176,7 @@ MORE:
 	{
 		DEBUG_PRINT("--------------------[%s] loop = %d--------------------\n", dev, tloop);
 
+
 #if !defined (MODE_FFC_DATA_ALIGN_ADJUST)
 		// バッファクリア
 		for (ix=0; ix<capSize; ix++)

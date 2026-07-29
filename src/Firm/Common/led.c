@@ -137,7 +137,7 @@ int getLed (int number, int *pMode)
 	if ((number < LED_NUM_MIN) || (number > LED_NUM_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		DEBUG_PRINT_FORCE ("LED Number(%d) Parameter Error. (Min:%d / Max:%d)\n", number, LED_NUM_MIN, LED_NUM_MAX);
+		sprintf (gLogMsgBuff, "LED Number(%d) Parameter Error. (Min:%d / Max:%d)\n", number, LED_NUM_MIN, LED_NUM_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -311,6 +311,9 @@ int ledDiagnosticState (void)
 	getLed (LED_STATE2, &saveLedPattern);
 	setLed (LED_STATE2, LED_DIAG);
 
+//@@@1
+	saveLedPattern = 1;
+//@@@1
 	return (saveLedPattern);
 }
 

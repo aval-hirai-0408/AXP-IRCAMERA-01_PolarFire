@@ -34,8 +34,8 @@ int gSpectrumType = CAMERA_TYPE_NO_SPECTRUM;
 //==================================================================================
 int cameraInformationInitialize (void)
 {
-	DEBUG_PRINT ("Camera Information Initialize\n");
-
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, 0, "Camera Information Initialize\n");
+	
 	// ボードID
 	memset ((void *)FIRM_DATA_BOARDID_ADRS, 0x00, BOARD_PARAM_ALIGN);
 	getBoardId ((char *)FIRM_DATA_BOARDID_ADRS);

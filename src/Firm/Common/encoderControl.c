@@ -36,7 +36,7 @@ int encoderInitialize (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	DEBUG_PRINT ("Encoder IO Initialize\n");
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "Encoder IO Initialize\n");
 
 	// Register Data Restore
 	if ((status = cameraParamWriteRegister (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_ENCODER_ADRS, CAMERA_SAVE_ENCODER_SIZE)) != AVAL_STATUS_SUCCESS)

@@ -18,13 +18,13 @@
 //----------------------------------------------------------------------------------
 
 // Firmware Version
-#define FIRM_VERSION						"0.9"
+#define FIRM_VERSION						"0.2"
 
 // Main Version
-#define MAIN_VERSION						"0.9"
+#define MAIN_VERSION						"0.2"
 
 // HW Version
-#define HW_VERSION							"0.9"
+#define HW_VERSION							"0.2"
 
 
 //----------------------------------------------------------------------------------
@@ -115,18 +115,7 @@
 //#define MODE_MULTI_STREAM					// Multi Stream
 #define MODE_GIGE_10G						// GigE 10G
 //#define MODE_IEEE1588_PTP					// IEE1588 PTP
-#define MODE_DIAG_DDR_VERSION2				// Diag DDR Version2
 #define MODE_LUT_NUMBER_FIX					// Lut Number Fix Mode
-#define MODE_CPU1_CMD						// CPU1 Command Mode
-//#define MODE_PIXEL_FORMAT_CPU1_CMD		// CPU1 Command Pixel Format
-//#define MODE_CPU0_ONLY					// CPU1 Only
-
-
-//----------------------------------------------------------------------------------
-// Boot Timeout
-//----------------------------------------------------------------------------------
-#define PROGRAM_BOOT_TIMEOUT_CPU0			(10000)
-#define PROGRAM_BOOT_TIMEOUT_CPU1			(30000)
 
 
 //----------------------------------------------------------------------------------
@@ -395,6 +384,9 @@
 #define DRRS_IMG_MEMORY_ADRS				(0xB0000000)	// DRRS画像格納アドレス
 #define DRRS_IMG_MEMORY_ALIGN				(8192)
 #define DRRS_IMG_MEMORY_IPU_MULTI_INTERVAL	(DRRS_IMG_MEMORY_ALIGN * IMG_HEIGHT)
+
+#define DIAG_DDR_BASE1_ADRS					(0xA0000000)
+#define DIAG_DDR_BASE2_ADRS					(0xB0000000)
 
 
 //----------------------------------------------------------------------------------

@@ -3901,13 +3901,6 @@ u32 get_user_reg (u32 address, u16 *status)
 				{
 					valueBuffer += (address2nd > 0) ? address2nd / 4 : 0;
 					value = *valueBuffer;
-					if (address2nd % 1024 == 0)
-					{
-						//#if DEBUG_MODE_MSG
-						//DEBUG_PRINT("%s Reading File 0x%08X(swapped: 0x%08X) to the memories of bit-stream at 0x%08X(virtual:0x%08X) to 4 byte\r\n",
-						//		GIGE_TAG_OUT,value,value2nd,address2nd,address);
-						//#endif // DEBUG_MODE_MSG
-					}
 				}
 			}
 
@@ -4066,10 +4059,10 @@ u32 get_user_reg (u32 address, u16 *status)
 		ledSetState(LED_STATE,(*status == GEV_STATUS_SUCCESS) ? LED_COMMAND : LED_STREAMING_ERROR,*status);
 
 		//@@1if(address < xmlStartAddress || (address >= FPGA_BASE_ADRS && address < GENICAM_ADRS+0x00FFFFFF))
-		{
-			DEBUG_PRINT("%s reads 0x%08X(%8d / %f / %f ) at 0x%08X(0x%08X) %s with 0x%08X\r\n",
-				GIGE_TAG_OUT, (int)value, (int)value,(float)fltValue,(double)dblValue,(unsigned int)address,(unsigned int)address2nd,(*status==0)?"success":"failed",(unsigned int)*status);
-		}
+		//@@@1{
+			//@@@1DEBUG_PRINT("%s reads 0x%08X(%8d / %f / %f ) at 0x%08X(0x%08X) %s with 0x%08X\r\n",
+				//@@@1GIGE_TAG_OUT, (int)value, (int)value,(float)fltValue,(double)dblValue,(unsigned int)address,(unsigned int)address2nd,(*status==0)?"success":"failed",(unsigned int)*status);
+		//@@@1}
 
 	return value;
 }
@@ -4746,8 +4739,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			roiHeightSizeGe[0] = value3rd;
 			video_height = roiHeightSizeGe[0];
 
-			//DEBUG_PRINT_FORCE ("\nHeight %d\n", value3rd);
-
 			// Set Offset
 			//if ((*status = toG (aoiGetHeightOffset ((int*) &value3rd))) != AVAL_STATUS_SUCCESS)
 				//break;
@@ -4762,8 +4753,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 
 			roiHeightOffsetGe[0] = value3rd;
 			video_offs_y = roiHeightOffsetGe[0];
-
-			//DEBUG_PRINT_FORCE ("\nOffset %d\n", value3rd);
 
 			//インデックス初期化
 			SpectrumBand_Index = 0;
@@ -8816,11 +8805,13 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					 break;
 				#endif
 
+				#if 0 //@@@1
 				#if defined (MODE_FPGA_PF)
 				case FileSelector_IF_FPGA:
 					*status = toG (FileSelectorIfFpgaWrite());
 					break;
 				#endif
+				#endif //@@@1
 
 				#if defined (MODE_GIGE_10G)
 				case FileSelector_PHY:
@@ -9295,6 +9286,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//@@@1ARM1_DIAG_INC_VALUE(CounterDiagnosticValue_NetworkCommandWriteError);
 		}
 
+		#if 0	//@@@1
 		if (address <= xmlStartAddress || (address >= FPGA_BASE_ADRS && address < GENICAM_ADRS + 0x00FFFFFF))
 		{
 				DEBUG_PRINT("%s writes 0x%08X(%8d) at 0x%08X(0x%08X) %s with 0x%08X\r\n",
@@ -9302,6 +9294,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						(unsigned int) value, (unsigned int) address,(unsigned int) address2nd,
 						(*status == 0) ? "success" : "failed",	(unsigned int) *status);
 		}
+		#endif //@@@1
 
 		return;
 }
@@ -11576,6 +11569,7 @@ int FileSelectorXML (void)
 //		上記以外				：異常終了
 //==================================================================================
 #if defined (MODE_FPGA_PF)
+#if 0 //@@@1
 int FileSelectorIfFpgaWrite (void)
 {
 	int status = GEV_STATUS_SUCCESS;
@@ -11689,6 +11683,7 @@ _DONE:
 
 	return (status);
 }
+#endif //@@1
 #endif // #if defined (MODE_FPGA_PF)
 
 

@@ -35,7 +35,7 @@ int digitalIoInitialize (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	DEBUG_PRINT ("Digital IO Initialize\n");
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "Digital IO Initialize\n");
 
 	// Register Data Restore(Digital IO Line)
 	if ((status = cameraParamWriteRegister (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_DIGITAL_LINE_VERSION2_ADRS, CAMERA_SAVE_DIGITAL_LINE_VERSION2_SIZE)) != AVAL_STATUS_SUCCESS)

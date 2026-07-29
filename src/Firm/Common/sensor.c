@@ -89,7 +89,7 @@ int sensorInitialize2 (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	DEBUG_PRINT ("Sensor Initialize2\n");
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "Sensor Initialize2\n");
 
 #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
 

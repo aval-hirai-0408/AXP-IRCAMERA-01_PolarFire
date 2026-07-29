@@ -41,7 +41,7 @@ int timingGeneratorNormalInitalize (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	DEBUG_PRINT ("Timing Generator Initialize\n");
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "Timing Generator Initialize\n");
 
 	// 取り込み停止
 	acquisitionAbort ();
