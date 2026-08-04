@@ -1009,68 +1009,68 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 	switch (adrs)
 	{
 		//------------------------------------------------------------
-		// Standard
+		// Standard設定
 		//------------------------------------------------------------
 		//case Standard:
 			//break;
 
 		//------------------------------------------------------------
-		// Revision
+		// Revision設定
 		//------------------------------------------------------------
 		//case Revision:
 			//break;
 
 		//------------------------------------------------------------
-		// XmlManifestSize
+		// XmlManifestSize設定
 		//------------------------------------------------------------
 		//case XmlManifestSize:
 			//break;
 
 		//------------------------------------------------------------
-		// XmlManifestSelector
+		// XmlManifestSelector設定
 		//------------------------------------------------------------
 		case XmlManifestSelector:
 			XmlManifestSelector_st = *pDataRecv;
 			break;
 
 		//------------------------------------------------------------
-		// XmlVersion
+		// XmlVersion設定
 		//------------------------------------------------------------
 		//case XmlVersion:
 			//break;
 
 		//------------------------------------------------------------
-		// XmlSchemaVersion
+		// XmlSchemaVersion設定
 		//------------------------------------------------------------
 		//case XmlSchemaVersion:
 			//break;
 
 		//------------------------------------------------------------
-		// XmlUrlAddress
+		// XmlUrlAddress設定
 		//------------------------------------------------------------
 		//case XmlUrlAddress:
 			//break;
 
 		//------------------------------------------------------------
-		// Iidc2Address
+		// Iidc2Address設定
 		//------------------------------------------------------------
 		//case Iidc2Address:
 			//break;
 
 		//------------------------------------------------------------
-		// CXP Interface FPGA Version
+		// CXP Interface FPGA Version設定
 		//------------------------------------------------------------
 		//case IfFpgaVersion:
 			//break;
 
 		//------------------------------------------------------------
-		// DeviceVendorName
+		// DeviceVendorName設定
 		//------------------------------------------------------------
 		//case DeviceVendorName:
 			//break;
 
 		//------------------------------------------------------------
-		// DeviceVendorNameWrite
+		// DeviceVendorNameWrite設定
 		//------------------------------------------------------------
 		case DeviceVendorNameWrite:
 		case DeviceVendorNameWrite+0x04:
@@ -1096,13 +1096,13 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// DeviceModelName
+		// DeviceModelName設定
 		//------------------------------------------------------------
 		//case DeviceModelName:
 			//break;
 
 		//------------------------------------------------------------
-		// DeviceModelNameWrite
+		// DeviceModelNameWrite設定
 		//------------------------------------------------------------
 		case DeviceModelNameWrite:
 		case DeviceModelNameWrite + 0x04:
@@ -1128,13 +1128,13 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// DeviceManufacturerInfo
+		// DeviceManufacturerInfo設定
 		//------------------------------------------------------------
 		//case DeviceManufacturerInfo:
 			//break;
 
 		//------------------------------------------------------------
-		// DeviceManufacturerInfoWrite
+		// DeviceManufacturerInfoWrite設定
 		//------------------------------------------------------------
 		case DeviceManufacturerInfoWrite:
 		case DeviceManufacturerInfoWrite + 0x04:
@@ -1164,13 +1164,13 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// DeviceVersion
+		// DeviceVersion設定
 		//------------------------------------------------------------
 		//case DeviceVersion:
 			//break;
 
 		//------------------------------------------------------------
-		// DeviceSerialNumber
+		// DeviceSerialNumber設定
 		//------------------------------------------------------------
 		//case DeviceSerialNumber:
 			//break;
@@ -1195,79 +1195,79 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// WidthAddress
+		// WidthAddress設定
 		//------------------------------------------------------------
 		//case WidthAddress:
 			//break;
 
 		//------------------------------------------------------------
-		// HeightAddress
+		// HeightAddress設定
 		//------------------------------------------------------------
 		//case HeightAddress:
 			//break;
 
 		//------------------------------------------------------------
-		// AcquisitionModeAddress
+		// AcquisitionModeAddress設定
 		//------------------------------------------------------------
 		//case AcquisitionModeAddress:
 			//break;
 
 		//------------------------------------------------------------
-		// AcquistionStartAddress
+		// AcquistionStartAddress設定
 		//------------------------------------------------------------
 		//case AcquistionStartAddress:
 			//break;
 
 		//------------------------------------------------------------
-		// AcquistionStopAddress
+		// AcquistionStopAddress設定
 		//------------------------------------------------------------
 		//case AcquistionStopAddress:
 			//break;
 
 		//------------------------------------------------------------
-		// PixelFormatAddress
+		// PixelFormatAddress設定
 		//------------------------------------------------------------
 		//case PixelFormatAddress:
 			//break;
 
 		//------------------------------------------------------------
-		// DeviceTapGeometryAddress
+		// DeviceTapGeometryAddress設定
 		//------------------------------------------------------------
 		//case DeviceTapGeometryAddress:
 			//break;
 
 		//------------------------------------------------------------
-		// Image1StreamIDAddress
+		// Image1StreamIDAddress設定
 		//------------------------------------------------------------
 		//case Image1StreamIDAddress:
 			//break;
 
 		//------------------------------------------------------------
-		// Image2StreamIDAddress
+		// Image2StreamIDAddress設定
 		//------------------------------------------------------------
 		//case Image2StreamIDAddress:
 			//break;
 
 		//------------------------------------------------------------
-		// Image1StreamID
+		// Image1StreamID設定
 		//------------------------------------------------------------
 		//case Image1StreamID:
 			//break;
 
 		//------------------------------------------------------------
-		// Image2StreamID
+		// Image2StreamID設定
 		//------------------------------------------------------------
 		//case Image2StreamID:
 			//break;
 
 		//------------------------------------------------------------
-		// ImagenStreamIDAddress
+		// ImagenStreamIDAddress設定
 		//------------------------------------------------------------
 		//case ImagenStreamIDAddress:
 			//break;
 
 		//------------------------------------------------------------
-		// 10.3.28 ConnectionReset
+		// 10.3.28 ConnectionReset設定
 		// このレジスタに値0x00000001を書き込むと、デバイス接続がリセットされます。
 		// マスター接続（接続0）を介してこの接続リセットコマンドを受信したデバイスは、接続リセットを実行し、200ms以内に検出接続構成をアクティブにする必要があります。
 		// デバイスは、検出接続構成をアクティブにすると、レジスタをクリアして0x00000000に戻します。
@@ -1362,7 +1362,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// 10.3.29 DeviceConnectionID
+		// 10.3.29 DeviceConnectionID設定
 		// このレジスタは、図 37 に示すように、このレジスタが読み取られるデバイス接続のIDを提供します。
 		// コメント: 接続 ID 0 は、接続がマスター接続であることを意味します。
 		// これは静的レジスタですが、どの接続から読み取られるかによって値が異なります。
@@ -1371,7 +1371,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			//break;
 
 		//------------------------------------------------------------
-		// 10.3.30 MasterHostConnectionID
+		// 10.3.30 MasterHostConnectionID設定
 		// このレジスタは、デバイス マスター接続に接続されたホスト接続のホスト接続のIDを保持します。
 		// 値 0x00000000 は、不明なホスト ID を示すために予約されています。
 		// 注: デバイスは、デバイス拡張接続への書き込みを無視します。
@@ -1383,7 +1383,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// 10.3.31 ControlPacketSizeMax
+		// 10.3.31 ControlPacketSizeMax設定
 		// このレジスタは、ホストがデバイスから読み取ったり、デバイスに書き込んだり
  		// できる最大制御パケットサイズを提供するものとします。
 		// デバイスに書き込むことができる最大制御パケット サイズを提供します。
@@ -1396,7 +1396,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			//break;
 
 		//------------------------------------------------------------
-		// 10.3.32 StreamPacketSizeMax
+		// 10.3.32 StreamPacketSizeMax設定
 		// このレジスタは、ホストが受け入れることができる最大ストリーム パケット サイズを保持します。
 		// サイズはバイトで定義され、4 バイトの倍数でなければなりません。
 		// デバイスは、このサイズまでの任意のパケット サイズを使用できます。
@@ -1410,7 +1410,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// 10.3.33 ConnectionConfig
+		// 10.3.33 ConnectionConfig設定
 		// このレジスタは、デバイス接続速度とアクティブなダウン接続の数の有効な組み合わせを保持します。
 		// このレジスタに書き込むと、指定された接続の接続速度が設定され、サポートされている場合は高速接続が設定されます。
 		// 新しい ConnectionConfig 値によって接続速度が変更される場合、デバイスは、元の接続速度での ConnectionConfig 
@@ -1434,7 +1434,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// 10.3.34 ConnectionConfigDefault
+		// 10.3.34 ConnectionConfigDefault設定
 		// このレジスタは、デバイスがデフォルト モードで動作できるようにする
 		// ConnectionConfig レジスタの値を提供します。
 		// デバイスが複数の ConnectionConfig モードで動作できる場合、ユーザーが 
@@ -1450,7 +1450,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			//break;
 
 		//------------------------------------------------------------
-		// 10.3.35 TestMode
+		// 10.3.35 TestMode設定
 		// このレジスタに値 0x00000001 を書き込むと、デバイスからホストへのテスト パケットの送信が有効になります。
 		// 値 0x00000000 は、通常の操作を許可します。
 		// 値が 0x00000001 から 0x00000000 に変更されると、デバイスは現在送信されている 1024 個のテスト ワードのパケットを完了します。
@@ -1483,7 +1483,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// 10.3.36 TestErrorCountSelector
+		// 10.3.36 TestErrorCountSelector設定
 		// このレジスタは、必要なテスト カウント [TestErrorCountSelector] レジスタを選択します。
 		// これは、有効なデバイス接続 ID 0 .. n-1、またはオプションの高速アップ接続用の n を保持します。
 		// コメント: 接続リセットは値 0x00000000 を設定します
@@ -1493,7 +1493,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// 10.3.37 TestErrorCount
+		// 10.3.37 TestErrorCount設定
 		// このレジスタは、レジスタ TestErrorCountSelector によって参照される接続の現在の接続エラー カウントを提供します。
 		// このレジスタに 0x00000000 を書き込むと、レジスタ TestErrorCountSelector によって参照される接続の
 		// 接続エラー カウントがゼロにリセットされます。
@@ -1505,7 +1505,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// 10.3.38 TestPacketCountTx
+		// 10.3.38 TestPacketCountTx設定
 		// このレジスタは、レジスタ TestErrorCountSelector によって参照される接続の現在の送信接続テスト パケット カウント
 		// を提供します。セクション 8.7.3 を参照してください。
 		// このレジスタに 0x00000000 を書き込むと、レジスタ TestErrorCountSelector によって参照される接続の送信された
@@ -1531,7 +1531,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// 10.3.39 TestPacketCountRx
+		// 10.3.39 TestPacketCountRx設定
 		// このレジスタは、レジスタ TestErrorCountSelector によって参照される接続の現在の受信接続テスト パケット カウント
 		// を提供します。
 		// セクション 8.7.3 を参照してください。
@@ -1556,8 +1556,15 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			}
 			break;
 
+		//--------------------------------------------------------------------------------
+		// Test Send Recive Selector設定
+		//--------------------------------------------------------------------------------
+		case CXP_TEST_SEND_RECIVE_SELECTOR:
+			TestSendReciveSelector_st = *pDataRecv;
+			break;
+
 		//------------------------------------------------------------
-		// 10.3.40 ElectricalComplianceTest
+		// 10.3.40 ElectricalComplianceTest設定
 		// 実装される場合、これはデバイスの正式なコンプライアンス テストをサポートするための不揮発性レジスタでなければなりません。それ以外の時間には使用しないものとします。値 0x00000000 を書き込むと、通常の動作が許可されます。有効な ConnectionConfig 値を書き込むと、デバイスが次に電源投入され、アップ接続でコマンドが送信されないときに、次の動作が発生します。
 		// ・ 接続速度と接続数は、このレジスタに書き込まれた値に従って設定されます。
 		// ・ セクション 8.7.2 で定義されているテスト パケットは、これらの接続で出力されます。
@@ -1581,7 +1588,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// 10.3.41 ElectricalComplianceTest
+		// 10.3.41 ElectricalComplianceTest設定
 		// このレジスタは、オプションの高速アップ接続のデバイス サポートを示します。
 		//------------------------------------------------------------
 		//case HSupconnection:
@@ -1593,63 +1600,63 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 #if defined (MODE_CXP_VERSION_20)
 
 		//------------------------------------------------------------
-		// CapabilityRegister
+		// CapabilityRegister設定
 		//------------------------------------------------------------
 		//case CapabilityRegister:
 			//break;
 
 		//------------------------------------------------------------
-		// FeatureControlRegister
+		// FeatureControlRegister設定
 		//------------------------------------------------------------
 		case FeatureControlRegister:
 			FeatureControlRegister_st = *pDataRecv;
 			break;
 
 		//------------------------------------------------------------
-		// VersionsSupported
+		// VersionsSupported設定
 		//------------------------------------------------------------
 		//case VersionsSupported:
 			//break;
 
 		//------------------------------------------------------------
-		// VersionUsed
+		// VersionUsed設定
 		//------------------------------------------------------------
 		case VersionUsed:
 			VersionUsed_st = *pDataRecv;
 			break;
 
 		//------------------------------------------------------------
-		// LinkSharingStatus
+		// LinkSharingStatus設定
 		//------------------------------------------------------------
 		//case LinkSharingStatus:
 			//break;
 
 		//------------------------------------------------------------
-		// LinkSharingHorizontalStripeCount
+		// LinkSharingHorizontalStripeCount設定
 		//------------------------------------------------------------
 		//case LinkSharingHorizontalStripeCount:
 			//break;
 
 		//------------------------------------------------------------
-		// LinkSharingVerticalStripeCount
+		// LinkSharingVerticalStripeCount設定
 		//------------------------------------------------------------
 		//case LinkSharingVerticalStripeCount:
 			//break;
 
 		//------------------------------------------------------------
-		// LinkSharingHorizontalOverlap
+		// LinkSharingHorizontalOverlap設定
 		//------------------------------------------------------------
 		//case LinkSharingHorizontalOverlap:
 			//break;
 
 		//------------------------------------------------------------
-		// LinkSharingVerticalOverlap
+		// LinkSharingVerticalOverlap設定
 		//------------------------------------------------------------
 		//case LinkSharingVerticalOverlap:
 			//break;
 
 		//------------------------------------------------------------
-		// LinkSharingDuplicateStripe
+		// LinkSharingDuplicateStripe設定
 		//------------------------------------------------------------
 		//case LinkSharingDuplicateStripe:
 			//break;
@@ -1879,63 +1886,63 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 	switch (adrs)
 	{
 		//------------------------------------------------------------
-		// Standard
+		// Standard取得
 		//------------------------------------------------------------
 		case Standard:
 			*pData = 0xC0A79AE5;
 			break;
 
 		//------------------------------------------------------------
-		// Revision
+		// Revision取得
 		//------------------------------------------------------------
 		case Revision:
 			*pData = CXP_VERSION;
 			break;
 
 		//------------------------------------------------------------
-		// XmlManifestSize
+		// XmlManifestSize取得
 		//------------------------------------------------------------
 		case XmlManifestSize:
 			*pData = XmlManifestSize_st;
 			break;
 
 		//------------------------------------------------------------
-		// XmlManifestSelector
+		// XmlManifestSelector取得
 		//------------------------------------------------------------
 		case XmlManifestSelector:
 			*pData = XmlManifestSelector_st;
 			break;
 	
 		//------------------------------------------------------------
-		// XmlVersion
+		// XmlVersion取得
 		//------------------------------------------------------------
 		case XmlVersion:
 			*pData = CXP_XML_VERSION;
 			break;
 
 		//------------------------------------------------------------
-		// XmlSchemaVersion
+		// XmlSchemaVersion取得
 		//------------------------------------------------------------
 		case XmlSchemaVersion:
 			*pData = CXP_XML_SCHEMA_VERSION;
 			break;
 
 		//------------------------------------------------------------
-		// XmlUrlAddress
+		// XmlUrlAddress取得
 		//------------------------------------------------------------
 		case XmlUrlAddress:
 			*pData = DevicePrimaryURL;
 			break;
 
 		//------------------------------------------------------------
-		// Iidc2Address
+		// Iidc2Address取得
 		//------------------------------------------------------------
 		case Iidc2Address:
 			*pData = 0x0;
 			break;
 
 		//------------------------------------------------------------
-		// CXP Interface FPGA Version
+		// CXP Interface FPGA Version取得
 		//------------------------------------------------------------
 		case IfFpgaVersion:
 			data1 = IN32(FIRM_DATA_IF_VERSION_ADRS);
@@ -1958,7 +1965,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// DeviceVendorName
+		// DeviceVendorName取得
 		//------------------------------------------------------------
 		case DeviceVendorName:
 		case DeviceVendorName + 0x04:
@@ -1995,7 +2002,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// DeviceModelName
+		// DeviceModelName取得
 		//------------------------------------------------------------
 		case DeviceModelName:
 		case DeviceModelName + 0x04:
@@ -2032,7 +2039,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// DeviceManufacturerInfo
+		// DeviceManufacturerInfo取得
 		//------------------------------------------------------------
 		case DeviceManufacturerInfo:
 		case DeviceManufacturerInfo + 0x04:
@@ -2077,7 +2084,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// DeviceVersionInfo
+		// DeviceVersionInfo取得
 		//------------------------------------------------------------
 		case DeviceVersionInfo:
 		case DeviceVersionInfo+0x04:
@@ -2102,7 +2109,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// DeviceFirmwareVersion
+		// DeviceFirmwareVersion取得
 		//------------------------------------------------------------
 		case DeviceFirmwareVersion:
 		case DeviceFirmwareVersion+0x04:
@@ -2127,7 +2134,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// DeviceSerialNumber
+		// DeviceSerialNumber取得
 		//------------------------------------------------------------
 		case DeviceSerialNumber:
 		case DeviceSerialNumber+0x04:
@@ -2148,7 +2155,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//--------------------------------------------------------------------------------
-		// Device Sensor ID
+		// Device Sensor ID取得
 		//--------------------------------------------------------------------------------
 		case DeviceSensorID:
 		case DeviceSensorID+0x04:
@@ -2193,56 +2200,56 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// WidthAddress
+		// WidthAddress取得
 		//------------------------------------------------------------
 		case WidthAddress:
 			*pData = FPGA_AOI_XSIZE_ADRS;
 			break;
 
 		//------------------------------------------------------------
-		// HeightAddress
+		// HeightAddress取得
 		//------------------------------------------------------------
 		case HeightAddress:
 			*pData = FPGA_AOI_YSIZE_ADRS;
 			break;
 
 		//------------------------------------------------------------
-		// AcquisitionModeAddress
+		// AcquisitionModeAddress取得
 		//------------------------------------------------------------
 		case AcquisitionModeAddress:
 			*pData = GENICAM_ACQUISITION_MODE_ADRS;
 			break;
 
 		//------------------------------------------------------------
-		// AcquistionStartAddress
+		// AcquistionStartAddress取得
 		//------------------------------------------------------------
 		case AcquistionStartAddress:
 			*pData = GENICAM_ACQUISITION_START_ADRS;
 			break;
 
 		//------------------------------------------------------------
-		// AcquistionStopAddress
+		// AcquistionStopAddress取得
 		//------------------------------------------------------------
 		case AcquistionStopAddress:
 			*pData = GENICAM_ACQUISITION_ABORT_ADRS;
 			break;
 
 		//------------------------------------------------------------
-		// PixelFormatAddress
+		// PixelFormatAddress取得
 		//------------------------------------------------------------
 		case PixelFormatAddress:
 			*pData = FPGA_AOI_BITWIDTH_ADRS;
 			break;
 
 		//------------------------------------------------------------
-		// DeviceTapGeometryAddress
+		// DeviceTapGeometryAddress取得
 		//------------------------------------------------------------
 		case DeviceTapGeometryAddress:
 			*pData = DeviceTapGeometry;
 			break;
 
 		//------------------------------------------------------------
-		// Image1StreamIDAddress
+		// Image1StreamIDAddress取得
 		//------------------------------------------------------------
 		case Image1StreamIDAddress:
 			*pData = Image1StreamID;
@@ -2250,98 +2257,98 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// Image2StreamIDAddress
+		// Image2StreamIDAddress取得
 		//------------------------------------------------------------
 		case Image2StreamIDAddress:
 			*pData = Image2StreamID;
 			break;
 
 		//------------------------------------------------------------
-		// Image1StreamID
+		// Image1StreamID取得
 		//------------------------------------------------------------
 		case Image1StreamID:
 			*pData = CXP_STREAM_ID1_NUMBER;
 			break;
 
 		//------------------------------------------------------------
-		// Image2StreamID
+		// Image2StreamID取得
 		//------------------------------------------------------------
 		case Image2StreamID:
 			*pData = CXP_STREAM_ID2_NUMBER;
 			break;
 
 		//------------------------------------------------------------
-		// ImagenStreamIDAddress
+		// ImagenStreamIDAddress取得
 		//------------------------------------------------------------
 		//case ImagenStreamIDAddress:
 			//*pData = 0x00;
 			//break;
 
 		//------------------------------------------------------------
-		// ConnectionReset
+		// ConnectionReset取得
 		//------------------------------------------------------------
 		case ConnectionReset:
 			*pData = ConnectionReset_st;
 			break;
 
 		//------------------------------------------------------------
-		// DeviceConnectionID
+		// DeviceConnectionID取得
 		//------------------------------------------------------------
 		case DeviceConnectionID:  // 0 = MasterHostConnectionID
 			*pData = ConnectionDeviceConnection_st[port];
 			break;
 
 		//------------------------------------------------------------
-		// MasterHostConnectionID
+		// MasterHostConnectionID取得
 		//------------------------------------------------------------
 		case MasterHostConnectionID:
 			*pData = ConnectionHostConnection_st;
 			break;
 
 		//------------------------------------------------------------
-		// ControlPacketSizeMax
+		// ControlPacketSizeMax取得
 		//------------------------------------------------------------
 		case ControlPacketSizeMax:
 			*pData = ControlPacketSizeMax_st;
 			break;
 
 		//------------------------------------------------------------
-		// StreamPacketSizeMax
+		// StreamPacketSizeMax取得
 		//------------------------------------------------------------
 		case StreamPacketSizeMax:
 			*pData = StreamPacketSizeMax_st;
 			break;
 
 		//------------------------------------------------------------
-		// ConnectionConfig
+		// ConnectionConfig取得
 		//------------------------------------------------------------
 		case ConnectionConfig:
 			*pData = ConnectionConfig_st;
 			break;
 
 		//------------------------------------------------------------
-		// ConnectionConfigDefault
+		// ConnectionConfigDefault取得
 		//------------------------------------------------------------
 		case ConnectionConfigDefault:
 			*pData = ConnectionConfigDefault_st;
 			break;
 
 		//------------------------------------------------------------
-		// TestMode
+		// TestMode取得
 		//------------------------------------------------------------
 		case TestMode:
 			*pData = TestMode_st;
 			break;
 
 		//------------------------------------------------------------
-		// TestErrorCountSelector
+		// TestErrorCountSelector取得
 		//------------------------------------------------------------
 		case TestErrorCountSelector:
 			*pData = TestErrorCountSelector_st;
 			break;
 
 		//------------------------------------------------------------
-		// TestErrorCount
+		// TestErrorCount取得
 		//------------------------------------------------------------
 		case TestErrorCount:
 
@@ -2353,7 +2360,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// TestPacketCountTx
+		// TestPacketCountTx取得
 		//------------------------------------------------------------
 		case TestPacketCountTx:
 		case TestPacketCountTx+0x04:
@@ -2374,7 +2381,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// TestPacketCountRx
+		// TestPacketCountRx取得
 		//------------------------------------------------------------
 		case TestPacketCountRx:
 		case TestPacketCountRx+0x04:
@@ -2389,8 +2396,15 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			*pData = (unsigned int)TestPacketCountRx_st;
 			break;
 
+		//--------------------------------------------------------------------------------
+		// Test Send Recive Selector取得
+		//--------------------------------------------------------------------------------
+		case CXP_TEST_SEND_RECIVE_SELECTOR:
+			*pData = TestSendReciveSelector_st;
+			break;
+
 		//------------------------------------------------------------
-		// ElectricalComplianceTest
+		// ElectricalComplianceTest取得
 		//------------------------------------------------------------
 		case ElectricalComplianceTest:
 			*pData = ElectricalComplianceTest_st;
@@ -2398,7 +2412,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 
 #if !defined (MODE_CXP_VERSION_20)
 		//------------------------------------------------------------
-		// HSupconnection
+		// HSupconnection取得
 		//------------------------------------------------------------
 		case HSupconnection:
 			*pData = 0;	 // not support
@@ -2411,21 +2425,21 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 #if defined (MODE_CXP_VERSION_20)
 
 		//------------------------------------------------------------
-		// CapabilityRegister
+		// CapabilityRegister取得
 		//------------------------------------------------------------
 		case CapabilityRegister:
 			*pData = 0;
 			break;
 
 		//------------------------------------------------------------
-		// FeatureControlRegister
+		// FeatureControlRegister取得
 		//------------------------------------------------------------
 		case FeatureControlRegister:
 			*pData = FeatureControlRegister_st;
 			break;
 
 		//------------------------------------------------------------
-		// VersionsSupported
+		// VersionsSupported取得
 		//------------------------------------------------------------
 		case VersionsSupported:
 #if !defined (MODE_CXP_VERSION_20)
@@ -2436,49 +2450,49 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 
 		//------------------------------------------------------------
-		// VersionUsed
+		// VersionUsed取得
 		//------------------------------------------------------------
 		case VersionUsed:
 			*pData = VersionUsed_st;
 			break;
 
 		//------------------------------------------------------------
-		// LinkSharingStatus
+		// LinkSharingStatus取得
 		//------------------------------------------------------------
 		case LinkSharingStatus:
 			*pData = 0x00;
 			break;
 
 		//------------------------------------------------------------
-		// LinkSharingHorizontalStripeCount
+		// LinkSharingHorizontalStripeCount取得
 		//------------------------------------------------------------
 		case LinkSharingHorizontalStripeCount:
 			*pData = 0x00;
 			break;
 
 		//------------------------------------------------------------
-		// LinkSharingVerticalStripeCount
+		// LinkSharingVerticalStripeCount取得
 		//------------------------------------------------------------
 		case LinkSharingVerticalStripeCount:
 			*pData = 0x00;
 			break;
 
 		//------------------------------------------------------------
-		// LinkSharingHorizontalOverlap
+		// LinkSharingHorizontalOverlap取得
 		//------------------------------------------------------------
 		case LinkSharingHorizontalOverlap:
 			*pData = 0x00;
 			break;
 
 		//------------------------------------------------------------
-		// LinkSharingVerticalOverlap
+		// LinkSharingVerticalOverlap取得
 		//------------------------------------------------------------
 		case LinkSharingVerticalOverlap:
 			*pData = 0x00;
 			break;
 
 		//------------------------------------------------------------
-		// LinkSharingDuplicateStripe
+		// LinkSharingDuplicateStripe取得
 		//------------------------------------------------------------
 		case LinkSharingDuplicateStripe:
 			*pData = 0x00;

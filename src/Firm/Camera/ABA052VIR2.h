@@ -90,7 +90,6 @@
 #define MODE_CXP							// Cxp Mode
 #define MODE_CXP_MULTI_PORT					// Cxp Multi Port
 #define MODE_CXP_VERSION_20					// Cxp Version 2.0
-
 #define MODE_CXP_RATE_CHANGE				// Cxp Rate Change
 //#define MODE_BOARD_ACB523GE				// GE  Board ACB-523GE_IF (ABA-013VIR/ABA-003VIR)
 #define MODE_BOARD_ACB532GE					// GE  Board ACB-532GE_IF (ABA-052VIR/ABA-032VIR)
@@ -262,11 +261,11 @@
 #define HINTERVAL_CLOCK_10BIT_SINGLE_6_25G	(0x1B6)
 #define HINTERVAL_CLOCK_12BIT_SINGLE_6_25G	(0x203)
 
-#define HINTERVAL_CLOCK_8BIT_SINGLE_10_00G	(0x109)
+#define HINTERVAL_CLOCK_8BIT_SINGLE_10_00G	(0x107)
 #define HINTERVAL_CLOCK_10BIT_SINGLE_10_00G	(0x11F)
 #define HINTERVAL_CLOCK_12BIT_SINGLE_10_00G	(0x1E9)
 
-#define HINTERVAL_CLOCK_8BIT_SINGLE_12_50G	(0x109)
+#define HINTERVAL_CLOCK_8BIT_SINGLE_12_50G	(0x107)
 #define HINTERVAL_CLOCK_10BIT_SINGLE_12_50G	(0x11F)
 #define HINTERVAL_CLOCK_12BIT_SINGLE_12_50G	(0x1E9)
 
@@ -321,67 +320,67 @@
 //----------------------------------------------------------------------------------
 // Memory MAP
 //----------------------------------------------------------------------------------
-#define CAMERA_PARAM_CONNON_ADRS			(0x88000000)	// カメラパラメータ共通領域
-#define CAMERA_PARAM_USER_ADRS				(0x88000200)	// カメラパラメータユーザー領域
-#define BOARD_ERROR_ADRS					(0x88004000)	// 初期化エラー情報格納アドレス
+#define CAMERA_PARAM_CONNON_ADRS			(0x82000000)	// カメラパラメータ共通領域
+#define CAMERA_PARAM_USER_ADRS				(0x82000200)	// カメラパラメータユーザー領域
+#define BOARD_ERROR_ADRS					(0x82004000)	// 初期化エラー情報格納アドレス
 	#define BOARD_ERROR_SIZE				(0x200)			// 初期化エラー情報格納アドレス
-#define FIRM_DATA_ADRS						(0x88004200)	// ファームウェアデータ領域アドレス
+#define FIRM_DATA_ADRS						(0x82004200)	// ファームウェアデータ領域アドレス
 	#define FIRM_DATA_SIZE					(0x3E00)		// ファームウェアデータ領域サイズ
-#define VIDEO_REGS        					(0x88006200)	// Non-heap out of OS memories management
+#define VIDEO_REGS        					(0x82006200)	// Non-heap out of OS memories management
 	#define VIDEO_REGS_SIZE 				(0x200)
-#define CAMERA_EVENT        				(0x88006300)	// カメライベント
+#define CAMERA_EVENT        				(0x82006300)	// カメライベント
 	#define CAMERA_SIZE        				(0x400)
-#define CAMERA_ROI_CPU1        				(0x88006700)	// カメラROI
+#define CAMERA_ROI_CPU1        				(0x82006700)	// カメラROI
 	#define CAMERA_ROI_CPU1_SIZE			(CAMERA_ROI_CPU1+0x00)
 	#define CAMERA_ROI_CPU1_OFFSET			(CAMERA_ROI_CPU1+0x80)
 	#define CAMERA_ROI_CPU1_VALID			(CAMERA_ROI_CPU1+0x100)
 	#define CAMERA_SIZE        				(0x400)
-#define UART0_RECV_BUFF_ADRS				(0x88006C00)	// UART0受信用
-#define UART0_SEND_BUFF_ADRS				(0x88007000)	// UART0送信用
-#define FIRM_SENSOR_REGISTER_SAVE_ADRS		(0x88007400)	// センサレジスタ格納アドレス
-#define FIRM_UPDATE_XML_FILE_NAME_ADRS		(0x88009400)	// Update XML File Name領域
+#define UART0_RECV_BUFF_ADRS				(0x82006C00)	// UART0受信用
+#define UART0_SEND_BUFF_ADRS				(0x82007000)	// UART0送信用
+#define FIRM_SENSOR_REGISTER_SAVE_ADRS		(0x82007400)	// センサレジスタ格納アドレス
+#define FIRM_UPDATE_XML_FILE_NAME_ADRS		(0x82009400)	// Update XML File Name領域
 #define FIRM_UPDATE_XML_FILE_NAME_SIZE		(0x200)			// Update XML File Nameサイズ
-#define FIRM_PHY_DATA_ADRS					(0x88100000)	// PHYデータ格納アドレス
-#define FIRM_XML_FILE_ADRS					(0x88200000)	// XMLファイル格納アドレス
-	#define FIRM_XML_FILE_SIZE				(0x400000)		// XMLファイル格納サイズ
-#define FIRM_CXP_SEND_DATA_ALL_ADRS			(0x88600000)	// CXP Send All Dataアドレス
+#define FIRM_PHY_DATA_ADRS					(0x82100000)	// PHYデータ格納アドレス
+#define FIRM_XML_FILE_ADRS					(0x82200000)	// XMLファイル格納アドレス
+	#define FIRM_XML_FILE_SIZE				(0x100000)		// XMLファイル格納サイズ
+#define FIRM_CXP_SEND_DATA_ALL_ADRS			(0x82300000)	// CXP Send All Dataアドレス
 	#define FIRM_CXP_SEND_DATA_ALL_SIZE		(0x100000)		// CXP Send All Dataサイズ
-#define FIRM_CXP_SEND_DATA_CMD_ADRS			(0x88600000)	// CXP Send Command Dataアドレス
+#define FIRM_CXP_SEND_DATA_CMD_ADRS			(0x82400000)	// CXP Send Command Dataアドレス
 	#define FIRM_CXP_SEND_DATA_CMD_SIZE		(0x100000)		// CXP Send Command Dataサイズ
-#define FIRM_CXP_RECV_DATA_ALL_ADRS			(0x88800000)	// CXP Recv All Dataアドレス
+#define FIRM_CXP_RECV_DATA_ALL_ADRS			(0x82500000)	// CXP Recv All Dataアドレス
 	#define FIRM_CXP_RECV_DATA_ALL_SIZE		(0x100000)		// CXP Recv All Dataサイズ
-#define FIRM_CXP_RECV_DATA_CMD_ADRS			(0x88900000)	// CXP Recv Command Dataアドレス
+#define FIRM_CXP_RECV_DATA_CMD_ADRS			(0x82600000)	// CXP Recv Command Dataアドレス
 	#define FIRM_CXP_RECV_DATA_CMD_SIZE		(0x100000)		// CXP Recv Command Dataサイズ
 	#define FIRM_CXP_DATA_INTERVAL			(0x00400000)	// CXP データ間隔
-#define FIRM_UPDATE_ADRS					(0x89000000)	// Update領域(圧縮領域)
-	#define FIRM_UPDATE_SIZE				(0x02000000)	// Updateサイズ(32M)
-#define FIRM_UPDATE_UNCOMP_ADRS				(0x89800000)	// Update領域(非圧縮領域)
+#define FIRM_UPDATE_ADRS					(0x82800000)	// Update領域(圧縮領域)
+	#define FIRM_UPDATE_SIZE				(0x00800000)	// Updateサイズ(8M)	//@@@1
+#define FIRM_UPDATE_UNCOMP_ADRS				(0x84700000)	// Update領域(非圧縮領域)
 	#define FIRM_UPDATE_UNCOMP_SIZE			(24*1024*1024)	// Update領域(非圧縮領域サイズ)
-#define DMA_MEMORY_ADRS						(0x8C000000)	// DMA用メモリアドレス
+#define DMA_MEMORY_ADRS						(0x84800000)	// DMA用メモリアドレス
 #define DMA_MEMORY_IPU_MULTI_INTERVAL		(DMA_WIDTH_DATA_ALIGH * IMG_HEIGHT)
-#define DPC_GRID_ADRS						(0x8FC80000)	// 4byte * 欠陥画素最大数
-#define DPC_GRID2_ADRS						(0x8FD00000)	// 4byte * 欠陥画素最大数
-#define DPCINFO_ADRS						(0x8FD80000)	// 4byte * 欠陥画素最大数
-#define DPC_MEMORY_ADRS						(0x8FE00000)	// 画像補正データ用係数格納メモリアドレス
+#define DPC_GRID_ADRS						(0x86820000)	// 4byte * 欠陥画素最大数
+#define DPC_GRID2_ADRS						(0x868A0000)	// 4byte * 欠陥画素最大数
+#define DPCINFO_ADRS						(0x86920000)	// 4byte * 欠陥画素最大数
+#define DPC_MEMORY_ADRS						(0x86A00000)	// 画像補正データ用係数格納メモリアドレス
 	#define DPC_MEMORY_IPU_MULTI_INTERVAL	(DPC_WIDTH_DATA_ALIGH * IMG_HEIGHT)
-#define FFC_MEMORY_ADRS						(0x90000000)	// FFCデータ用メモリアドレス
+#define FFC_MEMORY_ADRS						(0x87000000)	// FFCデータ用メモリアドレス
 	#define FFC_MEMORY_IPU_MULTI_INTERVAL	(FFC_WIDTH_DATA_ALIGH * IMG_HEIGHT)
-#define FFC_OFFSET_MEMORY_ADRS				(0x95000000)	// FFC時:オフセットデータ格納用アドレス
-#define FFC_GAIN_MEMORY_ADRS				(0x96000000)	// FFC ゲインデータ格納用アドレス
-#define FFC0_TEMP_MEMORY_ADRS				(0x98000000)	// FFC時:FFC0格納用アドレス
-#define DPC_SD_MEMORY_ADRS					(0x98000000)	// DPC時:標準偏差格納用アドレス
-#define FFC3_TEMP_MEMORY_ADRS				(0x9C000000)	// FFC時:FFC3格納用アドレス
-#define DPC_AVG_MEMORY_ADRS					(0x9C000000)	// DPC時:平均データ格納用アドレス
-#define FFC_BLACK_MEMORY_ADRS				(0xA0000000)	// FFC時:FFC 黒データ格納用アドレス
-#define DPC_SUM_MEMORY_ADRS					(0xA0000000)	// DPC時:加算データ格納用アドレス
-#define FFC_WHITE_MEMORY_ADRS				(0xA4000000)	// FFC時:FFC 白データ格納用アドレス
-#define DPC_SQUARE_SUM_MEMORY_ADRS			(0xA4000000)	// DPC時:２乗加算データ格納用アドレス
-#define DPC_NON_MEMORY_ADRS					(0xA8000000)	// DPC時:感度不均一データ格納用アドレス
-#define DPC_TEMP0_MEMORY_ADRS				(0xAC000000)	// DPC時:DPC欠陥座標１次格納用アドレス
-#define DPC_TEMP1_MEMORY_ADRS				(0xAC800000)	// DPC時:DPC欠陥座標１次格納用アドレス
-#define DPC_TEMP2_MEMORY_ADRS				(0xAD000000)	// DPC時:DPC欠陥座標１次格納用アドレス
-#define DPC_TEMP3_MEMORY_ADRS				(0xAD800000)	// DPC時:DPC欠陥座標１次格納用アドレス
-#define DRRS_IMG_MEMORY_ADRS				(0xB0000000)	// DRRS画像格納アドレス
+#define FFC_OFFSET_MEMORY_ADRS				(0x8B400000)	// FFC時:オフセットデータ格納用アドレス
+#define FFC_GAIN_MEMORY_ADRS				(0x8C400000)	// FFC ゲインデータ格納用アドレス
+#define FFC0_TEMP_MEMORY_ADRS				(0x8E400000)	// FFC時:FFC0格納用アドレス
+#define DPC_SD_MEMORY_ADRS					(0x8E400000)	// DPC時:標準偏差格納用アドレス
+#define FFC3_TEMP_MEMORY_ADRS				(0x92400000)	// FFC時:FFC3格納用アドレス
+#define DPC_AVG_MEMORY_ADRS					(0x92400000)	// DPC時:平均データ格納用アドレス
+#define FFC_BLACK_MEMORY_ADRS				(0x96400000)	// FFC時:FFC 黒データ格納用アドレス
+#define DPC_SUM_MEMORY_ADRS					(0x96400000)	// DPC時:加算データ格納用アドレス
+#define FFC_WHITE_MEMORY_ADRS				(0x9A400000)	// FFC時:FFC 白データ格納用アドレス
+#define DPC_SQUARE_SUM_MEMORY_ADRS			(0x9A400000)	// DPC時:２乗加算データ格納用アドレス
+#define DPC_NON_MEMORY_ADRS					(0x9E400000)	// DPC時:感度不均一データ格納用アドレス
+#define DPC_TEMP0_MEMORY_ADRS				(0xA2400000)	// DPC時:DPC欠陥座標１次格納用アドレス
+#define DPC_TEMP1_MEMORY_ADRS				(0xA2C00000)	// DPC時:DPC欠陥座標１次格納用アドレス
+#define DPC_TEMP2_MEMORY_ADRS				(0xA3400000)	// DPC時:DPC欠陥座標１次格納用アドレス
+#define DPC_TEMP3_MEMORY_ADRS				(0xA3C00000)	// DPC時:DPC欠陥座標１次格納用アドレス
+#define DRRS_IMG_MEMORY_ADRS				(0xA4400000)	// DRRS画像格納アドレス
 #define DRRS_IMG_MEMORY_ALIGN				(8192)
 #define DRRS_IMG_MEMORY_IPU_MULTI_INTERVAL	(DRRS_IMG_MEMORY_ALIGN * IMG_HEIGHT)
 
@@ -406,30 +405,30 @@
 //----------------------------------------------------------------------------------
 // Flash MAP
 //----------------------------------------------------------------------------------
-#define FLASH_UPDATE_ALL_ADRS				(0x00100000)	// All Address
-#define FLASH_PHY_DATA_ADRS					(0x01400000)	// PHY Data Adrs
+#define FLASH_XML_ADRS						(0x00100000)	// XML Address
+	#define FLASH_XML_SIZE					(0xF0000)		// XML Size
+#define FLASH_XML_FILE_NAME_ADRS			(0x001F0000)	// XML File Name Address
+	#define FLASH_XML_FILE_NAME_SIZE		(0x10000)		// XML File Name Size
+#define FLASH_UPDATE_ALL_ADRS				(0x00200000)	// All Address
+#define FLASH_PHY_DATA_ADRS					(0x01500000)	// PHY Data Adrs
 	#define FLASH_PHY_DATA_SIZE				(0x100000)		// PHY Data Size
-#define FLASH_XML_FILE_NAME_ADRS			(0x01500000)	// XML File Name Address
-	#define FLASH_XML_FILE_NAME_SIZE		(0x1000)		// XML File Name Size
-#define FLASH_XML_ADRS						(0x01600000)	// XML Address
-	#define FLASH_XML_SIZE					(0x100000)		// XML Size
-#define FLASH_UPDATE_ALL_ADMIN_ADRS			(0x01800000)	// All Address(Backup)
-#define FLASH_PHY_DATA_BACKUP_ADRS			(0x02B00000)	// PHY Data Adrs(Backup)
-#define FLASH_LUT1_ADRS						(0x02C00000)	// LUT1データ格納Flashアドレス
-#define FLASH_LUT2_ADRS						(0x02C10000)	// LUT2データ格納Flashアドレス
-#define FLASH_BOARD_PARAM_ADRS				(0x02C20000)	// 基板情報格納
-#define FLASH_USERSET0_ADRS					(0x02C30000)	// UserSet0保存アドレス
-#define FLASH_USERSET1_ADRS					(0x02C40000)	// UserSet1保存アドレス
-#define FLASH_USERSET2_ADRS					(0x02C50000)	// UserSet2保存アドレス
-#define FLASH_USERSET_COMMON_ADRS			(0x02C60000)	// UserSet共通保存アドレス
-#define FLASH_DPC_INFO_ORG_ADRS				(0x02C70000)	// DPC調整情報格納アドレス(オリジナル)
-#define FLASH_DPC_IMPOSSIBLE_GRID_ORG_ADRS	(0x02C80000)	// DPC補正不可座標アドレス(オリジナル)
-#define FLASH_DPC_INFO_ADRS					(0x02C90000)	// DPC調整情報格納アドレス
-#define FLASH_DPC_IMPOSSIBLE_GRID_ADRS		(0x02CA0000)	// DPC補正不可座標アドレス
-#define FLASH_DPC_ADRS						(0x02CB0000)	// 画像補正データ用係数格納Flashアドレス
-#define FLASH_DPC_ORG_ADRS					(0x02DC0000)	// 画像補正データ用係数格納Flashアドレス(オリジナル)
-#define FLASH_FFC_INFO_ADRS					(0x02ED0000)	// FFC調整情報格納
-#define FLASH_FFC0_ADRS						(0x02EE0000)	// FFCゲインデータ格納Flashアドレス
+#define FLASH_UPDATE_ALL_ADMIN_ADRS			(0x01600000)	// All Address(Backup)
+#define FLASH_PHY_DATA_BACKUP_ADRS			(0x02900000)	// PHY Data Adrs(Backup)
+#define FLASH_LUT1_ADRS						(0x02A00000)	// LUT1データ格納Flashアドレス
+#define FLASH_LUT2_ADRS						(0x02A10000)	// LUT2データ格納Flashアドレス
+#define FLASH_BOARD_PARAM_ADRS				(0x02A20000)	// 基板情報格納
+#define FLASH_USERSET0_ADRS					(0x02A30000)	// UserSet0保存アドレス
+#define FLASH_USERSET1_ADRS					(0x02A40000)	// UserSet1保存アドレス
+#define FLASH_USERSET2_ADRS					(0x02A50000)	// UserSet2保存アドレス
+#define FLASH_USERSET_COMMON_ADRS			(0x02A60000)	// UserSet共通保存アドレス
+#define FLASH_DPC_INFO_ORG_ADRS				(0x02A70000)	// DPC調整情報格納アドレス(オリジナル)
+#define FLASH_DPC_IMPOSSIBLE_GRID_ORG_ADRS	(0x02A80000)	// DPC補正不可座標アドレス(オリジナル)
+#define FLASH_DPC_INFO_ADRS					(0x02A90000)	// DPC調整情報格納アドレス
+#define FLASH_DPC_IMPOSSIBLE_GRID_ADRS		(0x02AA0000)	// DPC補正不可座標アドレス
+#define FLASH_DPC_ADRS						(0x02AB0000)	// 画像補正データ用係数格納Flashアドレス
+#define FLASH_DPC_ORG_ADRS					(0x02BC0000)	// 画像補正データ用係数格納Flashアドレス(オリジナル)
+#define FLASH_FFC_INFO_ADRS					(0x02CD0000)	// FFC調整情報格納
+#define FLASH_FFC0_ADRS						(0x02CE0000)	// FFCゲインデータ格納Flashアドレス
 #define FLASH_DIAG_ADRS						(0x07FF0000)	// Read/Writeテスト用
 
 
