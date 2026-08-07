@@ -698,7 +698,7 @@ typedef unsigned char   u8;
 #define FIRM_DATA_PELTIER_POWER_HIGH_CLIP			(FIRM_DATA_ADRS+0x6a0)
 #define FIRM_DATA_PELTIER_POWER_START_FLAG			(FIRM_DATA_ADRS+0x6a4)
 #define FIRM_DATA_CMD_EXE_FLAG						(FIRM_DATA_ADRS+0x6a8)
-
+#define FIRM_DATA_TEST_PATTERN						(FIRM_DATA_ADRS+0x6aC)
 #define FIRM_DATA_PHY_FIRM_VERSION					(FIRM_DATA_ADRS+0x6b0)	// 16byte
 #define FIRM_DATA_PHY_API_VERSION					(FIRM_DATA_ADRS+0x6c0)	// 8byte
 #define FIRM_DATA_BOOT_VERSION						(FIRM_DATA_ADRS+0x6c8)	// 8byte
@@ -1463,6 +1463,7 @@ int irGetBitWidth (int *pBit);
 int cameraGetBitWidthGigE (int *pBit);
 int aoiSetPad (int x, int y);
 int aoiGetPad (int *pX, int *pY);
+int aoiSetPatternMain (int index);
 int aoiSetPattern (int index);
 int aoiGetPattern (int *pIndex);
 int aoiSetTpInc (int horizon, int virtical);
@@ -2697,6 +2698,7 @@ int sensorHIntervalDataDrrs (int bit, unsigned int *pData);
 int sensorHIntervalCalc (double frameRate, unsigned int *pData);
 int sensorSetHIntervalReg (unsigned int data);
 int sensorGetHIntervalReg (unsigned int *pData);
+int sensorGetHIntervalTime (double *pData);
 int sensorSetHInterval (int bit);
 int sensorSetHIntervalTrgNormal (double frameRate);
 int sensorSetHIntervalData (unsigned int data);

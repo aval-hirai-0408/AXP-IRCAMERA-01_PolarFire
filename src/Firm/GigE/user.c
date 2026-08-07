@@ -3051,6 +3051,20 @@ u32 get_user_reg (u32 address, u16 *status)
 			*status = toG (sensorGetBlackPixel ((int *)&value));
 			break;
 #endif
+		
+		//--------------------------------------------------------------------------------
+		// SensorHTime取得
+		//--------------------------------------------------------------------------------
+#if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
+		case SensorHTime:
+			if ((*status = toG (sensorGetHIntervalTime ((int *)&dblValue))) != AVAL_STATUS_SUCCESS)
+				break;
+
+			// ns単位に変換
+			value = dblValue * 1000;
+		
+			break;
+#endif
 
 		//--------------------------------------------------------------------------------
 		// DeviceAcesFlag取得
@@ -5112,7 +5126,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Test Pattern設定
 		//--------------------------------------------------------------------------------
 		case FPGA_AOI_TP_INDEX_ADRS:
-			*status = toG (aoiSetPattern (value));
+			*status = toG (aoiSetPatternMain (value));
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -7885,6 +7899,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			break;
 #endif
 
+		//--------------------------------------------------------------------------------
+		// SensorHTime設定
+		//--------------------------------------------------------------------------------
+#if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
+		case SensorHTime:
+            *status = GEV_STATUS_WRITE_PROTECT;
+			break;
+#endif
 
 #if defined (MODE_FRAMERATE_HIGH_SPEED)
 		//--------------------------------------------------------------------------------

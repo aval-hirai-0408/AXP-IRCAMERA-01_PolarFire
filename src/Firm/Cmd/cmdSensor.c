@@ -1424,6 +1424,76 @@ int cmdSensorStandbyHelp (void *str)
 
 	return (AVAL_STATUS_SUCCESS);
 }
+
+
+//**********************************************************************************
+//	HTime
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdSensorHTime (void *str)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	int argc;
+	double hTimeD;
+
+	// Get Argument
+	argc = cmdCheckArg ((char *)str);
+
+	// Help?
+	if (argc == 2)
+	{
+		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
+		{
+			cmdSensorHTimeHelp (NULL);
+			goto _DONE;
+		}
+	}
+
+	if (argc == 1)
+	{
+		// Get Htime
+		if ((status = sensorGetHIntervalTime (&hTimeD)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+		
+			DEBUG_PRINT_FORCE ("%.5f\n", hTimeD);
+	}
+	else
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_ARGUMENT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
+		goto _DONE;
+	}
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Sensor HTime Help
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdSensorHTimeHelp (void *str)
+{
+	DEBUG_PRINT_FORCE ("\n");
+	DEBUG_PRINT_FORCE ("[Get]\n");
+	DEBUG_PRINT_FORCE ("  Function          : sensor htime is acquired.\n");
+	DEBUG_PRINT_FORCE ("  Command           : htime [param]\n");
+	DEBUG_PRINT_FORCE ("  Input Param       : none\n");
+	DEBUG_PRINT_FORCE ("  Output Param      : Htime[us]\n");
+
+	return (AVAL_STATUS_SUCCESS);
+}
 #endif // #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
 
 

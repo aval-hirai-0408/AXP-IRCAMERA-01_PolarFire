@@ -1450,6 +1450,12 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			//break;
 
 		//------------------------------------------------------------
+		// CXP_CONNECTION_CONFIG_STATUS設定
+		//------------------------------------------------------------
+		//case CXP_CONNECTION_CONFIG_STATUS:
+			//break;
+		
+		//------------------------------------------------------------
 		// 10.3.35 TestMode設定
 		// このレジスタに値 0x00000001 を書き込むと、デバイスからホストへのテスト パケットの送信が有効になります。
 		// 値 0x00000000 は、通常の操作を許可します。
@@ -2333,6 +2339,13 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			*pData = ConnectionConfigDefault_st;
 			break;
 
+		//------------------------------------------------------------
+		// CXP_CONNECTION_CONFIG_STATUS取得
+		//------------------------------------------------------------
+		case CXP_CONNECTION_CONFIG_STATUS:
+			*pData = ConnectionConfigDefault_st;
+			break;
+		
 		//------------------------------------------------------------
 		// TestMode取得
 		//------------------------------------------------------------

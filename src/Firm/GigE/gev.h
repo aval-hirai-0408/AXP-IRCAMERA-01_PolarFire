@@ -465,6 +465,7 @@ typedef struct
 #define GainxFloat												( 0x0000E800 ) // RW; 4 bytes;
 #define SensorGainX												( 0x0000E810 ) // RW; 4 bytes;
 #define SensorConversionGain									( 0x0000E818 ) // RW; 4 bytes;
+#define SensorHTime												( 0x0000E81C ) // RW; 4 bytes;
 #define SensorGradComp8BitConvert								( 0x0000E838 ) // RW; 4 bytes;
 
 
@@ -830,6 +831,7 @@ typedef struct
 //
 //====================================================================================
 #define CXP_TEST_SEND_RECIVE_SELECTOR							(0x0000D4B0) // RW; 4 bytes;
+#define CXP_CONNECTION_CONFIG_STATUS							(0x0000D4B4) // RW; 4 bytes;
 
 
 //====================================================================================

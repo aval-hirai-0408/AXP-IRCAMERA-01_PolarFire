@@ -90,6 +90,8 @@ int aoiInitialize (void)
 	}
 #endif
 
+	// テストパターン設定値初期化
+	OUT32 (FIRM_DATA_TEST_PATTERN, 0);
 
 	return (AVAL_STATUS_SUCCESS);
 }
@@ -773,6 +775,72 @@ _DONE:
 
 
 //**********************************************************************************
+//	テストパターン設定Main
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		index				：テストパターンインデックス
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int aoiSetPatternMain (int index)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	int sensorMode;
+	unsigned int save;
+
+	// 設定値取得
+	save = IN32 (FIRM_DATA_TEST_PATTERN);
+
+	if (index == 0)		// 撮像画像
+	{
+		if (save == 0)
+		{
+			goto _DONE;
+		}
+		else if ((save >= (AOI_TP_MIN_AREA+1)) || (save <= AOI_TP_MAX_AREA))
+		{
+			if ((status = aoiSetPattern (0)) != AVAL_STATUS_SUCCESS)
+				goto _DONE;
+		}
+		else
+		{
+			if ((status = sensorTpSetMode (0)) != AVAL_STATUS_SUCCESS)
+				goto _DONE;
+		}
+	}
+	else if ((index >= (AOI_TP_MIN_AREA+1)) || (index <= AOI_TP_MAX_AREA))
+	{
+		if ((status = aoiSetPattern (index)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+	}
+	else if  ((index >= AOI_TP_SENSOR_MIN) || (index <= AOI_TP_SENSOR_MAX))
+	{
+		if (index = AOI_TP_SENSOR_SEQUENCE_PATTERN)
+			sensorMode = 1;
+		else
+			sensorMode = 3;
+
+		if ((status = sensorTpSetMode (sensorMode)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+	}
+	else
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Test Pattern(%d) Parameter Error. (Min:%d / Max:%d)\n", index, AOI_TP_MIN_AREA, AOI_TP_SENSOR_MAX);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+
+	// 設定値保存
+	OUT32 (FIRM_DATA_TEST_PATTERN, index);
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
 //	テストパターンIndex設定
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
@@ -839,7 +907,8 @@ int aoiGetPattern (int *pIndex)
 	}
 
 	// Get Index
-	*pIndex = IN32 (FPGA_AOI_TP_INDEX_ADRS) & FPGA_AOI_TP_MASK;
+	//*pIndex = IN32 (FPGA_AOI_TP_INDEX_ADRS) & FPGA_AOI_TP_MASK;
+	*pIndex = IN32 (FIRM_DATA_TEST_PATTERN);
 
 _DONE:
 	return (status);

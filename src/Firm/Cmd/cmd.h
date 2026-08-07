@@ -746,6 +746,8 @@ int cmdSensorVirtualHeight (void *str);
 int cmdSensorVirtualHeightHelp (void *str);
 int cmdSensorStandby (void *str);
 int cmdSensorStandbyHelp (void *str);
+int cmdSensorHTime (void *str);
+int cmdSensorHTimeHelp (void *str);
 int cmdSensorDrrsMode (void *str);
 int cmdSensorDrrsModeHelp (void *str);
 
