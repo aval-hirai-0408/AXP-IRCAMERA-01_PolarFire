@@ -400,6 +400,7 @@ void cmdCharGet (char *buff)
 						}
 					}
 					
+					gCxpCmdInterruptFlag = 0;
 					//@@@1 CXPの割り込み許可
 				}
 			}
@@ -421,7 +422,6 @@ void cmdCharGet (char *buff)
 					DEBUG_PRINT_FORCE ("\n");
 					DEBUG_PRINT_FORCE (CMD_OK);
 				}
-
 			}
 			else
 			{

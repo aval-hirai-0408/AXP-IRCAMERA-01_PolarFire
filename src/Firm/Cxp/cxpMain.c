@@ -52,7 +52,8 @@ unsigned char gXmlFileNameUpdate [CXP_XML_URL_SIZE];
 
 int gLinkStatusCheck = 0;
 int gCxpCmdInterruptFlag = 0;
-int gCxpCmdPorcessFlag = 0;
+int gCxpCmdProcessFlag = 0;
+
 
 //----------------------------------------------------------------------------------
 // externs
@@ -847,13 +848,16 @@ static void user_event_callback_cxp (u32 event_mask)
 void cxpCmdInterruptHandler (void)
 {
 	// コマンド処理中?
-	if (gCxpCmdPorcessFlag == 0)
+	if (gCxpCmdInterruptFlag == 0)
 	{
 		// コマンド割り込み発生フラグ
 		gCxpCmdInterruptFlag = 1;
 	}
 	else
 	{
+		// コマンド処理中Flag
+		gCxpCmdProcessFlag = 1;
+		
 		// コマンド処理中なので、割り込みルーチン内でコマンド解析
 		cxpProcs (0);
 	}

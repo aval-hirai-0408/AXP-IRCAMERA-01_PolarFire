@@ -102,7 +102,6 @@ unsigned long long TestPacketCountTx_st   = 0;
 unsigned long long TestPacketCountRx_st   = 0;
 unsigned int ElectricalComplianceTest_st  = 0;
 unsigned int FeatureControlRegister_st    = 0;
-unsigned int TestSendReciveSelector_st    = 0;
 #if defined (MODE_CXP_VERSION_20)
 unsigned int VersionUsed_st               = 0x00020000;
 #else

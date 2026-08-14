@@ -3282,40 +3282,6 @@ _DONE:
 
 
 //**********************************************************************************
-//	H Interval取得(us時間単位)
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		pData				：H Intervalを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int sensorGetHIntervalTime (double *pData)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int data32;
-
-	// Check pData Parameter
-	if (pData == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "H Interval Time Get NULL Parameter Error\n");
-		goto _DONE;
-	}
-
-	// H Interval
-	if ((status = sensorGetHIntervalReg(&data32)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// H時間取得
-	*pData = (double)(SENSOR_H_TIME * (double)data32);
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
 //	H Interval設定(トリガモード)
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
@@ -9693,9 +9659,6 @@ int sensorTpSetMode (int mode)
 	int regHold, acTmg;
 	unsigned char id;
 	unsigned char data8;
-	unsigned short black;
-	unsigned int gcMode;
-	int bit;
 	int startMode = 0;
 
 	// Check mode Parameter
@@ -9790,42 +9753,6 @@ int sensorTpSetMode (int mode)
 		#endif //#if defined (MODE_SENSOR_IMX992) || defined (MODE_SENSOR_IMX993)
 	}
 
-	if (mode == 0)
-	{
-		if ((status = aoiGetBitWidth (&bit)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-		
-		if (bit == 8)
-			black = SENSOR_REG_BLACKLEVEL_8BIT;
-		else if (bit == 10)
-			black = SENSOR_REG_BLACKLEVEL_10BIT;
-		else
-			black = SENSOR_REG_BLACKLEVEL_12BIT;
-		
-		#if defined (MODE_SENSOR_GRADATION_COMPRESS)
-		gcMode = sensorGradationCompGetModeDDR2();
-		// Gradation Compress Mode有効?
-		if (gcMode == MODE_ENABLE)
-			bit = GC_CAMERA_BIT;
-		#endif
-	}
-	else
-	{
-		black = 0;
-	}
-	
-		// Sensor Black1
-	id = 0x07;
-	data8 = (unsigned char)(black & SENSOR_REG_BLACKLEVEL1_MASK);
-	if ((status = sensorRegWriteByte (id, SENSOR_REG_BLACKLEVEL1_ADRS, data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// Sensor Black2
-	id = 0x07;
-	data8 = (unsigned char)((black >> 8) & SENSOR_REG_BLACKLEVEL2_MASK);
-	if ((status = sensorRegWriteByte (id, SENSOR_REG_BLACKLEVEL2_ADRS, data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-	
 	// StandByモード解除
 	if ((status = sensorStandByCancel ()) != AVAL_STATUS_SUCCESS)
 		goto _DONE;

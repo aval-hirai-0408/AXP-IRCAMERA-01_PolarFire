@@ -1887,14 +1887,6 @@ u32 get_user_reg (u32 address, u16 *status)
 			break;
 
 		//----------------------------------------------------------------------------------
-		// FlatFieldCorrectionLoadAdmin
-		//----------------------------------------------------------------------------------
-		case FlatFieldCorrectionLoadAdmin:
-			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_FFC_LOAD_ADMIN, (u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
-			break;
-
-		//----------------------------------------------------------------------------------
 		// FlatFieldCorrectionSetSave取得
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionSetSave:
@@ -1912,14 +1904,6 @@ u32 get_user_reg (u32 address, u16 *status)
 			}
 			break;
 #endif
-
-		//----------------------------------------------------------------------------------
-		// FlatFieldCorrectionSaveAdmin取得
-		//----------------------------------------------------------------------------------
-		case FlatFieldCorrectionSaveAdmin:
-			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_FFC_SAVE_ADMIN, (u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
-			break;
 
 		//----------------------------------------------------------------------------------
 		// Flat Filed Correction取得
@@ -3051,20 +3035,6 @@ u32 get_user_reg (u32 address, u16 *status)
 			*status = toG (sensorGetBlackPixel ((int *)&value));
 			break;
 #endif
-		
-		//--------------------------------------------------------------------------------
-		// SensorHTime取得
-		//--------------------------------------------------------------------------------
-#if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
-		case SensorHTime:
-			if ((*status = toG (sensorGetHIntervalTime ((int *)&dblValue))) != AVAL_STATUS_SUCCESS)
-				break;
-
-			// ns単位に変換
-			value = dblValue * 1000;
-		
-			break;
-#endif
 
 		//--------------------------------------------------------------------------------
 		// DeviceAcesFlag取得
@@ -4008,21 +3978,9 @@ u32 get_user_reg (u32 address, u16 *status)
 				//	valueBuffer +=(address2nd>0)?address2nd/4:0;
 				//	value = SWAP_L((*valueBuffer));
 				//}
-				#if !defined (MODE_XML_FILE_MEMORY_LOAD)
-				address2nd = address & BASE_NET_BOOTROM_XMLFILE_MASK;
-				address2nd += BASE_NET_BOOTROM_XMLFILE_OFFSET;
-
-				*status = qspiFlashRead((unsigned int) address2nd, (unsigned char*) &value, (unsigned int) sizeof(value));
-				value = SWAP_L(value); // with swapped endian
-
-				#else // #if !defined (MODE_XML_FILE_MEMORY_LOAD)
-
 				address2nd = address - xmlStartAddress;
 				value = IN32 ((FIRM_XML_FILE_ADRS + address2nd));
 				value = SWAP_L (value);
-
-				#endif // #if !defined (MODE_XML_FILE_MEMORY_LOAD)
-				
 				break;
 			}
 			else if ((address >= xmlStartAddressSecond) && (address < xmlStartAddressSecond + xmlSizeSecond + 1024))
@@ -4330,10 +4288,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			else
 				value = XFLIP_ENABLE;
 		#endif
-
-			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
-				break;
 
 			// X Flip Command
 			//value2nd = executeCommand(FIRM_CMD_SENSOR_XFLIP, CPU_CMD_SYNC_ON, (u32*) &value, 1);
@@ -4666,10 +4620,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 
 			//value2nd = executeCommand(FIRM_CMD_ROI_AREA, CPU_CMD_SYNC_ON, (u32*) &value, 1);
 			//*status = toG(value2nd);
-		
-			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
-				break;
 		
 			// Frame Rate High Speed Mode設定
 			if ((*status = toG (roiSetAreaSize (value))) != AVAL_STATUS_SUCCESS)
@@ -5126,7 +5076,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Test Pattern設定
 		//--------------------------------------------------------------------------------
 		case FPGA_AOI_TP_INDEX_ADRS:
-			*status = toG (aoiSetPatternMain (value));
+			*status = toG (aoiSetPattern (value));
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -6097,6 +6047,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		
 			//executeCommandUserSetDefault(Flash_UserSetDefault);
 
+			// Cmd Initialze
+			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+				break;
+
 			// UserSet Boot
 			*status = toG (userSetBoot (value));
 			break;
@@ -6625,23 +6579,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FlatFieldCorrectionLoadAdmin設定
-		//--------------------------------------------------------------------------------
-		case FlatFieldCorrectionLoadAdmin:
-			//*status = executeCommandFFCLoad(FlatFieldCorrection_Selector);
-			//*status = toG(ffcGetLoadNum((int*) &FlatFieldCorrection_Selector));
-
-			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
-				break;
-
-			// FFC Load
-			if ((*status = toG (ffcLoadMain (FlatFieldCorrection_Selector, FFC_USER))) != AVAL_STATUS_SUCCESS)
-				break;
-
-			break;
-
-		//--------------------------------------------------------------------------------
 		// FlatFieldCorrectionSetSave設定
 		//--------------------------------------------------------------------------------
 		case FlatFieldCorrectionSetSave:
@@ -6683,22 +6620,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 
 					break;
 			}
-			break;
-
-		//--------------------------------------------------------------------------------
-		// FlatFieldCorrectionSaveAdmin設定
-		//--------------------------------------------------------------------------------
-		case FlatFieldCorrectionSaveAdmin:
-			//*status = executeCommandFFCAdministoratorSave(FlatFieldCorrection_Selector);
-
-			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
-				break;
-
-			// FFC Save
-			if ((*status = toG (gigeCmdFfcSaveMain (FlatFieldCorrection_Selector))) != AVAL_STATUS_SUCCESS)
-				break;
-
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -7899,14 +7820,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			break;
 #endif
 
-		//--------------------------------------------------------------------------------
-		// SensorHTime設定
-		//--------------------------------------------------------------------------------
-#if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
-		case SensorHTime:
-            *status = GEV_STATUS_WRITE_PROTECT;
-			break;
-#endif
 
 #if defined (MODE_FRAMERATE_HIGH_SPEED)
 		//--------------------------------------------------------------------------------

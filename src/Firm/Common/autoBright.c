@@ -27,7 +27,6 @@
 #define GAIN_KP								(0.95)		//比例ゲイン
 #define GAIN_KI								(0.5)		//積分ゲイン
 #define GAIN_KD								(0.03)		//微分ゲイン
-
 // 積分最大値
 #define PID_I_MAX							(100)
 

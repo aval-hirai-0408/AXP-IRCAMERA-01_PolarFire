@@ -244,10 +244,8 @@ int hwInitialize (int cpuType)
 	//------------------------------------------------------------
 	//	XML Fileメモリロード
 	//------------------------------------------------------------
-#if defined (MODE_XML_FILE_MEMORY_LOAD)
 	if ((status = xmlFileLoadMemory ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
-#endif
 
 	//------------------------------------------------------------
 	//	Gev Parameter Initialize

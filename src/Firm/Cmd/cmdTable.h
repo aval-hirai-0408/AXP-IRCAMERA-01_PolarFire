@@ -704,15 +704,13 @@ CMD_TBL mainCmdTbl [] =
 	{ (char *)"sensortmg",					(CMDFUNC)cmdSensorTmg,					(CMDFUNC)cmdSensorTmgHelp, 						OPT_NONE},
 	{ (char *)"blackpixel",					(CMDFUNC)cmdSensorBlackPixel,			(CMDFUNC)cmdSensorBlackPixelHelp, 				OPT_NONE},
 	{ (char *)"sensorstandby",				(CMDFUNC)cmdSensorStandby,				(CMDFUNC)cmdSensorStandbyHelp, 					OPT_NONE},
-	{ (char *)"htime",						(CMDFUNC)cmdSensorStandby,				(CMDFUNC)cmdSensorStandbyHelp, 					OPT_NONE},
 #endif
 
 	{ (char *)"timer",						(CMDFUNC)cmdDiagTimer,					(CMDFUNC)cmdDiagTimerHelp, 						OPT_NONE},
 	{ (char *)"diag2",						(CMDFUNC)cmdDiagMain2,					(CMDFUNC)cmdDiagMain2Help, 						OPT_NONE},
 	{ (char *)"aging",						(CMDFUNC)cmdDiagAging,					(CMDFUNC)cmdDiagAgingHelp, 						OPT_NONE},
 	
-	{ (char *)"htime",						(CMDFUNC)cmdDiagAging,					(CMDFUNC)cmdDiagAgingHelp, 						OPT_NONE},
-
+	{ (char *)NULL, 0, 0, OPT_NONE}
 };
 
 // eof
