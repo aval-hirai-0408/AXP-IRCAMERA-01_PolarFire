@@ -7,7 +7,7 @@
 // The distribution policy is described in the file "COPYING"
 // furnished with this package.
 //
-// qspiFlash_N25Q_Micron.c - QSPI Flash Program
+// qspiFlash_Micron.c - QSPI Flash Program
 //**********************************************************************************
 
 //----------------------------------------------------------------------------------

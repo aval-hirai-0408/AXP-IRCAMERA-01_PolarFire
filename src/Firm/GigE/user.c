@@ -5076,7 +5076,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Test Pattern設定
 		//--------------------------------------------------------------------------------
 		case FPGA_AOI_TP_INDEX_ADRS:
-			*status = toG (aoiSetPattern (value));
+			*status = toG (aoiSetPatternMain (value));
 			break;
 
 		//--------------------------------------------------------------------------------

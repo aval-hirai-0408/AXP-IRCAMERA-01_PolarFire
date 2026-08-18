@@ -3894,27 +3894,40 @@ _DONE:
 int ffcSetMemoryOffsetGain (int ffcNo, unsigned int memAdrs, unsigned short *pImageOffset, int *pImageGain)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned int *ptrL;
+	unsigned char *ptrWriteB;
+	unsigned char *ptrReadB;
 	int i;
 	unsigned int oData;
 	int gData;
-	unsigned int data;
 	int x, y;
-
+	unsigned char data8;
+	unsigned int data32;
+	
 	i=0;
 	for (y=0; y<IMG_HEIGHT; y++)
 	{
 		// 外部メモリアドレス設定
-		ptrL = (unsigned int *)(memAdrs + FFC_WIDTH_DATA_ALIGH * y);
+		ptrWriteB = (unsigned char *)(memAdrs + FFC_WIDTH_DATA_ALIGH * y);
+		ptrReadB = ptrWriteB;
 
-		for (x=0; x<IMG_WIDTH; x++, ptrL++, i++)
+		for (x=0; x<IMG_WIDTH; x++, i++)
 		{
 			// Read
-			data = *ptrL;
+			data8 = *ptrReadB;
+			data32 = (unsigned int)(data8 << 16);
+			ptrReadB++;
 
+			data8 = *ptrReadB;
+			data32 |= (unsigned int)(data8 << 8);
+			ptrReadB++;
+			
+			data8 = *ptrReadB;
+			data32 |= (unsigned int)data8;
+			ptrReadB++;
+			
 			// Save
-			oData = OFFSET_GET_DATA (data);
-			gData = GAIN_GET_DATA (data);
+			oData = (data32>>16) & 0xffff;
+			gData = data32 & 0xff;
 
 			// オフセットデータがNULLでなければ新規データを設定
 			if (pImageOffset != NULL)
@@ -3924,7 +3937,18 @@ int ffcSetMemoryOffsetGain (int ffcNo, unsigned int memAdrs, unsigned short *pIm
 			if (pImageGain != NULL)
 				gData = (int)pImageGain[i];
 
-			*ptrL = (unsigned int)(OFFSET_SET_DATA(oData) | GAIN_SET_DATA(gData));
+			// Write
+			data32 = (oData & 0xffff) << 16;
+			data32 |= (gData & 0xffff);
+
+			*ptrWriteB = (unsigned char)(data32 >> 16);
+			ptrWriteB++;
+
+			*ptrWriteB = (unsigned char)(data32 >> 8);
+			ptrWriteB++;
+
+			*ptrWriteB = (unsigned char)data32;
+			ptrWriteB++;
 		}
 	}
 
@@ -3950,7 +3974,8 @@ int ffcSetMemoryOffsetGain (int ffcNo, unsigned int memAdrs, unsigned short *pIm
 int ffcSetMemoryOffsetGain (int ffcNo, unsigned int memAdrs, unsigned short *pImageOffset, int *pImageGain)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned int *ptrL;
+	unsigned char *ptrWriteB;
+	unsigned char *ptrReadB;
 	unsigned int oData;
 	int gData;
 	unsigned int data;
@@ -3959,6 +3984,8 @@ int ffcSetMemoryOffsetGain (int ffcNo, unsigned int memAdrs, unsigned short *pIm
 	unsigned short *pPtrOffset;
 	int *pPtrGain;
 	int xOffset;
+	unsigned char data8;
+	unsigned int data32;
 
 	for (ipu=0; ipu < IPU_COUNT; ipu++)
 	{
@@ -3970,7 +3997,8 @@ int ffcSetMemoryOffsetGain (int ffcNo, unsigned int memAdrs, unsigned short *pIm
 				xOffset = IMG_WIDTH_OFFSET;
 
 			// 外部メモリアドレス設定
-			ptrL = (unsigned int *)(memAdrs + (FFC_WIDTH_DATA_ALIGH * y) + (FFC_MEMORY_IPU_MULTI_INTERVAL * ipu) + (xOffset * 4));
+			ptrWriteB = (unsigned char *)(memAdrs + (FFC_WIDTH_DATA_ALIGH * y) + (FFC_MEMORY_IPU_MULTI_INTERVAL * ipu) + (xOffset * 4));
+			ptrReadB = ptrWriteB;
 
 			// オフセット格納アドレス
 			pPtrOffset = (unsigned short *)(pImageOffset + (y * IMG_WIDTH) + (ipu * (IMG_WIDTH/IPU_COUNT)));
@@ -3978,14 +4006,24 @@ int ffcSetMemoryOffsetGain (int ffcNo, unsigned int memAdrs, unsigned short *pIm
 			// ゲイン格納アドレス
 			pPtrGain = (int *)(pImageGain + (y * IMG_WIDTH) + ipu * (IMG_WIDTH/IPU_COUNT));
 
-			for (x=0; x<IMG_WIDTH_IPU_SIZE; x++, ptrL++, pPtrOffset++, pPtrGain++)
+			for (x=0; x<IMG_WIDTH_IPU_SIZE; x++, pPtrOffset++, pPtrGain++)
 			{
 				// Read
-				data = *ptrL;
+				data8 = *ptrReadB;
+				data32 = (unsigned int)(data8 << 16);
+				ptrReadB++;
 
+				data8 = *ptrReadB;
+				data32 |= (unsigned int)(data8 << 8);
+				ptrReadB++;
+				
+				data8 = *ptrReadB;
+				data32 |= (unsigned int)data8;
+				ptrReadB++;
+				
 				// Save
-				oData = OFFSET_GET_DATA (data);
-				gData = GAIN_GET_DATA (data);
+				oData = (data32>>16) & 0xffff;
+				gData = data32 & 0xff;
 
 				// オフセットデータがNULLでなければ新規データを設定
 				if (pImageOffset != NULL)
@@ -3995,7 +4033,18 @@ int ffcSetMemoryOffsetGain (int ffcNo, unsigned int memAdrs, unsigned short *pIm
  				if (pImageGain != NULL)
 					gData = (int)*pPtrGain;
 
-				*ptrL = (unsigned int)(OFFSET_SET_DATA(oData) | GAIN_SET_DATA(gData));
+				// Write
+				data32 = (oData & 0xffff) << 16;
+				data32 |= (gData & 0xffff);
+
+				*ptrWriteB = (unsigned char)(data32 >> 16);
+				ptrWriteB++;
+
+				*ptrWriteB = (unsigned char)(data32 >> 8);
+				ptrWriteB++;
+
+				*ptrWriteB = (unsigned char)data32;
+				ptrWriteB++;
 			}
 		}
 	}
@@ -4164,8 +4213,9 @@ int ffcGetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int x, y;
-	unsigned int *prtExtMem;
-	unsigned int *prtIntMem;
+	int p;
+	unsigned char *prtExtMem8;
+	unsigned char *prtIntMem8;
 #if defined (MODE_IPU_MULTI)
 	int ipu;
 #endif
@@ -4187,18 +4237,20 @@ int ffcGetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 	}
 
 	// 内部メモリアドレス設定
-	prtIntMem = (unsigned int *)intMemAdrs;
+	prtIntMem8 = (unsigned char *)intMemAdrs;
 
 #if !defined (MODE_IPU_MULTI)
 
 	for (y=0; y<IMG_HEIGHT; y++)
 	{
 		// 外部メモリアドレス設定
-		prtExtMem = (unsigned int *)(extMemAdrs + FFC_WIDTH_DATA_ALIGH * y);
+		prtExtMem8 = (unsigned char *)(extMemAdrs + FFC_WIDTH_DATA_ALIGH * y);
 
-		for (x=0; x<IMG_WIDTH; x++, prtExtMem++, prtIntMem++)
+		for (x=0; x<IMG_WIDTH; x++)
 		{
-			*prtIntMem = *prtExtMem;
+			// FFCデータが3画素
+			for (p=0; p<3; p++, prtExtMem8++, prtIntMem8++)
+				*prtIntMem8 = *prtExtMem8;
 		}
 	}
 
@@ -4209,11 +4261,13 @@ int ffcGetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 		for (y=0; y<IMG_HEIGHT; y++)
 		{
 			// 外部メモリアドレス設定
-			prtExtMem = (unsigned int *)(extMemAdrs + FFC_WIDTH_DATA_ALIGH * y + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu);
+			prtExtMem8 = (unsigned int *)(extMemAdrs + FFC_WIDTH_DATA_ALIGH * y + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu);
 
-			for (x=0; x<IMG_WIDTH_IPU_MULTI_HALF; x++, prtExtMem++, prtIntMem++)
+			for (x=0; x<IMG_WIDTH_IPU_MULTI_HALF; x++)
 			{
-				*prtIntMem = *prtExtMem;
+				// FFCデータが3画素
+				for (p=0; p<3; p++, prtExtMem8++, prtIntMem8++)
+					*prtIntMem8 = *prtExtMem8;
 			}
 		}
 	}
@@ -4242,8 +4296,9 @@ int ffcSetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int x, y;
-	unsigned int *prtExtMem;
-	unsigned int *prtIntMem;
+	unsigned char *prtExtMem8;
+	unsigned char *prtIntMem8;
+	int p;
 #if defined (MODE_IPU_MULTI)
 	int ipu;
 #endif
@@ -4265,18 +4320,20 @@ int ffcSetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 	}
 
 	// 内部メモリアドレス設定
-	prtIntMem = (unsigned int *)intMemAdrs;
+	prtIntMem8 = (unsigned char *)intMemAdrs;
 
 #if !defined (MODE_IPU_MULTI)
 
 	for (y=0; y<IMG_HEIGHT; y++)
 	{
 		// 外部メモリアドレス設定
-		prtExtMem = (unsigned int *)(extMemAdrs + FFC_WIDTH_DATA_ALIGH * y);
+		prtExtMem8 = (unsigned char *)(extMemAdrs + FFC_WIDTH_DATA_ALIGH * y);
 
-		for (x=0; x<IMG_WIDTH; x++, prtExtMem++, prtIntMem++)
+		for (x=0; x<IMG_WIDTH; x++)
 		{
-			*prtExtMem = *prtIntMem;
+			// FFCデータが3画素
+			for (p=0; p<3; p++, prtExtMem8++, prtIntMem8++)
+				*prtExtMem8 = *prtIntMem8;
 		}
 	}
 
@@ -4287,11 +4344,13 @@ int ffcSetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 		for (y=0; y<IMG_HEIGHT; y++)
 		{
 			// 外部メモリアドレス設定
-			prtExtMem = (unsigned int *)(extMemAdrs + FFC_WIDTH_DATA_ALIGH * y + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu);
+			prtExtMem8 = (unsigned char *)(extMemAdrs + FFC_WIDTH_DATA_ALIGH * y + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu);
 
-			for (x=0; x<IMG_WIDTH_IPU_MULTI_HALF; x++, prtExtMem++, prtIntMem++)
+			for (x=0; x<IMG_WIDTH_IPU_MULTI_HALF; x++)
 			{
-				*prtExtMem = *prtIntMem;
+				// FFCデータが3画素
+				for (p=0; p<3; p++, prtExtMem8++, prtIntMem8++)
+					*prtExtMem8 = *prtIntMem8;
 			}
 		}
 	}
@@ -4436,12 +4495,12 @@ int ffcToFlash (unsigned int flashAdrs, unsigned int memAdrs, int size)
 	// Write
 	//-----------------------------------------------------------
 	flashAdrs2 = flashAdrs;
-	size2 = IMG_WIDTH / IPU_COUNT * 4;
+	size2 = IMG_WIDTH / IPU_COUNT * 3;
 	for (ipu=0; ipu < IPU_COUNT; ipu++)
 	{
 		memAdrs2 = memAdrs + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu;
 		if (ipu != 0)
-			memAdrs2 += (IMG_WIDTH_OFFSET * 4);
+			memAdrs2 += (IMG_WIDTH_OFFSET * 3);
 
 		for (y=0; y<IMG_HEIGHT; y++)
 		{
@@ -4578,14 +4637,14 @@ int ffcToMemory (unsigned int flashAdrs, unsigned int memAdrs, int size)
 	unsigned long memAdrs2;
 
 	flashAdrs2 = flashAdrs;
-	size2 = IMG_WIDTH / IPU_COUNT * 4;
+	size2 = IMG_WIDTH / IPU_COUNT * 3;
 
 	for (ipu=0; ipu < IPU_COUNT; ipu++)
 	{
 		memAdrs2 = memAdrs + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu;
 
 		if (ipu != 0)
-			memAdrs2 += (IMG_WIDTH_OFFSET * 4);
+			memAdrs2 += (IMG_WIDTH_OFFSET * 3);
 
 		for (y=0; y<IMG_HEIGHT; y++)
 		{
@@ -4627,7 +4686,7 @@ _DONE:
 
 
 //**********************************************************************************
-// FFCオフセット/ゲインデータをメモリに書き込む(Ver.1.5)
+// FFCオフセット/ゲインデータをメモリに書き込む
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		flashAdrs			：FFC Flashアドレス
@@ -4641,7 +4700,7 @@ int ffcToMemoryAdmin (unsigned int flashAdrs, unsigned int memAdrs, int size)
 {
 	int status;
 
-	status = ffcToMemoryAdmin (flashAdrs, memAdrs, size);
+	status = ffcToMemory (flashAdrs, memAdrs, size);
 
 	return (status);
 }
@@ -6709,7 +6768,7 @@ int ffcSetMarginGridData (void)
 	int ffcNum = 0;
 	unsigned int memAdrs;
 	unsigned int srcAdrs, desAdrs;
-	unsigned int data32;
+	unsigned int data8[3];
 
 	// メモリアドレス取得
 	if ((status = ffcGetMemAdrs (ffcNum, FFC_MEMORY_EXT, (unsigned int *)&memAdrs)) != AVAL_STATUS_SUCCESS)
@@ -6724,19 +6783,19 @@ int ffcSetMarginGridData (void)
 				// ipu1の最初の16画素
 				srcAdrs =  memAdrs;
 				srcAdrs += (y * FFC_WIDTH_DATA_ALIGH);
-				srcAdrs += (IMG_WIDTH_OFFSET * 4);
+				srcAdrs += (IMG_WIDTH_OFFSET * 3);
 				srcAdrs += (FFC_MEMORY_IPU_MULTI_INTERVAL * (ipu + 1));
 
 				// ipu0の最後の16画素
 				desAdrs =  memAdrs;
-				desAdrs += ((y * FFC_WIDTH_DATA_ALIGH) + (IMG_WIDTH_IPU_SIZE * 4));
+				desAdrs += ((y * FFC_WIDTH_DATA_ALIGH) + (IMG_WIDTH_IPU_SIZE * 3));
 			}
 			else
 			{
 				// ipu0の最後の16画素
 				srcAdrs =  memAdrs;
-				srcAdrs += ((y * FFC_WIDTH_DATA_ALIGH) + (IMG_WIDTH_IPU_SIZE * 4));
-				srcAdrs -= (IMG_WIDTH_OFFSET * 4);
+				srcAdrs += ((y * FFC_WIDTH_DATA_ALIGH) + (IMG_WIDTH_IPU_SIZE * 3));
+				srcAdrs -= (IMG_WIDTH_OFFSET * 3);
 
 				// ipu1の最初の画素
 				desAdrs =  memAdrs;
@@ -6746,11 +6805,21 @@ int ffcSetMarginGridData (void)
 
 			for (x = 0; x < IMG_WIDTH_OFFSET; x++)
 			{
-				data32 = IN32 (srcAdrs);
-				OUT32 (desAdrs, data32);
+				data8[0] = IN8 (srcAdrs);
+				srcAdrs++;
+				data8[1] = IN8 (srcAdrs);
+				srcAdrs++;
+				data8[2] = IN8 (srcAdrs);
+				srcAdrs++;
 
-				srcAdrs+=4;
-				desAdrs+=4;
+				OUT8 (desAdrs, data8[0]);
+				desAdrs++;
+
+				OUT8 (desAdrs, data8[1]);
+				desAdrs++;
+
+				OUT8 (desAdrs, data8[2]);
+				desAdrs++;
 			}
 		}
 	}

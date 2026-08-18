@@ -355,7 +355,7 @@ int bootVersion (char *pVer)
 	}
 
 	// Copy Version
-	strcpy (pVer, (char *)FIRM_DATA_BOOT_VERSION);
+	strncpy (pVer, (char *)FIRM_DATA_BOOT_VERSION, 4);
 
 _DONE:
 	return (status);

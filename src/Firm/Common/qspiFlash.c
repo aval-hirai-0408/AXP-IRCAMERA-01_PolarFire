@@ -69,7 +69,14 @@ int qspiFlashInitialize (void)
 	qspiFlashGetFlashId (&manufacturer_id, &device_id);
 	
 	// Check Read ID
-	if ((manufacturer_id == QSPI_FLASH_READ_ID_MANUFACTURE_N25Q) && (device_id == QSPI_FLASH_READ_ID_DEVICE_N25Q))
+	if ((manufacturer_id == QSPI_FLASH_READ_ID_MANUFACTURE_ISSI) && (device_id == QSPI_FLASH_READ_ID_DEVICE_ISSI))
+	{
+		gQspiFlashSelect = QSPI_FLASH_SELECT_ISSI;
+		
+		if ((gQspiFlashStatus = qspiFlashInitialize_ISSI ()) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+	}
+	else if ((manufacturer_id == QSPI_FLASH_READ_ID_MANUFACTURE_N25Q) && (device_id == QSPI_FLASH_READ_ID_DEVICE_N25Q))
 	{
 		gQspiFlashSelect = QSPI_FLASH_SELECT_N25Q;
 		
@@ -97,7 +104,11 @@ int qspiFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned int size
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
+	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
+	{
+		status = qspiFlashWrite_ISSI (adrs, pBuffer, size);
+	}
+	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
 	{
 		status = qspiFlashWrite_N25Q (adrs, pBuffer, size);
 	}
@@ -128,7 +139,11 @@ int qspiFlashRead (unsigned int adrs, unsigned char *pBuffer, unsigned int size)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
+	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
+	{
+		status = qspiFlashRead_ISSI (adrs, pBuffer, size);
+	}
+	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
 	{
 		status = qspiFlashRead_N25Q (adrs, pBuffer, size);
 	}
@@ -157,7 +172,11 @@ int qspiFlashSectorErase (unsigned int adrs)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
+	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
+	{
+		status = qspiFlashSectorErase_ISSI (adrs);
+	}
+	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
 	{
 		status = qspiFlashSectorErase_N25Q (adrs);
 	}
@@ -186,7 +205,11 @@ int qspiFlashEraseAll (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
+	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
+	{
+		status = qspiFlashEraseAll_ISSI ();
+	}
+	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
 	{
 		status = qspiFlashEraseAll_N25Q ();
 	}
@@ -215,7 +238,11 @@ int qspiFlashWriteProtect (unsigned int address)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
+	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
+	{
+		status = qspiFlashWriteProtect_ISSI (address);
+	}
+	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
 	{
 		status = qspiFlashWriteProtect_N25Q (address);
 	}
@@ -244,7 +271,11 @@ int qspiFlashWriteProtectRead (int *pStatus)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
+	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
+	{
+		status = qspiFlashWriteProtectRead_ISSI (pStatus);
+	}
+	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
 	{
 		status = qspiFlashWriteProtectRead_N25Q (pStatus);
 	}
@@ -273,7 +304,11 @@ int qspiFlashWriteProtectReadShow (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
+	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
+	{
+		status = qspiFlashWriteProtectReadShow_ISSI ();
+	}
+	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
 	{
 		status = qspiFlashWriteProtectReadShow_N25Q ();
 	}

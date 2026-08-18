@@ -397,15 +397,20 @@ typedef unsigned char   u8;
 
 // Flash Select
 #define QSPI_FLASH_SELECT_N25Q				(1)		// Micron
-#define QSPI_FLASH_SELECT_S25FL				(2)		// Cypress
-#define QSPI_FLASH_SELECT_MT25Q				(3)		// Micron
-#define QSPI_FLASH_SELECT_W25Q				(4)		// Winbond
+#define QSPI_FLASH_SELECT_ISSI				(2)		// ISSI
+#define QSPI_FLASH_SELECT_W25Q				(3)		// Winbond
 
 // READ ID
+
+// Micron
 #define QSPI_FLASH_READ_ID_MANUFACTURE_N25Q	(0x20)
 #define QSPI_FLASH_READ_ID_DEVICE_N25Q		(0xBA)
 #define QSPI_FLASH_READ_ID_SIZE_N25Q		(0x19)
 #define QSPI_FLASH_READ_ID_SIZE_N25Q_512M	(0x20)
+
+// ISSI
+#define QSPI_FLASH_READ_ID_MANUFACTURE_ISSI	(0x9D)
+#define QSPI_FLASH_READ_ID_DEVICE_ISSI		(0x60)
 
 // Qspi Flash Device Select
 #define QSPI_FLASH_DEVICE_SELECT_BOOT		(0)
@@ -698,7 +703,7 @@ typedef unsigned char   u8;
 #define FIRM_DATA_PELTIER_POWER_HIGH_CLIP			(FIRM_DATA_ADRS+0x6a0)
 #define FIRM_DATA_PELTIER_POWER_START_FLAG			(FIRM_DATA_ADRS+0x6a4)
 #define FIRM_DATA_CMD_EXE_FLAG						(FIRM_DATA_ADRS+0x6a8)
-
+#define FIRM_DATA_TEST_PATTERN						(FIRM_DATA_ADRS+0x6aC)
 #define FIRM_DATA_PHY_FIRM_VERSION					(FIRM_DATA_ADRS+0x6b0)	// 16byte
 #define FIRM_DATA_PHY_API_VERSION					(FIRM_DATA_ADRS+0x6c0)	// 8byte
 #define FIRM_DATA_BOOT_VERSION						(FIRM_DATA_ADRS+0x6c8)	// 8byte
@@ -1463,6 +1468,7 @@ int irGetBitWidth (int *pBit);
 int cameraGetBitWidthGigE (int *pBit);
 int aoiSetPad (int x, int y);
 int aoiGetPad (int *pX, int *pY);
+int aoiSetPatternMain (int index);
 int aoiSetPattern (int index);
 int aoiGetPattern (int *pIndex);
 int aoiSetTpInc (int horizon, int virtical);
@@ -2516,6 +2522,25 @@ int qspiFlashWriteProtectRead_N25Q (int *pStatus);
 int qspiFlashWriteProtectReadShow_N25Q (void);
 int qspiFlashSetBank_N25Q (unsigned int bankNum);
 int qspiFlashGetBank_N25Q (unsigned int *pBankNum);
+
+// qspiFlash_ISSI.c
+int qspiFlashInitialize_ISSI (void);
+int qspiFlashWrite_ISSI (unsigned int adrs, unsigned char *pBuffer, unsigned int size);
+int qspiFlashRead_ISSI (unsigned int adrs, unsigned char *pBuffer, unsigned int size);
+int qspiFlashSectorErase_ISSI (unsigned int adrs);
+int qspiFlashEraseAll_ISSI (void);
+int qspiFlashStatusCheck_ISSI (unsigned int timeout);
+int qspiFlashWaitReadyEraseCheck_ISSI (unsigned int timeout);
+int qspiFlashWriteProtectMake_ISSI (int top, int data, int *pMakeData);
+int qspiFlashWriteProtect_ISSI (unsigned int address);
+int qspiFlashWriteEnableCmd_ISSI (void);
+int qspiFlashWriteDisableCmd_ISSI (void);
+int qspiFlashExAddresseCmd_ISSI (unsigned int adrs);
+int qspiFlash3ByteAddresseCmd_ISSI (void);
+int qspiFlashWriteProtectRead_ISSI (int *pStatus);
+int qspiFlashWriteProtectReadShow_ISSI (void);
+int qspiFlashSetBank_ISSI (unsigned int bankNum);
+int qspiFlashGetBank_ISSI (unsigned int *pBankNum);
 
 // regMap.c
 int fpgaRegMap (void);

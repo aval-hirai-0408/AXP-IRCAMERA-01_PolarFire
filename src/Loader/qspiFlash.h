@@ -51,6 +51,13 @@ int qspiFlashWriteDisableCmd_N25Q (void);
 int qspiFlashExAddresseCmd_N25Q (unsigned int adrs);
 int qspiFlash3ByteAddresseCmd_N25Q (void);
 
+int qspiFlashInitialize_ISSI (void);
+int qspiFlashRead_ISSI (unsigned int adrs, unsigned char *pBuffer, unsigned int size);
+int qspiFlashStatusCheck_ISSI (unsigned int timeout);
+int qspiFlashWriteEnableCmd_ISSI (void);
+int qspiFlashWriteDisableCmd_ISSI (void);
+int qspiFlashExAddresseCmd_ISSI (unsigned int adrs);
+
 #endif // __QSPI_FLASH_H__
 
 // eof

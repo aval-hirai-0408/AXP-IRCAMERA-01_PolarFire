@@ -1162,7 +1162,7 @@ int cmdAoiTpMode (void *str)
 		}
 
 		// Test Pattern設定
-		if ((status = aoiSetPattern (mode)) != AVAL_STATUS_SUCCESS)
+		if ((status = aoiSetPatternMain (mode)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
 	else

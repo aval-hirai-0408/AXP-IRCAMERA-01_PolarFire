@@ -9659,6 +9659,9 @@ int sensorTpSetMode (int mode)
 	int regHold, acTmg;
 	unsigned char id;
 	unsigned char data8;
+	unsigned short black;
+	unsigned int gcMode;
+	int bit;
 	int startMode = 0;
 
 	// Check mode Parameter
@@ -9752,6 +9755,48 @@ int sensorTpSetMode (int mode)
 			goto _DONE;
 		#endif //#if defined (MODE_SENSOR_IMX992) || defined (MODE_SENSOR_IMX993)
 	}
+
+	if (mode == 0)
+	{
+		if ((status = aoiGetBitWidth (&bit)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+		
+		if (bit == 8)
+			black = SENSOR_REG_BLACKLEVEL_8BIT;
+		else if (bit == 10)
+			black = SENSOR_REG_BLACKLEVEL_10BIT;
+		else
+			black = SENSOR_REG_BLACKLEVEL_12BIT;
+		
+		#if defined (MODE_SENSOR_GRADATION_COMPRESS)
+		gcMode = sensorGradationCompGetModeDDR2();
+		// Gradation Compress Mode有効?
+		if (gcMode == MODE_ENABLE)
+			bit = GC_CAMERA_BIT;
+		#endif
+	}
+	else
+	{
+		black = 0;
+	}
+	
+	// Sensor Black1
+	id = 0x07;
+	data8 = (unsigned char)(black & SENSOR_REG_BLACKLEVEL1_MASK);
+	if ((status = sensorRegWriteByte (id, SENSOR_REG_BLACKLEVEL1_ADRS, data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// Sensor Black2
+	id = 0x07;
+	data8 = (unsigned char)((black >> 8) & SENSOR_REG_BLACKLEVEL2_MASK);
+	if ((status = sensorRegWriteByte (id, SENSOR_REG_BLACKLEVEL2_ADRS, data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// PGHGSTEP
+	id = 0x07;
+	data8 = 4;	// 4step
+	if ((status = sensorRegWriteByte (id, SENSOR_REG_PG_ADRS, data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
 	// StandByモード解除
 	if ((status = sensorStandByCancel ()) != AVAL_STATUS_SUCCESS)
