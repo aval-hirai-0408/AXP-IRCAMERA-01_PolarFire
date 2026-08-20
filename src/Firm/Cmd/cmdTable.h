@@ -632,8 +632,8 @@ CMD_TBL mainCmdTbl [] =
 // CXP Command
 //============================================================================================================================================
 #if defined (MODE_CXP)
-	{ (char *)"cxpfiforead", 		 		(CMDFUNC)cmdCxpFifoRead,				(CMDFUNC)cmdCxpFifoReadHelp, 					OPT_NONE},
-	{ (char *)"cxpfifowrite", 		 		(CMDFUNC)cmdCxpFifoWrite,				(CMDFUNC)cmdCxpFifoWriteHelp, 					OPT_NONE},
+	//{ (char *)"cxpfiforead", 		 		(CMDFUNC)cmdCxpFifoRead,				(CMDFUNC)cmdCxpFifoReadHelp, 					OPT_NONE},
+	//{ (char *)"cxpfifowrite", 		 		(CMDFUNC)cmdCxpFifoWrite,				(CMDFUNC)cmdCxpFifoWriteHelp, 					OPT_NONE},
 
 	{ (char *)"cxpsendadrs", 		 		(CMDFUNC)cmdCxpSendAdrs,				(CMDFUNC)cmdCxpSendAdrsHelp, 					OPT_NONE},
 	{ (char *)"cxprecvadrs", 		 		(CMDFUNC)cmdCxpRecvAdrs,				(CMDFUNC)cmdCxpRecvAdrsHelp, 					OPT_NONE},

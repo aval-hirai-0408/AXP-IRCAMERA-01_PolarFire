@@ -53,8 +53,18 @@ int cameraLogMsg (int level, const char *fileName, const char *funcName, unsigne
 	if ((status = getDipsw (&dipsw)) != AVAL_STATUS_SUCCESS)
 		dipsw = 0;
 
+    // Error Device
+    devCode = (short)(errorNumber>>16);
+
+    // Error Code
+    errCode = (short)(errorNumber&0xffff);
+
+//@@@@@@@@@
+	dipsw = 0;
+//@@@@@@@@@
 	// Checl Error Level & dipsw mode
-	if ((level != MSG_LEVEL_ERROR) && (dipsw != 0x3))
+	//if ((level != MSG_LEVEL_ERROR) && (dipsw != 0x3))
+	if (dipsw != 0x3)
 		goto _NEXT;
 	
 	// count
@@ -142,12 +152,10 @@ int cameraLogMsg (int level, const char *fileName, const char *funcName, unsigne
 	uartSend (UART_PORT0, (unsigned char *)&data8, 1);
 
 	// Device Error
-	devCode = (short)(errorNumber>>16);
 	//DEBUG_PRINT_FORCE ("%04x", (unsigned short)devCode);
 	uartSend (UART_PORT0, (unsigned char *)&devCode, 2);
 	
 	// Error
-	errCode = (short)(errorNumber&0xffff);
 	//DEBUG_PRINT_FORCE ("%04x", (unsigned short)errCode);
 	uartSend (UART_PORT0, (unsigned char *)&errCode, 2);
 
@@ -168,14 +176,14 @@ int cameraLogMsg (int level, const char *fileName, const char *funcName, unsigne
 	DEBUG_PRINT_FORCE ("%-192.192s", msg);
 
 _NEXT:
-	if (level == MSG_LEVEL_ERROR)
+	//@@@2if (level == MSG_LEVEL_ERROR)
 	{
 		if ((status = consoleGetMode (&consoleMode)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		if (consoleMode == 1)
 		{
-			DEBUG_PRINT_FORCE("%010d : Level=%d : Dev=%d : Err=%d : Line=%d : %s : %s", counter, level, devCode, errCode, fileLine, funcName, msg);
+			DEBUG_PRINT_FORCE("Level=%d : Dev=%d : Err=%d : Line=%d : %s : %s", level, devCode, errCode, fileLine, funcName, msg);
 		}
 	}
 	

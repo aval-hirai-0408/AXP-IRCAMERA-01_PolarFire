@@ -18,7 +18,7 @@
 //----------------------------------------------------------------------------------
 
 // Version
-#define FIRM_VERSION				"0.5"
+#define FIRM_VERSION				"0.1"
 
 // DDR
 #define DDR_BASE_ADDRESS			(0x80010000)

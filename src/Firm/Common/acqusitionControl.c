@@ -312,6 +312,9 @@ int acquisitionAbort (void)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int state1, state2;
 	unsigned int i;
+//@@@2
+	goto _DONE;
+//@@@2
 
 	// 取り込み中断
 	OUT32 (GENICAM_ACQUISITION_ABORT_ADRS, GENICAM_ACQUISITION_ABORT_BIT);

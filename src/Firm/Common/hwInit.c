@@ -179,13 +179,12 @@ int hwInitialize (int cpuType)
 	if ((status = qspiFlashInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
 
-#if 0	//@@@1
 	//------------------------------------------------------------
 	// Camera Parameter Initialize
 	//------------------------------------------------------------
 	if ((status = cameraParamInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
-#endif //@@@1
+
 	//------------------------------------------------------------
 	// UART Initialize
 	//------------------------------------------------------------

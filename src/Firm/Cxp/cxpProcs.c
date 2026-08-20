@@ -455,7 +455,9 @@ _DONE:
 int cxpRegWrite (int port, unsigned long adrs, unsigned int data, unsigned int size)
 {
 	int status = AVAL_STATUS_SUCCESS;
-
+//@@@2
+	goto _DONE;
+//@@@2
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
 	{
@@ -497,6 +499,9 @@ _DONE:
 int cxpRegRead (int port, unsigned long adrs, unsigned int *pData, unsigned int size)
 {
 	int status = AVAL_STATUS_SUCCESS;
+//@@@2
+	goto _DONE;
+//@@@2
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -626,21 +631,6 @@ int cxpProcs (int port)
 	}
 	#endif
 
-#if 0
-	// Connection Test Packet?
-	if (cxpPaket.cmdIndication == CXP_DATA_PACKET_TYPE_TEST)
-	{
-		// 終端パケット取得
-		if ((status = cxpGetCmdPacket (&data)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		// テストパケット受信数
-		TestPacketCountRx_st++;
-
-		goto _DONE;
-	}
-#endif
-
 	// それ以外のindication
 #if defined (MODE_CXP_VERSION_20)
 	if (VersionUsed_st == CXP_VERSION_20)
@@ -716,7 +706,6 @@ _NEXT_NOTAG:
 	cxpPaket.size = data & CXP_CTRL_SIZE_MASK;
 	cxpPaket.cmd = (data & CXP_CTRL_CMD_MASK) >> CXP_CTRL_CMD_SHIFT;
 
-
 	//------------------------------------------------------------
 	// アドレス取得
 	//------------------------------------------------------------
@@ -791,7 +780,6 @@ _NEXT_NOTAG:
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "End Code No Data\n");
 		goto _DONE;
 	}
-
 
 	//------------------------------------------------------------
 	// CRC計算
@@ -2752,7 +2740,7 @@ int cxpGetCmdPacket (int port, unsigned int *pData)
 	int status = AVAL_STATUS_SUCCESS;
 	int i;
 	int kCode;
-	unsigned char *ptr8 = (unsigned char *)pData;
+	//unsigned char *ptr8 = (unsigned char *)pData;
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -2766,10 +2754,10 @@ int cxpGetCmdPacket (int port, unsigned int *pData)
 	//------------------------------------------------------------
 	// FIFO Read
 	//------------------------------------------------------------
-	ptr8 += 3;
-	for (i=0; i<4; i++, ptr8--)
+	//ptr8 += 3;
+	//for (i=0; i<4; i++, ptr8--)
 	{
-		if ((status = cxpReadFifo (port, ptr8, &kCode)) != AVAL_STATUS_SUCCESS)
+		if ((status = cxpReadFifo (port, pData, &kCode)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
 
@@ -2797,7 +2785,6 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned int crc_value;
 	unsigned int count = 0;
 	unsigned char cxpSendCount = 0;
-	int cmdMode;
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -2853,15 +2840,10 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	//------------------------------------------------------------
 	//返信時にはpCxpSt->pDataの領域をCRC計算用として使用
 
-#if defined (MODE_BOARD_ACB531CXP)
-	// ACB-531の場合、送信方法はパラレルではなくI2Cモード(関数内部では普通のレジスタアクセス)
-	cmdMode = CXP_REG_CMD_MODE_I2C;
-#endif
-
 	//------------------------------------------------------------
 	// 開始 K Code設定
 	//------------------------------------------------------------
-	if ((status = cxpWriteFifo32 (port, cmdMode, CXP_K_CODE_K27_7, CXP_K_CODE_K27_7)) != AVAL_STATUS_SUCCESS)
+	if ((status = cxpWriteFifo32 (port, CXP_K_CODE_K27_7, CXP_K_CODE_K27_7)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 	//*ptrL = CXP_K_CODE_K27_7;			// CRC計算用
 	//ptrL++;
@@ -2871,7 +2853,7 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	//------------------------------------------------------------
 	// Command Indication設定
 	//------------------------------------------------------------
-	if ((status = cxpWriteFifo32 (port, cmdMode, pCxpSt->sendcmdIndication, 0)) != AVAL_STATUS_SUCCESS)
+	if ((status = cxpWriteFifo32 (port, pCxpSt->sendcmdIndication, 0)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	//ptrL++;
@@ -2885,7 +2867,7 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	{
 		if (pCxpSt->sendcmdIndication == CXP_DATA_PACKET_TYPE_ACK_TAG)
 		{
-			if ((status = cxpWriteFifo32 (port, cmdMode, pCxpSt->tag, 0)) != AVAL_STATUS_SUCCESS)
+			if ((status = cxpWriteFifo32 (port, pCxpSt->tag, 0)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
 			
 			*ptrL = pCxpSt->tag;				// CRC計算用 // 2025.06.19追加
@@ -2951,7 +2933,7 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	}
 
 	// Write
-	if ((status = cxpWriteFifo32 (port, cmdMode, ackCode, 0)) != AVAL_STATUS_SUCCESS)
+	if ((status = cxpWriteFifo32 (port, ackCode, 0)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	*ptrL = ackCode;						// CRC計算用
@@ -2964,7 +2946,7 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 		//------------------------------------------------------------
 		// size
 		//------------------------------------------------------------
-		if ((status = cxpWriteFifo32 (port, cmdMode, pCxpSt->ackSize, 0)) != AVAL_STATUS_SUCCESS)
+		if ((status = cxpWriteFifo32 (port, pCxpSt->ackSize, 0)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		*ptrL = pCxpSt->ackSize;				// CRC計算用
@@ -2987,14 +2969,14 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 
 		for (i=0; i<(pCxpSt->ackSize/4); i++, ptrL2++, count++, cxpSendCount++)
 		{
-			if ((status = cxpWriteFifo32 (port, cmdMode, *ptrL2, 0)) != AVAL_STATUS_SUCCESS)
+			if ((status = cxpWriteFifo32 (port, *ptrL2, 0)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
 		}
 
 		// Ver.2.7 Start
 		if ((pCxpSt->ackSize%4) != 0)
 		{
-			if ((status = cxpWriteFifo32 (port, cmdMode, *ptrL2, 0)) != AVAL_STATUS_SUCCESS)
+			if ((status = cxpWriteFifo32 (port, *ptrL2, 0)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
 			
 			count++;
@@ -3008,7 +2990,7 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	   	cxpCalculateCrc32 (&crc_value, (unsigned int *)(FIRM_CXP_SEND_DATA_CMD_ADRS + port * FIRM_CXP_DATA_INTERVAL), count);
 
 		dataSwap = SWAP_L (crc_value);
-		if ((status = cxpWriteFifo32 (port, cmdMode, dataSwap, 0)) != AVAL_STATUS_SUCCESS)
+		if ((status = cxpWriteFifo32 (port, dataSwap, 0)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		cxpSendCount++;						// CXPレジスタ設定用
@@ -3018,7 +3000,7 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	//------------------------------------------------------------
 	// 終了 K Code設定
 	//------------------------------------------------------------
-	if ((status = cxpWriteFifo32 (port, cmdMode, CXP_K_CODE_K29_7, CXP_K_CODE_K29_7)) != AVAL_STATUS_SUCCESS)
+	if ((status = cxpWriteFifo32 (port, CXP_K_CODE_K29_7, CXP_K_CODE_K29_7)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	cxpSendCount++;						// CXPレジスタ設定用
@@ -3156,7 +3138,7 @@ int cxpSendTestPacketAckCmd (unsigned int size)
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int cxpReadFifo (int port, unsigned char *pData, int *pKcode)
+int cxpReadFifo (int port, unsigned int *pData, int *pKcode)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int data32;
@@ -3214,6 +3196,14 @@ int cxpReadFifo (int port, unsigned char *pData, int *pKcode)
 		goto _DONE;
 	}
 
+	// データ取得
+	data32 = IN32 (FPGA_CXP_LSUC_SW_RX_PKT_DATA);
+	*pData = data32;
+	
+	// 受信データをバッファに格納
+	cxpRecvBuffer (port, (unsigned char)*pData);
+
+#if 0
 	// FIFO Read
 	data32 = IN32 ((FPGA_CXP_RX_CMD_FIFO_DATA_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
 
@@ -3222,6 +3212,7 @@ int cxpReadFifo (int port, unsigned char *pData, int *pKcode)
 
 	// 受信データをバッファに格納
 	cxpRecvBuffer (port, (unsigned char)*pData);
+
 
 	// K Code取得
 	if (data32 & FPGA_CXP_RX_CMD_FIFO_K_MASK)
@@ -3243,7 +3234,7 @@ int cxpReadFifo (int port, unsigned char *pData, int *pKcode)
 	// FIFO Count Read Ack
 	if (data32 == 0)
 		OUT32 ((FPGA_CXP_RX_CMD_FIFO_SIZE_CTRL_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port), FPGA_CXP_RX_CMD_FIFO_SIZE_READ_ACK);
-
+#endif
 _DONE:
 	return (status);
 }
@@ -3281,6 +3272,7 @@ int cxpGetFifoSizeCount (int port, unsigned int *pCount)
 		goto _DONE;
 	}
 
+#if 0
 	// 受信カウント数(メモリから取得)
 	data = IN32 ((FIRM_DATA_CXP_DATA_COUNT_MULTI_ADRS + port * 4));
 	
@@ -3338,7 +3330,17 @@ int cxpGetFifoSizeCount (int port, unsigned int *pCount)
 			*pCount = 0;
 		}
 	}
+#endif
 
+	// Fead Fifo Status
+	if ((status = cxpGetReadFifoStatus (port, &data)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+	
+	if (data & FPGA_CXP_LSUC_RX_SW_PKT_VAL_BIT)
+		*pCount = 1;
+	else
+		*pCount = 0;
+	
 _DONE:
 	return (status);
 }
@@ -3347,19 +3349,19 @@ _DONE:
 int gCxpWriteFifoLocalCount = 0;
 unsigned int gCxpWriteFifoDataSave = 0;
 unsigned int gCxpWriteFifoMarkSave = 0;
+#if 0
 //**********************************************************************************
 //	CXP Write FIFO
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		port				：ポート番号
-//		mode				：コマンドモード
 //		data				：送信データ(4byte)
 //		mark				：マークデータ(開始の場合：CXP_K_CODE_K27_7/終了の場合：CXP_K_CODE_K29_7/それ以外=0) 	// 2025.06.20
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int cxpWriteFifo32 (int port, int mode, unsigned int data, unsigned int mark)
+int cxpWriteFifo32 (int port, unsigned int data, unsigned int mark)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int ctrl;
@@ -3453,8 +3455,68 @@ _DONE:
 
 	return (status);
 }
+#endif
+//**********************************************************************************
+//	CXP Write FIFO
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		port				：ポート番号
+//		data				：送信データ(4byte)
+//		mark				：マークデータ(開始の場合：CXP_K_CODE_K27_7/終了の場合：CXP_K_CODE_K29_7/それ以外=0) 	// 2025.06.20
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int cxpWriteFifo32 (int port, unsigned int data, unsigned int mark)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	unsigned int ctrl;
+	unsigned int swapData;
+	unsigned int ix;
+	unsigned int data32;
 
+	// Check port Parameter
+	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "CXP Write32 FIFO port(%d) Parameter Error.(Min:%d / Max:%d)\n", port, CXP_PORT_MIN, CXP_PORT_MAX);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
 
+	//--------------------------------------------------------------------------------
+	// Check Tx Ready
+	//--------------------------------------------------------------------------------
+	for (ix = 0; ix <CXP_TX_READY_TIMEOUT; ix++)
+	{
+		data32 = IN32(FPGA_CXP_LSUC_RX_SW_PKT_STATUS);
+
+		if ((data32&FPGA_CXP_HSDC_TX_READY_BIT) != 0)
+			break;
+
+		usDelay (2);
+	}
+
+	if (ix >= CXP_TX_READY_TIMEOUT)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_TIMEOUT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP TX Ready Tiemout Error\n");
+		goto _DONE;
+	}
+
+	// FIFO Data Write
+	OUT32 ((FPGA_CXP_LSUC_SW_TX_PKT_DATA), data);
+
+_DONE:
+
+	// 送信データをバッファに格納
+	swapData = SWAP_L(data);
+	cxpSendBuffer (port, swapData);
+
+	return (status);
+}
+
+#if 0
 //**********************************************************************************
 //	CCXPxp Read FIFO to DDR
 //----------------------------------------------------------------------------------
@@ -3491,6 +3553,7 @@ int cxpFifoToDdr (int port, unsigned int adrs, unsigned int size)
 _DONE:
 	return (status);
 }
+#endif
 
 
 //**********************************************************************************
@@ -3801,7 +3864,8 @@ _DONE:
 int cxpSetPixelFormat (int port, int bit)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned char data8;
+	unsigned int data32;
+	unsigned int bitData32;
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -3814,20 +3878,27 @@ int cxpSetPixelFormat (int port, int bit)
 
 	if (bit == 12)
 	{
-		data8 = CXP_REG_PIXEL_MONO12;
+		bitData32 = CXP_REG_PIXEL_MONO12;
 	}
 	else if (bit == 10)
 	{
-		data8 = CXP_REG_PIXEL_MONO10;
+		bitData32 = CXP_REG_PIXEL_MONO10;
 	}
 	else
 	{
-		data8 = CXP_REG_PIXEL_MONO8;
+		bitData32 = CXP_REG_PIXEL_MONO8;
 	}
 
 	// Pixel Format設定
+#if 0
 	if ((status = cxpRegWrite (port, CXP_REG_PIXEL_L_ADRS, data8, 1)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+#else
+	data32 = IN32 (FPGA_CXP_S0_TAPG_PIXEL);
+	data32 &= ~0xffff;
+	data32 |= (bitData32 & 0xffff);
+	OUT32 (FPGA_CXP_S0_TAPG_PIXEL, data32);
+#endif
 
 _DONE:
 	return (status);
@@ -3885,8 +3956,12 @@ int cxpSetDSizeL (int port, int wSize)
 	data32 = wSize * bit / 32;
 
 	// D Size L設定
+#if 0
 	if ((status = cxpRegWrite (port, CXP_REG_DSIZEL_ADRS, data32, 4)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+#else
+	OUT32 (FPGA_CXP_S0_DSIZE, data32);
+#endif
 
 _DONE:
 	return (status);
@@ -3952,6 +4027,7 @@ int cxpSetWidth (int port, int size)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int wMin, wMax;
+	unsigned int data32;
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -3979,8 +4055,15 @@ int cxpSetWidth (int port, int size)
 		goto _DONE;
 	}
 
+#if 0
 	if ((status = cxpRegWrite (port, CXP_REG_XSIZE_ADRS, size, 4)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+#else
+	data32 = IN32 (FPGA_CXP_S0_XSIZE_OFFSET);
+	data32 &= ~0xffff;
+	data32 |= (size & 0xffff);
+	OUT32 (FPGA_CXP_S0_XSIZE_OFFSET, data32);
+#endif
 
 	// Data Size設定
 	if ((status = cxpSetDSizeL (port, size)) !=  AVAL_STATUS_SUCCESS)
@@ -4005,6 +4088,7 @@ int cxpSetOffsetX (int port, int offset)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int wMin, wMax;
+	unsigned int data32;
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -4030,9 +4114,16 @@ int cxpSetOffsetX (int port, int offset)
 		goto _DONE;
 	}
 
+#if 0
 	// OffsetX設定
 	if ((status = cxpRegWrite (port, CXP_REG_XOFFSET_ADRS, offset, 4)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+#else
+	data32 = IN32 (FPGA_CXP_S0_XSIZE_OFFSET);
+	data32 &= ~(0xffff0000);
+	data32 |= ((offset & 0xffff)<<16);
+	OUT32 (FPGA_CXP_S0_XSIZE_OFFSET, data32);
+#endif
 
 _DONE:
 	return (status);
@@ -4053,6 +4144,7 @@ int cxpSetHeight (int port, int size)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int hMin, hMax;
+	unsigned int data32;
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -4079,9 +4171,16 @@ int cxpSetHeight (int port, int size)
 	}
 
 	// Height設定
+#if 0
 	if ((status = cxpRegWrite (port, CXP_REG_YSIZE_ADRS, size, 4)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
+#else
+	data32 = IN32 (FPGA_CXP_S0_YSIZE_OFFSET);
+	data32 &= ~0xffff;
+	data32 |= (size & 0xffff);
+	OUT32 (FPGA_CXP_S0_YSIZE_OFFSET, data32);
+#endif
+	
 _DONE:
 	return (status);
 }
@@ -4101,6 +4200,7 @@ int cxpSetOffsetY (int port, int offset)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int hMin, hMax;
+	unsigned int data32;
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -4127,8 +4227,15 @@ int cxpSetOffsetY (int port, int offset)
 	}
 
 	// OffsetY設定
+#if 0
 	if ((status = cxpRegWrite (port, CXP_REG_YOFFSET_ADRS, offset, 4)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+#else
+	data32 = IN32 (FPGA_CXP_S0_YSIZE_OFFSET);
+	data32 &= ~(0xffff0000);
+	data32 |= ((offset & 0xffff)<<16);
+	OUT32 (FPGA_CXP_S0_YSIZE_OFFSET, data32);
+#endif
 
 _DONE:
 	return (status);
@@ -5269,7 +5376,10 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 
 	// 取り込み停止
 	acquisitionAbort ();
-
+//@@@2
+	goto _DONE;
+//@@@2
+	
 	//--------------------------------------------------------------------------------
 	// IPレジスタ設定値取得
 	//--------------------------------------------------------------------------------
@@ -5382,6 +5492,47 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 _DONE:
 	return (status);
 }
+
+
+//**********************************************************************************
+//	CXP受信カウント数取得
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		port				：ポート番号
+//		pCount				：受信カウントを格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int cxpGetReadFifoStatus (int port, unsigned int *pStatus)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	unsigned int data, count;
+
+	// Check port Parameter
+	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "CXP Rx FIFO Stauts port(%d) Parameter Error.(Min:%d / Max:%d)\n", port, CXP_PORT_MIN, CXP_PORT_MAX);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+
+	// Check pStatus Parameter
+	if (pStatus == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Rx FIFO Status NULL Parameter Error\n");
+		goto _DONE;
+	}
+
+	// 受信ステータス
+	*pStatus = IN32 (FPGA_CXP_LSUC_RX_SW_PKT_STATUS) & FPGA_CXP_LSUC_RX_SW_PKT_VAL_BIT;
+
+_DONE:
+	return (status);
+}
+
 #endif // #if defined (IF_CXP)
 #endif // #if defined (MODE_CXP)
 

@@ -51,6 +51,7 @@ int cameraParamInitialize (void)
 	// 共通パラメータ格納アドレス取得
 	gpCameraCommonParameter = (unsigned int *)CAMERA_PARAM_CONNON_ADRS;
 
+#if 0   //@@@1
 	// 共通パラメータ領域取得
 	if ((status = cameraParamCommonAllRead ()) != AVAL_STATUS_SUCCESS)
 	{
@@ -110,6 +111,8 @@ int cameraParamInitialize (void)
 
 #endif // #if defined (MODE_USERSET_SPECTRUM_PARAM)
 
+
+#endif //@@@1
 _DONE:
 	return (status);
 }

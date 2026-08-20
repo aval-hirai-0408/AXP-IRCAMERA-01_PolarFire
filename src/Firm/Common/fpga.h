@@ -226,8 +226,22 @@
 //----------------------------------------------------------------------
 // CXP
 //----------------------------------------------------------------------
-#define FPGA_CXP_ADRS												(FPGA_BASE_ADRS+0x10001000)
-#define FPGA_CXP_PF_ADRS											(FPGA_BASE_ADRS+0x11000000)
+#define FPGA_CXP_ADRS												(CORECXP_BASE_ADDR)
+#define FPGA_CXP_IP_ADRS											(CORECXP_BASE_ADDR)
+#define FPGA_CXP_PF_ADRS											(CORECXP_BASE_ADDR+0x00100000)
+
+#define FPGA_CXP_LSUC_SW_TX_PKT_DATA								(FPGA_CXP_IP_ADRS + 0x08)
+#define FPGA_CXP_LSUC_RX_SW_PKT_STATUS								(FPGA_CXP_IP_ADRS + 0x0C)
+	#define FPGA_CXP_LSUC_RX_SW_PKT_VAL_BIT							(1<<0)
+	#define FPGA_CXP_HSDC_TX_READY_BIT								(1<<8)
+	#define CXP_TX_READY_TIMEOUT									(5000000)
+#define FPGA_CXP_LSUC_SW_RX_PKT_DATA								(FPGA_CXP_IP_ADRS + 0x10)
+
+#define FPGA_CXP_S0_XSIZE_OFFSET									(FPGA_CXP_IP_ADRS + 0x44)
+#define FPGA_CXP_S0_YSIZE_OFFSET									(FPGA_CXP_IP_ADRS + 0x48)
+#define FPGA_CXP_S0_DSIZE											(FPGA_CXP_IP_ADRS + 0x4C)
+#define FPGA_CXP_S0_TAPG_PIXEL										(FPGA_CXP_IP_ADRS + 0x50)
+
 
 #define FPGA_CXP_REGISTER_PORT_INTERVAL								(0x1000)
 

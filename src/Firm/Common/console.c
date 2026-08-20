@@ -19,7 +19,6 @@
 //----------------------------------------------------------------------------------
 // globals
 //----------------------------------------------------------------------------------
-int gConsoleMode = 0;
 int gConsoleSelect = UART_PORT0;
 int gConsoleUpdateSelect = UART_PORT0;
 static char debugBuff[512];
@@ -98,9 +97,6 @@ int consoleModeInitialize (void)
 #endif //@@@1
 
 
-	// モード取得
-	gConsoleMode = mode;
-
 	// 管理外に設定
 	OUT32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS, mode);
 
@@ -130,9 +126,6 @@ int consoleSetMode (int mode)
 		goto _DONE;
 	}
 
-	// Consoleモード設定
-	gConsoleMode = mode;
-
 	// 管理外に設定
 	OUT32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS, mode);
 
@@ -141,8 +134,8 @@ int consoleSetMode (int mode)
 		goto _DONE;
 
 	// Save Console Mode(ROM)
-	if ((status = cameraParamCommonWriteRom (CAMERA_SAVE_COMMON_CONSOLE_MODE_ADRS, mode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//@@@1if ((status = cameraParamCommonWriteRom (CAMERA_SAVE_COMMON_CONSOLE_MODE_ADRS, mode)) != AVAL_STATUS_SUCCESS)
+		//@@@1goto _DONE;
 
 _DONE:
 	return (status);
@@ -162,10 +155,6 @@ int consoleGetMode (int *pMode)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-//@@@1
-*pMode = 1;
-goto _DONE;
-//@@@1
 	// Check pMode Parameter
 	if (pMode == NULL)
 	{
@@ -175,8 +164,8 @@ goto _DONE;
 	}
 
 	// Read Console Mode(Memory)
-	if ((status = cameraParamCommonReadMem (CAMERA_SAVE_COMMON_CONSOLE_MODE_ADRS, (unsigned int *)&gConsoleMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//if ((status = cameraParamCommonReadMem (CAMERA_SAVE_COMMON_CONSOLE_MODE_ADRS, (unsigned int *)&gConsoleMode)) != AVAL_STATUS_SUCCESS)
+		//goto _DONE;
 
 	// Mode取得
 	*pMode = IN32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS);

@@ -1666,9 +1666,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt);
 int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt);
 int cxpCalculateCrc32 (unsigned int *pCrc, unsigned int *pData, unsigned int count);
 int cxpGetCmdPacket (int port, unsigned int *pData);
-int cxpWriteFifo32 (int port, int mode, unsigned int data, unsigned int mark);
-int cxpWriteFifo32I2c (int port, unsigned int data);
-int cxpWriteFifo32Parallel (int port, unsigned int data);
+int cxpWriteFifo32 (int port, unsigned int data, unsigned int mark);
 int cxpSendFifoStart (int port, int mode);
 int cxpSendFifoStartI2c (int port);
 int cxpSendFifoStartParallel (int port);
@@ -1681,7 +1679,7 @@ int cxpSetCmdMode (int mode);
 int cxpGetCmdMode (int *pMode);
 int cxpGetFifoCount (unsigned int *pCount);
 int cxpSendTestPacketAckCmd (unsigned int size);
-int cxpReadFifo (int port, unsigned char *pData, int *pKcode);
+int cxpReadFifo (int port, unsigned int *pData, int *pKcode);
 int cxpFifoToDdr (int port, unsigned int adrs, unsigned int size);
 int cxpSendBuffer (int port, unsigned int data);
 int cxpGetSendCurrentAdrs (int port, unsigned int *pAdrs);
@@ -1732,6 +1730,7 @@ int cxpGetStreamId (int port, unsigned int *pId);
 int cxpSetStreamId (int port, unsigned int id);
 int cxpSetRateReg (unsigned int data);
 int cxpSetConnectionConfig (int port, unsigned int configData);
+int cxpGetReadFifoStatus (int port, unsigned int *pStatus);
 
 // compress.c
 int gzipUncomp (unsigned char *pUnCompress, int *uncomprLen, unsigned char *pCompress, int comprLen);

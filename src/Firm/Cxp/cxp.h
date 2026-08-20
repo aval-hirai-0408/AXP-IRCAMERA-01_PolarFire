@@ -46,9 +46,6 @@
 
 #define CXP_REG_DATA_SIZE_MAX				(0x800)
 
-#define CXP_REG_CMD_MODE_I2C				(0)
-#define CXP_REG_CMD_MODE_PARALLEL			(1)
-
 
 //----------------------------------------------------------------------------------
 // ACB-531 Register

@@ -18,6 +18,7 @@
 
 
 #if defined (MODE_CXP)
+#if 0	//@@@1
 //**********************************************************************************
 //	CXP FIFO Read
 //----------------------------------------------------------------------------------
@@ -184,7 +185,7 @@ int cmdCxpFifoWrite (void *str)
 		}
 
 		// CXP Fifoデータ出力
-		if ((status = cxpWriteFifo32 (port, CXP_REG_CMD_MODE_I2C, data, 0)) != AVAL_STATUS_SUCCESS)
+		if ((status = cxpWriteFifo32 (port, data, 0)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		// CXP Fifoデータ出力
@@ -226,7 +227,7 @@ int cmdCxpFifoWriteHelp (void *str)
 
 	return (AVAL_STATUS_SUCCESS);
 }
-
+#endif //@@@1
 
 //**********************************************************************************
 //	CXP Send Adrs

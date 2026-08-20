@@ -3343,6 +3343,27 @@ u32 get_user_reg (u32 address, u16 *status)
 			value = (int) fltValue;
 			break;
 
+		//--------------------------------------------------------------------------------
+		// DeviceTemperatureAlarmStatus取得
+		//--------------------------------------------------------------------------------
+		case DeviceTemperatureAlarmStatus:
+			value = (int)IN32 (BOARD_STATUS_TEMP_ADRS);
+			break;
+
+		//--------------------------------------------------------------------------------
+		// DeviceTemperatureSensorAlarmCount取得
+		//--------------------------------------------------------------------------------
+		case DeviceTemperatureSensorAlarmCount:
+			value = (int)IN32 (BOARD_STATUS_SENSOR_TEMP_UPPER_ADRS);
+			break;
+
+		//--------------------------------------------------------------------------------
+		// DeviceTemperatureCaseAlarmCount取得
+		//--------------------------------------------------------------------------------
+		case DeviceTemperatureCaseAlarmCount:
+			value = (int)IN32 (BOARD_STATUS_CASE_TEMP_ADRS);
+			break;
+
 #if defined (MODE_PELTIER_CTRL)
 		//--------------------------------------------------------------------------------
 		// DevicePeltierPowerLevel取得
@@ -8186,6 +8207,27 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			*status = toG(peltierGetCaseTempAlarm(&dblValue, &dblValue2nd));
 			dblValue2nd = value;
 			*status = toG(peltierSetCaseTempAlarm(dblValue, dblValue2nd));
+			break;
+
+		//--------------------------------------------------------------------------------
+		// DeviceTemperatureAlarmStatus設定
+		//--------------------------------------------------------------------------------
+		case DeviceTemperatureAlarmStatus:
+			*status = GEV_STATUS_WRITE_PROTECT;
+			break;
+
+		//--------------------------------------------------------------------------------
+		// DeviceTemperatureSensorAlarmCount設定
+		//--------------------------------------------------------------------------------
+		case DeviceTemperatureSensorAlarmCount:
+			*status = GEV_STATUS_WRITE_PROTECT;
+			break;
+
+		//--------------------------------------------------------------------------------
+		// DeviceTemperatureCaseAlarmCount設定
+		//--------------------------------------------------------------------------------
+		case DeviceTemperatureCaseAlarmCount:
+			*status = GEV_STATUS_WRITE_PROTECT;
 			break;
 
 #if defined (MODE_PELTIER_CTRL)
