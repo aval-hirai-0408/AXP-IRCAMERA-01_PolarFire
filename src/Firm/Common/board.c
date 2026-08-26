@@ -35,7 +35,7 @@ int gSpectrumType = CAMERA_TYPE_NO_SPECTRUM;
 int cameraInformationInitialize (void)
 {
 	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, 0, "Camera Information Initialize\n");
-	
+#if 0 //@@@1
 	// ボードID
 	memset ((void *)FIRM_DATA_BOARDID_ADRS, 0x00, BOARD_PARAM_ALIGN);
 	getBoardId ((char *)FIRM_DATA_BOARDID_ADRS);
@@ -62,6 +62,21 @@ int cameraInformationInitialize (void)
 
 	// キャッシュFlash
 	cacheFlushRange (FIRM_DATA_ADRS, FIRM_DATA_SIZE);
+#else	//@@@1
+	// ベンダ名取得
+	memset ((void *)FIRM_DATA_VENDOR_ADRS, 0x00, BOARD_PARAM_VENDOR_SIZE);
+	strcpy ((void *)FIRM_DATA_VENDOR_ADRS, (void *)VENDOR_NAME);
+	
+	// 製造者名取得
+	memset ((void *)FIRM_DATA_MANUFACTURE_ADRS, 0x00, BOARD_PARAM_MANUFACTURE_SIZE);
+	strcpy ((void *)FIRM_DATA_MANUFACTURE_ADRS, (void *)MANUFACTURE_NAME);
+
+	// モデル名取得
+	memset ((void *)FIRM_DATA_MODEL_ADRS, 0x00, BOARD_PARAM_MODEL_SIZE);
+	strcpy ((void *)FIRM_DATA_MODEL_ADRS, (void *)MODEL_NAME_CXP);
+
+	
+#endif//@@@1
 
 	return (AVAL_STATUS_SUCCESS);
 }
@@ -543,7 +558,7 @@ int getUserId (char *pId)
 		data = IN8 ((adrs+len));
 		if (data == 0)
 			break;
-		else if ((data < 0x20) || (data > 0x7f))	// Ver.1.2
+		else if ((data < 0x20) || (data > 0x7f))
 			break;
 	}
 
@@ -891,7 +906,7 @@ int xmlFileLoadMemory (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	status = qspiFlashRead(FLASH_XML_ADRS, (unsigned char *)FIRM_XML_FILE_ADRS, FIRM_XML_FILE_SIZE);
+	status = qspiFlashRead(FLASH_XML_ADRS, (unsigned char *)FIRM_XML_FILE_ADRS, FLASH_XML_SIZE);
 
 	return (status);
 }

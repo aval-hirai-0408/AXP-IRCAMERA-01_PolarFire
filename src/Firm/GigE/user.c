@@ -82,10 +82,10 @@ sfnc_ptp_t sfnc_ptp = {.clockAccuracy      = 0xFE,
 //char XML_URL_FILE;
 unsigned int xmlStartAddress = 0;
 unsigned int xmlSize = 0;
-unsigned char xmlURL[] = { 0 };
+unsigned char xmlURL[CXP_XML_URL_SIZE] = { 0 };
 unsigned int xmlStartAddressSecond = 0;
 unsigned int xmlSizeSecond = 0;
-unsigned char xmlURLSecond[] = { 0 };
+unsigned char xmlURLSecond[CXP_XML_URL_SIZE] = { 0 };
 
 // ---- Global variables for status  --------------------------------------------
 volatile u32 DeviceStatus = 0;

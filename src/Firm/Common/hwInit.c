@@ -239,13 +239,15 @@ int hwInitialize (int cpuType)
 	//------------------------------------------------------------
 	if ((status = buffInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
+#endif //@@@1
 
 	//------------------------------------------------------------
 	//	XML Fileメモリロード
 	//------------------------------------------------------------
-	if ((status = xmlFileLoadMemory ()) != AVAL_STATUS_SUCCESS)
-		firmErrorAttention (status);
+	//@@1if ((status = xmlFileLoadMemory ()) != AVAL_STATUS_SUCCESS)
+		//@@@1firmErrorAttention (status);
 
+#if 0 //@@@1
 	//------------------------------------------------------------
 	//	Gev Parameter Initialize
 	//------------------------------------------------------------
@@ -270,13 +272,13 @@ int hwInitialize (int cpuType)
 	//------------------------------------------------------------
 	if ((status = cameraStatusInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
-
+#endif //@@@1
 	//------------------------------------------------------------
 	// カメラ情報初期化
 	//------------------------------------------------------------
 	if ((status = cameraInformationInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
-
+#if 0 //@@@1
 	//------------------------------------------------------------
 	// DIPSW Bit0 ONならばFPGA系の初期化は実施しない
 	//------------------------------------------------------------

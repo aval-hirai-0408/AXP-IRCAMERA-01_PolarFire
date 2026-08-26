@@ -53,7 +53,7 @@ unsigned char gXmlFileNameUpdate [CXP_XML_URL_SIZE];
 int gLinkStatusCheck = 0;
 int gCxpCmdInterruptFlag = 0;
 int gCxpCmdProcessFlag = 0;
-
+unsigned int gXMLSize = 0;
 
 //----------------------------------------------------------------------------------
 // externs
@@ -192,14 +192,15 @@ int cxpMain (void)
 	// Detection of Connection in progress
 	//------------------------------------------------------------
 	cxpLedConnectionDetection();
-
+#endif //@@@1
 
 	//------------------------------------------------------------
 	// User Init
 	//------------------------------------------------------------
     cxpUserInit ();
 
-
+//@@@1
+#if 0
 	//------------------------------------------------------------
 	// CXP Init2
 	//------------------------------------------------------------
@@ -265,6 +266,9 @@ int cxpMain (void)
 	return (status);
 }
 
+//@@@@@@@@@@@@@@@@
+extern int gConsolePassword;
+//@@@@@@@@@@@@@@@@
 
 //**********************************************************************************
 //	CXP User Init
@@ -286,6 +290,8 @@ int cxpUserInit (void)
 	char str16[16 + 1] = { 0 };
 	char strXMLAddress[10] = { 0 };
 	char strXMLSize[6] = { 0 };
+//@@@1
+#if 0
 
 	//------------------------------------------------------------
 	// CXP Parameter Initialize
@@ -391,7 +397,9 @@ int cxpUserInit (void)
 #if defined (MODE_SENSOR_DRRS)
 	sensorGetDrrs (&gDrrsMode);
 #endif
-	
+
+#endif//@@@1
+
 	
 	//---------------------------------------------------------------
 	// Reads the first XML URL to the eeprom
@@ -455,6 +463,9 @@ int cxpUserInit (void)
 				strXMLSize[xmlCount - 1] = '\0';
 				xmlDemilitor++;
 				xmlCount = 0;
+				
+				if (sscanf (strXMLSize, "%x", &gXMLSize) != 1)
+					gXMLSize = 0;
 			}
 		}
 		else
@@ -486,6 +497,15 @@ int cxpUserInit (void)
 		memset((void*) gXmlFileName2, 0, CXP_XML_URL_SIZE);
 	}
 
+	// XML Load
+	if (gXMLSize > FLASH_XML_SIZE)
+		gXMLSize = FLASH_XML_SIZE;
+	
+	qspiFlashRead (FLASH_XML_ADRS, (unsigned char *)FIRM_XML_FILE_ADRS, gXMLSize);
+
+	
+//@@@1
+#if 0
 
 	// ---- Initiates Global variables for File Access Control --------------------------------
 	fileSelector = 0;
@@ -585,7 +605,7 @@ int cxpUserInit (void)
 #if defined(MODE_CAMERA_INTERRUPT)
 	status = cameraIntRegister((p_user_event_callback)user_event_callback_cxp);
 #endif // #if defined(MODE_CAMERA_INTERRUPT)
-
+#endif//@@@1
 	return (status);
 }
 

@@ -241,6 +241,11 @@ int cxpInitialize2 (void)
 
 	// Connection Config Default設定
 	ConnectionConfigDefault_st = ConnectionConfig_st;
+	
+	// Connection Configは上記で3Gbpsに設定
+	ConnectionConfig_st &= ~0xffff;
+	ConnectionConfig_st |= CXP_RATE_3_125GBPS;
+
 	OUT32 (FIRM_DATA_CXP_CONNECTION_CONFIG, ConnectionConfig_st);
 	
 	//------------------------------------------------------------
@@ -590,7 +595,7 @@ int cxpProcs (int port)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
 		sprintf (gLogMsgBuff, "CXP Read Start Code(0x%08x) Error.\n", cxpPaket.start);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		//@@@1cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
@@ -995,10 +1000,9 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned int ix, iy;
 	unsigned char *ptrSrc8, *ptrDes8, *ptrDes8_DDR;
 	unsigned int *ptrL;
-	CXP_PACKET_ST cxpPaket;
 
-	sprintf (gLogMsgBuff,"Set User Start : adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size, status);
-	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	//sprintf (gLogMsgBuff,"Set User Start : adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size, status);
+	//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -1464,7 +1468,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 		// 12.500 0x58
 		//------------------------------------------------------------
 		case ConnectionConfig:
-			status = cxpSetConnectionConfig (port, *pDataRecv);
+			///@@@1status = cxpSetConnectionConfig (port, *pDataRecv);
 			break;
 
 		//------------------------------------------------------------
@@ -1773,6 +1777,8 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 				(adrs == (DeviceManufacturerInfoOnEEPROM + 44))
 				)
 			{
+				CXP_PACKET_ST cxpPaket;
+
 				// wait status設定
 				cxpPaket.status = CXP_ACK_CODE_WAIT;
 
@@ -1780,7 +1786,12 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 				if (VersionUsed_st == CXP_VERSION_20)
 				{
 					if (pCxpSt->cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
+					{
 						cxpPaket.sendcmdIndication = CXP_DATA_PACKET_TYPE_ACK_TAG;
+
+						// Cmd Tag
+						cxpPaket.tag = pCxpSt->tag;
+					}
 					else
 						cxpPaket.sendcmdIndication = CXP_DATA_PACKET_TYPE_ACK;
 				}
@@ -1788,6 +1799,9 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 				{
 					cxpPaket.sendcmdIndication = CXP_DATA_PACKET_TYPE_ACK;
 				}
+
+				// Cmd Indication
+				cxpPaket.cmdIndication = pCxpSt->cmdIndication;
 
 				// Ack Size
 				cxpPaket.ackSize = 4;
@@ -1798,7 +1812,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 
 				if (VersionUsed_st == CXP_VERSION_20)
 				{
-					if (cxpPaket.cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
+					if (pCxpSt->cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
 						ptrL++;		// Tag追加(+4)
 				}
 
@@ -1843,27 +1857,28 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 				(adrs == DeviceDrrsCommand)							||
 				(adrs == FileOperationExecute))
 			{
+
 				// Ack返信Flag設定
 				gCxpAckDoneFlag = 1;
 
 				// status設定
-				cxpPaket.status = 0;
+				pCxpSt->status = 0;
 
 				// Send Cmd Indication
 				if (VersionUsed_st == CXP_VERSION_20)
 				{
 					if (pCxpSt->cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
-						cxpPaket.sendcmdIndication = CXP_DATA_PACKET_TYPE_ACK_TAG;
+						pCxpSt->sendcmdIndication = CXP_DATA_PACKET_TYPE_ACK_TAG;
 					else
-						cxpPaket.sendcmdIndication = CXP_DATA_PACKET_TYPE_ACK;
+						pCxpSt->sendcmdIndication = CXP_DATA_PACKET_TYPE_ACK;
 				}
 				else
 				{
-					cxpPaket.sendcmdIndication = CXP_DATA_PACKET_TYPE_ACK;
+					pCxpSt->sendcmdIndication = CXP_DATA_PACKET_TYPE_ACK;
 				}
 
 				// Ack Packet設定
-				cxpSetAckPacket (port, &cxpPaket);
+				cxpSetAckPacket (port, pCxpSt);
 				sprintf (gLogMsgBuff,"Set User Execute : adrs=0x%08x, size=0x%08x, data=0x%08x, status =0x%08x\n", pCxpSt->adrs, pCxpSt->size, *pCxpSt->pData, status);
 			}
 
@@ -1900,7 +1915,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 	}
 
-	sprintf (gLogMsgBuff,"Set User End : adrs=0x%08x, size=0x%08x, data=0x%08x, status =0x%08x\n", pCxpSt->adrs, pCxpSt->size, *pCxpSt->pData, status);
+	sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status =0x%08x\n", pCxpSt->adrs, pCxpSt->size, *pCxpSt->pData, status);
 
 _DONE:
 	return (status);
@@ -1929,8 +1944,8 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned int ix;
 	unsigned int amari;
 
-	sprintf (gLogMsgBuff,"Get User Start : adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size);
-	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	//sprintf (gLogMsgBuff,"Get User Start : adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size);
+	//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 	
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -2280,12 +2295,13 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			if ((pCxpSt->ackSize+adrs2) > 16)
 				pCxpSt->ackSize = adrs2 - 16;
 
-			getUserId(deviceUserID);
+			//@@@1getUserId(deviceUserID);
 
 			for (ix=0; ix<pCxpSt->ackSize; ix+=4, pData++)
 			{
-				swapData32 = IN32 ((deviceUserID + adrs2 + ix));
-				*pData = SWAP_L(swapData32);
+				//@@@1swapData32 = IN32 ((deviceUserID + adrs2 + ix));
+				//@@@1*pData = SWAP_L(swapData32);
+				*pData = 0;
 			}
 
 			break;
@@ -2414,14 +2430,16 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 		// ConnectionConfig取得
 		//------------------------------------------------------------
 		case ConnectionConfig:
-			*pData = ConnectionConfig_st;
+			//@@@1*pData = ConnectionConfig_st;
+			*pData  = ((1<<16) | 0x38);
 			break;
 
 		//------------------------------------------------------------
 		// ConnectionConfigDefault取得
 		//------------------------------------------------------------
 		case ConnectionConfigDefault:
-			*pData = ConnectionConfigDefault_st;
+			//@@@*pData = ConnectionConfigDefault_st;
+			*pData  = ((1<<16) | 0x38);
 			break;
 
 		//------------------------------------------------------------
@@ -2661,8 +2679,8 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 				{
 					// XML Fileデータ取得
 					*pData2 = IN32 ((FIRM_XML_FILE_ADRS+adrs2+(ix*4)));
-					swapData32 = SWAP_L (*pData2);
-					*pData2 = swapData32;
+					//@@@1swapData32 = SWAP_L (*pData2);
+					//@@@1*pData2 = swapData32;
 				}
 				// Ver.2.7 End
 			}
@@ -2714,10 +2732,10 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 	}
 	
 		// Show XML
-		if ((adrs >= 0x61000000) && (adrs < 0x61800000))
-			goto _DONE;
+		//if ((adrs >= 0x61000000) && (adrs < 0x61800000))
+			//goto _DONE;
 
-		sprintf (gLogMsgBuff,"Get User End : adrs=0x%08x, size=0x%08x, data=0x%08x, status=0x%08x\n", adrs, pCxpSt->ackSize, *pData2, status);
+		sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status=0x%08x\n", adrs, pCxpSt->ackSize, *pData2, status);
 		cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 _DONE:
