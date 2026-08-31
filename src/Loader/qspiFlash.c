@@ -17,6 +17,7 @@
 #include "aval_status.h"
 #include "core_spi.h"
 #include "hw_platform.h"
+#include "common.h"
 
 
 //----------------------------------------------------------------------------------
@@ -66,6 +67,11 @@ int qspiFlashInitialize (void)
 	int status = AVAL_STATUS_SUCCESS;
 	uint8_t manufacturer_id, device_id;
 
+//@@@1	
+	OUT32 ((CORESPI_BASE_ADDR+0x00), 2);
+	OUT32 ((CORESPI_BASE_ADDR+0x2c), 2);
+	OUT32 ((CORESPI_BASE_ADDR+0x00), 3);
+//@@@1	
 	// Initialize
     SPI_init (&g_flash_core_spi, CORESPI_BASE_ADDR, 32);
 

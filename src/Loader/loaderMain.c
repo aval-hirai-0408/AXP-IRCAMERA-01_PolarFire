@@ -133,16 +133,24 @@ void read_program_from_flash_and_copy_to_ddr(void)
 	qspiFlashInitialize ();
 	
 	//ddr memory initialization with 0x55
-	for (i=0; i<DDR_APP_MAX_SIZE; i=i+4)
-		*(volatile uint32_t*)(DDR_BASE_ADDRESS+i) = 0x55555555;
+	//for (i=0; i<DDR_APP_MAX_SIZE; i=i+4)
+		//*(volatile uint32_t*)(DDR_BASE_ADDRESS+i) = 0x55555555;
 
 	// Load
 	for (i=0;i <DDR_APP_MAX_SIZE; i=i+FLASH_READ_SIZE)
 	{
+		#if 1
+
+		qspiFlashRead ((FLASH_PRGRAM_START_ADRS+i), (unsigned char *)(DDR_BASE_ADDRESS+i), FLASH_READ_SIZE);
+
+		#else
+		
 		qspiFlashRead ((FLASH_PRGRAM_START_ADRS+i), &g_read_buf[0], FLASH_READ_SIZE);
 
         for(j=0;j<FLASH_READ_SIZE;j++)
 			*(volatile uint8_t*)(DDR_BASE_ADDRESS+i+j) = g_read_buf[j];
+		
+		#endif
 	}
 	
 	return;

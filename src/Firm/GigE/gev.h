@@ -753,7 +753,7 @@ typedef struct
 //====================================================================================
 #define DeviceTemperatureSensorAlarmCount						( 0x0000D3C4)  // RW; 4 bytes
 #define DeviceTemperatureCaseAlarmCount							( 0x0000D3C8)  // RW; 4 bytes
-#define DeviceTemperatureAlarmStatusClear						( 0x0000D3CC)  // RW; 4 bytes
+#define DeviceTemperatureAlarmClear								( 0x0000D3CC)  // RW; 4 bytes
 #define DeviceTemperatureAlarmStatus							( 0x0000D3D0)  // RW; 4 bytes
 #define DeviceTemperature_Sensor_Float							( 0x0000D3D4)  // RW; 4 bytes
 #define DeviceTemperature_Case_Float							( 0x0000D3D8)  // RW; 4 bytes
@@ -781,12 +781,9 @@ typedef struct
 #define   FileSelector_UserSet2									(          6)  // RW   4 bytes : IEnumEntry
 #define   FileSelector_DPC0										(          7)  // RW   4 bytes : IEnumEntry Custom
 #define   FileSelector_FFC0										(          8)  // RW   4 bytes : IEnumEntry Custom DSNU + PRNU
-#define   FileSelector_SENSOR_FPGA								(          9)  // RW   4 bytes : IEnumEntry Custom
-#define   FileSelector_ADM										(         10)  // RW   4 bytes : IEnumEntry Custom
-#define   FileSelector_SPECTRUM_WAVE							(         11)  // RW   4 bytes : IEnumEntry Custom
-#define   FileSelector_IF_FPGA									(         12)  // RW   4 bytes : IEnumEntry Custom
-#define   FileSelector_PHY										(         13)  // RW   4 bytes : IEnumEntry Custom
-#define   FileSelector_MAX										(         14)  // MAX of FileSelector
+#define   FileSelector_SPECTRUM_WAVE							(          9)  // RW   4 bytes : IEnumEntry Custom
+#define   FileSelector_PHY										(         10)  // RW   4 bytes : IEnumEntry Custom
+#define   FileSelector_MAX										(         11)  // MAX of FileSelector
 #define FileOperationeSelector									( 0x0000D104)  // RW   4 bytes : IEnumeration Open,Close,Read,Write,Delete
 #define   FileOperationeSelector_Open							(          0)  // RW   4 bytes : IEnumEntry
 #define   FileOperationeSelector_Close							(          1)  // RW   4 bytes : IEnumEntry

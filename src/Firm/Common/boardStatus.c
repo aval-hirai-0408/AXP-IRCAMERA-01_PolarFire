@@ -169,7 +169,7 @@ int cameraSetStatusAll (void)
 	OUT32 (BOARD_STATUS_QSPI_ADRS, gQspiFlashStatus);
 
 	// AXI QSPI Flash
-	OUT32 (BOARD_STATUS_AXI_QSPI_ADRS, gAxiQspiFlashStatus);
+	//OUT32 (BOARD_STATUS_AXI_QSPI_ADRS, gAxiQspiFlashStatus);
 
 	// DMA
 	OUT32 (BOARD_STATUS_DMA_ADRS, gDmaStatus);

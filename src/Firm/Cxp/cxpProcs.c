@@ -83,13 +83,13 @@ int cxpInitialize (void)
 	//------------------------------------------------------------
 
 	// 送信カウンタクリア
-	OUT32 (FIRM_DATA_CXP_SEND_DATA_COUNT, 0);
+	//OUT32 (FIRM_DATA_CXP_SEND_DATA_COUNT, 0);
 
 	for (port=0; port<CXP_PORT_COUNT; port++)
 		OUT32 ((FIRM_DATA_CXP_SEND_DATA_COUNT_MULTI_ADRS + port * 4), 0);
 
 	// 送信アドレスクリア
-	OUT32 (FIRM_DATA_CXP_SEND_FPGA_ADRS, 0);
+	//OUT32 (FIRM_DATA_CXP_SEND_FPGA_ADRS, 0);
 
 
 	//------------------------------------------------------------
@@ -97,27 +97,18 @@ int cxpInitialize (void)
 	//------------------------------------------------------------
 
 	// 受信カウンタクリア
-	OUT32 (FIRM_DATA_CXP_RECV_DATA_COUNT, 0);
+	//OUT32 (FIRM_DATA_CXP_RECV_DATA_COUNT, 0);
 
-	// 受信カウンタクリア(MODE_CXP_MULTI_PORT用)
+	// 受信カウンタクリア
 	for (port=0; port<CXP_PORT_COUNT; port++)
 		OUT32 ((FIRM_DATA_CXP_RECV_DATA_COUNT_MULTI_ADRS + port * 4), 0);
 
 	// 受信データ数クリア
-	OUT32 (FIRM_DATA_CXP_DATA_COUNT, 0);
+	//OUT32 (FIRM_DATA_CXP_DATA_COUNT, 0);
 
-	// 受信データ数クリア(MODE_CXP_MULTI_PORT用)
+	// 受信データ数クリア
 	for (port=0; port<CXP_PORT_COUNT; port++)
 		OUT32 ((FIRM_DATA_CXP_DATA_COUNT_MULTI_ADRS + port * 4), 0);
-
-	for (port=0; port<CXP_PORT_COUNT; port++)
-	{
-		// 受信FIFO Reset
-		OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), FPGA_CXP_RX_CMD_FIFO_CTRL_RESET);
-
-		// 受信FIFO Enable
-		OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE);
-	}
 
 	return (status);
 }
@@ -152,7 +143,6 @@ int cxpInitialize2 (void)
 
 
 	// Stream ID
-	#if defined (MODE_BOARD_ACB531CXP)
 	for (port=0; port<CXP_PORT_COUNT; port++)
 	{
 		if (port == 0)
@@ -163,11 +153,8 @@ int cxpInitialize2 (void)
 		if ((status = cxpSetStreamId (port, dataI32)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
-	#endif
 
-	// CXP FPGAバージョン取得
-	if (gInterFaceID == INTERFACE_CXP)
-		cxpGetFpgaVersion ((unsigned int *)FIRM_DATA_IF_VERSION_ADRS);
+
 
 	//------------------------------------------------------------
 	// Register Data Restore
@@ -1001,8 +988,8 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned char *ptrSrc8, *ptrDes8, *ptrDes8_DDR;
 	unsigned int *ptrL;
 
-	//sprintf (gLogMsgBuff,"Set User Start : adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size, status);
-	//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size, status);
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -1727,9 +1714,8 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			//------------------------------------------------------------
 			if ((adrs >= FileAccessBuffer) && (adrs < BASE_FILE_BUFFER_MAX))
 			{
-				if ((status = cxpUploadBuffer (adrs, (unsigned char *)pDataRecv, pCxpSt->size)) != AVAL_STATUS_SUCCESS)
-					goto _DONE;
-
+				//@@@1if ((status = cxpUploadBuffer (adrs, (unsigned char *)pDataRecv, pCxpSt->size)) != AVAL_STATUS_SUCCESS)
+					//@@@1goto _DONE;
 				break;
 			}
 
@@ -1916,6 +1902,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 	}
 
 	sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status =0x%08x\n", pCxpSt->adrs, pCxpSt->size, *pCxpSt->pData, status);
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 _DONE:
 	return (status);
@@ -1944,8 +1931,8 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned int ix;
 	unsigned int amari;
 
-	//sprintf (gLogMsgBuff,"Get User Start : adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size);
-	//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size);
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 	
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -2731,12 +2718,12 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 	}
 	
-		// Show XML
-		//if ((adrs >= 0x61000000) && (adrs < 0x61800000))
-			//goto _DONE;
+	// Show XML
+	//if ((adrs >= 0x61000000) && (adrs < 0x61800000))
+		//goto _DONE;
 
-		sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status=0x%08x\n", adrs, pCxpSt->ackSize, *pData2, status);
-		cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status=0x%08x\n", adrs, pCxpSt->ackSize, *pData2, status);
+	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 _DONE:
 	return (status);
@@ -3144,6 +3131,9 @@ int cxpSendTestPacketAckCmd (unsigned int size)
 	return (status);
 }
 
+//@@@@@@@@@@@@@@@@
+unsigned int gCxpAllRecvCount = 0;
+//@@@@@@@@@@@@@@@@
 
 //**********************************************************************************
 //	CXP Read FIFO
@@ -3217,10 +3207,16 @@ int cxpReadFifo (int port, unsigned int *pData, int *pKcode)
 	// データ取得
 	data32 = IN32 (FPGA_CXP_LSUC_SW_RX_PKT_DATA);
 	*pData = data32;
+
+//@@@@@@@@@@@@@@@@@@@@@
+	DEBUG_PRINT_FORCE("[%d]0x%08x\n", ++gCxpAllRecvCount, data32);
+//@@@@@@@@@@@@@@@@@@@@@
 	
 	// 受信データをバッファに格納
 	cxpRecvBuffer (port, (unsigned char)*pData);
 
+	
+	
 #if 0
 	// FIFO Read
 	data32 = IN32 ((FPGA_CXP_RX_CMD_FIFO_DATA_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
@@ -3749,43 +3745,6 @@ int cxpRecvBuffer (int port, unsigned char data)
 
 _DONE:
 
-	return (status);
-}
-
-
-//**********************************************************************************
-//	CXP FPGA Version
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		pVer				：CXP FPGA Version
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int cxpGetFpgaVersion (unsigned int *pVer)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned char buff[2];
-	unsigned int data32;
-
-	// Check pVer Parameter
-	if (pVer == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP FPGA Version pVer NULL Parameter Error\n");
-		goto _DONE;
-	}
-
-
-	if ((status = cxpRegRead (0, CXP_REG_VERSION_ADRS, &data32, 1)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	buff[1] = (unsigned char)data32;
-
-	// バージョン格納
-	*pVer = (unsigned int)buff[1];
-
-_DONE:
 	return (status);
 }
 
@@ -4523,8 +4482,8 @@ int cxpUploadBuffer (unsigned int adrs, unsigned char *pData, unsigned int size)
 	pSrc = pData;
 
 	// データCopy
-	for (i=0; i<size; i++, pSrc++, pDst++)
-		*pDst = *pSrc;
+	//@@@1for (i=0; i<size; i++, pSrc++, pDst++)
+		//@@@1*pDst = *pSrc;
 
 	adrs2 = adrs & BASE_FILE_BUFFER_MASK;
 	fileResult[fileSelector][fileSel[fileSelector]] = adrs2 + size;
@@ -5226,7 +5185,6 @@ _DONE:
 int cxpGetStreamId (int port, unsigned int *pId)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned int data32;
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -5246,10 +5204,7 @@ int cxpGetStreamId (int port, unsigned int *pId)
 	}
 
 	// Steram ID取得
-	if ((status = cxpRegRead (port, CXP_REG_STREAM_ID_ADRS, &data32, 4)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	*pId = data32;
+	*pId = INT32 (FPGA_CXP_S0_FLAG_SID_MZXSIZE) & FPGA_CXP_S0_SID_MASK;
 
 _DONE:
 	return (status);
@@ -5280,20 +5235,11 @@ int cxpSetStreamId (int port, unsigned int id)
 		goto _DONE;
 	}
 
-	// Steram ID設定(CXP Register)
-	if ((status = cxpRegWrite (port, CXP_REG_STREAM_ID_ADRS, (unsigned int)id, 4)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// Steram ID取得(CXP IP Register)
-	if ((status = cxpRegRead (port, CXP_REG_IP_STREAM1_ID_ADRS,  &data32, 4)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	data32 &= ~0xff;
-	data32 |= id;
-
-	// Steram ID設定(CXP IP Register)
-	if ((status = cxpRegWrite (port, CXP_REG_IP_STREAM1_ID_ADRS, (unsigned int)data32, 4)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	// Steram ID取得
+	data32 = INT32 (FPGA_CXP_S0_FLAG_SID_MZXSIZE);
+	data32 &= ~FPGA_CXP_S0_SID_MASK;
+	data32 |= (id & FPGA_CXP_S0_SID_MASK);
+	OUT32 (FPGA_CXP_S0_FLAG_SID_MZXSIZE, data32);
 
 _DONE:
 	return (status);

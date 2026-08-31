@@ -268,6 +268,12 @@ int acquisitionStart (void)
 		acquisitionRestLinkTrgCount ();
 #endif
 
+//@@@@@@@@@@@@@@@@@@@@@@
+	usDelay(500);
+	DEBUG_PRINT_FORCE("Start\n");
+	OUT32 (0x6b200004, 1);
+//@@@@@@@@@@@@@@@@@@@@@@
+	
 #if defined (MODE_TEMP_ABNORMAL_CHECK)
 _DONE:
 #endif

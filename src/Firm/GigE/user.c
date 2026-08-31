@@ -291,6 +291,10 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Camera Width Max取得
 		//----------------------------------------------------------------------------------
 		case CameraWidthMax:
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@
+			value = 2560;
+			break;
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@
 			if ((*status = toG (roiGetAreaSize ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
 				value2nd = 0;
 
@@ -319,6 +323,11 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Camera Height Max取得
 		//----------------------------------------------------------------------------------
 		case CameraHeightMax:
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@
+			value = 2048;
+			break;
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 			if ((*status = toG (roiGetAreaSize ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
 				value2nd = 0;
 
@@ -361,6 +370,10 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Width取得
 		//----------------------------------------------------------------------------------
 		case FPGA_AOI_XSIZE_ADRS:
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@
+			value = 640;
+			break;
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@
 			*status = toG (aoiGetWidth ((int*)&value));
 			video_width = value;
 			break;
@@ -369,6 +382,10 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Height取得
 		//----------------------------------------------------------------------------------
 		case FPGA_AOI_YSIZE_ADRS:
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@
+			value = 512;
+			break;
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 			// High Speed Mode
 			#if defined (MODE_FRAMERATE_HIGH_SPEED)
@@ -418,6 +435,10 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Width Offset取得
 		//----------------------------------------------------------------------------------
 		case FPGA_AOI_XOFFSET_ADRS:
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@
+			value = 0;
+			break;
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@
 			*status = toG(aoiGetWidthOffset((int*) &value));
 			video_offs_x = value;
 
@@ -431,6 +452,10 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Height Offset取得
 		//----------------------------------------------------------------------------------
 		case FPGA_AOI_YOFFSET_ADRS:
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@
+			value = 0;
+			break;
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 			// ROIモード取得
 			if ((*status = toG (roiCheckMultiMode ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
@@ -626,10 +651,13 @@ u32 get_user_reg (u32 address, u16 *status)
 			if ((*status = toG (cameraGetBitWidthGigE ((int *)&value))) == AVAL_STATUS_SUCCESS)
 			{
 				video_pixfmt = value;
+//@@@@@@@@@@@@@@@@				
+				value = video_pixfmt = GVSP_PIX_MONO8;
+//@@@@@@@@@@@@@@@@				
 			}
 			else
 			{
-				*status = GEV_STATUS_INVALID_PARAMETER;
+				//@@@@@*status = GEV_STATUS_INVALID_PARAMETER;
 				value = video_pixfmt = GVSP_PIX_MONO8;
 			}
 
@@ -3351,6 +3379,13 @@ u32 get_user_reg (u32 address, u16 *status)
 			break;
 
 		//--------------------------------------------------------------------------------
+		// DeviceTemperatureAlarmClear取得
+		//--------------------------------------------------------------------------------
+		case DeviceTemperatureAlarmClear:
+			value = (int)IN32 (BOARD_STATUS_TEMP_ADRS);
+			break;
+
+		//--------------------------------------------------------------------------------
 		// DeviceTemperatureSensorAlarmCount取得
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureSensorAlarmCount:
@@ -3775,7 +3810,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileOperationExecute取得取得
+		// FileOperationExecute取得
 		//--------------------------------------------------------------------------------
 		case FileOperationExecute:
 			// コマンドステータス取得
@@ -3796,49 +3831,49 @@ u32 get_user_reg (u32 address, u16 *status)
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileOpenMode
+		// FileOpenMode取得
 		//--------------------------------------------------------------------------------
 		case FileOpenMode:
 			value = fileMode[fileSelector];
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileAccessOffset
+		// FileAccessOffset取得
 		//--------------------------------------------------------------------------------
 		case FileAccessOffset:
 			value = fileOffset[fileSelector][fileSel[fileSelector]];
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileAccessLength
+		// FileAccessLength取得
 		//--------------------------------------------------------------------------------
 		case FileAccessLength:
 			value = fileLength[fileSelector][fileSel[fileSelector]];
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileOperationStatus
+		// FileOperationStatus取得
 		//--------------------------------------------------------------------------------
 		case FileOperationStatus:
 			value = fileStatus[fileSelector][fileSel[fileSelector]];
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileOperationResult
+		// FileOperationResult取得
 		//--------------------------------------------------------------------------------
 		case FileOperationResult:
 			value = fileResult[fileSelector][fileSel[fileSelector]];
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileSize
+		// FileSize取得
 		//--------------------------------------------------------------------------------
 		case FileSize:
 			value = fileSize[fileSelector];
 			break;
 
 		//--------------------------------------------------------------------------------
-		// default
+		// default取得
 		//--------------------------------------------------------------------------------
 		default:
 
@@ -7785,7 +7820,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// DeviceBoot設定
 		//--------------------------------------------------------------------------------
 		case DeviceBoot:
-		*status = toG (boardReset());
+		    *status = toG (boardReset());
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -8214,6 +8249,13 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureAlarmStatus:
 			*status = GEV_STATUS_WRITE_PROTECT;
+			break;
+
+		//--------------------------------------------------------------------------------
+		// DeviceTemperatureAlarmClear設定
+		//--------------------------------------------------------------------------------
+		case DeviceTemperatureAlarmClear:
+			*status = toG (peltierClearTempAlarm (value));
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -8698,25 +8740,25 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//====================================================================================
 
 		//--------------------------------------------------------------------------------
-		// FileSelector
+		// FileSelector設定
 		//--------------------------------------------------------------------------------
 		case FileSelector:
 			fileSelector = value;
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileOperationeSelector
+		// FileOperationeSelector設定
 		//--------------------------------------------------------------------------------
 		case FileOperationeSelector:
 			fileSel[fileSelector] = value;
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileOperationExecute
+		// FileOperationExecute設定
 		//--------------------------------------------------------------------------------
 		case FileOperationExecute:
 			fileExec[fileSelector] = value;
-			ledSetState(LED_POWER, LED_CONFIG, 0);
+			//@@@@@ledSetState(LED_POWER, LED_CONFIG, 0);
 			switch (fileSelector)
 			{
 				case FileSelector_SYSTEM:
@@ -8782,14 +8824,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					 break;
 				#endif
 
-				#if 0 //@@@1
-				#if defined (MODE_FPGA_PF)
-				case FileSelector_IF_FPGA:
-					*status = toG (FileSelectorIfFpgaWrite());
-					break;
-				#endif
-				#endif //@@@1
-
 				#if defined (MODE_GIGE_10G)
 				case FileSelector_PHY:
 					*status = toG (FileSelectorPhyWrite());
@@ -8806,49 +8840,49 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 		//--------------------------------------------------------------------------------
-		// FileOpenMode
+		// FileOpenMode設定
 		//--------------------------------------------------------------------------------
 		case FileOpenMode:
 			fileMode[fileSelector] = value;
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileAccessOffset
+		// FileAccessOffset設定
 		//--------------------------------------------------------------------------------
 		case FileAccessOffset:
 			fileOffset[fileSelector][fileSel[fileSelector]] = value;
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileAccessLength
+		// FileAccessLength設定
 		//--------------------------------------------------------------------------------
 		case FileAccessLength:
 			fileLength[fileSelector][fileSel[fileSelector]] = value;
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileOperationStatus
+		// FileOperationStatus設定
 		//--------------------------------------------------------------------------------
 		case FileOperationStatus:
 			fileStatus[fileSelector][fileSel[fileSelector]] = value;
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileOperationResult
+		// FileOperationResult設定
 		//--------------------------------------------------------------------------------
 		case FileOperationResult:
 			fileResult[fileSelector][fileSel[fileSelector]] = value;
 			break;
 
 		//--------------------------------------------------------------------------------
-		// FileSize
+		// FileSize設定
 		//--------------------------------------------------------------------------------
 		case FileSize:
 			fileSize[fileSelector] = value;
 			break;
 
 		//--------------------------------------------------------------------------------
-		// default
+		// default設定
 		//--------------------------------------------------------------------------------
 		default:
 
@@ -10101,19 +10135,7 @@ void user_init(u32* status)
 					fileBuffer[i] = fileBuffer[FileSelector_FPGA];	// FileSelector_FPGAで確保した領域を使用
 					break;
 
-				case FileSelector_SENSOR_FPGA:
-					fileBuffer[i] = fileBuffer[FileSelector_FPGA];	// FileSelector_FPGAで確保した領域を使用
-					break;
-
-				case FileSelector_ADM:
-					fileBuffer[i] = fileBuffer[FileSelector_FPGA];	// FileSelector_FPGAで確保した領域を使用
-					break;
-
 				case FileSelector_SPECTRUM_WAVE:
-					fileBuffer[i] = fileBuffer[FileSelector_FPGA];	// FileSelector_FPGAで確保した領域を使用
-					break;
-
-				case FileSelector_IF_FPGA:
 					fileBuffer[i] = fileBuffer[FileSelector_FPGA];	// FileSelector_FPGAで確保した領域を使用
 					break;
 
@@ -11373,7 +11395,7 @@ int FileSelectorFpga (void)
 	switch (fileSel[fileSelector])
 	{
 		case FileOperationeSelector_Open:
-			memset((void*) fileBuffer[fileSelector], 0, UPDATE_DATA_SIZE); // temporary DDR memories
+			//@@@1memset((void*) fileBuffer[fileSelector], 0, UPDATE_DATA_SIZE); // temporary DDR memories
 			fileOffset[fileSelector][fileSel[fileSelector]] = 0; // Address
 			fileLength[fileSelector][fileSel[fileSelector]] = 0; // 0 bytes
 			fileStatus[fileSelector][fileSel[fileSelector]] = 0; // Success or Failure
@@ -11401,6 +11423,12 @@ int FileSelectorFpga (void)
 			size = fileLength[fileSelector][fileSel[fileSelector]]; // Gets the address of offset by starting point
 			valueBuffer = fileBuffer[fileSelector]; //Gets the start pointer of temporary buffer
 
+//@@@1
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		DEBUG_PRINT_FORCE("@@@@@@Write\n");
+		//@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+#if 0
 			// Cmd Initialze
 			if ((status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
@@ -11408,7 +11436,8 @@ int FileSelectorFpga (void)
 			// Flash Write
 			if ((status = gigeCmdFirmUpload (adrs, (unsigned char *)valueBuffer, size)) != AVAL_STATUS_SUCCESS)
 				break;
-
+#endif
+//@@@1
 			// Success or Failure
 			fileStatus[fileSelector][fileSel[fileSelector]] = status;
 

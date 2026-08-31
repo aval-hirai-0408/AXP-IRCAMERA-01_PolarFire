@@ -872,8 +872,6 @@ int cmdMainVersion (void *str);
 int cmdMainVersionHelp (void *str);
 int cmdFirmVersion (void *str);
 int cmdFirmVersionHelp (void *str);
-int cmdIfFpgaVersion (void *str);
-int cmdIfFpgaVersionHelp (void *str);
 int cmdBootVersion (void *str);
 int cmdBootVersionHelp (void *str);
 

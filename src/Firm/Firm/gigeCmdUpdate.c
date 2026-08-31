@@ -75,6 +75,10 @@ int gigeCmdFirmUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned 
 	}
 #endif
 
+	//@@@@@@@@@@@@@@@@
+	DEBUG_PRINT_FORCE("Update!!!!!!!!!!\n");
+	//@@@@@@@@@@@@@@@@
+	
 	// Flash Write
 	if ((status = firmUpdateFlashWrite (flashAdrs, pUpdatePtr, updateSize)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;

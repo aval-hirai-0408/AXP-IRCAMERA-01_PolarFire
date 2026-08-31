@@ -18,13 +18,13 @@
 //----------------------------------------------------------------------------------
 
 // Firmware Version
-#define FIRM_VERSION						"0.4"
+#define FIRM_VERSION						"0.1"
 
 // Main Version
-#define MAIN_VERSION						"0.4"
+#define MAIN_VERSION						"0.1"
 
 // HW Version
-#define HW_VERSION							"0.4"
+#define HW_VERSION							"0.1"
 
 
 //----------------------------------------------------------------------------------

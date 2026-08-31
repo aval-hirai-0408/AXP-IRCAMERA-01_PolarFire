@@ -341,6 +341,7 @@ int hwInitialize (int cpuType)
 	if ((status = voltIfInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
 #endif
+#endif //@@@1
 
 	//------------------------------------------------------------
 	// CXP初期化
@@ -358,7 +359,6 @@ int hwInitialize (int cpuType)
 	//------------------------------------------------------------
 	if ((status = cameraSetStatusAll ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
-#endif //@@@1
 
 	// Boot Flag
 	OUT32 (FIRM_DATA_FIRM_BOOT_FLAG_ADRS, 1);

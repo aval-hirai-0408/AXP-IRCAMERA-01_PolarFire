@@ -359,10 +359,6 @@ CMD_TBL mainCmdTbl [] =
 	{ (char *)"version",	 	 			(CMDFUNC)cmdMainVersion,				(CMDFUNC)cmdMainVersionHelp, 					OPT_NONE},
 	{ (char *)"bootversion",	 	 		(CMDFUNC)cmdBootVersion,				(CMDFUNC)cmdBootVersionHelp, 					OPT_NONE},
 
-#if defined (MODE_CXP)
-	{ (char *)"iffpgaversion", 				(CMDFUNC)cmdIfFpgaVersion,				(CMDFUNC)cmdIfFpgaVersionHelp, 					OPT_NONE},
-#endif
-
 	{ (char *)"firmbuild",	  				(CMDFUNC)cmdFirmBuildInfo,				(CMDFUNC)cmdFirmBuildInfoHelp, 					OPT_NONE},
 	{ (char *)"fpgabuild",	  				(CMDFUNC)cmdFpgaBuildInfo,				(CMDFUNC)cmdFpgaBuildInfoHelp, 					OPT_NONE},
 

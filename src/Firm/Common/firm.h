@@ -654,10 +654,10 @@ typedef unsigned char   u8;
 #define FIRM_DATA_AUTO_BRIGHT_USERSET_OFFSET		(FIRM_DATA_ADRS+0x600)
 #define FIRM_DATA_SPI_PL_BANK_FLAG_ADRS				(FIRM_DATA_ADRS+0x604)
 #define FIRM_DATA_BIT8_CONVERT_MODE					(FIRM_DATA_ADRS+0x608)
-#define FIRM_DATA_CXP_SEND_DATA_COUNT				(FIRM_DATA_ADRS+0x60c)
-#define FIRM_DATA_CXP_RECV_DATA_COUNT				(FIRM_DATA_ADRS+0x610)
-#define FIRM_DATA_CXP_DATA_COUNT					(FIRM_DATA_ADRS+0x614)
-#define FIRM_DATA_CXP_SEND_FPGA_ADRS				(FIRM_DATA_ADRS+0x618)
+//#define FIRM_DATA_CXP_SEND_DATA_COUNT				(FIRM_DATA_ADRS+0x60c)
+//#define FIRM_DATA_CXP_RECV_DATA_COUNT				(FIRM_DATA_ADRS+0x610)
+//#define FIRM_DATA_CXP_DATA_COUNT					(FIRM_DATA_ADRS+0x614)
+//#define FIRM_DATA_CXP_SEND_FPGA_ADRS				(FIRM_DATA_ADRS+0x618)
 #define FIRM_DATA_IF_VERSION_ADRS					(FIRM_DATA_ADRS+0x61c)
 #define FIRM_DATA_CXP_LED1_ADRS						(FIRM_DATA_ADRS+0x620)
 #define FIRM_DATA_TRG_SOFT_COUNT_ADRS				(FIRM_DATA_ADRS+0x624)
@@ -1690,7 +1690,6 @@ int cxpGetFifoSizeCount (int port, unsigned int *pCount);
 int cxpCheckFpgaMemAdrs (unsigned int *pAdrs, unsigned int size);
 int cxpSetFifoAdrs (unsigned int adrs);
 int cxpSetDmaAdrs (unsigned int adrs);
-int cxpGetFpgaVersion (unsigned int *pVer);
 int cxpSetFifoReset (void);
 int cxpSetConectionConfig (unsigned int data);
 int cxpGetConectionConfig (unsigned int *pData);

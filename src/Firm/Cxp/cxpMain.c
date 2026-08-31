@@ -150,12 +150,6 @@ int cxpMain (void)
 	int port = 0;
 
 	//------------------------------------------------------------
-	// 管理外メモリ設定
-	//------------------------------------------------------------
-	//@@@1map ();
-
-
-	//------------------------------------------------------------
 	// CPU1 Boot Flag
 	//------------------------------------------------------------
 	OUT32 (FIRM_DATA_CPU1_BOOT_FLAG, 0);
@@ -290,13 +284,15 @@ int cxpUserInit (void)
 	char str16[16 + 1] = { 0 };
 	char strXMLAddress[10] = { 0 };
 	char strXMLSize[6] = { 0 };
+
 //@@@1
 #if 0
-
 	//------------------------------------------------------------
 	// CXP Parameter Initialize
 	//------------------------------------------------------------
 	cxpInitializeImageParam ();
+#endif
+//@@@1
 
 	//------------------------------------------------------------
 	// DeviceIndicatorMode_Selecotr
@@ -311,6 +307,8 @@ int cxpUserInit (void)
 	Flash_UserSetSave = 0;
 	Flash_UserSetDefault = CAMERA_SAVE_USER_NUM;
 
+//@@@1
+#if 0
 	//------------------------------------------------------------
 	// Counter
 	//------------------------------------------------------------
@@ -490,6 +488,12 @@ int cxpUserInit (void)
 		// XML Data Read
 		sprintf (gLogMsgBuff, "XML File Name : %s / Adrs : 0x%08x / Size : 0x%08x\n", gXmlFileName1, xmlStartAddress, xmlSize);
 		cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+
+		// XML Load
+		if (gXMLSize > FLASH_XML_SIZE)
+			gXMLSize = FLASH_XML_SIZE;
+		
+		qspiFlashRead (FLASH_XML_ADRS, (unsigned char *)FIRM_XML_FILE_ADRS, gXMLSize);
 	}
 	else
 	{
@@ -497,16 +501,28 @@ int cxpUserInit (void)
 		memset((void*) gXmlFileName2, 0, CXP_XML_URL_SIZE);
 	}
 
-	// XML Load
-	if (gXMLSize > FLASH_XML_SIZE)
-		gXMLSize = FLASH_XML_SIZE;
-	
-	qspiFlashRead (FLASH_XML_ADRS, (unsigned char *)FIRM_XML_FILE_ADRS, gXMLSize);
 
-	
-//@@@1
-#if 0
+//@@@@@@@@@@@@@@@@@@
+	{
+	unsigned int data, wsize;
 
+	OUT32(FPGA_CXP_S0_XSIZE_OFFSET, 640);
+	OUT32(FPGA_CXP_S0_YSIZE_OFFSET, 512);
+	OUT32(FPGA_CXP_S0_DSIZE, (640*8/32));
+
+	OUT32(FPGA_CXP_S0_TAPG_PIXEL, CXP_REG_PIXEL_MONO8);
+	OUT32(FPGA_CXP_S0_STREAM_EN, 1);
+
+		
+	data = IN32((CORECXP2_BASE_ADDR+0x08));
+	wsize = data & 0xffff;
+	wsize /= 8;
+	data &= ~0xffff;
+	data |= wsize;
+	OUT32((CORECXP2_BASE_ADDR+0x08), data);
+	}
+//@@@@@@@@@@@@@@@@@@
+	
 	// ---- Initiates Global variables for File Access Control --------------------------------
 	fileSelector = 0;
 	for (i = 0; i < FileSelector_MAX; i++)
@@ -555,30 +571,9 @@ int cxpUserInit (void)
 				break;
 
 			//------------------------------------------------------------
-			// Sensor FPGA
-			//------------------------------------------------------------
-			case FileSelector_SENSOR_FPGA:
-				fileBuffer[i] = fileBuffer[FileSelector_FPGA];	// FileSelector_FPGAで確保した領域を使用
-				break;
-
-			//------------------------------------------------------------
-			// ADM
-			//------------------------------------------------------------
-			case FileSelector_ADM:
-				fileBuffer[i] = fileBuffer[FileSelector_FPGA];	// FileSelector_FPGAで確保した領域を使用
-				break;
-
-			//------------------------------------------------------------
 			// Spectrum Wave Information
 			//------------------------------------------------------------
 			case FileSelector_SPECTRUM_WAVE:
-				fileBuffer[i] = fileBuffer[FileSelector_FPGA];	// FileSelector_FPGAで確保した領域を使用
-				break;
-
-			//------------------------------------------------------------
-			// IF FPGA
-			//------------------------------------------------------------
-			case FileSelector_IF_FPGA:
 				fileBuffer[i] = fileBuffer[FileSelector_FPGA];	// FileSelector_FPGAで確保した領域を使用
 				break;
 
@@ -605,7 +600,7 @@ int cxpUserInit (void)
 #if defined(MODE_CAMERA_INTERRUPT)
 	status = cameraIntRegister((p_user_event_callback)user_event_callback_cxp);
 #endif // #if defined(MODE_CAMERA_INTERRUPT)
-#endif//@@@1
+
 	return (status);
 }
 
