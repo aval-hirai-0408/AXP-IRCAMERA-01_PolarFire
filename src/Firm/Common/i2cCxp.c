@@ -64,7 +64,7 @@ int cxpI2cRegWrite (unsigned int adrs, unsigned char data)
 	if ((adrs < CXP_I2C_REG_ADRS_MIN) || (adrs > CXP_I2C_REG_ADRS_MAX))
     {
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-    	sprintf (gLogMsgBuff, "CXP I2C Reg Write Address(0x%x) Parameter Error. Min : 0x%x / Max : 0x%x\n", adrs, CXP_I2C_REG_ADRS_MIN, CXP_I2C_REG_ADRS_MAX);
+    	sprintf (gLogMsgBuff, "CXP I2C Reg Write Address(0x%x) Parameter Error.(Min : 0x%x / Max : 0x%x)\n", adrs, CXP_I2C_REG_ADRS_MIN, CXP_I2C_REG_ADRS_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
     }

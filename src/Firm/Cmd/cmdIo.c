@@ -1152,7 +1152,7 @@ int cmdDiagDeviceRead (unsigned long adrs, unsigned int *pData, int acesSize, in
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Device Read pData NULL Parameter Error\n");
+		sprintf (gLogMsgBuff, "Device Read NULL Parameter Error\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1180,7 +1180,7 @@ int cmdDiagDeviceRead (unsigned long adrs, unsigned int *pData, int acesSize, in
 
 		if (status != AVAL_STATUS_SUCCESS)
 		{
-			sprintf (gLogMsgBuff, "\nError - QSPI Flash Read Error. Error = %d, Aces Size = %d\n", status, acesSize);
+			sprintf (gLogMsgBuff, "\nError - Flash Read Error. Error = %d, Size = %d\n", status, acesSize);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1218,7 +1218,7 @@ int cmdDiagDeviceRead (unsigned long adrs, unsigned int *pData, int acesSize, in
 		adrs = adrs & 0xffff;
 		if ((status = phyReadReg (dev, adrs, pData)) != AVAL_STATUS_SUCCESS)
 		{
-			sprintf (gLogMsgBuff, "\nError - Phy Read Error. Error = %d, Aces Size = %d\n", status, acesSize);
+			sprintf (gLogMsgBuff, "\nError - Phy Read Error. Error = %d, Size = %d\n", status, acesSize);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1229,7 +1229,7 @@ int cmdDiagDeviceRead (unsigned long adrs, unsigned int *pData, int acesSize, in
 		pData8 = (unsigned char *)pData;
 		if ((status = phyReadReg (adrs, pData)) != AVAL_STATUS_SUCCESS)
 		{
-			sprintf (gLogMsgBuff, "\nError - Phy Read Error. Error = %d, Aces Size = %d\n", status, acesSize);
+			sprintf (gLogMsgBuff, "\nError - Phy Read Error. Error = %d, Size = %d\n", status, acesSize);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1294,7 +1294,7 @@ int cmdDiagDeviceWrite (unsigned long adrs, unsigned int data, int acesSize, int
 
 		if (status != AVAL_STATUS_SUCCESS)
 		{
-			sprintf (gLogMsgBuff, "\nError - QSPI Flash Write Error. Error = %d, Aces Size = %d\n", status, acesSize);
+			sprintf (gLogMsgBuff, "\nError - Flash Write Error. Error = %d, Size = %d\n", status, acesSize);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1334,7 +1334,7 @@ int cmdDiagDeviceWrite (unsigned long adrs, unsigned int data, int acesSize, int
 		adrs = adrs & 0xffff;
 		if ((status = phyWriteReg (dev, adrs, data)) != AVAL_STATUS_SUCCESS)
 		{
-			sprintf (gLogMsgBuff, "\nError - Phy Write Error. Error = %d, Aces Size = %d\n", status, acesSize);
+			sprintf (gLogMsgBuff, "\nError - Phy Write Error. Error = %d, Size = %d\n", status, acesSize);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1344,7 +1344,7 @@ int cmdDiagDeviceWrite (unsigned long adrs, unsigned int data, int acesSize, int
 	{
 		if ((status = phyWriteReg (adrs, data)) != AVAL_STATUS_SUCCESS)
 		{
-			sprintf (gLogMsgBuff, "\nError - Phy Write Error. Error = %d, Aces Size = %d\n", status, acesSize);
+			sprintf (gLogMsgBuff, "\nError - Phy Write Error. Error = %d, Size = %d\n", status, acesSize);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1385,7 +1385,7 @@ int cmdDiagDeviceErase (unsigned long adrs, int devType)
 	{
 		if ((status = qspiFlashSectorErase (adrs)) != AVAL_STATUS_SUCCESS)
 		{
-			sprintf (gLogMsgBuff, "\nError - QSPI Flash Erase Error = %d / Adrs = 0x%lx\n\n", status, adrs);
+			sprintf (gLogMsgBuff, "\nError - Flash Erase Error = %d / Adrs = 0x%lx\n", status, adrs);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}

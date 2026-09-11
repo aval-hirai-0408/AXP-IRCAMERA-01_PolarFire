@@ -69,20 +69,9 @@ enum bootStrap
 	Start_of_manufacturer_specific_register_space = 0x00006000,
 
 	//manf specific boot strap registers
-	Pattern = 0x00003148,
 	Image2StreamID = 0x30E0,
 	Image1StreamID = 0x30E4,
-	HorzSwap = 0x0000304E,
-	Gain = 0x000030E8,
 	IfFpgaVersion = 0x000030F0,
-
-
-	XML_ADD = 0x0000700C,
-	XML_REQ = 0x00008100,
-
-	//UpdateFirmAdrs = 0x1000000,
-	//UpdateXmlAdrs = 02000000,
-
 };
 
 unsigned int XmlManifestSize_st           = 1;
@@ -98,15 +87,11 @@ unsigned int ConnectionConfigDefault_st   = DEFAULT_CONNECTION_CONFIG_DEFAULT;
 unsigned int TestMode_st                  = 0;
 unsigned int TestErrorCountSelector_st    = 0;
 unsigned int TestErrorCount_st            = 0;
-unsigned long long TestPacketCountTx_st   = 0;
-unsigned long long TestPacketCountRx_st   = 0;
+unsigned int TestPacketCountTx_st         = 0;
+unsigned int TestPacketCountRx_st         = 0;
 unsigned int ElectricalComplianceTest_st  = 0;
 unsigned int FeatureControlRegister_st    = 0;
-#if defined (MODE_CXP_VERSION_20)
 unsigned int VersionUsed_st               = 0x00020000;
-#else
-unsigned int VersionUsed_st               = 0x00010001;
-#endif
 
 #endif // BOOTSTRAP_H
 

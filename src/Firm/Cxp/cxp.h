@@ -64,6 +64,7 @@
 	#define CXP_REG_CXP_EXP_PWR_BIT			(1<<30)
 	#define CXP_REG_CXP_IF_PWR_BIT			(1<<31)
 #define CXP_REG_DRI_CTRLADRS				(FPGA_CXP_PF_BASE_ADRS + 0x40)
+//@@@1#define CXP_REG_DRI_CTRLADRS				(FPGA_CXP_BASE_ADDR + 0x04)
 	#define CXP_REG_DRI_CTRL_1_25G			(0x00)
 	#define CXP_REG_DRI_CTRL_2_5G			(0x01)
 	#define CXP_REG_DRI_CTRL_3_125G			(0x02)

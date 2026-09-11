@@ -323,7 +323,7 @@ _DPC_SKIP:
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Black Bit(%d) Parameter Error. (Min:%dbit / Max:%dbit)\n", ffcParam.bit, PIXEL_BIT_MIN, PIXEL_BIT_MAX);
+		sprintf (gLogMsgBuff, "FFC Black Bit(%d) Parameter Error.(Min:%dbit / Max:%dbit)\n", ffcParam.bit, PIXEL_BIT_MIN, PIXEL_BIT_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -332,7 +332,7 @@ _DPC_SKIP:
 	if (ffcParam.target > blackMax)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Black Target(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcParam.target, FFC_BLACK_LEVEL_MIN, blackMax);
+		sprintf (gLogMsgBuff, "FFC Black Target(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcParam.target, FFC_BLACK_LEVEL_MIN, blackMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -855,7 +855,7 @@ _DPC_SKIP:
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC White Bit(%d) Parameter Error. (Min:%dbit / Max:%dbit)\n", ffcParam.bit, PIXEL_BIT_MIN, PIXEL_BIT_MAX);
+		sprintf (gLogMsgBuff, "FFC White Bit(%d) Parameter Error.(Min:%dbit / Max:%dbit)\n", ffcParam.bit, PIXEL_BIT_MIN, PIXEL_BIT_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -874,7 +874,7 @@ _DPC_SKIP:
 	if ((ffcParam.target <= blackTarget) || (ffcParam.target > whiteMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC White white_target(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcParam.target, blackTarget+1, whiteMax);
+		sprintf (gLogMsgBuff, "FFC White white_target(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcParam.target, blackTarget+1, whiteMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1107,7 +1107,7 @@ int ffcFlashSave (FFC_PARAM ffcParam)
 	if ((ffcParam.ffcNo < FFC_NUMBER_MIN) || (ffcParam.ffcNo > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Save ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcParam.ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Save ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcParam.ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1628,7 +1628,7 @@ int ffcAdjustInfoBlackSave (int ffcNum, int userMode, FFCINFO ffcInfo)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Adjust Black Information ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Adjust Black Info ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1637,7 +1637,7 @@ int ffcAdjustInfoBlackSave (int ffcNum, int userMode, FFCINFO ffcInfo)
 	if ((userMode != FFC_USER) && (userMode != FFC_ADMIN))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Adjust Black Information User(%d) Parameter Error.(User:%d / Admin:%d)\n", userMode, FFC_USER, FFC_ADMIN);
+		sprintf (gLogMsgBuff, "FFC Adjust Black Info User(%d) Parameter Error.(User:%d / Admin:%d)\n", userMode, FFC_USER, FFC_ADMIN);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1646,7 +1646,7 @@ int ffcAdjustInfoBlackSave (int ffcNum, int userMode, FFCINFO ffcInfo)
 	if ((pBuffer = malloc ((size))) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		sprintf (gLogMsgBuff, "FFC Adjust Black Information Buffer Request Error\n");
+		sprintf (gLogMsgBuff, "FFC Adjust Black Info Buffer Request Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1770,7 +1770,7 @@ int ffcAdjustInfoWhiteSave (int ffcNum, int userMode, FFCINFO ffcInfo)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Adjust White Information ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Adjust White Info ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1779,7 +1779,7 @@ int ffcAdjustInfoWhiteSave (int ffcNum, int userMode, FFCINFO ffcInfo)
 	if ((userMode != FFC_USER) && (userMode != FFC_ADMIN))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Adjust White Information User(%d) Parameter Error.(User:%d / Admin:%d)\n", userMode, FFC_USER, FFC_ADMIN);
+		sprintf (gLogMsgBuff, "FFC Adjust White Info User(%d) Parameter Error.(User:%d / Admin:%d)\n", userMode, FFC_USER, FFC_ADMIN);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1788,7 +1788,7 @@ int ffcAdjustInfoWhiteSave (int ffcNum, int userMode, FFCINFO ffcInfo)
 	if ((pBuffer = malloc ((size))) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		sprintf (gLogMsgBuff, "FFC Adjust White Information Buffer Request Error\n");
+		sprintf (gLogMsgBuff, "FFC Adjust White Info Buffer Request Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1912,7 +1912,7 @@ int ffcAdjustInfoBlackRead (int ffcNum, int userMode, FFCINFO *pFfcInfo)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Black Adjust Information Read ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Black Adjust Info Read ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1921,7 +1921,7 @@ int ffcAdjustInfoBlackRead (int ffcNum, int userMode, FFCINFO *pFfcInfo)
 	if ((userMode != FFC_USER) && (userMode != FFC_ADMIN))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Black Adjust Information Read User(%d) Parameter Error.(User:%d / Admin:%d)\n", userMode, FFC_USER, FFC_ADMIN);
+		sprintf (gLogMsgBuff, "FFC Black Adjust Info Read User(%d) Parameter Error.(User:%d / Admin:%d)\n", userMode, FFC_USER, FFC_ADMIN);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1930,7 +1930,7 @@ int ffcAdjustInfoBlackRead (int ffcNum, int userMode, FFCINFO *pFfcInfo)
 	if (pFfcInfo == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Black Adjust Information Read pFfcInfo NULL Parameter Error.\n");
+		sprintf (gLogMsgBuff, "FFC Black Adjust Info Read pFfcInfo NULL Parameter Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1939,7 +1939,7 @@ int ffcAdjustInfoBlackRead (int ffcNum, int userMode, FFCINFO *pFfcInfo)
 	if ((pBuffer = malloc ((size))) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		sprintf (gLogMsgBuff, "FFC Black Adjust Read Information Buffer Request Error\n");
+		sprintf (gLogMsgBuff, "FFC Black Adjust Info Buffer Request Error\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2031,7 +2031,7 @@ int ffcAdjustInfoWhiteRead (int ffcNum, int userMode, FFCINFO *pFfcInfo)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC White Adjust Information Read ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC White Adjust Info Read ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2040,7 +2040,7 @@ int ffcAdjustInfoWhiteRead (int ffcNum, int userMode, FFCINFO *pFfcInfo)
 	if ((userMode != FFC_USER) && (userMode != FFC_ADMIN))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC White Adjust Information Read User(%d) Parameter Error.(User:%d / Admin:%d)\n", userMode, FFC_USER, FFC_ADMIN);
+		sprintf (gLogMsgBuff, "FFC White Adjust Info Read User(%d) Parameter Error.(User:%d / Admin:%d)\n", userMode, FFC_USER, FFC_ADMIN);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2049,7 +2049,7 @@ int ffcAdjustInfoWhiteRead (int ffcNum, int userMode, FFCINFO *pFfcInfo)
 	if (pFfcInfo == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC White Adjust Information Read pFfcInfo NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC White Adjust Info Read pFfcInfo NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2057,7 +2057,7 @@ int ffcAdjustInfoWhiteRead (int ffcNum, int userMode, FFCINFO *pFfcInfo)
 	if ((pBuffer = malloc ((size))) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC White Adjust Information Read Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC White Adjust Info Read Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -2153,7 +2153,7 @@ int cmdSensorTempBatch (double sensorTemp)
 	if ((sensorTemp < targetMin) || (sensorTemp > targetMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Temp(%.2f) Parameter Error. (Min:%.2f / Max:%.2f)\n", sensorTemp, targetMin, targetMax);
+		sprintf (gLogMsgBuff, "Sensor Temp(%.2f) Parameter Error.(Min:%.2f / Max:%.2f)\n", sensorTemp, targetMin, targetMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}

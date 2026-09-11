@@ -427,7 +427,7 @@ int autoExposurePid (int bright, int target, double *pPID)
 	if (pPID == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Exp PID NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Exp PID NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -512,7 +512,7 @@ int autoGainPid (int bright, int target, double *pPID)
 	if (pPID == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Ex PID NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Ex PID NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -742,7 +742,7 @@ int autoBrightGetFunctionValid (int *pValid)
 	if (pValid == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Valid Function pValid NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Valid Function pValid NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -808,7 +808,7 @@ int autoBrightSetExposureMode (int mode)
 	if ((mode < MODE_DISABLE) || (mode > MODE_ENABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Auto Bright Exposure Set Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Auto Bright Exposure Set Mode(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -864,7 +864,7 @@ int autoBrightGetExposureMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Exposure Mode pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Exposure Mode pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -922,7 +922,7 @@ int autoBrightGetExposureStatus (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Exposure Once Status pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Exposure Once Status pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -977,7 +977,7 @@ int autoBrightSetExposureMax (int exp)
 	if ((exp < getExpTimeMin) || (exp > getExpTimeMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Auto Bright Set Exposure Max(%d) Parameter Error. (Min:%d / Max:%d)\n", exp, getExpTimeMin, getExpTimeMax);
+		sprintf (gLogMsgBuff, "Auto Bright Set Exposure Max(%d) Parameter Error.(Min:%d / Max:%d)\n", exp, getExpTimeMin, getExpTimeMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1068,7 +1068,7 @@ int autoBrightGetExposureMax (int *pExp)
 	if (pExp == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Exposure Max pExp NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Exposure Max pExp NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1103,7 +1103,7 @@ int autoBrightSetGainMode (int mode)
 	if ((mode < MODE_DISABLE) || (mode > MODE_ENABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Auto Bright Gain Set Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Auto Bright Gain Set Mode(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1148,7 +1148,7 @@ int autoBrightGetGainMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Gain Mode pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Gain Mode pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1208,7 +1208,7 @@ int autoBrightGetGainStatus (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Gain Once Status pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Gain Once Status pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1244,7 +1244,7 @@ int autoBrightSetGainMax (double gain)
 	if ((gain < DOG_GAIN_MIN) || (gain > DOG_GAIN_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Auto Bright Set Gain Max(%lf) Parameter Error. (Min:%lf / Max:%lf)\n", gain, AUTO_GAIN_MIN, AUTO_GAIN_MAX);
+		sprintf (gLogMsgBuff, "Auto Bright Set Gain Max(%lf) Parameter Error.(Min:%lf / Max:%lf)\n", gain, AUTO_GAIN_MIN, AUTO_GAIN_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1292,7 +1292,7 @@ int autoBrightGetGainMax (double *pGain)
 	if (pGain == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Gain Max pGain NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Gain Max pGain NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1327,7 +1327,7 @@ int autoBrightSetDetectArea (int mode)
 	if ((mode < FPGA_AUTO_BRIGHT_CTRL_OVERLAY_MIN) || (mode > FPGA_AUTO_BRIGHT_CTRL_OVERLAY_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Auto Bright Set Detect Area(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, FPGA_AUTO_BRIGHT_CTRL_OVERLAY_MIN, FPGA_AUTO_BRIGHT_CTRL_OVERLAY_MAX);
+		sprintf (gLogMsgBuff, "Auto Bright Set Area(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, FPGA_AUTO_BRIGHT_CTRL_OVERLAY_MIN, FPGA_AUTO_BRIGHT_CTRL_OVERLAY_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1366,7 +1366,7 @@ int autoBrightGetDetectArea (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Detect Area pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Detect Area pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1412,7 +1412,7 @@ int autoBrightSetTarget (int target)
 	if (target < 0 || target > targetMax)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Auto Bright Set Target(%d) Parameter Error. (Min:0 Max:%d)\n", target, targetMax);
+		sprintf (gLogMsgBuff, "Auto Bright Set Target(%d) Parameter Error. (Min:0 / Max:%d)\n", target, targetMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1469,7 +1469,7 @@ int autoBrightGetTarget (int *pTarget)
 	if (pTarget == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Target pTarget NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Target pTarget NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1528,7 +1528,7 @@ int autoBrightGetAverage (int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Average pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Average pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1688,7 +1688,7 @@ int autoBrightSetWidthSize (int size)
 	if ((size % ROI_FPGA_WIDTH_SIZE_ALIGH) != 0)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Auto Bright  Width Set Size Align(%d) Parameter Error. Align = %d.\n", size / binningNum, ROI_FPGA_WIDTH_SIZE_ALIGH);
+		sprintf (gLogMsgBuff, "Auto Bright Width Set Size Align(%d) Parameter Error. Align = %d.\n", size / binningNum, ROI_FPGA_WIDTH_SIZE_ALIGH);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1755,7 +1755,7 @@ int autoBrightGetWidthSize (int *pSize)
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Auto Bright Get Width Size pSize NULL Parameter Error\n");
+		sprintf (gLogMsgBuff, "Auto Bright Get Width Size pSize NULL Parameter Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1840,7 +1840,7 @@ int autoBrightSetHeightSize (int size)
 	if ((size < heightMin) || (size > heightMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Auto Bright Height Size(%d) Parameter Error. (Min:%d / Max:%d)\n", size / binningNum, heightMin, heightMax / binningNum);
+		sprintf (gLogMsgBuff, "Auto Bright Height Size(%d) Parameter Error.(Min:%d / Max:%d)\n", size / binningNum, heightMin, heightMax / binningNum);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1907,7 +1907,7 @@ int autoBrightGetHeightSize (int *pSize)
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Auto Bright Get Height Size pSize NULL Parameter Error\n");
+		sprintf (gLogMsgBuff, "Auto Bright Get Height Size pSize NULL Parameter Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2000,7 +2000,7 @@ int autoBrightSetWidthOffset (int offset)
 		if ((offset < 0) || (offset > widthMax-CXP_WIDTH_MIN))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Auto Bright Width Offset(%d) Parameter Error. (Min:%d / Max:%d)\n", offset / binningNum, widthMin, (widthMax / binningNum) - CXP_WIDTH_MIN);
+			sprintf (gLogMsgBuff, "Auto Bright Width Offset(%d) Parameter Error.(Min:%d / Max:%d)\n", offset / binningNum, widthMin, (widthMax / binningNum) - CXP_WIDTH_MIN);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -2012,7 +2012,7 @@ int autoBrightSetWidthOffset (int offset)
 		if ((offset < widthMin) || (offset  > (widthMax - ROI_WIDTH_ALIGH)))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Auto Bright Width Offset(%d) Parameter Error. (Min:%d / Max:%d)\n", offset / binningNum, widthMin, (widthMax / binningNum) - ROI_WIDTH_ALIGH);
+			sprintf (gLogMsgBuff, "Auto Bright Width Offset(%d) Parameter Error.(Min:%d / Max:%d)\n", offset / binningNum, widthMin, (widthMax / binningNum) - ROI_WIDTH_ALIGH);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -2084,7 +2084,7 @@ int autoBrightGetWidthOffset (int *pOffset)
 	if (pOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Width Offset pOffset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Width Offset pOffset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2230,7 +2230,7 @@ int autoBrightGetHeightOffset (int *pOffset)
 	if (pOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Height Offset pOffset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Height Offset pOffset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2280,7 +2280,7 @@ int autoBrightSetTargetArea (int area)
 	if ((area < AUTO_BRIGHT_TARGET_AREA_MIN) || (area > AUTO_BRIGHT_TARGET_AREA_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Auto Bright Target Area(%d) Parameter Error. (Min:%d / Max:%d)\n", area, AUTO_BRIGHT_TARGET_AREA_MIN,AUTO_BRIGHT_TARGET_AREA_MAX);
+		sprintf (gLogMsgBuff, "Auto Bright Target Area(%d) Parameter Error.(Min:%d / Max:%d)\n", area, AUTO_BRIGHT_TARGET_AREA_MIN,AUTO_BRIGHT_TARGET_AREA_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2387,7 +2387,7 @@ int autoBrightGetTargetArea (int *area)
 	if (area == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Height Offset area NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Auto Bright Get Height Offset area NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

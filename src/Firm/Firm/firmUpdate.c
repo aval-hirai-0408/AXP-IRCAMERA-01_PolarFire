@@ -129,7 +129,7 @@ int firmUpdateMain (unsigned int flashAdrs, unsigned int size, int offsetMode)
 	if ((pUpdateBuff = malloc (size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Firmware Update Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Firmware Update Buffer Request Error.\n");
 		goto _DONE;
 	}
 #endif
@@ -437,7 +437,7 @@ int firmDownloadMain (unsigned int flashAdrs, unsigned int size, char *pName)
 	if ((pBuffer = malloc (size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Firmware Download Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Firmware Download Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -445,7 +445,7 @@ int firmDownloadMain (unsigned int flashAdrs, unsigned int size, char *pName)
 	if (pName == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Firmware Download pName NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Firmware Download pName NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -541,7 +541,7 @@ int fpgaUpdatePolarFireMain (unsigned int flashAdrs, unsigned int size, int offs
 	if ((pUpdateBuff = malloc (size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface FPGA Update Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface FPGA Update Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -565,7 +565,7 @@ int fpgaUpdatePolarFireMain (unsigned int flashAdrs, unsigned int size, int offs
 		if ((strncmp (gKermitFileName, UPDATE_FILE_NAME_POLAFIRE_COMPARE, len1) != 0) && (strncmp (gKermitFileName, UPDATE_FILE_NAME_POLAFIRE_BOARD_COMPARE, len2) != 0))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_FILE);
-			sprintf (gLogMsgBuff, "Interface FPGA Update File Name Error.\nInvalid File Name = %s\nValid File Name   = %s\nValid File Name   = %s\n", gKermitFileName, UPDATE_FILE_NAME_POLAFIRE_EXSAMPLE, UPDATE_FILE_NAME_POLAFIRE_BOARD_EXSAMPLE);
+			sprintf (gLogMsgBuff, "Interface FPGA Update File Name Error.\nInvalid File Name = %s\nValid File Name = %s\nValid File Name = %s\n", gKermitFileName, UPDATE_FILE_NAME_POLAFIRE_EXSAMPLE, UPDATE_FILE_NAME_POLAFIRE_BOARD_EXSAMPLE);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -668,7 +668,7 @@ int fpgaUpdatePolarFireReconfig (void)
 	if ((status = cxpRegWrite (0, CXP_REG_RC_INDEX_ADRS, CXP_REG_RC_INDEX, 1))!= AVAL_STATUS_SUCCESS)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface FPGA Update cxpRegWrite Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface FPGA Update cxpRegWrite Error.\n");
 		goto _DONE;
 	}
 
@@ -676,7 +676,7 @@ int fpgaUpdatePolarFireReconfig (void)
 	if ((status = cxpRegWrite (0, CXP_REG_RC_TRG_ADRS, CXP_REG_RC_TRG, 1))!= AVAL_STATUS_SUCCESS)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface FPGA Update cxpRegWrite Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface FPGA Update cxpRegWrite Error.\n");
 		goto _DONE;
 	}
 
@@ -688,7 +688,7 @@ int fpgaUpdatePolarFireReconfig (void)
 	if((cxpI2cRegRead (CXP_REG_I2C_RC_TRG_ADRS, (unsigned char *)&data) != AVAL_STATUS_SUCCESS) || (data != 0x00))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_TIMEOUT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface FPGA Update Timeout Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface FPGA Update Timeout Erro.r\n");
 		goto _DONE;
 	}
 
@@ -961,7 +961,7 @@ int fpgaDownloadPolarFireMain (unsigned int flashAdrs, unsigned int size, char *
 	if ((pBuffer = malloc (size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "IF FPGA  Download Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "IF FPGA  Download Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -969,7 +969,7 @@ int fpgaDownloadPolarFireMain (unsigned int flashAdrs, unsigned int size, char *
 	if (pName == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "IF FPGA  Download pName NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "IF FPGA  Download pName NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

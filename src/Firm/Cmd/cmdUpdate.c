@@ -218,7 +218,7 @@ int cmdFirmXmlDownload (void *str)
 		if (waitTimeS > DOWNLOAD_WAIT_TIME_MAX)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "XML Data Download Wait Time(%d) Parameter Error. (Min:0 / Max:%d)\n", waitTimeS, DOWNLOAD_WAIT_TIME_MAX);
+			sprintf (gLogMsgBuff, "XML Download Wait Time(%d) Parameter Error.\n", waitTimeS);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -323,7 +323,7 @@ int cmdFirmDownloadAll (void *str)
 		if (waitTimeS > DOWNLOAD_WAIT_TIME_MAX)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Program Download Wait Time(%d) Parameter Error. (Min=0 / Max=%d)\n", waitTimeS, DOWNLOAD_WAIT_TIME_MAX);
+			sprintf (gLogMsgBuff, "Program Download Wait Time(%d) Parameter Error.\n", waitTimeS);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -581,7 +581,7 @@ int cmdFpgaDownloadInterface (void *str)
 		if (waitTimeS > DOWNLOAD_WAIT_TIME_MAX)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Interface FPGA Data Download Wait Time(%d) Parameter Error. (Min:0 / Max:%d)\n", waitTimeS, DOWNLOAD_WAIT_TIME_MAX);
+			sprintf (gLogMsgBuff, "Interface FPGA Data Download Wait Time(%d) Parameter Error.\n", waitTimeS);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}

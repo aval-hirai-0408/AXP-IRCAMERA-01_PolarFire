@@ -276,7 +276,7 @@ int ipuSetGlobalInt (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "IPU Global Interrupt mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "IPU Global Interrupt mode(%d) Parameter Error.\n", mode);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}

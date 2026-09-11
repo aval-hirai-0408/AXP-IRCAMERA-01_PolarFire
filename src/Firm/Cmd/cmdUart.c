@@ -108,7 +108,7 @@ MORE:
 			if (*sPtrL != *rPtrL)
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_UART, AVAL_STATUS_COMPARE);
-				sprintf (gLogMsgBuff, "UART Compare Error.\nAdrs  = 0x%x\nSend  = 0x%x\nRecv  = 0x%x\n", i, *sPtrL, *rPtrL);
+				sprintf (gLogMsgBuff, "UART Compare Error.\nAdrs=0x%x\nSend=0x%x\nRecv=0x%x\n", i, *sPtrL, *rPtrL);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				goto _DONE;
 			}

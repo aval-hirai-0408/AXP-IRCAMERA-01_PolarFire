@@ -7,14 +7,14 @@
 // The distribution policy is described in the file "COPYING"
 // furnished with this package.
 //
-// qspiFlash.c - QSPI Flash Program
+// flash.c - Flash Program
 //**********************************************************************************
 
 //----------------------------------------------------------------------------------
 // includes
 //----------------------------------------------------------------------------------
 #include "../Common/common.h"
-#include "qspiFlash.h"
+#include "flash.h"
 
 
 //----------------------------------------------------------------------------------
@@ -114,8 +114,8 @@ int qspiFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned int size
 	}
 	else
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Write Device Select Error\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Device Select Error.\n");
 		goto _DONE;
 	}
 
@@ -149,8 +149,8 @@ int qspiFlashRead (unsigned int adrs, unsigned char *pBuffer, unsigned int size)
 	}
 	else
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Read Device Select Error\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Read Device Select Error.\n");
 		goto _DONE;
 	}
 
@@ -182,8 +182,8 @@ int qspiFlashSectorErase (unsigned int adrs)
 	}
 	else
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Erase Device Select Error\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Erase Device Select Error.\n");
 		goto _DONE;
 	}
 
@@ -215,8 +215,8 @@ int qspiFlashEraseAll (void)
 	}
 	else
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Erase All Device Select Error\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Erase All Device Select Error.\n");
 		goto _DONE;
 	}
 
@@ -248,8 +248,8 @@ int qspiFlashWriteProtect (unsigned int address)
 	}
 	else
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Write Protect All Device Select Error\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Protect All Device Select Error.\n");
 		goto _DONE;
 	}
 	
@@ -281,8 +281,8 @@ int qspiFlashWriteProtectRead (int *pStatus)
 	}
 	else
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Write Protect Read All Device Select Error\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Protect Read All Device Select Error.\n");
 		goto _DONE;
 	}
 
@@ -314,8 +314,8 @@ int qspiFlashWriteProtectReadShow (void)
 	}
 	else
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Write Protect Show All Device Select Error\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Protect Show All Device Select Error.\n");
 		goto _DONE;
 	}
 
@@ -361,8 +361,8 @@ int qspiFlashGetBank (unsigned int *pBankNum)
 	// Check pBankNum Parameter
 	if (pBankNum == NULL)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash pBankNum NULL Parameter Error.\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash pBankNum NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -392,15 +392,15 @@ int qspiFlashGetFlashId (unsigned char *pManufacturerId, unsigned char *pDeviceI
 	// Check pManufacturerId Parameter
 	if (pManufacturerId == NULL)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Manufacture ID NULL Parameter Error.\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Manufacture ID NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
 	// Check pDeviceId Parameter
 	if (pDeviceId == NULL)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Device ID NULL Parameter Error.\n");
 		goto _DONE;
 	}

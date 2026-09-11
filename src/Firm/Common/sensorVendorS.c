@@ -2582,7 +2582,7 @@ int sensorStandByCancel (void)
 		if ((data32 & FPGA_SENSOR_INPUT_STATUS_RESET_END_BIT) == 0)
 			break;
 		
-		usDelay (1000);
+		usDelay (2);
 	}
 	
 	// Check Timeout
@@ -2931,7 +2931,7 @@ int sensorHIntervalData (int bit, unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "H Interval Get NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "H Interval Get NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3028,7 +3028,7 @@ int sensorHIntervalData (int bit, unsigned int *pData)
 		else
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Rate(0x%x) Parameter Error\n", rate);
+			sprintf (gLogMsgBuff, "CXP Rate(0x%x) Parameter Error.\n", rate);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -3081,7 +3081,7 @@ int sensorHIntervalData (int bit, unsigned int *pData)
 		else
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Rate(0x%x) Parameter Error\n", data32);
+			sprintf (gLogMsgBuff, CXP "Rate(0x%x) Parameter Error.\n", data32);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -3117,7 +3117,7 @@ int sensorHIntervalDataDrrs (int bit, unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "H Interval Get NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "H Interval Get NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3194,7 +3194,7 @@ int sensorHIntervalCalc (double frameRate, unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "H Interval Get NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "H Interval Get NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3269,7 +3269,7 @@ int sensorGetHIntervalReg (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "H Interval Get NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "H Interval Get NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3545,7 +3545,7 @@ int sensorSetHvGen (int mode)
 				break;
 		}
 
-		usDelay (1000);
+		usDelay (2);
 	}
 
 	// Check Timeout
@@ -3554,9 +3554,9 @@ int sensorSetHvGen (int mode)
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
 
 		if (mode == MODE_ENABLE)
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor HV Gen Enable Timeout Error\n");
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor HV Gen Enable Timeout Error.\n");
 		else
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor HV Gen Disable Timeout Error\n");
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor HV Gen Disable Timeout Error.\n");
 
 		goto _DONE;
 	}
@@ -3623,7 +3623,7 @@ int sensorSetTrgControl (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Set Trg Control Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Sensor Set Trg Control Mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -3656,7 +3656,7 @@ int sensorSetTrgControl (int mode)
 				break;
 		}
 
-		usDelay (1000);
+		usDelay (2);
 	}
 
 	// Check Timeout
@@ -3665,9 +3665,9 @@ int sensorSetTrgControl (int mode)
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
 		
 		if (mode == MODE_ENABLE)
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Trg Control Enable Timeout Error\n");
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Trg Control Enable Timeout Error.\n");
 		else
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Trg Control Disable Timeout Error\n");
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Trg Control Disable Timeout Error.\n");
 
 		goto _DONE;
 	}
@@ -4151,7 +4151,7 @@ int sensorSetDrrsMain (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "DRRS Set Main Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "DRRS Set Main Mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -4306,7 +4306,7 @@ int sensorSetDrrs (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "DRRS Set Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "DRRS Set Mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -4395,7 +4395,7 @@ int sensorSetDrrsSensorRegister (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "DRRS Set Sensor Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "DRRS Set Sensor Mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -8717,7 +8717,7 @@ int sensorSetFpgaShutterMode (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Set FPGA Shutter Mode(%d) Parameter Error. (Normal:%d / Trigger:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Sensor Set FPGA Shutter Mode(%d) Parameter Error.(Normal:%d / Trigger:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -8824,7 +8824,7 @@ int sensorSetConversionGain (int mode)
 	if ((mode != MODE_DISABLE) && (mode != MODE_ENABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Set Conversion Gain(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Sensor Set Conversion Gain(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -9071,7 +9071,7 @@ int sensorRegWriteBase (unsigned char *pId, unsigned char *pAdrs, unsigned char 
 	if (pId == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Write pId NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Write pId NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -9079,7 +9079,7 @@ int sensorRegWriteBase (unsigned char *pId, unsigned char *pAdrs, unsigned char 
 	if (pAdrs == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Write pAdrs NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Write pAdrs NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -9096,7 +9096,7 @@ int sensorRegWriteBase (unsigned char *pId, unsigned char *pAdrs, unsigned char 
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Write pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Write pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -9155,14 +9155,14 @@ int sensorRegWriteBase (unsigned char *pId, unsigned char *pAdrs, unsigned char 
 		if ((data32 & FPGA_SENSOR_REG_CTRL_END_BIT) == FPGA_SENSOR_REG_CTRL_END_BIT)
 			break;
 
-		usDelay (1000);
+		usDelay (2);
 	}
 
 	// Check Timeout
 	if (i >= SENSOR_REG_ACES_TIMEOUT)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_TIMEOUT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Write Timeout Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Write Timeout Error.\n");
 		goto _DONE;
 	}
 
@@ -9197,7 +9197,7 @@ int sensorRegReadBase (unsigned char *pId, unsigned char *pAdrs, unsigned char *
 	if (pId == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Read pId NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Read pId NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -9205,7 +9205,7 @@ int sensorRegReadBase (unsigned char *pId, unsigned char *pAdrs, unsigned char *
 	if (pAdrs == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Read pAdrs NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Read pAdrs NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -9222,7 +9222,7 @@ int sensorRegReadBase (unsigned char *pId, unsigned char *pAdrs, unsigned char *
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Read pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Read pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -9277,14 +9277,14 @@ int sensorRegReadBase (unsigned char *pId, unsigned char *pAdrs, unsigned char *
 		if ((data32 & FPGA_SENSOR_REG_CTRL_END_BIT) == FPGA_SENSOR_REG_CTRL_END_BIT)
 			break;
 
-		usDelay (1000);
+		usDelay (2);
 	}
 
 	// Check Timeout
 	if (i >= SENSOR_REG_ACES_TIMEOUT)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_TIMEOUT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Read Timeout Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Read Timeout Error.\n");
 		goto _DONE;
 	}
 
@@ -9325,7 +9325,7 @@ int sensorSetBlackPixel (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Black Pixel mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Sensor Black Pixel mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -9405,7 +9405,7 @@ int sensorGetBlackPixel (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Black Pixel Get pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Black Pixel Get pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -9437,7 +9437,7 @@ int sensorSetGainDB (float gain)
 	if ((gain < SENSOR_REG_GAIN_DB_MIN) || (gain > SENSOR_REG_GAIN_DB_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Gain dB(%f) Parameter Error. (Min:%.1f / Max:%.1f)\n", gain, SENSOR_REG_GAIN_DB_MIN, SENSOR_REG_GAIN_DB_MAX);
+		sprintf (gLogMsgBuff, "Sensor Gain dB(%f) Parameter Error.(Min:%.1f / Max:%.1f)\n", gain, SENSOR_REG_GAIN_DB_MIN, SENSOR_REG_GAIN_DB_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -9486,7 +9486,7 @@ int sensorGetGainDB (float *pGain)
 	if (pGain == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Gain pGain NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Gain pGain NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -9538,7 +9538,7 @@ int sensorSetGainX (float gain)
 	if ((gainF < SENSOR_REG_GAIN_X_MIN) || (gainF > SENSOR_REG_GAIN_X_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Digital Gain(%lf) Parameter Error. (Min:%.1f / Max:%.1f)\n", gainF, SENSOR_REG_GAIN_X_MIN, SENSOR_REG_GAIN_X_MAX);
+		sprintf (gLogMsgBuff, "Digital Gain(%lf) Parameter Error.(Min:%.1f / Max:%.1f)\n", gainF, SENSOR_REG_GAIN_X_MIN, SENSOR_REG_GAIN_X_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -9577,7 +9577,7 @@ int sensorGetGainX (float *pGain)
 	if (pGain == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Gain pGain NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Gain pGain NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -9615,7 +9615,7 @@ int sensorSetXFlip (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Xflip Mode(%d) Parameter Error. (Reverse Disable:%d / Reverse Enable:%d)\n", mode, MODE_ENABLE, MODE_DISABLE);
+		sprintf (gLogMsgBuff, "Sensor Xflip Mode(%d) Parameter Error.(Reverse Disable:%d / Reverse Enable:%d)\n", mode, MODE_ENABLE, MODE_DISABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -9668,7 +9668,7 @@ int sensorTpSetMode (int mode)
 	if ((mode < SENSOR_REG_PG_MODE_MIN) || (mode > SENSOR_REG_PG_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Test Pattern(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, SENSOR_REG_PG_MODE_MIN, SENSOR_REG_PG_MODE_MAX);
+		sprintf (gLogMsgBuff, "Sensor Test Pattern(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, SENSOR_REG_PG_MODE_MIN, SENSOR_REG_PG_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -9835,7 +9835,7 @@ int sensorTpGetMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Test Pattern Mode pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Test Pattern Mode pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -9957,7 +9957,7 @@ int sensorTpGetInc (unsigned char *pHInc, unsigned char *pVInc)
 	if (pHInc == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Test Pattern Increment pHInc NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Test Pattern Increment pHInc NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -9965,7 +9965,7 @@ int sensorTpGetInc (unsigned char *pHInc, unsigned char *pVInc)
 	if (pHInc == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Test Pattern Increment pVInc NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Test Pattern Increment pVInc NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -10101,7 +10101,7 @@ int sensorTpGetData (unsigned int *pData1, unsigned int *pData2)
 	if (pData1 == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Test Pattern Data pData1 NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Test Pattern Data pData1 NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -10109,7 +10109,7 @@ int sensorTpGetData (unsigned int *pData1, unsigned int *pData2)
 	if (pData2 == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Test Pattern Data pDat2 NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Test Pattern Data pDat2 NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -10551,7 +10551,7 @@ int sensorGradationCompSetMode (int mode)
 	if ((mode != MODE_DISABLE) && (mode != MODE_ENABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Gradation Compress Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Sensor Gradation Compress Mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -10567,7 +10567,7 @@ int sensorGradationCompSetMode (int mode)
 	if (mode == MODE_ENABLE)
 	{
 		// bit設定
-		if ((status = aoiSetBitWidth (0)) != AVAL_STATUS_SUCCESS)
+		if ((status = irSetBitWidth (0)) != AVAL_STATUS_SUCCESS)
 			goto _DONE_RESET;
 	}
 	else
@@ -10577,7 +10577,7 @@ int sensorGradationCompSetMode (int mode)
 			goto _DONE_RESET;
 
 		// bit設定
-		if ((status = aoiSetBitWidth (bit)) != AVAL_STATUS_SUCCESS)
+		if ((status = irSetBitWidth (bit)) != AVAL_STATUS_SUCCESS)
 			goto _DONE_RESET;
 	}
 
@@ -10609,7 +10609,7 @@ int sensorGradationCompSetModeMain (int mode)
 	if ((mode != MODE_DISABLE) && (mode != MODE_ENABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Gradation Compress Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Sensor Gradation Compress Mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -10658,7 +10658,7 @@ int sensorGradationCompSetModeMain2 (int mode)
 	if ((mode != MODE_DISABLE) && (mode != MODE_ENABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Gradation Compress Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Sensor Gradation Compress Mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -10778,13 +10778,13 @@ _DONE:
 int sensorGradationCompSetPosition (int first, int second)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	int startMode = 0;
+	//int startMode = 0;
 
 	// Check first Parameter
 	if ((first < SENSOR_REG_GRAD_COMP_POS_FIRST_MIN) || (first > SENSOR_REG_GRAD_COMP_POS_FIRST_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Gradation Compress First Position(%d) Parameter Error. (Min:%d / Max:%d)\n", first, SENSOR_REG_GRAD_COMP_POS_FIRST_MIN, SENSOR_REG_GRAD_COMP_POS_FIRST_MAX);
+		sprintf (gLogMsgBuff, "Sensor Gradation Compress First Position(%d) Parameter Error.(Min:%d / Max:%d)\n", first, SENSOR_REG_GRAD_COMP_POS_FIRST_MIN, SENSOR_REG_GRAD_COMP_POS_FIRST_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -10793,7 +10793,7 @@ int sensorGradationCompSetPosition (int first, int second)
 	if ((second < SENSOR_REG_GRAD_COMP_POS_SECOND_MIN) || (second > SENSOR_REG_GRAD_COMP_POS_SECOND_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Gradation Compress Second Position(%d) Parameter Error. (Min:%d / Max:%d)\n", second, SENSOR_REG_GRAD_COMP_POS_SECOND_MIN, SENSOR_REG_GRAD_COMP_POS_SECOND_MAX);
+		sprintf (gLogMsgBuff, "Sensor Gradation Compress Second Position(%d) Parameter Error.(Min:%d / Max:%d)\n", second, SENSOR_REG_GRAD_COMP_POS_SECOND_MIN, SENSOR_REG_GRAD_COMP_POS_SECOND_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -10802,7 +10802,7 @@ int sensorGradationCompSetPosition (int first, int second)
 	if (first > second)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Gradation Compress First(%d) > Second(%d) Position Parameter Error. \n", first, second);
+		sprintf (gLogMsgBuff, "Sensor Gradation Compress First(%d) > Second(%d) Position Parameter Error.\n", first, second);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -10817,31 +10817,31 @@ int sensorGradationCompSetPosition (int first, int second)
 	}
 
 	// Start Status
-	acquisitionGetStartFlag (&startMode);
+	//acquisitionGetStartFlag (&startMode);
 
 	// 取り込み停止
-	if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
+		//goto _DONE;
 
 	// StandByモード移行
-	if ((status = sensorStandBy ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//if ((status = sensorStandBy ()) != AVAL_STATUS_SUCCESS)
+		//goto _DONE;
 
 	// センサレジスタ設定
 	if ((status = sensorGradationCompSetPositionReg (first, second)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// StandByモード解除
-	if ((status = sensorStandByCancel ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//if ((status = sensorStandByCancel ()) != AVAL_STATUS_SUCCESS)
+		//goto _DONE;
 
 	// DDRへ設定
 	OUT32 (FIRM_DATA_GRADATION_COMPRESS_POS_FIRST, first);
 	OUT32 (FIRM_DATA_GRADATION_COMPRESS_POS_SECOND, second);
 
 _DONE:
-	if (startMode != 0)
-		acquisitionStart ();
+	//if (startMode != 0)
+		//acquisitionStart ();
 
 	return (status);
 }
@@ -10950,13 +10950,13 @@ _DONE:
 int sensorGradationCompSetGain (int first, int second)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	int startMode = 0;
+	//int startMode = 0;
 
 	// Check first Parameter
 	if ((first < SENSOR_REG_GRAD_COMP_GAIN_FIRST_MIN) || (first > SENSOR_REG_GRAD_COMP_GAIN_FIRST_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Gradation Compress First Gain(%d) Parameter Error. (Min:%d / Max:%d)\n", first, SENSOR_REG_GRAD_COMP_GAIN_FIRST_MIN, SENSOR_REG_GRAD_COMP_GAIN_FIRST_MAX);
+		sprintf (gLogMsgBuff, "Sensor Gradation Compress First Gain(%d) Parameter Error.(Min:%d / Max:%d)\n", first, SENSOR_REG_GRAD_COMP_GAIN_FIRST_MIN, SENSOR_REG_GRAD_COMP_GAIN_FIRST_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -10965,37 +10965,37 @@ int sensorGradationCompSetGain (int first, int second)
 	if ((second < SENSOR_REG_GRAD_COMP_GAIN_SECOND_MIN) || (second > SENSOR_REG_GRAD_COMP_GAIN_SECOND_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Gradation Compress Gain Position(%d) Parameter Error. (Min:%d / Max:%d)\n", second, SENSOR_REG_GRAD_COMP_GAIN_SECOND_MIN, SENSOR_REG_GRAD_COMP_GAIN_SECOND_MAX);
+		sprintf (gLogMsgBuff, "Sensor Gradation Compress Gain Position(%d) Parameter Error.(Min:%d / Max:%d)\n", second, SENSOR_REG_GRAD_COMP_GAIN_SECOND_MIN, SENSOR_REG_GRAD_COMP_GAIN_SECOND_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
 	// Start Status
-	acquisitionGetStartFlag (&startMode);
+	//acquisitionGetStartFlag (&startMode);
 
 	// 取り込み停止
-	if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
+		//goto _DONE;
 
 	// StandByモード移行
-	if ((status = sensorStandBy ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//if ((status = sensorStandBy ()) != AVAL_STATUS_SUCCESS)
+		//goto _DONE;
 
 	// センサレジスタ設定
 	if ((status = sensorGradationCompSetGainReg (first, second)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// StandByモード解除
-	if ((status = sensorStandByCancel ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//if ((status = sensorStandByCancel ()) != AVAL_STATUS_SUCCESS)
+		//goto _DONE;
 
 	// DDRへ設定
 	OUT32 (FIRM_DATA_GRADATION_COMPRESS_GAIN_FIRST, first);
 	OUT32 (FIRM_DATA_GRADATION_COMPRESS_GAIN_SECOND, second);
 
 _DONE:
-	if (startMode != 0)
-		acquisitionStart ();
+	//if (startMode != 0)
+		//acquisitionStart ();
 
 	return (status);
 }
@@ -11103,15 +11103,27 @@ _DONE:
 int sensorSet8BitConvert (int mode)
 {
 	int status = AVAL_STATUS_SUCCESS;
+	int startMode = 0;
 
 	// Check mode Parameter
 	if ((mode != MODE_DISABLE) && (mode != MODE_ENABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Bit 8  Set Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Sensor Bit 8  Set Mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
+
+	// Start Status
+	acquisitionGetStartFlag (&startMode);
+
+	// 取り込み停止
+	if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// StandByモード移行
+	if ((status = sensorStandBy ()) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
 	// Gradation Position設定
 	if ((status = sensorGradationCompSetPosition (1, 8)) != AVAL_STATUS_SUCCESS)
@@ -11125,10 +11137,17 @@ int sensorSet8BitConvert (int mode)
 	if ((status = sensorGradationCompSetMode (mode)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
+	// StandByモード解除
+	if ((status = sensorStandByCancel ()) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
 	// メモリへ設定
 	//OUT32 (FIRM_DATA_8BIT_MODE, mode);
 
 _DONE:
+	if (startMode != 0)
+		acquisitionStart ();
+
 	return (status);
 }
 
@@ -11247,7 +11266,7 @@ int sensorGetFrameRateHighSpeedMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Frame Rate Get High Speed Mode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Frame Rate Get High Speed Mode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -11299,7 +11318,7 @@ int sensorSetFrameRateHighSpeedMode (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Frame Rete Set High Speed Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Frame Rete Set High Speed Mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -11718,7 +11737,7 @@ int sensorSetFrameRateHighSpeedStartLine (int startLine)
 	if ((startLine < FPGA_FRAMERATE_HIGH_SPEED_START_LINE_MIN) || (startLine > FPGA_FRAMERATE_HIGH_SPEED_START_LINE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Frame Rate High Speed Set Start Line(%d) Parameter Error. (Min:%d / Max:%d)\n", startLine, FPGA_FRAMERATE_HIGH_SPEED_START_LINE_MIN, FPGA_FRAMERATE_HIGH_SPEED_START_LINE_MAX);
+		sprintf (gLogMsgBuff, "Frame Rate High Speed Set Start Line(%d) Parameter Error.(Min:%d / Max:%d)\n", startLine, FPGA_FRAMERATE_HIGH_SPEED_START_LINE_MIN, FPGA_FRAMERATE_HIGH_SPEED_START_LINE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -11796,7 +11815,7 @@ int sensorGetVirtualHeightMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Virtial High Get Mode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Virtial High Get Mode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -11831,7 +11850,7 @@ int sensorSetVirtualHeightMode (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Virtial High Set Mode(%d) Parameter Error\n", mode);
+		sprintf (gLogMsgBuff, "Virtial High Set Mode(%d) Parameter Error.\n", mode);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -11870,7 +11889,7 @@ int sensorGetVirtualHeightLineScanMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Virtial High Get LineScan Mode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Virtial High Get LineScan Mode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -11905,7 +11924,7 @@ int sensorSetVirtualHeightLineScanMode (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Virtial High Set LineScan Mode(%d) Parameter Error\n", mode);
+		sprintf (gLogMsgBuff, "Virtial High Set LineScan Mode(%d) Parameter Error.\n", mode);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -11944,7 +11963,7 @@ int sensorGetVirtualHeight (int *pHeight)
 	if (pHeight == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Virtial Height Get NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Virtial Height Get NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -12044,7 +12063,7 @@ int sensorCheckVirtualHeight (int virtualHeight, int *pVirtualHeight)
 	if (pVirtualHeight == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Virtial Height Check NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Virtial Height Check NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -12092,7 +12111,7 @@ int sensorVendorSFrameRateSpeedModeInitialize (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Initialize Frame Rate Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Sensor Initialize Frame Rate Mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -14727,7 +14746,7 @@ int sensorGetTgesHighSpeed (int height, int *pTges)
 	if ((height != 2) && (height != 4) && (height != 6))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "TGES Get High Speed Height(%d) Parameter Error\n", height);
+		sprintf (gLogMsgBuff, "TGES Get High Speed Height(%d) Parameter Error.\n", height);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -14736,7 +14755,7 @@ int sensorGetTgesHighSpeed (int height, int *pTges)
 	if (pTges == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGES Get High Speed NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGES Get High Speed NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -14770,7 +14789,7 @@ int sensorGetTgpdHighSpeed (int height, int *pTgpd)
 	if ((height != 2) && (height != 4) && (height != 6))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGPD Get High Speed Height(%d) Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGPD Get High Speed Height(%d) Parameter Error.\n");
 		goto _DONE;
 	}
 	
@@ -14778,7 +14797,7 @@ int sensorGetTgpdHighSpeed (int height, int *pTgpd)
 	if (pTgpd == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGPD Get High Speed NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGPD Get High Speed NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -14883,7 +14902,7 @@ int sensorSetSHS_H (unsigned int expTime)
 	if ((shs < shsMin) || (shs > shsMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Set SHS(%d) Parameter Error. (Min:%d / Max:%d)\n", shs, shsMin, shsMax);
+		sprintf (gLogMsgBuff, "Sensor Set SHS(%d) Parameter Error.(Min:%d / Max:%d)\n", shs, shsMin, shsMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -14945,7 +14964,7 @@ int sensorGetSHS_H (unsigned int *pExpTime)
 	if (pExpTime == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Get SHS NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Get SHS NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

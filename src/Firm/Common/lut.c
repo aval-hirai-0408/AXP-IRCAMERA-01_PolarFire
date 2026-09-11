@@ -181,7 +181,7 @@ int lutSetMode (int lutMode)
 	if ((lutMode < LUT_MODE_MIN) || (lutMode > LUT_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Lut Set Mode(%d) Parameter Error. (Min:%d / Max:%.d)\n", lutMode, LUT_MODE_MIN, LUT_MODE_MAX);
+		sprintf (gLogMsgBuff, "Lut Set Mode(%d) Parameter Error.(Min:%d / Max:%.d)\n", lutMode, LUT_MODE_MIN, LUT_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -204,7 +204,7 @@ int lutSetMode (int lutMode)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Set Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", lutMode, LUT_MODE_MIN, LUT_MODE_MAX);
+		sprintf (gLogMsgBuff, "LUT Set Mode(%d) Parameter Error.(Min:%d / Max:%d)\n", lutMode, LUT_MODE_MIN, LUT_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -236,7 +236,7 @@ int lutGetMode (int *pLutMode)
 	if (pLutMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Get Mode pLutMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Get Mode pLutMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -280,7 +280,7 @@ int lutSetEnable (int select, int mode)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Enable select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Enable select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -289,7 +289,7 @@ int lutSetEnable (int select, int mode)
 	if ((mode != LUT_ENABLE) && (mode != LUT_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Enable mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, LUT_DISABLE, LUT_ENABLE);
+		sprintf (gLogMsgBuff, "LUT Enable mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, LUT_DISABLE, LUT_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -335,7 +335,7 @@ int lutGetEnable (int *pSelect, int *pMode)
 	if (pSelect == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Enable pSelect NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Enable pSelect NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -343,7 +343,7 @@ int lutGetEnable (int *pSelect, int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Enable pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Enable pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -405,7 +405,7 @@ int lutSetFormat (int select, int format)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Set Format select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Set Format select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -414,7 +414,7 @@ int lutSetFormat (int select, int format)
 	if ((format < LUT_FORMAT_MIN) || (format > LUT_FORMAT_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Set Format(%d) Parameter Error. (Min:%d / Max:%d)\n", format, LUT_FORMAT_MIN, LUT_FORMAT_MAX);
+		sprintf (gLogMsgBuff, "LUT Set Format(%d) Parameter Error.(Min:%d / Max:%d)\n", format, LUT_FORMAT_MIN, LUT_FORMAT_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -556,7 +556,7 @@ int lutGetFormat (int select, int *pFormat)
 	if (pFormat == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Get Format pFormat pBuffer NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Get Format pFormat pBuffer NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -574,7 +574,7 @@ int lutGetFormat (int select, int *pFormat)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Get Format select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Get Format select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -617,7 +617,7 @@ int lutSetBinThreshold (int select, int threshold)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Binarization select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Binarization select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -626,7 +626,7 @@ int lutSetBinThreshold (int select, int threshold)
 	if ((status = lutGetTableSize (&sizeMax)) != AVAL_STATUS_SUCCESS)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table Parameter Error. \n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -634,7 +634,7 @@ int lutSetBinThreshold (int select, int threshold)
 	if ((threshold < THRESHOLD_SIZE_MIN) || (threshold > sizeMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Binarization Threshold(%d) Parameter Error. (Min:%d / Max:%d)\n", threshold, THRESHOLD_SIZE_MIN, sizeMax);
+		sprintf (gLogMsgBuff, "LUT Binarization Threshold(%d) Parameter Error.(Min:%d / Max:%d)\n", threshold, THRESHOLD_SIZE_MIN, sizeMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -716,7 +716,7 @@ int lutGetBinThreshold (int select, int *pThreshold)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Binarization select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Binarization select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -753,7 +753,7 @@ int lutSetGamma (int select, float gamma)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Gamma select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Gamma select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -762,7 +762,7 @@ int lutSetGamma (int select, float gamma)
 	if ((gamma < LUT_GAMMA_MIN) || (gamma > LUT_GAMMA_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Gamma(%f) Parameter Error. (Min:%.1f / Max:%.1f)\n", gamma, LUT_GAMMA_MIN, LUT_GAMMA_MAX);
+		sprintf (gLogMsgBuff, "LUT Gamma(%f) Parameter Error.(Min:%.1f / Max:%.1f)\n", gamma, LUT_GAMMA_MIN, LUT_GAMMA_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -807,7 +807,7 @@ int lutGetGamma (int select, float *pGamma)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Gamma select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Gamma select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -816,7 +816,7 @@ int lutGetGamma (int select, float *pGamma)
 	if (pGamma == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Gamma pGamma pBuffer NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Gamma pGamma NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -859,7 +859,7 @@ int lutSetDataGamma (int select, float gamma)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Gamma select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Gamma select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -935,7 +935,7 @@ int lutSetTable (int select, unsigned char *pBuff, int count, int bit)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Set Table select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Set Table select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -944,7 +944,7 @@ int lutSetTable (int select, unsigned char *pBuff, int count, int bit)
 	if (pBuff == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Set Table pBuffer NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Set Table pBuffer NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -960,7 +960,7 @@ int lutSetTable (int select, unsigned char *pBuff, int count, int bit)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Set Table Bit(%d) Parameter Error. (Min:%d / Max:%d)\n", bit, PIXEL_BIT_MIN, PIXEL_BIT_MAX);
+		sprintf (gLogMsgBuff, "LUT Set Table Bit(%d) Parameter Error.(Min:%d / Max:%d)\n", bit, PIXEL_BIT_MIN, PIXEL_BIT_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -969,7 +969,7 @@ int lutSetTable (int select, unsigned char *pBuff, int count, int bit)
 	if ((count <= 0) || (count > maxCount))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Set Table Count(%d) Parameter Error. (Min:1 / Max:%d)\n", count, maxCount);
+		sprintf (gLogMsgBuff, "LUT Set Table Count(%d) Parameter Error.(Min:1 / Max:%d)\n", count, maxCount);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1056,7 +1056,7 @@ int lutGetTable (int select, unsigned char *pBuff, int count, int bit)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Get Table select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Get Table select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1065,7 +1065,7 @@ int lutGetTable (int select, unsigned char *pBuff, int count, int bit)
 	if (pBuff == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Get Table pBuffer NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Get Table pBuffer NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1081,7 +1081,7 @@ int lutGetTable (int select, unsigned char *pBuff, int count, int bit)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Get Table Bit(%d) Parameter Error. (Min:%d / Max:%d)\n", bit, PIXEL_BIT_MIN, PIXEL_BIT_MAX);
+		sprintf (gLogMsgBuff, "LUT Get Table Bit(%d) Parameter Error.(Min:%d / Max:%d)\n", bit, PIXEL_BIT_MIN, PIXEL_BIT_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1090,7 +1090,7 @@ int lutGetTable (int select, unsigned char *pBuff, int count, int bit)
 	if ((count <= 0) || (count > maxCount))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Get Table Count(%d) Parameter Error. (Min:1 / Max:%d)\n", count, maxCount);
+		sprintf (gLogMsgBuff, "LUT Get Table Count(%d) Parameter Error.(Min:1 / Max:%d)\n", count, maxCount);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1156,7 +1156,7 @@ int lutSetTableData (int select, unsigned int offset, unsigned int data)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Table select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Table select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1164,7 +1164,7 @@ int lutSetTableData (int select, unsigned int offset, unsigned int data)
 	// データサイズ取得
 	if ((status = lutGetTableSize (&dataSize)) != AVAL_STATUS_SUCCESS)
 	{
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table Parameter Error. \n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table Parameter Error.\n");
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
 		goto _DONE;
 	}
@@ -1173,7 +1173,7 @@ int lutSetTableData (int select, unsigned int offset, unsigned int data)
 	if (offset >= dataSize)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Table Data offset(%d) Parameter Error. (Min:0 / Max:%d)\n", offset, dataSize-1);
+		sprintf (gLogMsgBuff, "LUT Table Data offset(%d) Parameter Error.(Min:0 / Max:%d)\n", offset, dataSize-1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1182,7 +1182,7 @@ int lutSetTableData (int select, unsigned int offset, unsigned int data)
 	if (data >= dataSize)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Table Data data(%d) Parameter Error. (Min:0 / Max:%d)\n", data, dataSize-1);
+		sprintf (gLogMsgBuff, "LUT Table Data data(%d) Parameter Error.(Min:0 / Max:%d)\n", data, dataSize-1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1245,7 +1245,7 @@ int lutGetTableData (int select, unsigned int offset, unsigned int *pData)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Table select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Table select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1254,7 +1254,7 @@ int lutGetTableData (int select, unsigned int offset, unsigned int *pData)
 	if ((status = lutGetTableSize (&dataSize)) != AVAL_STATUS_SUCCESS)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table Parameter Error. \n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1262,7 +1262,7 @@ int lutGetTableData (int select, unsigned int offset, unsigned int *pData)
 	if (offset >= dataSize)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Table Data offset(%d) Parameter Error. (Min:0 / Max:%d)\n", offset, dataSize-1);
+		sprintf (gLogMsgBuff, "LUT Table Data offset(%d) Parameter Error.(Min:0 / Max:%d)\n", offset, dataSize-1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1271,7 +1271,7 @@ int lutGetTableData (int select, unsigned int offset, unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1322,7 +1322,7 @@ int lutSetFlash (int select, unsigned int *pBuffer, unsigned int size)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Flash Write select(%d) Parameter Error\n", select);
+		sprintf (gLogMsgBuff, "LUT Flash Write select(%d) Parameter Error.\n", select);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1331,7 +1331,7 @@ int lutSetFlash (int select, unsigned int *pBuffer, unsigned int size)
 	if (pBuffer == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Flash Write pBuffer Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Flash Write pBuffer Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1339,7 +1339,7 @@ int lutSetFlash (int select, unsigned int *pBuffer, unsigned int size)
 	if ((size < 1) && (size > LUT_DATA_SIZE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Flash Write size(0x%x) Parameter Error. (Min:1 / Max:%d)\n", size, LUT_DATA_SIZE);
+		sprintf (gLogMsgBuff, "LUT Flash Write size(0x%x) Parameter Error.(Min:1 / Max:%d)\n", size, LUT_DATA_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1388,7 +1388,7 @@ int lutGetFlash (int select, unsigned int *pBuffer, unsigned int size)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Flash Read select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Flash Read select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1397,7 +1397,7 @@ int lutGetFlash (int select, unsigned int *pBuffer, unsigned int size)
 	if (pBuffer == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Flash Read pBuffer Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Flash Read pBuffer Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1405,7 +1405,7 @@ int lutGetFlash (int select, unsigned int *pBuffer, unsigned int size)
 	if ((size < 1) && (size > LUT_DATA_SIZE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Flash Read size(0x%x) Parameter Error. (Min:1 / Max:%d)\n", size, LUT_DATA_SIZE);
+		sprintf (gLogMsgBuff, "LUT Flash Read size(0x%x) Parameter Error.(Min:1 / Max:%d)\n", size, LUT_DATA_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1459,7 +1459,7 @@ int lutLoadData (int select)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Load select(%d) Parameter Error. (Min:%d / Max:d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Load select(%d) Parameter Error.(Min:%d / Max:d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1504,7 +1504,7 @@ int lutGetMemAdrs (int select, unsigned int *pAdrs)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Get Adress select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Get Adress select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1513,7 +1513,7 @@ int lutGetMemAdrs (int select, unsigned int *pAdrs)
 	if (pAdrs == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Get Adrs pAdrs NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Get Adrs pAdrs NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1546,7 +1546,7 @@ int lutGetFlashAdrs (int select, unsigned int *pAdrs)
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Get Flash Adress select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
+		sprintf (gLogMsgBuff, "LUT Get Flash Adress select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, LUT_SELECT_MIN_NUM, LUT_SELECT_MAX_NUM);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1588,7 +1588,7 @@ int lutGetTableSize (unsigned int *pSize)
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table Size pSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table Size pSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1608,7 +1608,7 @@ int lutGetTableSize (unsigned int *pSize)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Table Size Bit(%d) Parameter Error. \n", bit);
+		sprintf (gLogMsgBuff, "LUT Table Size Bit(%d) Parameter Error.\n", bit);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1636,7 +1636,7 @@ int lutGetTablInterval (int bit, unsigned int *pSize)
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table Interval pSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LUT Table Interval pSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1652,7 +1652,7 @@ int lutGetTablInterval (int bit, unsigned int *pSize)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_LUT, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LUT Table Size Bit(%d) Parameter Error. \n", bit);
+		sprintf (gLogMsgBuff, "LUT Table Size Bit(%d) Parameter Error.\n", bit);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}

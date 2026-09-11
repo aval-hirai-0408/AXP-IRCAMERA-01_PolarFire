@@ -751,7 +751,7 @@ int cmdDpcDataDownload (void *str)
 		if (waitTimeS > DOWNLOAD_WAIT_TIME_MAX)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "DPC Data Download Wait Time(%d) Parameter Error. (Min:0 / Max:%d)\n", waitTimeS, DOWNLOAD_WAIT_TIME_MAX);
+			sprintf (gLogMsgBuff, "DPC Download Wait Time(%d) Parameter Error.\n", waitTimeS);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -840,7 +840,7 @@ int cmdDpcDataDownloadCompress (void *str)
 		if (waitTimeS > DOWNLOAD_WAIT_TIME_MAX)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "DPC Data Download Wait Time(%d) Parameter Error. (Min:0 / Max:%d)\n", waitTimeS, DOWNLOAD_WAIT_TIME_MAX);
+			sprintf (gLogMsgBuff, "DPC Download Wait Time(%d) Parameter Error.\n", waitTimeS);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}

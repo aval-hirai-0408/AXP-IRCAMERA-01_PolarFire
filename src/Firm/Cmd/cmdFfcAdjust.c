@@ -75,7 +75,7 @@ int cmdFfcAdjustInfo (void *str)
 			if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "FFC Adjust Information ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+				sprintf (gLogMsgBuff, "FFC Adjust Info No(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				goto _DONE;
 			}
@@ -94,7 +94,7 @@ int cmdFfcAdjustInfo (void *str)
 			if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "FFC Adjust Information ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+				sprintf (gLogMsgBuff, "FFC Adjust Info No(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				goto _DONE;
 			}
@@ -192,7 +192,7 @@ int cmdFfcAdjustInfoAdmin (void *str)
 			if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "FFC Adjust Information ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+				sprintf (gLogMsgBuff, "FFC Adjust Info No(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				goto _DONE;
 			}
@@ -211,7 +211,7 @@ int cmdFfcAdjustInfoAdmin (void *str)
 			if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "FFC Adjust Information ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+				sprintf (gLogMsgBuff, "FFC Adjust Info No(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				goto _DONE;
 			}
@@ -1076,7 +1076,7 @@ int cmdFfcAdjustBatchBlack (void *str)
 		if ((ffcNo < FFC_NUMBER_MIN) || (ffcNo > FFC_NUMBER_MAX))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Black ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+			sprintf (gLogMsgBuff, "FFC Black No(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1303,7 +1303,7 @@ int cmdFfcAdjustBatchWhite (void *str)
 		if ((ffcNo < FFC_NUMBER_MIN) || (ffcNo > FFC_NUMBER_MAX))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Black ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+			sprintf (gLogMsgBuff, "FFC Black No(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1557,7 +1557,7 @@ int cmdFfcAdjustBatchShading (void *str)
 		if ((ffcNo < FFC_NUMBER_MIN) || (ffcNo > FFC_NUMBER_MAX))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Black ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+			sprintf (gLogMsgBuff, "FFC Black No(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1876,7 +1876,7 @@ int cmdFfcAdjustBatchBlackAll (void *str)
 		if ((ffcNo < FFC_NUMBER_MIN) || (ffcNo > FFC_NUMBER_MAX))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Black ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+			sprintf (gLogMsgBuff, "FFC Black No(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -2090,7 +2090,7 @@ int cmdFfcAdjustBatchWhiteAll (void *str)
 		if ((ffcNo < FFC_NUMBER_MIN) || (ffcNo > FFC_NUMBER_MAX))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC White ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+			sprintf (gLogMsgBuff, "FFC White No(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -2321,7 +2321,7 @@ int cmdFfcAdjustBatchShadingAll (void *str)
 		if ((ffcNo < FFC_NUMBER_MIN) || (ffcNo > FFC_NUMBER_MAX))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Shading ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+			sprintf (gLogMsgBuff, "FFC Shading No(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}

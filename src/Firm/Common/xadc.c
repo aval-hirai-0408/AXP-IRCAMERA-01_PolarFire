@@ -40,7 +40,7 @@ int xadcGetFpgaTemp (double *pTemp)
 	if (pTemp == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "XADC pTemp NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "XADC pTemp NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

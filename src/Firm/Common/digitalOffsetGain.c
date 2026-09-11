@@ -94,7 +94,7 @@ int dogSetUpdate (int mode)
 	if ((mode != DOG_ENABLE) && (mode != DOG_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Digital Offset Gain Update mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, DOG_DISABLE, DOG_ENABLE);
+		sprintf (gLogMsgBuff, "Digital Offset Gain Update mode(%d) Parameter Error.\n", mode);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -137,7 +137,7 @@ int dogGetUpdate (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Offset Gain Update pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Offset Gain Update pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -179,7 +179,7 @@ int dogSetOffsetGain (int offset1, int offset2, float gain)
 	if ((offset1 < offset1Min) || (offset1 > offset1Max))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Dog offset1(%d) Parameter Error. (Min:%d / Max:%d)\n", offset1, offset1Min, offset1Max);
+		sprintf (gLogMsgBuff, "Dog offset1(%d) Parameter Error.(Min:%d / Max:%d)\n", offset1, offset1Min, offset1Max);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -188,7 +188,7 @@ int dogSetOffsetGain (int offset1, int offset2, float gain)
 	if ((offset2 < offset2Min) || (offset2 > offset2Max))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Dog offset2(%d) Parameter Error. (Min:%d / Max:%d)\n", offset2, offset2Min, offset2Max);
+		sprintf (gLogMsgBuff, "Dog offset2(%d) Parameter Error.(Min:%d / Max:%d)\n", offset2, offset2Min, offset2Max);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -198,7 +198,7 @@ int dogSetOffsetGain (int offset1, int offset2, float gain)
 	if ((gain < DOG_DECIBEL_MIN) || (gain > DOG_DECIBEL_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Dog gain(%f) Parameter Error. (Min:%.2f / Max:%.2f)\n", gain, DOG_DECIBEL_MIN, DOG_DECIBEL_MAX);
+		sprintf (gLogMsgBuff, "Dog gain(%f) Parameter Error.(Min:%.2f / Max:%.2f)\n", gain, DOG_DECIBEL_MIN, DOG_DECIBEL_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -206,7 +206,7 @@ int dogSetOffsetGain (int offset1, int offset2, float gain)
 	if ((gain < DOG_GAIN_MIN) || (gain > DOG_GAIN_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Dog gain(%f) Parameter Error. (Min:2f / Max:2f)\n", gain, DOG_GAIN_MIN, DOG_GAIN_MAX);
+		sprintf (gLogMsgBuff, "Dog gain(%f) Parameter Error.(Min:2f / Max:2f)\n", gain, DOG_GAIN_MIN, DOG_GAIN_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -248,7 +248,7 @@ int dogGetOffsetGain (int *pOffset1, int *pOffset2, float *pGain)
 	if (pOffset1 == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Gain pOffset1 NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Gain pOffset1 NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -256,7 +256,7 @@ int dogGetOffsetGain (int *pOffset1, int *pOffset2, float *pGain)
 	if (pOffset2 == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Gain pOffset2 NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Gain pOffset2 NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -264,7 +264,7 @@ int dogGetOffsetGain (int *pOffset1, int *pOffset2, float *pGain)
 	if (pGain == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Gain pGain NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Gain pGain NULL Parameter Erro.r\n");
 		goto _DONE;
 	}
 
@@ -306,7 +306,7 @@ int dogGetOffsetMaxMin (int *pOffset1Min, int *pOffset1Max, int *pOffset2Min, in
 	if (pOffset1Min == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Max/Min pOffset1Min NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Max/Min pOffset1Min NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -314,7 +314,7 @@ int dogGetOffsetMaxMin (int *pOffset1Min, int *pOffset1Max, int *pOffset2Min, in
 	if (pOffset1Max == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Max/Min pOffset1Max NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Max/Min pOffset1Max NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -322,7 +322,7 @@ int dogGetOffsetMaxMin (int *pOffset1Min, int *pOffset1Max, int *pOffset2Min, in
 	if (pOffset2Min == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Max/Min pOffset2Min NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Max/Min pOffset2Min NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -330,7 +330,7 @@ int dogGetOffsetMaxMin (int *pOffset1Min, int *pOffset1Max, int *pOffset2Min, in
 	if (pOffset2Max == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Max/Min pOffset2Max NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Max/Min pOffset2Max NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -399,7 +399,7 @@ int dogGetOffset1MaxMin (int *pOffset1Min, int *pOffset1Max)
 	if (pOffset1Min == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Max/Min pOffset1Min NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Max/Min pOffset1Min NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -407,7 +407,7 @@ int dogGetOffset1MaxMin (int *pOffset1Min, int *pOffset1Max)
 	if (pOffset1Max == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Max/Min pOffset1Max NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Dog Offset Max/Min pOffset1Max NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -468,7 +468,7 @@ int dogGetOffset2MaxMin (int *pOffset2Min, int *pOffset2Max)
 	if (pOffset2Min == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Offset Max/Min pOffset2Min NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Offset Max/Min pOffset2Min NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -476,7 +476,7 @@ int dogGetOffset2MaxMin (int *pOffset2Min, int *pOffset2Max)
 	if (pOffset2Max == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Offset Max/Min pOffset2Max NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Offset Max/Min pOffset2Max NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -587,7 +587,7 @@ int digitalGetGain (float *pGain)
 	if (pGain == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Gain pGain NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Gain pGain NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -684,7 +684,7 @@ int digitalGetGainX (float *pGain)
 	if (pGain == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Gain pGain NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Gain pGain NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -749,7 +749,7 @@ int digitalGetGainReg (unsigned int *pGain)
 	if (pGain == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Gain pGain NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Gain pGain NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -785,7 +785,7 @@ int digitalSetOffset (int offset)
 	if ((offset < offset2Min) || (offset > offset2Max))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Digital Offset(%d) Parameter Error. (Min:%d / Max:%d)\n", offset, offset2Min, offset2Max);
+		sprintf (gLogMsgBuff, "Digital Offset(%d) Parameter Error.(Min:%d / Max:%d)\n", offset, offset2Min, offset2Max);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -844,7 +844,7 @@ int digitalGetOffset (int *pOffset)
 	if (pOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Offset pOffset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Offset pOffset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -897,7 +897,7 @@ int digitalSetOffset1 (int offset)
 	if ((offset < offset1Min) || (offset > offset1Max))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Digital Offset1(%d) Parameter Error. (Min:%d / Max:%d)\n", offset, offset1Min, offset1Max);
+		sprintf (gLogMsgBuff, "Digital Offset1(%d) Parameter Error.(Min:%d / Max:%d)\n", offset, offset1Min, offset1Max);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -956,7 +956,7 @@ int digitalGetOffset1 (int *pOffset)
 	if (pOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Offset Gain pOffset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Offset Gain pOffset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1002,7 +1002,7 @@ int opticalBlackSetInvert (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Optical Black Invert mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Optical Black Invert mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}

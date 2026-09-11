@@ -465,7 +465,7 @@ int calc_average2 (unsigned short *src_img, double *average)
 	if (average == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Calc Average average NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Calc Average average NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -588,7 +588,7 @@ int threshold (double *chara1, double *chara2, THRESHOLDCHARA thre, unsigned cha
 	if (chara1 == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Threshold chara1 NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Threshold chara1 NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -596,7 +596,7 @@ int threshold (double *chara1, double *chara2, THRESHOLDCHARA thre, unsigned cha
 	if (chara2 == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Threshold chara2 NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Threshold chara2 NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -604,7 +604,7 @@ int threshold (double *chara1, double *chara2, THRESHOLDCHARA thre, unsigned cha
 	if (detect == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Threshold detect NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Threshold detect NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -656,7 +656,7 @@ int ffc_offset (double *black_img, unsigned short *offset)
 	if (black_img == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Offset black_img NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Offset black_img NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -664,7 +664,7 @@ int ffc_offset (double *black_img, unsigned short *offset)
 	if (offset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Offset offset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Offset offset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -722,7 +722,7 @@ int ffc_gain (double *white_img, unsigned short *offset, unsigned short black_ta
 	if (white_img == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Gain white_img NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Gain white_img NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -730,7 +730,7 @@ int ffc_gain (double *white_img, unsigned short *offset, unsigned short black_ta
 	if (offset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Gain offset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Gain offset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -738,7 +738,7 @@ int ffc_gain (double *white_img, unsigned short *offset, unsigned short black_ta
 	if (gain == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Gain gain NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Gain gain NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -758,7 +758,7 @@ int ffc_gain (double *white_img, unsigned short *offset, unsigned short black_ta
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Gain Bit(%d) Parameter Error. (Min:%dbit / Max:%dbit)\n", bit, PIXEL_BIT_MIN, PIXEL_BIT_MAX);
+		sprintf (gLogMsgBuff, "FFC Gain Bit(%d) Parameter Error.(Min:%dbit / Max:%dbit)\n", bit, PIXEL_BIT_MIN, PIXEL_BIT_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -775,7 +775,7 @@ int ffc_gain (double *white_img, unsigned short *offset, unsigned short black_ta
 	if ((black_target < targetMin) || (targetMax < black_target))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Gain black_target(%d) Parameter Error. (Min:%d / Max:%d)\n", black_target, LUM_MIN_14BIT, LUM_MAX_14BIT);
+		sprintf (gLogMsgBuff, "FFC Gain black_target(%d) Parameter Error.(Min:%d / Max:%d)\n", black_target, LUM_MIN_14BIT, LUM_MAX_14BIT);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -784,7 +784,7 @@ int ffc_gain (double *white_img, unsigned short *offset, unsigned short black_ta
 	if ((white_target < targetMin) || (targetMax < white_target))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Gain white_target(%d) Parameter Error. (Min:%d / Max:%d)\n", white_target, LUM_MIN_14BIT, LUM_MAX_14BIT);
+		sprintf (gLogMsgBuff, "FFC Gain white_target(%d) Parameter Error.(Min:%d / Max:%d)\n", white_target, LUM_MIN_14BIT, LUM_MAX_14BIT);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -793,7 +793,7 @@ int ffc_gain (double *white_img, unsigned short *offset, unsigned short black_ta
 	if (black_target >= white_target)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Gain black_target(%d) > white_target(%d) Parameter Error. \n", black_target, white_target);
+		sprintf (gLogMsgBuff, "FFC Gain black_target(%d) > white_target(%d) Parameter Error.\n", black_target, white_target);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -853,7 +853,7 @@ int get_correct_coord (unsigned char *detect, DEFECTIONINFO *defection_info, int
 	if (detect == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Correct Coord detect NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Correct Coord detect NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -861,7 +861,7 @@ int get_correct_coord (unsigned char *detect, DEFECTIONINFO *defection_info, int
 	if (defection_info == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Correct Coord defection_info NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Correct Coord defection_info NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -869,7 +869,7 @@ int get_correct_coord (unsigned char *detect, DEFECTIONINFO *defection_info, int
 	if (index == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Correct Coord index NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Correct Coord index NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

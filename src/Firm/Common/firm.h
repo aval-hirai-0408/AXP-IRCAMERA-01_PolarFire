@@ -1652,7 +1652,7 @@ int cxpLedLinkState (unsigned int *pLinkStatus);
 int cxpLedConnectionDetection (void);
 int cxpLedConnectioned (void);
 int cxpGetLinkCount (unsigned int *pCount);
-void cxpCmdInterruptHandler (void);
+int cxpSetRecvIntMode (int mode);
 
 //cxpProcs.c
 int cxpInitialize (void);
@@ -1680,7 +1680,6 @@ int cxpGetCmdMode (int *pMode);
 int cxpGetFifoCount (unsigned int *pCount);
 int cxpSendTestPacketAckCmd (unsigned int size);
 int cxpReadFifo (int port, unsigned int *pData, int *pKcode);
-int cxpFifoToDdr (int port, unsigned int adrs, unsigned int size);
 int cxpSendBuffer (int port, unsigned int data);
 int cxpGetSendCurrentAdrs (int port, unsigned int *pAdrs);
 int cxpGetRecvCurrentAdrs (int port, unsigned int *pAdrs);
@@ -1707,6 +1706,7 @@ int cxpUpdateIfFpga (unsigned int flashAdrs, unsigned char *pData, unsigned int 
 int cxpGetCableConnection (int port, int *pMode);
 int cxpRestTestPacketRxCount (int port);
 int cxpGetTestPacketRxCount (int port, unsigned long long *pData);
+int cxpGetTestPacketTxCount (int port, unsigned long long *pData);
 int cxpGetTestPacketErrCount (int port, unsigned int *pData);
 int cxpSetPowerCtrl (int port, int autoMode, int mode);
 int cxpGetPowerCtrl (int port, int *pAutoMode, int *pMode);

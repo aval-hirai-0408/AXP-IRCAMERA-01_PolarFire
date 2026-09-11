@@ -374,7 +374,7 @@ int cmdFfcCorMode (void *str)
 		if ((mode < FFC_CORRECTION_MODE_MIN) || (mode > FFC_CORRECTION_MODE_MAX))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Correction mode(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, FFC_CORRECTION_MODE_MIN, FFC_CORRECTION_MODE_MAX);
+			sprintf (gLogMsgBuff, "FFC Correction(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, FFC_CORRECTION_MODE_MIN, FFC_CORRECTION_MODE_MAX);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -511,7 +511,7 @@ int cmdFfcRegInitIntMem (void *str)
 		if ((offset != FFC_ENABLE) && (offset != FFC_DISABLE))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "offset mode[%d] Parameter Error. (Disable:%d / Enable:%d)\n", offset, FFC_DISABLE, FFC_ENABLE);
+			sprintf (gLogMsgBuff, "FFC Offset mode[%d] Parameter Error.\n", offset);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -520,7 +520,7 @@ int cmdFfcRegInitIntMem (void *str)
 		if ((gain != FFC_ENABLE) && (gain != FFC_DISABLE))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "gain mode[%d] Parameter Error. (Disable:%d / Enable:%d)\n", gain, FFC_DISABLE, FFC_ENABLE);
+			sprintf (gLogMsgBuff, "FFC Gain mode[%d] Parameter Error.\n", gain);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -644,7 +644,7 @@ int cmdFfcLoad (void *str)
 		if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Load ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+			sprintf (gLogMsgBuff, "FFC Load No(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -833,7 +833,7 @@ int cmdFfcSave (void *str)
 		if (ffcNo == FFC_FACTORY_NUMBER)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Save ffcNo(%d) Default Parameter Error.(Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN+1, FFC_NUMBER_MAX);
+			sprintf (gLogMsgBuff, "FFC Save No(%d) Default Parameter Error.(Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN+1, FFC_NUMBER_MAX);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -842,7 +842,7 @@ int cmdFfcSave (void *str)
 		if ((ffcNo < FFC_NUMBER_MIN+1) || (ffcNo > FFC_NUMBER_MAX-1))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Save ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN+1, FFC_NUMBER_MAX-1);
+			sprintf (gLogMsgBuff, "FFC Save No(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNo, FFC_NUMBER_MIN+1, FFC_NUMBER_MAX-1);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -993,7 +993,7 @@ int cmdFfcSaveAdmin (void *str)
 			if ((ffcNo < min) || (ffcNo > max))
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "FFC Save Admin ffcNo(%d) Parameter Error. (Min=%d / Max=%d)\n", ffcNo, min, max);
+				sprintf (gLogMsgBuff, "FFC Save Admin No(%d) Parameter Error. (Min=%d / Max=%d)\n", ffcNo, min, max);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				goto _DONE;
 			}
@@ -1099,7 +1099,7 @@ int cmdFfcSaveAdminAll (void *str)
 		if ((ffcNo < FFC_NUMBER_MIN) || (ffcNo > FFC_NUMBER_MAX))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Save Admin ffcNo(%d) Parameter Error. (Min=%d / Max=%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+			sprintf (gLogMsgBuff, "FFC Save Admin No(%d) Parameter Error. (Min=%d / Max=%d)\n", ffcNo, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1995,7 +1995,7 @@ int cmdFfcDataDownload (void *str)
 		if (waitTimeS > DOWNLOAD_WAIT_TIME_MAX)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Data Download Wait Time(%d) Parameter Error. (Min:0 / Max:%d)\n", waitTimeS, DOWNLOAD_WAIT_TIME_MAX);
+			sprintf (gLogMsgBuff, "FFC Download Wait Time(%d) Parameter Error.\n", waitTimeS);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -2085,7 +2085,7 @@ int cmdFfcDataDownloadCompress (void *str)
 		if (waitTimeS > DOWNLOAD_WAIT_TIME_MAX)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Data Download Wait Time(%d) Parameter Error. (Min:0 / Max:%d)\n", waitTimeS, DOWNLOAD_WAIT_TIME_MAX);
+			sprintf (gLogMsgBuff, "FFC Download Wait Time(%d) Parameter Error.\n", waitTimeS);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -2175,7 +2175,7 @@ int cmdFfcDataDownloadBin (void *str)
 		if (waitTimeS > DOWNLOAD_WAIT_TIME_MAX)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Data Download Wait Time(%d) Parameter Error. (Min:0 / Max:%d)\n", waitTimeS, DOWNLOAD_WAIT_TIME_MAX);
+			sprintf (gLogMsgBuff, "FFC Download Wait Time(%d) Parameter Error.\n", waitTimeS);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -2265,7 +2265,7 @@ int cmdFfcDataDownloadCompressBin (void *str)
 		if (waitTimeS > DOWNLOAD_WAIT_TIME_MAX)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Data Download Wait Time(%d) Parameter Error. (Min:0 / Max:%d)\n", waitTimeS, DOWNLOAD_WAIT_TIME_MAX);
+			sprintf (gLogMsgBuff, "FFC Download Wait Time(%d) Parameter Error.\n", waitTimeS);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}

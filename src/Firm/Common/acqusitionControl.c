@@ -212,7 +212,7 @@ int acquisitionGetMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Mode pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -247,8 +247,8 @@ int acquisitionStart (void)
 		goto _DONE;
 
 	// 温度以上の為、何もしない
-	if (tempStatus != 0)
-		goto _DONE;
+	//@@@1if (tempStatus != 0)
+	//@@@1goto _DONE;
 #endif
 
 	// 取り込み開始
@@ -269,8 +269,12 @@ int acquisitionStart (void)
 #endif
 
 //@@@@@@@@@@@@@@@@@@@@@@
-	usDelay(500);
-	DEBUG_PRINT_FORCE("Start\n");
+	// Stream Enable
+	OUT32(FPGA_CXP_S0_STREAM_EN_ADRS, 1);
+
+	usDelay(100);
+	
+	// Test Pattern
 	OUT32 (0x6b200004, 1);
 //@@@@@@@@@@@@@@@@@@@@@@
 	
@@ -318,9 +322,9 @@ int acquisitionAbort (void)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int state1, state2;
 	unsigned int i;
-//@@@2
+//@@@1
 	goto _DONE;
-//@@@2
+//@@@1
 
 	// 取り込み中断
 	OUT32 (GENICAM_ACQUISITION_ABORT_ADRS, GENICAM_ACQUISITION_ABORT_BIT);
@@ -357,6 +361,15 @@ int acquisitionAbort (void)
 	OUT32 (FIRM_DATA_ACQUISITION_START_ADRS, 0);
 
 _DONE:
+//@@@@@@@@@@@@@@@@@@@@@@
+	// Stream Disable
+	OUT32(FPGA_CXP_S0_STREAM_EN_ADRS, 0);
+
+	usDelay(100);
+	
+	// Test Pattern Off
+    OUT32 (0x6b200004, 0);
+//@@@@@@@@@@@@@@@@@@@@@@
 	return (status);
 }
 
@@ -378,7 +391,7 @@ int acquisitionGetStartFlag (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Start Status pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Start Status pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -406,7 +419,7 @@ int acquisitionSetFrameCount (unsigned int count)
 	if ((count < GENICAM_ACQUISITION_FRAME_COUNT_MIN) || (count > GENICAM_ACQUISITION_FRAME_COUNT_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Acquisition Set Frame Count(%d) Parameter Error.(Min:%d / Max:%u)\n", count, GENICAM_ACQUISITION_FRAME_COUNT_MIN, GENICAM_ACQUISITION_FRAME_COUNT_MAX);
+		sprintf (gLogMsgBuff, "Acquisition Frame Count(%d) Parameter Error.(Min:%d / Max:%u)\n", count, GENICAM_ACQUISITION_FRAME_COUNT_MIN, GENICAM_ACQUISITION_FRAME_COUNT_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -617,7 +630,7 @@ int irSetFrameRate (double frameRate)
 	if ((double)frameRateTimeD < (double)intervalD)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Frame Rate(%.2f) Setting Error\nRate Time = %.2f\nInterval = %.2f(TGPD = %d * hInterval = %.2f)\nhClock = %d\n", frameRate, frameRateTimeD, intervalD, tgpd,  hTimeD, hIntervalClock);
+		sprintf (gLogMsgBuff, "Frame Rate(%.2f) Setting Error\nRate Time = %.2f\nInterval = %.2f(TGPD=%d*hInterval = %.2f)\nhClock = %d\n", frameRate, frameRateTimeD, intervalD, tgpd,  hTimeD, hIntervalClock);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -808,7 +821,7 @@ int irSetFrameRateDrrs (double frameRate)
 	if ((frameRate < rMin) || (frameRate > rMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Acquisition Frame Rate(%.2f) Parameter Error. (Min:%.2f / Max:%.2f)\n", frameRate, rMin, rMax);
+		sprintf (gLogMsgBuff, "Acquisition Frame Rate(%.2f) Parameter Error.(Min:%.2f / Max:%.2f)\n", frameRate, rMin, rMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -945,7 +958,7 @@ int irGetFrameRateMain (double *pFrameRate)
 	if (pFrameRate == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Frame Rate pFrameRate NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Frame Rate pFrameRate NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1047,7 +1060,7 @@ int irGetFrameRateShutterNormalMain (double *pFrameRate)
 	if (pFrameRate == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Frame Rate pFrameRate NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Frame Rate pFrameRate NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1116,7 +1129,7 @@ int acquisitionGetStatus (int mode, int *pStatus)
 	if (pStatus == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Status pStatus NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Status pStatus NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1173,7 +1186,7 @@ int acquisitionGetSelect (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1238,7 +1251,7 @@ int acquisitionSetTrgMode (int mode)
 	if ((mode != ACQUISITION_TRG_MODE_DISABLE) && (mode != ACQUISITION_TRG_MODE_ENABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Acquisition Trg Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, ACQUISITION_TRG_MODE_DISABLE, ACQUISITION_TRG_MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Acquisition Trg Mode(%d) Parameter Error.\n", mode);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1274,7 +1287,7 @@ int acquisitionGetTrgMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Mode pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Mode pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1364,7 +1377,7 @@ int acquisitionGetTrgSource (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Source pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Source pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1448,7 +1461,7 @@ int lfTrgSourceCheck (int number)
 			break;
 		default:
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Acquisition Trg Source Number(%d) Parameter Error.\n", number);
+			sprintf (gLogMsgBuff, "Acquisition Trg Source No(%d) Parameter Error.\n", number);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			break;
 	}
@@ -1583,7 +1596,7 @@ int acquisitionGetTrgDelay (unsigned int *pDelay)
 	if (pDelay == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Delay pDelay NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Delay pDelay NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1612,7 +1625,7 @@ int acquisitionGetInvalidedTrg (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Invalid Trg pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Invalid Trg pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1644,7 +1657,7 @@ int acquisitionSetExposureMode (int mode)
 	if ((mode < ACQUISITION_EXPOSURE_MODE_MIN) || (mode > ACQUISITION_EXPOSURE_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Acquisition Exposure Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, ACQUISITION_EXPOSURE_MODE_MIN, ACQUISITION_EXPOSURE_MODE_MAX);
+		sprintf (gLogMsgBuff, "Acquisition Exposure Mode(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, ACQUISITION_EXPOSURE_MODE_MIN, ACQUISITION_EXPOSURE_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1661,7 +1674,7 @@ int acquisitionSetExposureMode (int mode)
 		if (autoMode == MODE_ENABLE)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Acquisition Exposure Mode(%d) Auto Bright Mode Enable Error.\n", mode);
+			sprintf (gLogMsgBuff, "Acquisition Exposure Mode(%d) Auto Bright Enable Error.\n", mode);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1693,7 +1706,7 @@ int acquisitionGetExposureMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Exposure Mode pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Exposure Mode NULL Parameter Error\n");
 		goto _DONE;
 	}
 
@@ -1841,7 +1854,7 @@ int irSetExposure (unsigned int expTime)
 	if ((expTime < expMin) || (expTime > expMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Acquisition Exposure Time(%d[us]) Parameter Error.(Min:%d / Max:%d)\n", expTime, expMin, expMax);
+		sprintf (gLogMsgBuff, "Acquisition Exposure Time(%d) Parameter Error.(Min:%d / Max:%d)\n", expTime, expMin, expMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2027,7 +2040,7 @@ int irSetExposureDrrs (unsigned int expTime)
 	if ((expTime < expMin) || (expTime > expMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Acquisition DRRS Exposure Time(%d[us]) Parameter Error.(Min:%d / Max:%d)\n", expTime, expMin, expMax);
+		sprintf (gLogMsgBuff, "Acquisition DRRS Exposure Time(%d) Parameter Error.(Min:%d / Max:%d)\n", expTime, expMin, expMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2100,7 +2113,7 @@ int irSetExposureSimple (unsigned int expTime)
 	if ((expTime < MIN_EXPOSURE_TIME) || (expTime > MAX_EXPOSURE_TIME))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Acquisition Exposure Time(%d[us]) Parameter Error.(Min:%d / Max:%d)\n", expTime, MIN_EXPOSURE_TIME, MAX_EXPOSURE_TIME);
+		sprintf (gLogMsgBuff, "Acquisition Exposure Time(%d) Parameter Error.(Min:%d / Max:%d)\n", expTime, MIN_EXPOSURE_TIME, MAX_EXPOSURE_TIME);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2126,7 +2139,7 @@ int irSetExposureSimple (unsigned int expTime)
 	if ((int)((int)frameRateTime - (int)expTime) < intervalD)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Acquisition Exposure Time(%d[us]) Over Error.(Min:%d / Max:%d)\n", expTime, MIN_EXPOSURE_TIME, (int)((int)frameRateTime - (int)expTime));
+		sprintf (gLogMsgBuff, "Acquisition Exposure Time(%d) Over Error.(Min:%d / Max:%d)\n", expTime, MIN_EXPOSURE_TIME, (int)((int)frameRateTime - (int)expTime));
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2186,7 +2199,7 @@ int irSetExposureSimpleShutterNormal (unsigned int expTime)
 	if ((expTime < MIN_EXPOSURE_TIME) || (expTime > MAX_EXPOSURE_TIME))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Acquisition Exposure Time(%d[us]) Parameter Error.(Min:%d / Max:%d)\n", expTime, MIN_EXPOSURE_TIME, MAX_EXPOSURE_TIME);
+		sprintf (gLogMsgBuff, "Acquisition Exposure Time(%d) Parameter Error.(Min:%d / Max:%d)\n", expTime, MIN_EXPOSURE_TIME, MAX_EXPOSURE_TIME);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2210,7 +2223,7 @@ int irSetExposureSimpleShutterNormal (unsigned int expTime)
 	if (frameRateTime < expTime)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Acquisition Exposure Time(%d[us]) Over Error.(Min:%d / Max:%d)\n", expTime, MIN_EXPOSURE_TIME, frameRateTime);
+		sprintf (gLogMsgBuff, "Acquisition Exposure Time(%d) Over Error.(Min:%d / Max:%d)\n", expTime, MIN_EXPOSURE_TIME, frameRateTime);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2315,7 +2328,7 @@ int irGetExposure (unsigned int *pExpTime)
 	if (pExpTime == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Exposure pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Exposure pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2360,7 +2373,7 @@ int irGetExposureDrrs (unsigned int *pExpTime)
 	if (pExpTime == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Exposure pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Exposure pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2415,7 +2428,7 @@ int acquisitionGetTrgInvalidCount (unsigned int *pCount)
 	if (pCount == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trigger Invalid Frame Count pCount NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trigger Invalid Frame Count NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2458,7 +2471,7 @@ int acquisitionSetTrgReserve (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Acquisition Trigger Reserved(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Acquisition Trigger Reserved(%d) Parameter Error.\n", mode);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2516,7 +2529,7 @@ int acquisitionGetTrgReserve (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trigger Reserved pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trigger Reserved NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2563,7 +2576,7 @@ int acquisitionGetTrgReserveMain (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trigger Reserved pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trigger Reserved NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2598,7 +2611,7 @@ int acquisitionGetFrameTrgMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Frame Trigger Mode pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Frame Trigger Mode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2739,7 +2752,7 @@ int exposureMin (int *pExp)
 	if (pExp == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Exposure Min pExp NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Exposure Min NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2847,7 +2860,7 @@ int exposureMax (int *pExp)
 	if (pExp == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Exposure Max pExp NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Exposure Max NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2911,7 +2924,7 @@ int rateMin (double *pRate)
 	if (pRate == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Rate Min pRate NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Rate Min NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2967,7 +2980,7 @@ int rateMax (double *pRate)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Rate Max Interface Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Rate Max Interface Error.\n");
 		goto _DONE;
 	}
 
@@ -3007,7 +3020,7 @@ int rateGetSensorMax (double *pRate)
 	if (pRate == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Rate Max pRate NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Rate Max NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3133,7 +3146,7 @@ int rateGetGigEMax (double *pRate)
 	if (pRate == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Rate Max pRate NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Rate Max NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3309,7 +3322,7 @@ int rateGetCxpMax (double *pRate)
 	if (pRate == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Rate Max pRate NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Rate Max NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3416,7 +3429,7 @@ int sensoreGetReadOut(int *pTime)
 	if (pTime == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Read Out pTime NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Read Out NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3545,7 +3558,7 @@ int acquisitionGetRateMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Get Rate Mode pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Get Rate Mode pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3588,7 +3601,7 @@ int acquisitionGetTrgCountHigh (int port, unsigned int *pCount)
 	if (pCount == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Trg Count NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Trg Count NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3630,7 +3643,7 @@ int acquisitionGetTrgCountHigh (int port, unsigned int *pCount)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Trg Count Selector(%d) Parameter Error\n", selector);
+		sprintf (gLogMsgBuff, "Trg Count Selector(%d) Parameter Error.\n", selector);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -3670,7 +3683,7 @@ int acquisitionGetTrgCountLow (int port, unsigned int *pCount)
 	if (pCount == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Trg Count NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Trg Count NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3712,7 +3725,7 @@ int acquisitionGetTrgCountLow (int port, unsigned int *pCount)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Trg Count Selector(%d) Parameter Error\n", selector);
+		sprintf (gLogMsgBuff, "Trg Count Selector(%d) Parameter Error.\n", selector);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}

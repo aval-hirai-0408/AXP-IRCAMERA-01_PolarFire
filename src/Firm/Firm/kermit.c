@@ -113,7 +113,7 @@ int kermitRecv (char *pBuffer, unsigned int size)
 	if (pBuffer == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Kermit pBuffer NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Kermit pBuffer NULL Parameter Error.\n");
 		return (status);
 	}
 
@@ -121,7 +121,7 @@ int kermitRecv (char *pBuffer, unsigned int size)
 	if (size > QSPI_FLASH_SIZE)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff,"Kermit size(0x%x) Parameter Error. (Min=1 / Max=%d)\n", size, QSPI_FLASH_SIZE);
+		sprintf (gLogMsgBuff,"Kermit size(0x%x) Parameter Error.(Min=1 / Max=%d)\n", size, QSPI_FLASH_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		return (status);
 	}
@@ -1079,7 +1079,7 @@ int kermitGzipDataCheck (unsigned char **pUnCompress, int *pUncomprLen, unsigned
 	if (pUncomprLen == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Kermit Data Check pUncomprLen NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Kermit Data Check pUncomprLen NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1087,7 +1087,7 @@ int kermitGzipDataCheck (unsigned char **pUnCompress, int *pUncomprLen, unsigned
 	if (pCompress == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Kermit Data Check pCompress NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Kermit Data Check pCompress NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

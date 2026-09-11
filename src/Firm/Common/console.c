@@ -121,7 +121,7 @@ int consoleSetMode (int mode)
 	if ((mode != CONSOLE_MODE_ON) && (mode != CONSOLE_MODE_OFF))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Console Mode mode(%d) Parameter Error.(OFF:%d / ON:%d)\n", mode, CONSOLE_MODE_OFF, CONSOLE_MODE_ON);
+		sprintf (gLogMsgBuff, "Console Mode mode(%d) Parameter Error.\n", mode);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -159,7 +159,7 @@ int consoleGetMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Console Mode pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Console Mode pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

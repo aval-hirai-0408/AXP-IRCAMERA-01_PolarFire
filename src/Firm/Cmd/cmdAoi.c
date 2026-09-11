@@ -1790,7 +1790,7 @@ int cmdAoiXflip (void *str)
 		if ((mode != XFLIP_ENABLE) && (mode != XFLIP_DISABLE))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Xflip Mode(%d) Parameter Error. (Reverse Disable:%d / Reverse Enable:%d)\n", mode, XFLIP_DISABLE, XFLIP_ENABLE);
+			sprintf (gLogMsgBuff, "Xflip Mode(%d) Parameter Error.\n", mode);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}

@@ -311,7 +311,7 @@ int peltierSetMountState (int state)
 	if ((state != MODE_DISABLE) && (state != MODE_ENABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Set Mount State(%d) Parameter Error. (Disable:%d / Enable:%d)\n", state, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Peltier Set Mount State(%d) Parameter Error.(Disable:%d / Enable:%d)\n", state, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -341,7 +341,7 @@ int peltierGetMountState (int *pState)
 	if (pState == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Mount State pState NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Mount State NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -375,7 +375,7 @@ int peltierCheckMountState (void)
 	if (state == MODE_DISABLE)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Not Mount\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Not Mount.\n");
 		goto _DONE;
 	}
 
@@ -401,7 +401,7 @@ int peltierSetEnable (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Enable mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Peltier Enable mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -440,7 +440,7 @@ int peltierGetEnable (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Enable pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Enable pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -633,7 +633,7 @@ int peltierSetMode (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Set Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Peltier Set Mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -677,7 +677,7 @@ int peltierGetMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -807,7 +807,7 @@ int peltierGetIntEnable (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Interrupt Enable pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Interrupt Enable pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -837,7 +837,7 @@ int peltierSetGlobalInt (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Global Interrupt mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Peltier Global Interrupt mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -876,7 +876,7 @@ int peltierGetGlobalInt (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Global Interrupt pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Global Interrupt pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -923,7 +923,7 @@ int peltierSetTarget (double temp)
 	if ((temp < tempMin) || (temp > tempMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Target temp(%.2f) Parameter Error. (Min:%.2f / Max:%.2f)\n", temp, tempMin, tempMax);
+		sprintf (gLogMsgBuff, "Peltier Target temp(%.2f) Parameter Error.(Min:%.2f / Max:%.2f)\n", temp, tempMin, tempMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -991,7 +991,7 @@ int peltierGetTarget (double *pTemp)
 	if (pTemp == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Target pTemp NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Target pTemp NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1055,7 +1055,7 @@ int peltierGetTargetMinMax (double *pMinTemp, double *pMaxTemp)
 	if (pMinTemp == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Target pMinTemp NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Target pMinTemp NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1063,7 +1063,7 @@ int peltierGetTargetMinMax (double *pMinTemp, double *pMaxTemp)
 	if (pMaxTemp == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Target pMaxTemp NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Target pMaxTemp NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1101,7 +1101,7 @@ int peltierSetSensorTempAlarm (double tempOver, double tempUnder)
 	if ((tempOver < tempMin) || (tempOver > tempMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Sensor Alarm tempOver(%.2f) Parameter Error. (Min:%.2f / Max:%.2f)\n", tempOver, tempMin, tempMax);
+		sprintf (gLogMsgBuff, "Peltier Sensor Alarm tempOver(%.2f) Parameter Error.(Min:%.2f / Max:%.2f)\n", tempOver, tempMin, tempMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1110,7 +1110,7 @@ int peltierSetSensorTempAlarm (double tempOver, double tempUnder)
 	if ((tempUnder < tempMin) || (tempUnder > tempMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Sensor Alarm tempUnder(%.2f) Parameter Error. (Min:%.2f / Max:%.2f)\n", tempUnder, tempMin, tempMax);
+		sprintf (gLogMsgBuff, "Peltier Sensor Alarm tempUnder(%.2f) Parameter Error.(Min:%.2f / Max:%.2f)\n", tempUnder, tempMin, tempMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1185,7 +1185,7 @@ int peltierSetSensorTempAlarmCalc (double alarm, unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Sensor Alarm pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Sensor Alarm pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1245,7 +1245,7 @@ int peltierGetSensorTempAlarm (double *pTempOver, double *pTempUnder)
 	if (pTempOver == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Sensor Alarm pTempOver NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Sensor Alarm pTempOver NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1253,7 +1253,7 @@ int peltierGetSensorTempAlarm (double *pTempOver, double *pTempUnder)
 	if (pTempUnder == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Sensor Alarm pTempUnder NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Sensor Alarm pTempUnder NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1303,7 +1303,7 @@ int peltierGetSensorTempAlarmCalc (unsigned int reg, double *pTempAlarm)
 	if (pTempAlarm == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Sensor Alarm pTempAlarm NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Sensor Alarm pTempAlarm NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1368,7 +1368,7 @@ int peltierGetSensorTempAlarmMinMax (double *pMinTemp, double *pMaxTemp)
 	if (pMinTemp == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Target pMinTemp NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Target pMinTemp NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1376,7 +1376,7 @@ int peltierGetSensorTempAlarmMinMax (double *pMinTemp, double *pMaxTemp)
 	if (pMaxTemp == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Target pMaxTemp NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Target pMaxTemp NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1409,7 +1409,7 @@ int peltierSetCaseTempAlarm (double tempOver, double tempUnder)
 	if ((tempOver < PELTIER_CASE_ALM_MIN_TEMP) || (tempOver > PELTIER_CASE_ALM_MAX_TEMP))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Case Alarm tempOver(%.2f) Parameter Error. (Min:%.2f / Max:%.2f)\n", tempOver, PELTIER_CASE_ALM_MIN_TEMP, PELTIER_CASE_ALM_MAX_TEMP);
+		sprintf (gLogMsgBuff, "Peltier Case Alarm tempOver(%.2f) Parameter Error.(Min:%.2f / Max:%.2f)\n", tempOver, PELTIER_CASE_ALM_MIN_TEMP, PELTIER_CASE_ALM_MAX_TEMP);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1418,7 +1418,7 @@ int peltierSetCaseTempAlarm (double tempOver, double tempUnder)
 	if ((tempUnder < PELTIER_CASE_ALM_MIN_TEMP) || (tempUnder > PELTIER_CASE_ALM_MAX_TEMP))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Case Alarm tempUnder(%.2f) Parameter Error. (Min:%.2f / Max:%.2f)\n", tempUnder, PELTIER_CASE_ALM_MIN_TEMP, PELTIER_CASE_ALM_MAX_TEMP);
+		sprintf (gLogMsgBuff, "Peltier Case Alarm tempUnder(%.2f) Parameter Error.(Min:%.2f / Max:%.2f)\n", tempUnder, PELTIER_CASE_ALM_MIN_TEMP, PELTIER_CASE_ALM_MAX_TEMP);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1507,7 +1507,7 @@ int peltierSetCaseTempAlarmCalc (double alarm, unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Sensor Alarm pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Sensor Alarm pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1568,7 +1568,7 @@ int peltierGetCaseTempAlarm (double *pTempOver, double *pTempUnder)
 	if (pTempOver == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Case Alarm pTempOver NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Case Alarm pTempOver NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1576,7 +1576,7 @@ int peltierGetCaseTempAlarm (double *pTempOver, double *pTempUnder)
 	if (pTempUnder == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Case Alarm pTempUnder NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Case Alarm pTempUnder NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1625,7 +1625,7 @@ int peltierGetCaseTempAlarmCalc (unsigned int reg, double *pTempAlarm)
 	if (pTempAlarm == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Case Alarm pTempAlarm NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Case Alarm pTempAlarm NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1685,7 +1685,7 @@ int peltierGetSensorTemp (double *pTemp)
 	if (pTemp == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Sensor Temp pTemp NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Sensor Temp pTemp NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1733,7 +1733,7 @@ int peltierGetCaseTemp (double *pTemp)
 	if (pTemp == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Case Temp pTemp NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Case Temp pTemp NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1791,7 +1791,7 @@ int peltierGetTempAlarmStatus (unsigned int *pStatus)
 	if (pStatus == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Temp Alarm Status pStatus NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Temp Alarm Status pStatus NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1838,7 +1838,7 @@ int peltierClearTempAlarm (unsigned int clear)
 	if (clear > PELTIER_TEMP_STATUS_MAX)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Temp Alarm Status(0x%x) Parameter Error. Max = 0x%x\n", clear, PELTIER_TEMP_STATUS_MAX);
+		sprintf (gLogMsgBuff, "Peltier Temp Alarm Status(0x%x) Parameter Error.(Max = 0x%x)\n", clear, PELTIER_TEMP_STATUS_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1891,7 +1891,7 @@ int peltierGetMakeTempAlarmStatus (unsigned int *pStatus)
 	if (pStatus == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Alarm Status pStatus NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Alarm Status pStatus NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1961,7 +1961,7 @@ int peltierGetClip (unsigned int *pLow, unsigned int *pHigh)
 	if (pLow == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Low Clip Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Low Clip Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1969,7 +1969,7 @@ int peltierGetClip (unsigned int *pLow, unsigned int *pHigh)
 	if (pHigh == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get High Clip Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get High Clip Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2002,7 +2002,7 @@ int peltierSetClip (unsigned int low, unsigned int high)
 	if (low > FPGA_PELTIER_CLIP_MASK)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Set Clip Low(%d) Parameter Error. (Min:0 / Max:%d)\n", low, FPGA_PELTIER_CLIP_MASK);
+		sprintf (gLogMsgBuff, "Peltier Set Clip Low(%d) Parameter Error.(Min:0 / Max:%d)\n", low, FPGA_PELTIER_CLIP_MASK);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2011,7 +2011,7 @@ int peltierSetClip (unsigned int low, unsigned int high)
 	if (high > FPGA_PELTIER_CLIP_MASK)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Set Clip Low(%d) Parameter Error. (Min:0 / Max:%d)\n", low, FPGA_PELTIER_CLIP_MASK);
+		sprintf (gLogMsgBuff, "Peltier Set Clip Low(%d) Parameter Error.(Min:0 / Max:%d)\n", low, FPGA_PELTIER_CLIP_MASK);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2045,7 +2045,7 @@ int peltierGetVolt (double *pVolt)
 	if (pVolt == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Volt pVolt NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Volt pVolt NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2078,7 +2078,7 @@ int peltierGetCurrent (double *pCurrent)
 	if (pCurrent == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Current pCurrent NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Current pCurrent NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2132,7 +2132,7 @@ int tempGetAbnormalStatus (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Temp Abnormal Status NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Temp Abnormal Status NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2181,7 +2181,7 @@ int tempGetAbnormalCount (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Temp Abnormal Count NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Temp Abnormal Count NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2230,7 +2230,7 @@ int tempGetAbnormalAcquisition (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Temp Abnormal Acquisition NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Temp Abnormal Acquisition NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2459,7 +2459,7 @@ int peltierGetPowerLevel (int *pLevel)
 	if (pLevel == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Power Level NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Power Level NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2491,7 +2491,7 @@ int peltierSetPowerLevel (int level)
 	if ((level < PELTIER_POWER_LEVEL_MIN) || (level > PELTIER_POWER_LEVEL_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Power Level(%d) Parameter Error. (Min:%d / Max:%d)\n", level, PELTIER_POWER_LEVEL_MIN, PELTIER_POWER_LEVEL_MAX);
+		sprintf (gLogMsgBuff, "Peltier Power Level(%d) Parameter Error.(Min:%d / Max:%d)\n", level, PELTIER_POWER_LEVEL_MIN, PELTIER_POWER_LEVEL_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2575,7 +2575,7 @@ int peltierGetPowerHighClip (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Power High Clip NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Power High Clip NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2624,7 +2624,7 @@ int peltierGetPowerStartFlag (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Power Start Flag NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Power Start Flag NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2653,7 +2653,7 @@ int peltierSetPowerStartFlag (unsigned int data)
 	if ((data != MODE_ENABLE) && (data != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Power Start Flag(%d) Parameter Error. (Disable:%d / Enable:%d)\n", data, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "Peltier Power Start Flag(%d) Parameter Error.(Disable:%d / Enable:%d)\n", data, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}

@@ -141,7 +141,7 @@ int fpgaRoiGetSensorHeight (int selector, int *pOffset, int *pSize, int *pValid)
 	if (pOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Sensor FPGA Get Height pOffset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Sensor FPGA Get Height pOffset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -149,7 +149,7 @@ int fpgaRoiGetSensorHeight (int selector, int *pOffset, int *pSize, int *pValid)
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Sensor FPGA Get Height pSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Sensor FPGA Get Height pSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -157,7 +157,7 @@ int fpgaRoiGetSensorHeight (int selector, int *pOffset, int *pSize, int *pValid)
 	if (pValid == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Sensor FPGA Get Height pValid NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Sensor FPGA Get Height pValid NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -460,7 +460,7 @@ int fpgaRoiGetCameraWidthMain (unsigned int adrs, int selector, int *pOffset, in
 	if (pOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Camera FPGA Get Width pOffset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Camera FPGA Get Width pOffset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -468,7 +468,7 @@ int fpgaRoiGetCameraWidthMain (unsigned int adrs, int selector, int *pOffset, in
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "ROI Camera FPGA Get Width pSize NULL Parameter Error\n");
+		sprintf (gLogMsgBuff, "ROI Camera FPGA Get Width pSize NULL Parameter Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -477,7 +477,7 @@ int fpgaRoiGetCameraWidthMain (unsigned int adrs, int selector, int *pOffset, in
 	if (pValid == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "ROI Camera FPGA Get Width pValid NULL Parameter Error\n");
+		sprintf (gLogMsgBuff, "ROI Camera FPGA Get Width pValid NULL Parameter Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -677,7 +677,7 @@ int fpgaRoiGetCameraHeightMain (unsigned int adrs, int selector, int *pOffset, i
 	if (pOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Camera FPGA Get Height pOffset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Camera FPGA Get Height pOffset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -685,7 +685,7 @@ int fpgaRoiGetCameraHeightMain (unsigned int adrs, int selector, int *pOffset, i
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Camera FPGA Get Height pSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Camera FPGA Get Height pSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -693,7 +693,7 @@ int fpgaRoiGetCameraHeightMain (unsigned int adrs, int selector, int *pOffset, i
 	if (pValid == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Camera FPGA Get Height pValid NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Camera FPGA Get Height pValid NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -742,7 +742,7 @@ int fpgaRoiGetCameraHeightTotalSize (int *pSize)
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Camera Height Total Size pSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Camera Height Total Size pSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -825,7 +825,7 @@ int fpgaRoiGetSensorHeightTotalSize (int *pSize)
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Sensor Height Total Size pSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Sensor Height Total Size pSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -873,7 +873,7 @@ int fpgaRoiGetOffsetY (int *pOffsetY)
 	if (pOffsetY == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Camera Offsety pOffsetY NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Camera Offsety pOffsetY NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

@@ -36,7 +36,7 @@ int voltFpgaGet09v (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +0.9V Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +0.9V Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -72,7 +72,7 @@ int voltFpgaGet12vSys (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +1.2V Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +1.2V Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -108,7 +108,7 @@ int voltFpgaGet25v (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +2.5V Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +2.5V Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -145,7 +145,7 @@ int voltFpgaGet115v (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +1.15V Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +1.15V Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -181,7 +181,7 @@ int voltFpgaGet33vd (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +3.3VD Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +3.3VD Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -217,7 +217,7 @@ int voltFpgaGetVtt (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board VTT Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board VTT Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -253,7 +253,7 @@ int voltFpgaGet12v (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +1.2V Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +1.2V Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -289,7 +289,7 @@ int voltFpgaGet33v (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +3.3V Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +3.3V Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -325,7 +325,7 @@ int voltFpgaGet33va (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +3.3VA Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +3.3VA Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -361,7 +361,7 @@ int voltFpgaGet50v (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +5V Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board +5V Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -397,7 +397,7 @@ int voltFpgaGetVref (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board VREF Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board VREF Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -433,7 +433,7 @@ int voltFpgaGetVccint (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "VCCINT Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "VCCINT Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -469,7 +469,7 @@ int voltFpgaGetVccaux (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "VCCAUX Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "VCCAUX Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -505,7 +505,7 @@ int voltFpgaGetVbram (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "VBRAM Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "VBRAM Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -541,7 +541,7 @@ int voltFpgaGetVccPsintlp (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "VCC PSINTPL Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "VCC PSINTPL Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -577,7 +577,7 @@ int voltFpgaGetVccPsinfp (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "VCC PSINFP Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "VCC PSINFP Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -613,7 +613,7 @@ int voltFpgaGetVccPSAux (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "VCC PSAUX Voltage pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "VCC PSAUX Voltage pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

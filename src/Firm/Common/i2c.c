@@ -209,7 +209,7 @@ int i2cWrite (int port, unsigned int slaveAdrs, unsigned int adrs, unsigned char
 		if (i >= I2C_TRANSMIT_TIMEOUT)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_I2C, AVAL_STATUS_TIMEOUT);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "I2C Write Timeout Error\n");
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "I2C Write Timeout Error.\n");
 			goto _DONE;
 		}
 	}
@@ -260,7 +260,7 @@ int i2cWrite (int port, unsigned int slaveAdrs, unsigned int adrs, unsigned char
 		if (i2cSatus != I2C_SUCCESS)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_I2C, AVAL_STATUS_TIMEOUT);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "I2C Write Timeout Error\n");
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "I2C Write Timeout Error.\n");
 			goto _DONE;
 		}
 	}
@@ -342,7 +342,7 @@ int i2cRead (int port, unsigned int slaveAdrs, unsigned int adrs, unsigned char 
 		if (i >= I2C_TRANSMIT_TIMEOUT)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_I2C, AVAL_STATUS_TIMEOUT);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "I2C Read Timeout Error\n");
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "I2C Read Timeout Error.\n");
 			goto _DONE;
 		}
 	}
@@ -396,7 +396,7 @@ int i2cRead (int port, unsigned int slaveAdrs, unsigned int adrs, unsigned char 
 		if (i2cSatus != I2C_SUCCESS)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_I2C, AVAL_STATUS_TIMEOUT);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "I2C Read Timeout Error\n");
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "I2C Read Timeout Error.\n");
 			goto _DONE;
 		}
 	}

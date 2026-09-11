@@ -65,7 +65,7 @@ int counterSetSelect (int select)
 	if ((select < COUNTER_SELECT_MIN) || (select > COUNTER_SELECT_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Counter Select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, COUNTER_SELECT_MIN, COUNTER_SELECT_MAX);
+		sprintf (gLogMsgBuff, "Counter Select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, COUNTER_SELECT_MIN, COUNTER_SELECT_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -95,7 +95,7 @@ int counterGetSelect (int *pSelect)
 	if (pSelect == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Select pSelect Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Select pSelect Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -161,7 +161,7 @@ int counterGetEventSource (int *pSource)
 	if (pSource == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Event pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Event pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -310,7 +310,7 @@ int counterGetEventActive (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Event Activation pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Event Activation pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -386,7 +386,7 @@ int counterGetResetSource (int *pSource)
 	if (pSource == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Reset pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Reset pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -542,7 +542,7 @@ int counterGetResetActive (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Reset  Activation pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Reset  Activation pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -629,7 +629,7 @@ int counterGetValue (int *pCount)
 	if (pCount == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Get Value pCount NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Get Value pCount NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -688,7 +688,7 @@ int counterGetResetValue (int *pCount)
 	if (pCount == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Reset Value pCount NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Reset Value pCount NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -747,7 +747,7 @@ int counterGetDuration (int *pCount)
 	if (pCount == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Reset Duration pCount NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Reset Duration pCount NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -776,7 +776,7 @@ int counterGetStatus (unsigned int *pStatus)
 	if (pStatus == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Reset Status pStatus NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Reset Status pStatus NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -842,7 +842,7 @@ int counterGetTrgSource (int *pSource)
 	if (pSource == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Trg pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Trg pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -959,7 +959,7 @@ int counterSetTrgActive (int mode)
 	if ((mode < COUNTER_TRG_ACTIVE_MIN) || (mode > COUNTER_TRG_ACTIVE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Counter Trg Activation Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, COUNTER_TRG_ACTIVE_MIN, COUNTER_TRG_ACTIVE_MAX);
+		sprintf (gLogMsgBuff, "Counter Trg Activation Mode(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, COUNTER_TRG_ACTIVE_MIN, COUNTER_TRG_ACTIVE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1000,7 +1000,7 @@ int counterGetTrgActive (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Trg Active pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Counter Trg Active pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

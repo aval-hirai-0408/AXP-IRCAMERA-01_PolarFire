@@ -343,7 +343,7 @@ int encoderSetDivider (int divider)
 	if ((divider < GENICAM_ENCODER_DVIDER_MIN) || (divider > GENICAM_ENCODER_DVIDER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Encoder divider(%d) Parameter Error. (Min:%d / Max:%d)\n", divider, GENICAM_ENCODER_DVIDER_MIN, GENICAM_ENCODER_DVIDER_MAX);
+		sprintf (gLogMsgBuff, "Encoder divider(%d) Parameter Error.(Min:%d / Max:%d)\n", divider, GENICAM_ENCODER_DVIDER_MIN, GENICAM_ENCODER_DVIDER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -412,7 +412,7 @@ int encoderSetOutputMode (int mode)
 	if ((mode < GENICAM_ENCODER_OUTPUT_MODE_MIN) || (mode > GENICAM_ENCODER_OUTPUT_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Encoder Output Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, GENICAM_ENCODER_OUTPUT_MODE_MIN, GENICAM_ENCODER_OUTPUT_MODE_MAX);
+		sprintf (gLogMsgBuff, "Encoder Output Mode(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, GENICAM_ENCODER_OUTPUT_MODE_MIN, GENICAM_ENCODER_OUTPUT_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -500,7 +500,7 @@ int encoderSetTimeout (int timeout)
 	if ((timeout < GENICAM_ENCODER_TIMEOUT_MIN) || (timeout > GENICAM_ENCODER_TIMEOUT_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Encoder Timeout(%d) Parameter Error. (Min:%d / Max:%d)\n", timeout, GENICAM_ENCODER_TIMEOUT_MIN, GENICAM_ENCODER_TIMEOUT_MAX);
+		sprintf (gLogMsgBuff, "Encoder Timeout(%d) Parameter Error.(Min:%d / Max:%d)\n", timeout, GENICAM_ENCODER_TIMEOUT_MIN, GENICAM_ENCODER_TIMEOUT_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -700,7 +700,7 @@ int encoderSetResetActivation (int activation)
 	if ((activation < GENICAM_ENCODER_RESET_ACTIVATION_MIN) || (activation > GENICAM_ENCODER_RESET_ACTIVATION_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Encoder Reset Activation(%d) Parameter Error. (Min:%d / Max:%d)\n", activation, GENICAM_ENCODER_RESET_ACTIVATION_MIN, GENICAM_ENCODER_RESET_ACTIVATION_MAX);
+		sprintf (gLogMsgBuff, "Encoder Reset Activation(%d) Parameter Error.(Min:%d / Max:%d)\n", activation, GENICAM_ENCODER_RESET_ACTIVATION_MIN, GENICAM_ENCODER_RESET_ACTIVATION_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -799,7 +799,7 @@ int encoderSetValue (long long value)
 	if ((value < (long long int)GENICAM_ENCODER_VALUE_MIN) || (value > GENICAM_ENCODER_VALUE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Encoder Value(%lld) Parameter Error. (Min:%lld / Max:%lld)\n", value, GENICAM_ENCODER_VALUE_MIN, GENICAM_ENCODER_VALUE_MAX);
+		sprintf (gLogMsgBuff, "Encoder Value(%lld) Parameter Error.(Min:%lld / Max:%lld)\n", value, GENICAM_ENCODER_VALUE_MIN, GENICAM_ENCODER_VALUE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}

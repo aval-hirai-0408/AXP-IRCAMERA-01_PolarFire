@@ -84,7 +84,7 @@ int voltIfCheckValid (void)
 	if (i >= FPGA_VOLT_IF_VALID_TIMEOUT)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Volt Valid Timeout Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Volt Valid Timeout Error.\n");
 		goto _DONE;
 	}
 
@@ -112,7 +112,7 @@ int voltIfGet105vd (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +1.05VD Voltage IF pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +1.05VD Voltage IF pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -146,7 +146,7 @@ int voltIfGet105va (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +1.05VA Voltage IF pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +1.05VA Voltage IF pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -180,7 +180,7 @@ int voltIfGet125vd (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +1.25VD Voltage IF pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +1.25VD Voltage IF pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -214,7 +214,7 @@ int voltIfGet18vd (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +1.8VD Voltage IF pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +1.8VD Voltage IF pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -248,7 +248,7 @@ int voltIfGet25vf (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +2.5VF Voltage IF pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +2.5VF Voltage IF pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -282,7 +282,7 @@ int voltIfGet33vd (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +3.3VD Voltage IF pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +3.3VD Voltage IF pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -317,7 +317,7 @@ int voltIfGet90va (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +9.0VA Voltage IF pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +9.0VA Voltage IF pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -468,7 +468,7 @@ int voltIfGet065v (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +0.65V Voltage IF pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +0.65V Voltage IF pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -502,7 +502,7 @@ int voltIfGet085va (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +0.85VA Voltage IF pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +0.85VA Voltage IF pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -536,7 +536,7 @@ int voltIfGet230va (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +2.3VA Voltage IF pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +2.3VA Voltage IF pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -570,7 +570,7 @@ int voltIfGet330v (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +3.3V Voltage IF pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +3.3V Voltage IF pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -604,7 +604,7 @@ int voltIfGet120vp (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +12.0VP Voltage IF pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +12.0VP Voltage IF pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -638,7 +638,7 @@ int voltIfGet240v (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +24.0V Voltage IF pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board +24.0V Voltage IF pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -671,7 +671,7 @@ int ifGetInternalTemp (double *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board Internal Temp pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Board Internal Temp pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

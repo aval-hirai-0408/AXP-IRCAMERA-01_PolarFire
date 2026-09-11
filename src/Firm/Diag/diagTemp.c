@@ -163,7 +163,7 @@ MORE:
 		if ((temp < DIAG_TEMP_SENSOR_MIN) || (temp > DIAG_TEMP_SENSOR_MAX))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "Sensor Temp Error   Sensor Temp          %.2f\n   Min:%f - Max:%f\n", temp, DIAG_TEMP_SENSOR_MIN, DIAG_TEMP_SENSOR_MAX);
+			sprintf (gLogMsgBuff, "Sensor Temp Error. ensor Temp = %.2f.(Min:%f - Max:%f)\n", temp, DIAG_TEMP_SENSOR_MIN, DIAG_TEMP_SENSOR_MAX);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -415,7 +415,7 @@ MORE:
 		if ((temp < DIAG_TEMP_CASE_MIN) || (temp > DIAG_TEMP_CASE_MAX))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "Case Temp Error   Case Temp            %.2f\n   Min:%f - Max:%f\n", temp, DIAG_TEMP_CASE_MIN, DIAG_TEMP_CASE_MAX);
+			sprintf (gLogMsgBuff, "Case Temp Error. Case Temp = %.2f.(Min:%f - Max:%f)\n", temp, DIAG_TEMP_CASE_MIN, DIAG_TEMP_CASE_MAX);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -583,7 +583,7 @@ MORE:
 		if ((temp < DIAG_TEMP_FPGA_MIN) || (temp > DIAG_TEMP_FPGA_MAX))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "FPGA Temp Error   FPGA Temp            %.2f\n   Min:%f - Max:%f\n", temp, DIAG_TEMP_FPGA_MIN, DIAG_TEMP_FPGA_MAX);
+			sprintf (gLogMsgBuff, "FPGA Temp Error. FPGA Temp = %.2f.(Min:%f - Max:%f)\n", temp, DIAG_TEMP_FPGA_MIN, DIAG_TEMP_FPGA_MAX);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}

@@ -90,7 +90,7 @@ int setLedMain (int number, int mode)
 	if ((number < LED_NUM_MIN) || (number > LED_NUM_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LED Number(%d) Parameter Error. (Min:%d / Max:%d)\n", number, LED_NUM_MIN, LED_NUM_MAX);
+		sprintf (gLogMsgBuff, "LED Num(%d) Parameter Error.(Min:%d / Max:%d)\n", number, LED_NUM_MIN, LED_NUM_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -99,7 +99,7 @@ int setLedMain (int number, int mode)
 	if ((mode < LED_PATTERN_MIN) || (mode > LED_PATTERN_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LED Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, LED_PATTERN_MIN, LED_PATTERN_MAX);
+		sprintf (gLogMsgBuff, "LED Mode(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, LED_PATTERN_MIN, LED_PATTERN_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -137,7 +137,7 @@ int getLed (int number, int *pMode)
 	if ((number < LED_NUM_MIN) || (number > LED_NUM_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LED Number(%d) Parameter Error. (Min:%d / Max:%d)\n", number, LED_NUM_MIN, LED_NUM_MAX);
+		sprintf (gLogMsgBuff, "LED Number(%d) Parameter Error.(Min:%d / Max:%d)\n", number, LED_NUM_MIN, LED_NUM_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -146,7 +146,7 @@ int getLed (int number, int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LED pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LED pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -375,7 +375,7 @@ int ledSetDebugMode (int mode)
 	if ((mode < LED_DEBUG_MODE_MIN) || (mode > LED_DEBUG_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "LED Debug Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, LED_DEBUG_MODE_MIN, LED_DEBUG_MODE_MAX);
+		sprintf (gLogMsgBuff, "LED Debug Mode(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, LED_DEBUG_MODE_MIN, LED_DEBUG_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -427,7 +427,7 @@ int ledGetDebugMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LED Debug pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LED Debug pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

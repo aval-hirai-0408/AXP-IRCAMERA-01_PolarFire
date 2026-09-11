@@ -37,7 +37,7 @@ int getGpi (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "GPI pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "GPI pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -97,7 +97,7 @@ int getGpo (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "GPO pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "GPO pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -234,7 +234,7 @@ int gpioSetDnf (int number, unsigned int highData, unsigned int lowData)
 	if ((number < GPIO_LINE_MIN) || (number > GPIO_LINE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Digital Noise Filter Number(%d) Parameter Error. (Min:%d / Max:%d)\n", number, GPIO_LINE_MIN, GPIO_LINE_MAX);
+		sprintf (gLogMsgBuff, "Digital Noise Filter Number(%d) Parameter Error.(Min:%d / Max:%d)\n", number, GPIO_LINE_MIN, GPIO_LINE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -254,7 +254,7 @@ int gpioSetDnf (int number, unsigned int highData, unsigned int lowData)
 	if (highData > GPIO_DNF_MAX)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Digital Noise Filter High Data(%d) Parameter Error. (Min:0 / Max:%d)\n", highData, GPIO_DNF_MAX);
+		sprintf (gLogMsgBuff, "Digital Noise Filter High Data(%d) Parameter Error.(Min:0 / Max:%d)\n", highData, GPIO_DNF_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -263,7 +263,7 @@ int gpioSetDnf (int number, unsigned int highData, unsigned int lowData)
 	if (lowData > GPIO_DNF_MAX)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Digital Noise Filter Low Data(%d) Parameter Error. (Min:0 / Max:%d)\n", lowData, GPIO_DNF_MAX);
+		sprintf (gLogMsgBuff, "Digital Noise Filter Low Data(%d) Parameter Error.(Min:0 / Max:%d)\n", lowData, GPIO_DNF_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -300,7 +300,7 @@ int gpioGetDnf (int number, unsigned int *pHighData, unsigned int *pLowData)
 	if ((number < GPIO_LINE_MIN) || (number > GPIO_LINE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Digital Noise Filter Number(%d) Parameter Error. (Min:%d / Max:%d)\n", number, GPIO_LINE_MIN, GPIO_LINE_MAX);
+		sprintf (gLogMsgBuff, "Digital Noise Filter Number(%d) Parameter Error.(Min:%d / Max:%d)\n", number, GPIO_LINE_MIN, GPIO_LINE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -320,7 +320,7 @@ int gpioGetDnf (int number, unsigned int *pHighData, unsigned int *pLowData)
 	if (pHighData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Noise Filter pHighData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Noise Filter pHighData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -328,7 +328,7 @@ int gpioGetDnf (int number, unsigned int *pHighData, unsigned int *pLowData)
 	if (pLowData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Noise Filter pLowData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Digital Noise Filter pLowData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -367,7 +367,7 @@ int gpioGetPulseTime (int number, unsigned int *pHighFreq, unsigned int *pLowFre
 	if ((number < GPIO_LINE_MIN) || (number > GPIO_LINE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "GPI Pulse Width Time Number(%d) Parameter Error. (Min:%d / Max:%d)\n", number, GPIO_LINE_MIN, GPIO_LINE_MAX);
+		sprintf (gLogMsgBuff, "GPI Pulse Width Time Number(%d) Parameter Error.(Min:%d / Max:%d)\n", number, GPIO_LINE_MIN, GPIO_LINE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -376,7 +376,7 @@ int gpioGetPulseTime (int number, unsigned int *pHighFreq, unsigned int *pLowFre
 	if (pHighFreq == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "GPI Pulse Width Time pHighFreq NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "GPI Pulse Width Time pHighFreq NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -384,7 +384,7 @@ int gpioGetPulseTime (int number, unsigned int *pHighFreq, unsigned int *pLowFre
 	if (pLowFreq == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "GPI Pulse Width Time pLowFreq NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "GPI Pulse Width Time pLowFreq NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

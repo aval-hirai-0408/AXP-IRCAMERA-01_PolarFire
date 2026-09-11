@@ -24,10 +24,9 @@
 // Timeout
 //--------------------------------------------------------------------------------
 #define SENSOR_POWER_TIMEOUT								(120)
-#define SENSOR_SIGNAL_RDY_TIMEOUT							(5000)
-#define SENSOR_IMAGE_RDY_TIMEOUT							(5000)
-#define SENSOR_INPUT_CTRL_STATUS_TIMEOUT					(5000)
-#define SENSOR_REG_ACES_TIMEOUT								(5000)
+#define SENSOR_IMAGE_RDY_TIMEOUT							(2500000)
+#define SENSOR_INPUT_CTRL_STATUS_TIMEOUT					(2500000)
+#define SENSOR_REG_ACES_TIMEOUT								(2500000)
 
 
 //--------------------------------------------------------------------------------

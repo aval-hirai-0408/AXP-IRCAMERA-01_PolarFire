@@ -148,7 +148,7 @@ int cmdDiagDmaMain (void *str)
 	if ((pBuffORG = (unsigned short *)malloc(size + align*2)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DMA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DMA Memory Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DMA Memory Request Error.\n");
 		goto _DONE;
 	}
 
@@ -190,7 +190,7 @@ MORE:
 		if ((status = dmaStart ((unsigned char *)pBuff)) != AVAL_STATUS_SUCCESS)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_DMA, AVAL_STATUS_IO);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DMA Start Error\n");
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DMA Start Error.\n");
 			goto _DONE;
 		}
 	}

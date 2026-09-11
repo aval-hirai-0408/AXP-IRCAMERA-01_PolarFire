@@ -99,7 +99,7 @@ int getSpectrumType (int *pType)
 	if (pType == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Spectrum Type pType NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Spectrum Type pType NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -133,7 +133,7 @@ int getDipsw (unsigned int *pDipsw)
 	if (pDipsw == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DIPSW pDipsw NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DIPSW pDipsw NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -199,7 +199,7 @@ int setBoardParam (char *pParam, int offset, int size)
 	if (pParam == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Board Param pParam NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Board Param pParam NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -219,7 +219,7 @@ int setBoardParam (char *pParam, int offset, int size)
 	if ((ptr = malloc (BOARD_PARAM_SIZE)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Board ID Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Board ID Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -266,7 +266,7 @@ int getBoardParam (char *pParam, int offset, int size)
 	if (pParam == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Board Param pParam NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Board Param pParam NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -298,7 +298,7 @@ int setBoardId (char *pId)
 	if (pId == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Board ID pId NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Board ID pId NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -343,7 +343,7 @@ int getBoardId (char *pId)
 	if (pId == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Board ID pId NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Board ID pId NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -375,7 +375,7 @@ int setSensorId (char *pId)
 	if (pId == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor ID pId NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor ID pId NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -420,7 +420,7 @@ int getSensorId (char *pId)
 	if (pId == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor ID pId NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor ID pId NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -450,7 +450,7 @@ int getInterfaceId (int *pId)
 	if (pId == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface ID pId NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface ID pId NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -488,7 +488,7 @@ int setUserId (char *pId)
 	if (pId == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "User ID pId NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "User ID pId NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -497,7 +497,7 @@ int setUserId (char *pId)
 	if (len > CAMERA_SAVE_USERID_SIZE)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "User ID Length(%d) Parameter Error. (Min:1 - Max:%d)\n", len, CAMERA_SAVE_USERID_SIZE);
+		sprintf (gLogMsgBuff, "User ID Length(%d) Parameter Error. (Min:1 / Max:%d)\n", len, CAMERA_SAVE_USERID_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -541,7 +541,7 @@ int getUserId (char *pId)
 	if (pId == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "User ID pId NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "User ID pId NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -603,7 +603,7 @@ int setVendor (char *pName)
 	if (pName == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Vendor pName NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Vendor pName NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -612,7 +612,7 @@ int setVendor (char *pName)
 	if (len > (sizeMax - 1))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Vendor Length(%d) Parameter Error. (Min:1 - Max:%d)\n", len, sizeMax - 1);
+		sprintf (gLogMsgBuff, "Vendor Length(%d) Parameter Error. (Min:1 / Max:%d)\n", len, sizeMax - 1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -658,7 +658,7 @@ int getVendor (char *pName)
 	if (pName == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Vendor Name pName NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Vendor Name pName NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -704,7 +704,7 @@ int setManufacture (char *pName)
 	if (pName == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Manufacture pName NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Manufacture pName NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -713,7 +713,7 @@ int setManufacture (char *pName)
 	if (len > (sizeMax - 1))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Manufacture Length(%d) Parameter Error. (Min:1 - Max:%d)\n", len, sizeMax - 1);
+		sprintf (gLogMsgBuff, "Manufacture Length(%d) Parameter Error. (Min:1 / Max:%d)\n", len, sizeMax - 1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -759,7 +759,7 @@ int getManufacture (char *pName)
 	if (pName == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Manufacture Name pName NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Manufacture Name pName NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -804,7 +804,7 @@ int setModel (char *pName)
 	if (pName == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Model pName NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Model pName NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -813,7 +813,7 @@ int setModel (char *pName)
 	if (len > (sizeMax - 1))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Model Length(%d) Parameter Error. (Min:1 - Max:%d)\n", len, sizeMax - 1);
+		sprintf (gLogMsgBuff, "Model Length(%d) Parameter Error. (Min:1 / Max:%d)\n", len, sizeMax - 1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -859,7 +859,7 @@ int getModel (char *pName)
 	if (pName == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Model Name pName NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Model Name pName NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -929,7 +929,7 @@ int cameraPowerSupply (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Power Supply NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Power Supply NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

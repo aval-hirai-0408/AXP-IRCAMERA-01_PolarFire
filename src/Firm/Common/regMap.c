@@ -42,6 +42,12 @@ int fpgaRegMap (void)
 
 	DEBUG_PRINT_FORCE("\n");
 	DEBUG_PRINT_FORCE("[Register]\n");
+	DEBUG_PRINT_FORCE("  CoaxPress IP            : 0x%08x\n", CORECXP_BASE_ADDR);
+	DEBUG_PRINT_FORCE("  CoaxPress FPGA          : 0x%08x\n", FPGA_CXP_BASE_ADDR);
+
+	
+#if 0//@@@1	
+	
 	DEBUG_PRINT_FORCE("  Version                 : 0x%08x\n", FPGA_VER_ADRS);
 
 #if defined (MODE_SYSTEM_MANAGEMENT)
@@ -113,6 +119,7 @@ int fpgaRegMap (void)
 	DEBUG_PRINT_FORCE("  DRRS Frame Buffer       : 0x%08x\n", DRRS_IMG_MEMORY_ADRS);
 #endif
 
+#endif //@@@1
 	DEBUG_PRINT_FORCE("\n");
 
 	return (status);

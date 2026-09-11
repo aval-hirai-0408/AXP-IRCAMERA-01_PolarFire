@@ -98,7 +98,7 @@ int gigeParamWriteRegister (int userNum, unsigned int offset, unsigned int size)
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_GIGE, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save GigE(Register Write) User Parameter Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "Camera Save GigE Write Mode(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -107,7 +107,7 @@ int gigeParamWriteRegister (int userNum, unsigned int offset, unsigned int size)
 	if ((offset + size) > CAMERA_SAVE_USER_SIZE)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_GIGE, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save GigE(Register Write) User Parameter Save Size(0x%x) Parameter Error. (Max:%d)\n", (offset + size), CAMERA_SAVE_USER_SIZE);
+		sprintf (gLogMsgBuff, "Camera Save GigE Write Size(0x%x) Parameter Error. (Max:%d)\n", (offset + size), CAMERA_SAVE_USER_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -285,7 +285,7 @@ int gevGetSpeedConfig (unsigned int *pSpeed)
 	if (pSpeed == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_GIGE, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Gev Get Speed Config NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Gev Get Speed Config NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -324,7 +324,7 @@ int gevSetSpeedConfig (unsigned int speed)
 		
 		default:
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_GIGE, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Gev set Speed(0x%x) Config Parameter Error\n", speed);
+			sprintf (gLogMsgBuff, "Gev set Speed(0x%x) Config Parameter Error.\n", speed);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			break;
 	}		

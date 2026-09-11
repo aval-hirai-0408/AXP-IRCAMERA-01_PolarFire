@@ -33,7 +33,7 @@ int userSetLoad (int userNum)
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "UserSet Load UserNum(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Load Num(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -67,7 +67,7 @@ int userSetSave (int userNum)
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "UserSet Save UserNum(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Save Num(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -76,7 +76,7 @@ int userSetSave (int userNum)
 	if (userNum == CAMERA_FACTORY_NUM)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "UserSet Save UserNum(%d) Default Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN+1, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Save Num(%d) Default Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN+1, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -157,7 +157,7 @@ int userSetDefault (int userNum)
 	if (userNum == CAMERA_FACTORY_NUM)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "UserSet Clear UserNum(%d) Default Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN+1, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Clear Num(%d) Default Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN+1, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -207,7 +207,7 @@ int userSetBoot (int userNum)
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "UserSet Boot UserNum(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Boot Num(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -244,7 +244,7 @@ int userGetBoot (int *pUserNum)
 	if (pUserNum == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Boot pUserNum NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Boot pUserNum NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

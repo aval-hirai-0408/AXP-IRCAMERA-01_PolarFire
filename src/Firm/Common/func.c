@@ -146,6 +146,11 @@ int cameraLogMsg (int level, const char *fileName, const char *funcName, unsigne
 	//DEBUG_PRINT_FORCE ("%02x", data8);
 	uartSend (UART_PORT0, (unsigned char *)&data8, 1);
 
+	// Reserved
+	data8= 0;
+	//DEBUG_PRINT_FORCE ("%02x", data8);
+	uartSend (UART_PORT0, (unsigned char *)&data8, 1);
+
 	// Level
 	data8 = (unsigned char)level;
 	//DEBUG_PRINT_FORCE ("%02x", data8);
@@ -170,10 +175,10 @@ int cameraLogMsg (int level, const char *fileName, const char *funcName, unsigne
 	uartSend (UART_PORT0, (unsigned char *)&data16, 2);
 
 	// Func Name
-	DEBUG_PRINT_FORCE ("%-32.32s", funcName);
+	DEBUG_PRINT_FORCE ("%-16.16s", funcName);
 
 	// Message
-	DEBUG_PRINT_FORCE ("%-192.192s", msg);
+	DEBUG_PRINT_FORCE ("%-80.80s", msg);
 
 _NEXT:
 	//@@@2if (level == MSG_LEVEL_ERROR)

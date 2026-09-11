@@ -66,7 +66,7 @@ int cmdLed (void *str)
 			if ((gInterFaceID == INTERFACE_GIGE) || (gInterFaceID == INTERFACE_GIGE20))
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "LED Number(%d) Parameter Error.\n", num);
+				sprintf (gLogMsgBuff, "LED No(%d) Parameter Error.\n", num);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				goto _DONE;
 			}
@@ -79,7 +79,7 @@ int cmdLed (void *str)
 		else
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "LED Number(%d) Parameter Error.\n", num);
+			sprintf (gLogMsgBuff, "LED No(%d) Parameter Error.\n", num);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -120,7 +120,7 @@ int cmdLed (void *str)
 			if ((gInterFaceID == INTERFACE_GIGE) || (gInterFaceID == INTERFACE_GIGE20))
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "LED Number(%d) Parameter Error.\n", num);
+				sprintf (gLogMsgBuff, "LED No(%d) Parameter Error.\n", num);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				goto _DONE;
 			}
@@ -133,7 +133,7 @@ int cmdLed (void *str)
 		else
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "LED Number(%d) Parameter Error.\n", num);
+			sprintf (gLogMsgBuff, "LED No(%d) Parameter Error.\n", num);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}

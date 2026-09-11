@@ -111,7 +111,7 @@ int dpcGetBatchCountGlobal (int *pCount)
 	if (pCount == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "DPC Get Count pMode NULL Parameter Error\n");
+		sprintf (gLogMsgBuff, "DPC Get Count pMode NULL Parameter Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -163,7 +163,7 @@ int dpcGetCount (int *pCount)
 	if (pCount == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Get Count pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Get Count pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -905,7 +905,7 @@ int lfDefect (int loop, double sd_thre, double nonuniformity_thre)
 	if (loop > NUM_IMG_FOR_LOOP)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "DPC lfDefect Loop(%d) Error. (Min:0 / Max:%d)\n", loop, NUM_IMG_FOR_LOOP);
+		sprintf (gLogMsgBuff, "DPC lfDefect Loop(%d) Error.(Min:0 / Max:%d)\n", loop, NUM_IMG_FOR_LOOP);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1185,7 +1185,7 @@ int dpcAdjustInfoSave (int dpcNum, int userMode, DPCINFO dpcInfo)
 	if ((pBuffer = malloc ((size))) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Adjust Information Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Adjust Information Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -1336,7 +1336,7 @@ int dpcAdjustInfoRead (int dpcNum, int userMode, DPCINFO *pDpcInfo)
 	if ((dpcNum < DPC_NUMBER_MIN) || (dpcNum > DPC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "DPC Adjust Information Read dpcNum(%d) Parameter Error.(Min:%d / Max:%d)\n", dpcNum, DPC_NUMBER_MIN, DPC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "DPC Adjust Info Read dpcNum(%d) Parameter Error.(Min:%d / Max:%d)\n", dpcNum, DPC_NUMBER_MIN, DPC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1345,7 +1345,7 @@ int dpcAdjustInfoRead (int dpcNum, int userMode, DPCINFO *pDpcInfo)
 	if ((userMode != DPC_USER) && (userMode != DPC_ADMIN))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "DPC Adjust Information Read User(%d) Parameter Error.(User:%d / Admin:%d)\n", userMode, DPC_USER, DPC_ADMIN);
+		sprintf (gLogMsgBuff, "DPC Adjust Info Read User(%d) Parameter Error.(User:%d / Admin:%d)\n", userMode, DPC_USER, DPC_ADMIN);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1354,7 +1354,7 @@ int dpcAdjustInfoRead (int dpcNum, int userMode, DPCINFO *pDpcInfo)
 	if (pDpcInfo == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Adjust Information Read pDpcInfo NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Adjust Info Read pDpcInfo NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1362,7 +1362,7 @@ int dpcAdjustInfoRead (int dpcNum, int userMode, DPCINFO *pDpcInfo)
 	if ((pBuffer = malloc ((size))) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Adjust Read Information Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Adjust Read Info Buffer Request Error\n");
 		goto _DONE;
 	}
 

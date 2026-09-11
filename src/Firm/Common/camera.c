@@ -117,7 +117,7 @@ int cameraGetType (int *pType)
 	if (pType == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Type pType NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Type pType NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

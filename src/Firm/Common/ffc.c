@@ -269,7 +269,7 @@ int ffcRegInit (unsigned int adrs, unsigned int size, int mode, int select)
 	if ((select < FPGA_FFC_CTRL_SELECT_MIN) || (select > FPGA_FFC_CTRL_SELECT_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Reg Init select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, FPGA_FFC_CTRL_SELECT_MIN, FPGA_FFC_CTRL_SELECT_MAX);
+		sprintf (gLogMsgBuff, "FFC Reg Init select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, FPGA_FFC_CTRL_SELECT_MIN, FPGA_FFC_CTRL_SELECT_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -542,7 +542,7 @@ int ffcSetMode (int offsetMode, int gainMode)
 	if ((offsetMode != FFC_ENABLE) && (offsetMode != FFC_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Offset mode[%d] Parameter Error. (Disable:%d / Enable:%d)\n", offsetMode, FFC_DISABLE, FFC_ENABLE);
+		sprintf (gLogMsgBuff, "FFC Offset mode[%d] Parameter Error.(Disable:%d / Enable:%d)\n", offsetMode, FFC_DISABLE, FFC_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -551,7 +551,7 @@ int ffcSetMode (int offsetMode, int gainMode)
 	if ((gainMode != FFC_ENABLE) && (gainMode != FFC_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Gain mode[%d] Parameter Error. (Disable:%d / Enable:%d)\n", gainMode, FFC_DISABLE, FFC_ENABLE);
+		sprintf (gLogMsgBuff, "FFC Gain mode[%d] Parameter Error.(Disable:%d / Enable:%d)\n", gainMode, FFC_DISABLE, FFC_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -612,7 +612,7 @@ int ffcGetMode (int *pOffsetMode, int *pGainMode)
 	if (pOffsetMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Mode pOffsetMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Mode pOffsetMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -620,7 +620,7 @@ int ffcGetMode (int *pOffsetMode, int *pGainMode)
 	if (pOffsetMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Mode pGainMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Mode pGainMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -661,7 +661,7 @@ int ffcSetLoadNum (int ffcNum)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Load Number ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Load Num(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -843,7 +843,7 @@ int ffcLoad (int ffcNum)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Load ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Load Num(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 
@@ -895,7 +895,7 @@ int ffcLoadAdmin (int ffcNum)
 	if ((ffcNum < FFC_NUMBER_ADMIN_MIN) || (ffcNum > FFC_NUMBER_ADMIN_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Load ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_ADMIN_MIN, FFC_NUMBER_ADMIN_MAX);
+		sprintf (gLogMsgBuff, "FFC Load Num(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_ADMIN_MIN, FFC_NUMBER_ADMIN_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -945,7 +945,7 @@ int ffcSave (int ffcNum, int memType)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Save ffcNum(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Save Num(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -995,7 +995,7 @@ int ffcSaveAdmin (int ffcNum, int memType)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Admin Save ffcNum(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Admin Save Num(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1118,7 +1118,7 @@ int ffcGetMemAdrs (int ffcNum, int memType, unsigned int *pAdrs)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Memory Adrs ffcNum(%d) Parameter Error.\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Memory Adrs Num(%d) Parameter Error.\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1170,7 +1170,7 @@ int ffcGetFlashAdrs (int ffcNum, unsigned int *pAdrs)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Flash ffcNum(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Flash Num(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1209,7 +1209,7 @@ int ffcGetFlashAdrsAdmin (int ffcNum, unsigned int *pAdrs)
 	if ((ffcNum < FFC_NUMBER_ADMIN_MIN) || (ffcNum > FFC_NUMBER_ADMIN_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Flash Admin ffcNum(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_ADMIN_MIN, FFC_NUMBER_ADMIN_MAX);
+		sprintf (gLogMsgBuff, "FFC Flash Admin Num(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_ADMIN_MIN, FFC_NUMBER_ADMIN_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1415,7 +1415,7 @@ int ffcSetOffsetData (int ffcNum, int x, int y, unsigned int data)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Offset Data ffcNum(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Offset Num(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1424,7 +1424,7 @@ int ffcSetOffsetData (int ffcNum, int x, int y, unsigned int data)
 	if ((x < 0) || (x >= widthMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Offset Data Width(%d) Parameter Error.(Min:0 / Max:%d)\n", x, widthMax-1);
+		sprintf (gLogMsgBuff, "FFC Offset Width(%d) Parameter Error.(Min:0 / Max:%d)\n", x, widthMax-1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1433,7 +1433,7 @@ int ffcSetOffsetData (int ffcNum, int x, int y, unsigned int data)
 	if ((y < 0) || (y >= heightMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Offset Data Height(%d) Parameter Error.(Min:0 / Max:%d)\n", y, heightMax-1);
+		sprintf (gLogMsgBuff, "FFC Offset Height(%d) Parameter Error.(Min:0 / Max:%d)\n", y, heightMax-1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1449,7 +1449,7 @@ int ffcSetOffsetData (int ffcNum, int x, int y, unsigned int data)
 	if (data > OFFSET_MASK/calc)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Offset Data (%d) Parameter Error.(Min:0 / Max:%d)\n", data, OFFSET_MASK/calc);
+		sprintf (gLogMsgBuff, "FFC Offset Data(%d) Parameter Error.(Min:0 / Max:%d)\n", data, OFFSET_MASK/calc);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1458,7 +1458,7 @@ int ffcSetOffsetData (int ffcNum, int x, int y, unsigned int data)
 	if (data > OFFSET_MASK)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Offset Data (%d) Parameter Error.(Min:0 / Max:%d)\n", data, OFFSET_MASK);
+		sprintf (gLogMsgBuff, "FFC Offset Data(%d) Parameter Error.(Min:0 / Max:%d)\n", data, OFFSET_MASK);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1612,7 +1612,7 @@ int ffcGetOffsetData (int ffcNum, int x, int y, unsigned int *pData)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Offset Data ffcNum(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Offset Num(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1621,7 +1621,7 @@ int ffcGetOffsetData (int ffcNum, int x, int y, unsigned int *pData)
 	if ((x < 0) || (x >= widthMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Offset Data Width(%d) Parameter Error.(Min:0 / Max:%d)\n", x, widthMax-1);
+		sprintf (gLogMsgBuff, "FFC Offset Width(%d) Parameter Error.(Min:0 / Max:%d)\n", x, widthMax-1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1630,7 +1630,7 @@ int ffcGetOffsetData (int ffcNum, int x, int y, unsigned int *pData)
 	if ((y < 0) || (y >= heightMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Offset Data Height(%d) Parameter Error.(Min:0 / Max:%d)\n", y, HeightMax-1);
+		sprintf (gLogMsgBuff, "FFC Offset Height(%d) Parameter Error.(Min:0 / Max:%d)\n", y, HeightMax-1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1731,7 +1731,7 @@ int ffcSetGainData (int ffcNum, int x, int y, unsigned int data)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Gain Data ffcNum(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Gain Num(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1740,7 +1740,7 @@ int ffcSetGainData (int ffcNum, int x, int y, unsigned int data)
 	if ((x < 0) || (x >= widthMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Gain Data Width(%d) Parameter Error.(Min:0 / Max:%d)\n", x, widthMax-1);
+		sprintf (gLogMsgBuff, "FFC Gain Width(%d) Parameter Error.(Min:0 / Max:%d)\n", x, widthMax-1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1749,7 +1749,7 @@ int ffcSetGainData (int ffcNum, int x, int y, unsigned int data)
 	if ((y < 0) || (y >= heightMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Gain Data Height(%d) Parameter Error.(Min:0 / Max:%d)\n", y, heightMax-1);
+		sprintf (gLogMsgBuff, "FFC Gain Height(%d) Parameter Error.(Min:0 / Max:%d)\n", y, heightMax-1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1906,7 +1906,7 @@ int ffcGetGainData (int ffcNum, int x, int y, unsigned int *pData)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Gain Data ffcNum(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Gain Num(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1915,7 +1915,7 @@ int ffcGetGainData (int ffcNum, int x, int y, unsigned int *pData)
 	if ((x < 0) || (x >= widthMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Gain Data Width(%d) Parameter Error.(Min:0 / Max:%d)\n", x, widthMax-1);
+		sprintf (gLogMsgBuff, "FFC Gain Width(%d) Parameter Error.(Min:0 / Max:%d)\n", x, widthMax-1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1924,7 +1924,7 @@ int ffcGetGainData (int ffcNum, int x, int y, unsigned int *pData)
 	if ((y < 0) || (y >= heightMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Gain Data Height(%d) Parameter Error.(Min:0 / Max:%d)\n", y, heightMax-1);
+		sprintf (gLogMsgBuff, "FFC Gain Height(%d) Parameter Error.(Min:0 / Max:%d)\n", y, heightMax-1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2064,7 +2064,7 @@ int ffcGetOffsetAve (int ffcNum, int dpcNum, double *pAve, FFC_OG_INFO *pMin, FF
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Offset Average Data ffcNum(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Offset Average Data Num(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2097,7 +2097,7 @@ int ffcGetOffsetAve (int ffcNum, int dpcNum, double *pAve, FFC_OG_INFO *pMin, FF
 	if ((pGrid = (GRID_XY *)malloc (NUM_DEFECTION_PIX * sizeof(GRID_XY))) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		DEBUG_PRINT_FORCE ("FFC Offset Average Data Buffer Request Error. size = 0x%x.\n", (NUM_DEFECTION_PIX * sizeof(GRID_XY)));
+		DEBUG_PRINT_FORCE ("FFC Offset Average Buffer Request Error. size = 0x%x.\n", (NUM_DEFECTION_PIX * sizeof(GRID_XY)));
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2257,7 +2257,7 @@ int ffcGetGainAve (int ffcNum, int dpcNum, double *pAve, FFC_OG_INFO *pMin, FFC_
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Gain Average Data ffcNum(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Gain Average Num(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2266,7 +2266,7 @@ int ffcGetGainAve (int ffcNum, int dpcNum, double *pAve, FFC_OG_INFO *pMin, FFC_
 	if (pAve == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Gain Average Data pAve NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Gain Average pAve NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2274,7 +2274,7 @@ int ffcGetGainAve (int ffcNum, int dpcNum, double *pAve, FFC_OG_INFO *pMin, FFC_
 	if (pMin == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Gain Average Data pMin NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Gain Average pMin NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2290,7 +2290,7 @@ int ffcGetGainAve (int ffcNum, int dpcNum, double *pAve, FFC_OG_INFO *pMin, FFC_
 	if ((pGrid = (GRID_XY *)malloc (NUM_DEFECTION_PIX * sizeof(GRID_XY))) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		sprintf (gLogMsgBuff, "FFC Offset Average Data Buffer Request Error. size = 0x%x.\n", (NUM_DEFECTION_PIX * sizeof(GRID_XY)));
+		sprintf (gLogMsgBuff, "FFC Offset Average Buffer Request Error. size = 0x%x.\n", (NUM_DEFECTION_PIX * sizeof(GRID_XY)));
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2602,7 +2602,7 @@ int ffcDataUpload (int ffcNum)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Data Upload ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Upload ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2611,7 +2611,7 @@ int ffcDataUpload (int ffcNum)
 	if ((status = ffcGetMemAdrs (ffcNum, FFC_MEMORY_EXT, &memAdrs)) != AVAL_STATUS_SUCCESS)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Data Upload Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Upload Buffer Request ErrorData\n");
 		goto _DONE;
 	}
 
@@ -2621,7 +2621,7 @@ int ffcDataUpload (int ffcNum)
 	if ((pAsciiBuff = malloc (FFC_UPLOAD_SIZE)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Data Upload Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Upload Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -2629,7 +2629,7 @@ int ffcDataUpload (int ffcNum)
 	if ((pBinBuff = malloc (FFC_DATA_SIZE)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Data Upload Upload Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Upload Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -2644,7 +2644,7 @@ int ffcDataUpload (int ffcNum)
 	if ((size = kermitRecv ((char *)pAsciiBuff, FFC_UPLOAD_SIZE)) < 0)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_IO);
-		sprintf (gLogMsgBuff, "FFC Data Upload kermit Error. Size = %d\n", size);
+		sprintf (gLogMsgBuff, "FFC Upload kermit Error. Size = %d\n", size);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2751,7 +2751,7 @@ int lfFfcUploadAsciiToBin (void *pAscii, void *pBinary, unsigned int size)
 	if (pAscii == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Upload pAscii NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Upload pAscii NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2759,7 +2759,7 @@ int lfFfcUploadAsciiToBin (void *pAscii, void *pBinary, unsigned int size)
 	if (pBinary == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Upload pBinary NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Upload pBinary NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2967,7 +2967,7 @@ int ffcDataUploadBin (int ffcNum)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Data Upload ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Upload ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2976,7 +2976,7 @@ int ffcDataUploadBin (int ffcNum)
 	if ((status = ffcGetMemAdrs (ffcNum, FFC_MEMORY_EXT, &memAdrs)) != AVAL_STATUS_SUCCESS)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Data Upload Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Upload Buffer Request Error\n");
 		goto _DONE;
 	}
 
@@ -2986,7 +2986,7 @@ int ffcDataUploadBin (int ffcNum)
 	if ((pAsciiBuff = malloc (FFC_UPLOAD_SIZE)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Data Upload Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Upload Buffer Request Error\n");
 		goto _DONE;
 	}
 
@@ -3000,7 +3000,7 @@ int ffcDataUploadBin (int ffcNum)
 	if ((size = kermitRecv ((char *)pAsciiBuff, FFC_UPLOAD_SIZE)) < 0)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_IO);
-		sprintf (gLogMsgBuff, "FFC Data Upload kermit Error. Size = %d\n", size);
+		sprintf (gLogMsgBuff, "FFC Upload kermit Error. Size = %d\n", size);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -3095,7 +3095,7 @@ int lfFfcUploadAsciiToReg (void *pAscii, void *pBinary, unsigned int size)
 	if (pAscii == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Upload pAscii NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Upload pAscii NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3103,7 +3103,7 @@ int lfFfcUploadAsciiToReg (void *pAscii, void *pBinary, unsigned int size)
 	if (pBinary == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Upload pBinary NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Upload pBinary NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3218,7 +3218,7 @@ int ffcDataDownload (int ffcNum, int mode)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Data Download ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Download Num(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -3227,7 +3227,7 @@ int ffcDataDownload (int ffcNum, int mode)
 	if ((mode != UPDATE_COMPRESS) && (mode != UPDATE_UNCOMPRESS))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Data Download mode(%d) Parameter Error. (Compress:%d / Uncpmpress:%d)\n", mode, UPDATE_COMPRESS, UPDATE_UNCOMPRESS);
+		sprintf (gLogMsgBuff, "FFC Download mode(%d) Parameter Error. (Compress:%d / Uncpmpress:%d)\n", mode, UPDATE_COMPRESS, UPDATE_UNCOMPRESS);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -3236,7 +3236,7 @@ int ffcDataDownload (int ffcNum, int mode)
 	if ((status = ffcGetMemAdrs (ffcNum, FFC_MEMORY_EXT, &memAdrs)) != AVAL_STATUS_SUCCESS)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Data Download Get FFC Mem Adrs Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download Get FFC Mem Adrs Error.\n");
 		goto _DONE;
 	}
 
@@ -3246,7 +3246,7 @@ int ffcDataDownload (int ffcNum, int mode)
 	if ((pAsciiBuff = malloc (size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Data Download Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -3268,7 +3268,7 @@ int ffcDataDownload (int ffcNum, int mode)
 		if ((pCompressBuff = malloc (size + COMPRESS_DOWNLOAD_ADD_MEMORY)) == NULL)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Data Download Buffer Request Error\n");
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download Buffer Request Error.\n");
 			goto _DONE;
 		}
 
@@ -3304,7 +3304,7 @@ int ffcDataDownload (int ffcNum, int mode)
 	if ((kermitSendSize = kermitSend ((char *)fileName, (char *)ptrSend, sendSize)) < 0)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Data Download kermit Error. Size = %d\n", kermitSendSize);
+		sprintf (gLogMsgBuff, "FFC Download kermit Error. Size = %d\n", kermitSendSize);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -3357,7 +3357,7 @@ int lfFfcDownloadBintoAscii (void *pAscii, void *pBinary, unsigned int *pSize)
 	if (pAscii == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pAscii NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pAscii NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3365,7 +3365,7 @@ int lfFfcDownloadBintoAscii (void *pAscii, void *pBinary, unsigned int *pSize)
 	if (pBinary == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pBinary NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pBinary NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3373,7 +3373,7 @@ int lfFfcDownloadBintoAscii (void *pAscii, void *pBinary, unsigned int *pSize)
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3559,7 +3559,7 @@ int lfFfcDownloadBintoAscii (void *pAscii, void *pBinary, unsigned int *pSize)
 	if (pAscii == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pAscii NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pAscii NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3567,7 +3567,7 @@ int lfFfcDownloadBintoAscii (void *pAscii, void *pBinary, unsigned int *pSize)
 	if (pBinary == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pBinary NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pBinary NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3575,7 +3575,7 @@ int lfFfcDownloadBintoAscii (void *pAscii, void *pBinary, unsigned int *pSize)
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3770,7 +3770,7 @@ int ffcDataDownloadBin (int ffcNum, int mode)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Data Download ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Download ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -3779,7 +3779,7 @@ int ffcDataDownloadBin (int ffcNum, int mode)
 	if ((mode != UPDATE_COMPRESS) && (mode != UPDATE_UNCOMPRESS))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Data Download mode(%d) Parameter Error. (Compress:%d / Uncpmpress:%d)\n", mode, UPDATE_COMPRESS, UPDATE_UNCOMPRESS);
+		sprintf (gLogMsgBuff, "FFC Download mode(%d) Parameter Error. (Compress:%d / Uncpmpress:%d)\n", mode, UPDATE_COMPRESS, UPDATE_UNCOMPRESS);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -3788,7 +3788,7 @@ int ffcDataDownloadBin (int ffcNum, int mode)
 	if ((status = ffcGetMemAdrs (ffcNum, FFC_MEMORY_EXT, &memAdrs)) != AVAL_STATUS_SUCCESS)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Data Download FFC Mem Adrs Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download FFC Mem Adrs Error.\n");
 		goto _DONE;
 	}
 
@@ -3798,7 +3798,7 @@ int ffcDataDownloadBin (int ffcNum, int mode)
 	if ((pAsciiBuff = malloc (size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Data Download Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -3827,7 +3827,7 @@ int ffcDataDownloadBin (int ffcNum, int mode)
 		if ((pCompressBuff = malloc (size + COMPRESS_DOWNLOAD_ADD_MEMORY)) == NULL)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Data Download Buffer Request Error\n");
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download Buffer Request Error.\n");
 			goto _DONE;
 		}
 #else // #if !defined (MODE_FFC_MEM_EXTERNAL_MALLOC)
@@ -3862,7 +3862,7 @@ int ffcDataDownloadBin (int ffcNum, int mode)
 	if ((kermitSendSize = kermitSend ((char *)fileName, (char *)ptrSend, sendSize)) < 0)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Data Download kermit Error. Size = %d\n", kermitSendSize);
+		sprintf (gLogMsgBuff, "FFC Download kermit Error. Size = %d\n", kermitSendSize);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -4224,7 +4224,7 @@ int ffcGetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 	if (extMemAdrs == 0)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Set External Addressd extMemAdrs Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Set External Address extMemAdrs Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4232,7 +4232,7 @@ int ffcGetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 	if (intMemAdrs == 0)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Set External Addressd intMemAdrs Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Set External Address intMemAdrs Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4261,7 +4261,7 @@ int ffcGetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 		for (y=0; y<IMG_HEIGHT; y++)
 		{
 			// 外部メモリアドレス設定
-			prtExtMem8 = (unsigned int *)(extMemAdrs + FFC_WIDTH_DATA_ALIGH * y + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu);
+			prtExtMem8 = (unsigned char *)(extMemAdrs + FFC_WIDTH_DATA_ALIGH * y + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu);
 
 			for (x=0; x<IMG_WIDTH_IPU_MULTI_HALF; x++)
 			{
@@ -4307,7 +4307,7 @@ int ffcSetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 	if (extMemAdrs == 0)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Set Internal Addressd extMemAdrs Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Set Internal Address extMemAdrs Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4315,7 +4315,7 @@ int ffcSetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 	if (intMemAdrs == 0)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Set Internal Addressd intMemAdrs Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Set Internal Address intMemAdrs Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4746,7 +4746,7 @@ int ffcCopy (int srcFfcNum, int desFfcNum)
 	if ((pBuffer = (unsigned char *)malloc(size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Copy Buffer Request Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Copy Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -4754,7 +4754,7 @@ int ffcCopy (int srcFfcNum, int desFfcNum)
 	if ((srcFfcNum < FFC_NUMBER_MIN) || (srcFfcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Copy Source ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", srcFfcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Copy Source ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", srcFfcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -4763,7 +4763,7 @@ int ffcCopy (int srcFfcNum, int desFfcNum)
 	if ((desFfcNum < (FFC_NUMBER_MIN + 1)) || (desFfcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Copy Destination ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", desFfcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Copy Destination ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", desFfcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -4772,7 +4772,7 @@ int ffcCopy (int srcFfcNum, int desFfcNum)
 	if (srcFfcNum == desFfcNum)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Copy Source ffcNo(%d)/Destination ffcNo(%d) Parameter Error. (Min:%d / Max:%d)\n", srcFfcNum, desFfcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Copy Source ffcNo(%d)/Destination ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", srcFfcNum, desFfcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -4897,7 +4897,7 @@ int ffcSetBlackTarget (unsigned int data)
 	if ((data < FFC_BLACK_TARGET_MIN) || (data > FFC_BLACK_TARGET_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Black Target data(%d) Parameter Error. (Min:%d / Max:%d)\n", data/calc, FFC_BLACK_TARGET_MIN, FFC_BLACK_TARGET_MAX/calc);
+		sprintf (gLogMsgBuff, "FFC Black Target(%d) Parameter Error.(Min:%d / Max:%d)\n", data/calc, FFC_BLACK_TARGET_MIN, FFC_BLACK_TARGET_MAX/calc);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -4934,7 +4934,7 @@ int ffcGetBlackTarget (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Black Target pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Black Target pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4963,7 +4963,7 @@ int ffcSetWhiteTarget (unsigned int data)
 	if ((data < FFC_WHITE_LEVEL_MIN) || (data > FFC_WHITE_LEVEL_BIT14_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC White Target data(%d) Parameter Error. (Min:%d / Max:%d)\n", data, FFC_WHITE_LEVEL_MIN, FFC_WHITE_LEVEL_BIT14_MAX);
+		sprintf (gLogMsgBuff, "FFC White Target(%d) Parameter Error.(Min:%d / Max:%d)\n", data, FFC_WHITE_LEVEL_MIN, FFC_WHITE_LEVEL_BIT14_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -4993,7 +4993,7 @@ int ffcGetWhiteTarget (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC White Target pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC White Target pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -5044,7 +5044,7 @@ int ffcGetBlackTargetFromFlash (int ffcNum, unsigned int *pData)
 	if ((ffcNum < FFC_NUMBER_MIN) || (ffcNum > FFC_NUMBER_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Black Target(Flash) ffcNo(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
+		sprintf (gLogMsgBuff, "FFC Black Target(Flash) Num(%d) Parameter Error.(Min:%d / Max:%d)\n", ffcNum, FFC_NUMBER_MIN, FFC_NUMBER_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -5053,7 +5053,7 @@ int ffcGetBlackTargetFromFlash (int ffcNum, unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Black Target(Flash) pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Black Target(Flash) pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -5096,7 +5096,7 @@ int ffcAdjustCheckModeParam (int mode)
 		if ((mode < FFC_ADJUST_BLACK) || (mode > FFC_ADJUST_WHITE))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Get Adjust mode(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, FFC_ADJUST_BLACK, FFC_ADJUST_WHITE);
+			sprintf (gLogMsgBuff, "FFC Get Adjust mode(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, FFC_ADJUST_BLACK, FFC_ADJUST_WHITE);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -5110,7 +5110,7 @@ int ffcAdjustCheckModeParam (int mode)
 		if ((mode < FFC_ADJUST_BLACK) || (mode > FFC_ADJUST_WHITE))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "FFC Get Adjust mode(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, FFC_ADJUST_BLACK, FFC_ADJUST_WHITE);
+			sprintf (gLogMsgBuff, "FFC Get Adjust mode(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, FFC_ADJUST_BLACK, FFC_ADJUST_WHITE);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -5299,7 +5299,7 @@ int ffcSetAdjustTarget (int mode, int target)
 	if ((target < 0) || (target > PIXEL_14_MASK))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Adjust Set target(%d) Parameter Error. (Min:%d / Max:%d)\n", target, 0, PIXEL_14_MASK);
+		sprintf (gLogMsgBuff, "FFC Adjust Set target(%d) Parameter Error.(Min:%d / Max:%d)\n", target, 0, PIXEL_14_MASK);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -5386,7 +5386,7 @@ int ffcSetAdjustTemp (int mode, float temp)
 	if ((temp < PELTIER_SENSOR_ASJUST_TEMP_MIN) || (temp > PELTIER_SENSOR_ASJUST_TEMP_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Adjust Set Temperature(%.2f) Parameter Error. (Min:%.2f / Max:%.2f)\n", temp, PELTIER_SENSOR_ASJUST_TEMP_MIN, PELTIER_SENSOR_ASJUST_TEMP_MAX);
+		sprintf (gLogMsgBuff, "FFC Adjust Set Temperature(%.2f) Parameter Error.(Min:%.2f / Max:%.2f)\n", temp, PELTIER_SENSOR_ASJUST_TEMP_MIN, PELTIER_SENSOR_ASJUST_TEMP_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -5476,7 +5476,7 @@ int ffcSetAdjustGainX (int mode, float gain)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		sprintf (gLogMsgBuff, "FFC Adjust Set Gain(%.2f) Parameter Error. (Min:%.2f / Max:%.2f)\n", gain, DOG_GAIN_MIN, DOG_GAIN_MAX);
+		sprintf (gLogMsgBuff, "FFC Adjust Set Gain(%.2f) Parameter Error.(Min:%.2f / Max:%.2f)\n", gain, DOG_GAIN_MIN, DOG_GAIN_MAX);
 		goto _DONE;
 	}
 
@@ -5562,7 +5562,7 @@ int ffcSetAdjustBit (int mode, int bit)
 	if ((bit != 8) && (bit != 10) && (bit != 12) && (bit != 14))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Bit(%d) Parameter Error. (%d:8Bit / %d:10Bit / %d:12Bit / %d:14Bit)\n", bit, PIXEL_8BIT, PIXEL_10BIT, PIXEL_12BIT, PIXEL_14BIT);
+		sprintf (gLogMsgBuff, "Bit(%d) Parameter Error.\n", bit);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -6043,7 +6043,7 @@ int ffcGetBitCalc (int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Bit Calc pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Bit Calc pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -6062,7 +6062,7 @@ int ffcGetBitCalc (int *pData)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Bit Calc Bit(%d) Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Bit Calc Bit(%d) Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -6089,7 +6089,7 @@ int ffcGetBitCalc2 (int bit, int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Bit Calc2 pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Bit Calc2 pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -6104,7 +6104,7 @@ int ffcGetBitCalc2 (int bit, int *pData)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Bit Calc2 Bit(%d) Parameter Error\n");
+		sprintf (gLogMsgBuff, "FFC Bit Calc2 Bit(%d) Parameter Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -6145,7 +6145,7 @@ int ffcDataXFlip (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC X Flip mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "FFC X Flip mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -6227,7 +6227,7 @@ int ffcDataXFlip (int mode)
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC X Flip mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		sprintf (gLogMsgBuff, "FFC X Flip mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -6371,7 +6371,7 @@ int ffcSetCorMode (int mode)
 	if ((mode < FFC_CORRECTION_MODE_MIN) && (mode > FFC_CORRECTION_MODE_MIN))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Correction Mode Parameter Error. (Min:%d / Max:%d)\n", mode, FFC_CORRECTION_MODE_MIN, FFC_CORRECTION_MODE_MIN);
+		sprintf (gLogMsgBuff, "FFC Correction Mode Parameter Error.(Min:%d / Max:%d)\n", mode, FFC_CORRECTION_MODE_MIN, FFC_CORRECTION_MODE_MIN);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -6401,7 +6401,7 @@ int ffcGetCorMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Correction Mode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Correction Mode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -6438,7 +6438,7 @@ int ffcDataReplacement (int lineStart, int lineSize, int ffcCorMode)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Data Replace(%d) Correction Mode  Error.(Min:%d / Max:%d)\n", ffcCorMode, FFC_CORRECTION_MODE_MIN, FFC_CORRECTION_MODE_MAX);
+		sprintf (gLogMsgBuff, "FFC Data Replace(%d) Correction Mode Error.(Min:%d / Max:%d)\n", ffcCorMode, FFC_CORRECTION_MODE_MIN, FFC_CORRECTION_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -6476,7 +6476,7 @@ int ffcDataReplacementFirst (int lineStart, int lineSize)
 	if ((lineStart < 0) || (lineStart > HeightMax()))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Data Replace Line Start(%d) Parameter Error. (Min:%d / Max:%d)\n", lineStart, HeightMin(), HeightMax());
+		sprintf (gLogMsgBuff, "FFC Data Replace Line Start(%d) Parameter Error.(Min:%d / Max:%d)\n", lineStart, HeightMin(), HeightMax());
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -6485,7 +6485,7 @@ int ffcDataReplacementFirst (int lineStart, int lineSize)
 	if ((lineSize <= 0) || (lineSize > HeightMax()))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Data Replace Line Size(%d) Parameter Error. (Min:%d / Max:%d)\n", lineSize, 0, HeightMax());
+		sprintf (gLogMsgBuff, "FFC Data Replace Line Size(%d) Parameter Error.(Min:%d / Max:%d)\n", lineSize, 0, HeightMax());
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}

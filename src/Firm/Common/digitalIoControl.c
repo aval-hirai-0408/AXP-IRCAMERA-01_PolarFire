@@ -603,7 +603,7 @@ int digitalIoSetUserSelect (int select)
 	if ((select < DIGITAL_USER_SELECT_MIN) || (select > DIGITAL_USER_SELECT_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "User Select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, DIGITAL_USER_SELECT_MIN, DIGITAL_USER_SELECT_MAX);
+		sprintf (gLogMsgBuff, "User Select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, DIGITAL_USER_SELECT_MIN, DIGITAL_USER_SELECT_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -664,7 +664,7 @@ int digitalIoSetUserValue (int value)
 	if ((value != DIGITAL_USER_VALUE_NEGATE) && (value != DIGITAL_USER_VALUE_ASSERT))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "User Value(%d) Parameter Error. (Negate:%d / Assert:%d)\n", value, DIGITAL_USER_VALUE_NEGATE, DIGITAL_USER_VALUE_ASSERT);
+		sprintf (gLogMsgBuff, "User Value(%d) Parameter Error.(Negate:%d / Assert:%d)\n", value, DIGITAL_USER_VALUE_NEGATE, DIGITAL_USER_VALUE_ASSERT);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}

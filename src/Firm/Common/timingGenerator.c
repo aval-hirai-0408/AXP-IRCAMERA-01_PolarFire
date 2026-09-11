@@ -218,7 +218,7 @@ int tgSetTgse (unsigned int data)
 	if ((data < FPGA_TG_TGSE_MIN) || (data > FPGA_TG_TGSE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "TGES Set (%d) Parameter Error. (Min:%d / Max:%d)\n", data, FPGA_TG_TGSE_MIN, FPGA_TG_TGSE_MAX);
+		sprintf (gLogMsgBuff, "TGES Set (%d) Parameter Error.(Min:%d / Max:%d)\n", data, FPGA_TG_TGSE_MIN, FPGA_TG_TGSE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -260,7 +260,7 @@ int tgSetTgse2 (unsigned int data)
 	if ((data < FPGA_TG_TGSE_MIN) || (data > FPGA_TG_TGSE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "TGES Set (%d) Parameter Error. (Min:%d / Max:%d)\n", data, FPGA_TG_TGSE_MIN, FPGA_TG_TGSE_MAX);
+		sprintf (gLogMsgBuff, "TGES Set (%d) Parameter Error.(Min:%d / Max:%d)\n", data, FPGA_TG_TGSE_MIN, FPGA_TG_TGSE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -300,7 +300,7 @@ int tgGetTgse (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGSE pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGSE pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -330,7 +330,7 @@ int tgSetTges (unsigned int data)
 	if ((data < FPGA_TG_TGES_MIN) || (data > FPGA_TG_TGES_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "TGES Set (%d) Parameter Error. (Min:%d / Max:%d)\n", data, FPGA_TG_TGES_MIN, FPGA_TG_TGES_MAX);
+		sprintf (gLogMsgBuff, "TGES Set (%d) Parameter Error.(Min:%d / Max:%d)\n", data, FPGA_TG_TGES_MIN, FPGA_TG_TGES_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -371,7 +371,7 @@ int tgSetTges2 (unsigned int data)
 	if ((data < FPGA_TG_TGES_MIN) || (data > FPGA_TG_TGES_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "TGES Set (%d) Parameter Error. (Min:%d / Max:%d)\n", data, FPGA_TG_TGES_MIN, FPGA_TG_TGES_MAX);
+		sprintf (gLogMsgBuff, "TGES Set (%d) Parameter Error.(Min:%d / Max:%d)\n", data, FPGA_TG_TGES_MIN, FPGA_TG_TGES_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -408,7 +408,7 @@ int tgGetTges (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGES pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGES pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -438,7 +438,7 @@ int tgSetTgpd (unsigned int data)
 	if ((data < FPGA_TG_TGPD_MIN) || (data > FPGA_TG_TGPD_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "TGPD Set (%d) Parameter Error. (Min:%d / Max:%d)\n", data, FPGA_TG_TGPD_MIN, FPGA_TG_TGPD_MAX);
+		sprintf (gLogMsgBuff, "TGPD Set (%d) Parameter Error.(Min:%d / Max:%d)\n", data, FPGA_TG_TGPD_MIN, FPGA_TG_TGPD_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -479,7 +479,7 @@ int tgSetTgpd2 (unsigned int data)
 	if ((data < FPGA_TG_TGPD_MIN) || (data > FPGA_TG_TGPD_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "TGPD Set (%d) Parameter Error. (Min:%d / Max:%d)\n", data, FPGA_TG_TGPD_MIN, FPGA_TG_TGPD_MAX);
+		sprintf (gLogMsgBuff, "TGPD Set (%d) Parameter Error.(Min:%d / Max:%d)\n", data, FPGA_TG_TGPD_MIN, FPGA_TG_TGPD_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -515,7 +515,7 @@ int tgGetTgpd (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGPD pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGPD pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

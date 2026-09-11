@@ -64,7 +64,7 @@ int phyReadReg (unsigned int adrs, unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_GIGE, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Phy Read pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Phy Read pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -145,7 +145,7 @@ int phyReadReg (unsigned int dev, unsigned int adrs, unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_GIGE, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Phy Read pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Phy Read pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 		
@@ -153,7 +153,7 @@ int phyReadReg (unsigned int dev, unsigned int adrs, unsigned int *pData)
 	if ((mtdStatus = mtdHwXmdioRead (&mtd_dev, port, dev, adrs, &data16)) != MTD_OK)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_GIGE, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Phy Read Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Phy Read Error.\n");
 		goto _DONE;
 	}
 
@@ -192,7 +192,7 @@ int phyWriteReg (unsigned int dev, unsigned int adrs, unsigned int data)
 	if ((mtdStatus = mtdHwXmdioWrite (&mtd_dev, port, dev, adrs, data16)) != MTD_OK)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_GIGE, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Phy Wrie Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Phy Wrie Error.\n");
 		goto _DONE;
 	}
 
@@ -224,7 +224,7 @@ int phyGetCount (unsigned int speed, unsigned int selector, unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_GIGE, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Phy Count NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Phy Count NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -236,7 +236,7 @@ int phyGetCount (unsigned int speed, unsigned int selector, unsigned int *pData)
 	if ((mtdStatus = mtdTunitPktGeneratorGetCounter (&mtd_dev, port, speed, selector, &packetCount, &byteCount)) != MTD_OK)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_GIGE, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Phy Get Count Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Phy Get Count Error.\n");
 		goto _DONE;
 	}
 

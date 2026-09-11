@@ -7,14 +7,14 @@
 // The distribution policy is described in the file "COPYING"
 // furnished with this package.
 //
-// qspiFlash_Micron.c - QSPI Flash Program
+// flash_Micron.c - Flash Program
 //**********************************************************************************
 
 //----------------------------------------------------------------------------------
 // includes
 //----------------------------------------------------------------------------------
 #include "../Common/common.h"
-#include "qspiFlash.h"
+#include "flash.h"
 
 
 //----------------------------------------------------------------------------------
@@ -184,8 +184,8 @@ int qspiFlashWrite_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int
 	// Check adrs Parameter
 	if (adrs >= QSPI_FLASH_SIZE)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "QSPI Flash Address(0x%x) Parameter Error. (Min=0x0 / Max=0x%x)\n", adrs, QSPI_FLASH_SIZE);
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Flash Address(0x%x) Parameter Error.(Min=0x0 / Max=0x%x)\n", adrs, QSPI_FLASH_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		return (status);
 	}
@@ -193,8 +193,8 @@ int qspiFlashWrite_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int
 	// Check size Parameter
 	if (size > QSPI_FLASH_SIZE)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "QSPI Flash Write Size(0x%x) Parameter Error. (Min=0x0 / Max=0x%x)\n", size, QSPI_FLASH_SIZE);
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Flash Write Size(0x%x) Parameter Error.(Min=0x0 / Max=0x%x)\n", size, QSPI_FLASH_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		return (status);
 	}
@@ -202,8 +202,8 @@ int qspiFlashWrite_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int
 	// Check adrs + size Parameter
 	if ((adrs + size) > QSPI_FLASH_SIZE)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "QSPI Flash Write Adrs(0x%x) + size(0x%x) Parameter Error. (Min=0x1 / Max=0x%x)\n", adrs, size, QSPI_FLASH_SIZE);
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Flash Write Adrs(0x%x) + size(0x%x) Parameter Error.(Min=0x1 / Max=0x%x)\n", adrs, size, QSPI_FLASH_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		return (status);
 	}
@@ -211,8 +211,8 @@ int qspiFlashWrite_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int
 	// Check pBuffer Parameter
 	if (pBuffer == NULL)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "QSPI Flash Write pBuffer NULL Parameter Error.\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Flash Write pBuffer NULL Parameter Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		return (status);
 	}
@@ -380,8 +380,8 @@ int qspiFlashRead_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int 
 	// Check adrs Parameter
 	if (adrs >= QSPI_FLASH_SIZE)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "QSPI Read Flash Address(0x%x) Parameter Error. (Min=0x0 / Max=0x%x)\n", adrs, QSPI_FLASH_SIZE);
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Flash Read Address(0x%x) Parameter Error.(Min=0x0 / Max=0x%x)\n", adrs, QSPI_FLASH_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		return (status);
 	}
@@ -389,8 +389,8 @@ int qspiFlashRead_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int 
 	// Check size Parameter
 	if (size > QSPI_FLASH_SIZE)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "QSPI Read Flash Size(0x%x) Parameter Error. (Min=0x0 / Max=0x%x)\n", size, QSPI_FLASH_SIZE);
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Flash Read Size(0x%x) Parameter Error.(Min=0x0 / Max=0x%x)\n", size, QSPI_FLASH_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		return (status);
 	}
@@ -398,8 +398,8 @@ int qspiFlashRead_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int 
 	// Check adrs + size Parameter
 	if ((adrs + size) > QSPI_FLASH_SIZE)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "QSPI Read Flash Adrs(0x%x) + size(0x%x) Parameter Error. (Min=0x1 / Max=0x%x)\n", adrs, size, QSPI_FLASH_SIZE);
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Flash Read Adrs(0x%x) + size(0x%x) Parameter Error.(Min=0x1 / Max=0x%x)\n", adrs, size, QSPI_FLASH_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		return (status);
 	}
@@ -407,8 +407,8 @@ int qspiFlashRead_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int 
 	// Check pBuffer Parameter
 	if (pBuffer == NULL)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Read pBuffer NULL Parameter Error.\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Read pBuffer NULL Parameter Error.\n");
 		return (status);
 	}
 
@@ -528,8 +528,8 @@ int qspiFlashSectorErase_N25Q (unsigned int adrs)
 	// Check adrs Parameter
 	if (adrs >= QSPI_FLASH_SIZE)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "QSPI Flash Erase Size(0x%x) Parameter Error. (Min=0x0 / Max=0x%x)\n", adrs, QSPI_FLASH_SIZE);
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Flash Erase Size(0x%x) Parameter Error.(Min=0x0 / Max=0x%x)\n", adrs, QSPI_FLASH_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		return (status);
 	}
@@ -678,8 +678,8 @@ int qspiFlashStatusCheck_N25Q (unsigned int timeout)
 	// Check Timeout
 	if (retry >= timeout)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_TIMEOUT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Status Timeout Error\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_TIMEOUT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Status Timeout Error.\n");
 		goto _DONE;
 	}
 
@@ -718,8 +718,8 @@ int qspiFlashWaitReadyEraseCheck_N25Q (unsigned int timeout)
 	// Check Timeout
 	if (retry >= timeout)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_TIMEOUT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Wait Ready Erase Timeout Error\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_TIMEOUT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Wait Ready Erase Timeout Error.\n");
 		goto _DONE;
 	}
 
@@ -797,8 +797,8 @@ int qspiFlashWriteProtect_N25Q (unsigned int address)
 	// Check address parameter
 	if ((address > QSPI_FLASH_SIZE) && (address != 0xffffffff))
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "QSPI Flash Write Protect Address(0x%x) Parameter Error. (Min:0 - Max:0x%x)\n", address, QSPI_FLASH_SIZE);
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Flash Write Protect Address(0x%x) Parameter Error.(Min:0 / Max:0x%x)\n", address, QSPI_FLASH_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -851,8 +851,8 @@ int qspiFlashWriteProtect_N25Q (unsigned int address)
 	// コマンド発行
 	if (XQspiPsu_PolledTransfer (&QspiFlashInstance, FlashMsg, 2) != XST_SUCCESS)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Read Status Command Error\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Read Status Command Error.\n");
 		goto _DONE;
 	}
 
@@ -880,8 +880,8 @@ int qspiFlashWriteProtect_N25Q (unsigned int address)
 	// コマンド発行
 	if (XQspiPsu_PolledTransfer (&QspiFlashInstance, FlashMsg, 1) != XST_SUCCESS)
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Write Status Command Error\n");
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Status Command Error.\n");
 		goto _DONE;
 	}
 
@@ -890,7 +890,7 @@ int qspiFlashWriteProtect_N25Q (unsigned int address)
 	//------------------------------------------------------------
 	if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
 	{
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Write Status Check Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Status Check Error.\n");
 		goto _DONE;
 	}
 
@@ -1043,7 +1043,7 @@ int qspiFlashWriteProtectRead_N25Q (int *pStatus)
 	if (pStatus == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER));
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Write Protect Status Command Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Protect Status Command Error.\n");
 		goto _DONE;
 	}
 
@@ -1074,8 +1074,8 @@ int qspiFlashWriteProtectRead_N25Q (int *pStatus)
 		// コマンド発行
 		if (XQspiPsu_PolledTransfer (&QspiFlashInstance, FlashMsg, 2) != XST_SUCCESS)
 		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Read Status Command Error\n");
+			status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Read Status Command Error.\n");
 			goto _DONE;
 		}
 
@@ -1105,15 +1105,15 @@ int qspiFlashWriteProtectRead_N25Q (int *pStatus)
 		// コマンド発行
 		if (XQspiPsu_PolledTransfer (&QspiFlashInstance, FlashMsg, 1) != XST_SUCCESS)
 		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Write Status Command Error\n");
+			status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Status Command Error.\n");
 			goto _DONE;
 		}
 
 		// ステータスCheck
 		if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
 		{
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Status Check Error.\n");
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Status Check Error.\n");
 			goto _DONE;
 		}
 
@@ -1141,8 +1141,8 @@ int qspiFlashWriteProtectRead_N25Q (int *pStatus)
 		// コマンド発行
 		if (XQspiPsu_PolledTransfer (&QspiFlashInstance, FlashMsg, 2) != XST_SUCCESS)
 		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "QSPI Flash Read Status Command Error\n");
+			status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Read Status Command Error.\n");
 			goto _DONE;
 		}
 

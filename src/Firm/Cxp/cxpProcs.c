@@ -60,6 +60,9 @@ extern int gLinkStatusCheck;
 
 extern int gCxpCmdProcessFlag;
 
+//@@@@@@@@@@
+int gDebugAAA = 0;
+//@@@@@@@@@@
 
 //**********************************************************************************
 //	CXP Initialize(受信関連レジスタのみ：ARM0から初期化)
@@ -142,7 +145,26 @@ int cxpInitialize2 (void)
 #endif // #if defined (MODE_SENSOR_IMX992) || defined (MODE_SENSOR_IMX993)
 
 
+	//------------------------------------------------------------
+	// CoaxPress IP Initialize
+	//------------------------------------------------------------
+
+	// Spped Mode
+	OUT32 (FPGA_CXP_LSUC_SPEED_MODE_ADRS, 0);
+
+	// Heaet Bert Disable
+	OUT32 (FPGA_CXP_HSDC_HB_EN_ADRS, 0);
+
+	// Stream Disable
+	OUT32 (FPGA_CXP_S0_STREAM_EN_ADRS, 0);
+	
+	// MAX Packet & id=0
+	OUT32 (FPGA_CXP_S0_FLAG_SID_MZXSIZE_ADRS, (0x800<<16));
+
+
+	//------------------------------------------------------------
 	// Stream ID
+	//------------------------------------------------------------
 	for (port=0; port<CXP_PORT_COUNT; port++)
 	{
 		if (port == 0)
@@ -155,19 +177,22 @@ int cxpInitialize2 (void)
 	}
 
 
-
-	//------------------------------------------------------------
-	// Register Data Restore
-	//------------------------------------------------------------
-	if ((status = cameraParamWriteRegister (CAMERA_SAVE_USER_NUM, CAMERA_CXP_ADRS, CAMERA_CXP_SIZE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-
 	//------------------------------------------------------------
 	// DeviceConnectionID
 	//------------------------------------------------------------
 	for (port=0; port<CXP_PORT_COUNT; port++)
 		ConnectionDeviceConnection_st[port] = port;
+//@@@1
+goto _DONE;
+//@@@1
+
+#if 0	//@@@1
+	//------------------------------------------------------------
+	// Register Data Restore
+	//------------------------------------------------------------
+	if ((status = cameraParamWriteRegister (CAMERA_SAVE_USER_NUM, CAMERA_CXP_ADRS, CAMERA_CXP_SIZE)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+#endif //@@@1
 
 
 	//--------------------------------------------------------------------------------
@@ -352,7 +377,7 @@ int cxpInitializeImageParam (void)
 #if defined(MODE_BINNING)
 	int binning;
 #endif
-	int port = 0;
+	int port;
 
 	for (port=0; port<CXP_PORT_COUNT; port++)
 	{
@@ -538,7 +563,8 @@ int cxpProcs (int port)
 	CXP_PACKET_ST cxpPaket;
 	unsigned int crc_value;
 	unsigned int rxCount = 0;
-
+	unsigned int packetCount;
+	
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
 	{
@@ -568,6 +594,16 @@ int cxpProcs (int port)
 	//============================================================
 
 	//------------------------------------------------------------
+	// パケット数取得
+	//------------------------------------------------------------
+	if ((status = cxpGetCmdPacket (port, &packetCount)) != AVAL_STATUS_SUCCESS)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Start Code No Data\n");
+		goto _DONE;
+	}
+
+	//------------------------------------------------------------
 	// 開始 K Code取得
 	//------------------------------------------------------------
 	if ((status = cxpGetCmdPacket (port, &cxpPaket.start)) != AVAL_STATUS_SUCCESS)
@@ -582,7 +618,7 @@ int cxpProcs (int port)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
 		sprintf (gLogMsgBuff, "CXP Read Start Code(0x%08x) Error.\n", cxpPaket.start);
-		//@@@1cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
@@ -1301,6 +1337,12 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 		case ConnectionReset:
 			ConnectionReset_st = *pDataRecv;
 
+			// Stream Disable
+			OUT32(FPGA_CXP_S0_STREAM_EN_ADRS, 0);
+		
+			// Heat Beat ID
+			OUT32 (FPGA_CXP_HSDC_HB_ID_ADRS, *pDataRecv);
+
 			// LED
 			//ledConnectStateForce();
 
@@ -1308,7 +1350,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			acquisitionAbort ();
 
 			// Speed & Connection
-			cxpSetConnectionConfig (0/*port*/, ((1<<16) | CXP_RATE_3_125G));
+			//@@@1cxpSetConnectionConfig (0/*port*/, ((1<<16) | CXP_RATE_3_125G));
 
 			// Activate the master connection. Extension connections shall not be activated.
 			// マスター接続をアクティブにします。 拡張接続はアクティブにしてはなりません。
@@ -1405,6 +1447,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 		//------------------------------------------------------------
 		case MasterHostConnectionID:
 			ConnectionHostConnection_st = *pDataRecv;
+			OUT32 (FPGA_CXP_HSDC_HB_ID_ADRS, *pDataRecv);
 			break;
 
 		//------------------------------------------------------------
@@ -1431,6 +1474,15 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 		// クション 10.1.5 を参照
 		//------------------------------------------------------------
 		case StreamPacketSizeMax:
+			if (*pDataRecv > 2048)
+				*pDataRecv = 2048;
+
+			// Set Max Packet Size
+			data1 = IN32(FPGA_CXP_S0_FLAG_SID_MZXSIZE_ADRS);
+			data1 &= 0xffff;
+			data1 |= (*pDataRecv << 16);
+			OUT32 (FPGA_CXP_S0_FLAG_SID_MZXSIZE_ADRS, data1);
+
 			StreamPacketSizeMax_st = *pDataRecv;
 			break;
 
@@ -1455,7 +1507,8 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 		// 12.500 0x58
 		//------------------------------------------------------------
 		case ConnectionConfig:
-			///@@@1status = cxpSetConnectionConfig (port, *pDataRecv);
+			if (gDebugAAA != 0)	//@@@@@1
+			status = cxpSetConnectionConfig (port, *pDataRecv);
 			break;
 
 		//------------------------------------------------------------
@@ -1691,7 +1744,6 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			OUT32 (GENICAM_ENCODER_VALUE_LO_ADRS,  *pDataRecv);
 			break;
 
-
 		//--------------------------------------------------------------------------------
 		// Encoder At Value設定
 		//--------------------------------------------------------------------------------
@@ -1714,8 +1766,8 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			//------------------------------------------------------------
 			if ((adrs >= FileAccessBuffer) && (adrs < BASE_FILE_BUFFER_MAX))
 			{
-				//@@@1if ((status = cxpUploadBuffer (adrs, (unsigned char *)pDataRecv, pCxpSt->size)) != AVAL_STATUS_SUCCESS)
-					//@@@1goto _DONE;
+				if ((status = cxpUploadBuffer (adrs, (unsigned char *)pDataRecv, pCxpSt->size)) != AVAL_STATUS_SUCCESS)
+					goto _DONE;
 				break;
 			}
 
@@ -1757,7 +1809,8 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			//------------------------------------------------------------
 			if ((adrs == FPGA_AOI_BITWIDTH_ADRS) 				||
 				(adrs == FPGA_XFLIP_CTRL_ADRS_FPGA)				||
-				(adrs == FIRM_DATA_ROI_AREA_SIZE_ADRS)			||
+				(adrs == FPGA_XFLIP_CTRL_ADRS_FPGA)				||
+				(adrs == SensorGradComp8BitConvert)				||
 				(adrs == (DeviceVendorNameOnEEPROM + 28))		||
 				(adrs == (DeviceModelNameOnEEPROM + 28))		||
 				(adrs == (DeviceManufacturerInfoOnEEPROM + 44))
@@ -1901,7 +1954,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 	}
 
-	sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status =0x%08x\n", pCxpSt->adrs, pCxpSt->size, *pCxpSt->pData, status);
+	sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status=0x%08x\n", pCxpSt->adrs, pCxpSt->size, *pCxpSt->pData, status);
 	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 _DONE:
@@ -1947,7 +2000,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 	if (pCxpSt == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get User pCxpSt NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get User pCxpSt NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1955,7 +2008,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 	if (pCxpSt->pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get User pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get User pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2449,7 +2502,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 		case TestErrorCount:
 
 			// Get Test Packet Err Count
-			if ((status = cxpGetTestPacketErrCount (TestErrorCountSelector_st, &TestErrorCount_st)) != AVAL_STATUS_SUCCESS)
+			if ((status = cxpGetTestPacketErrCount (port, &TestErrorCount_st)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			*pData = TestErrorCount_st;
@@ -2459,37 +2512,26 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 		// TestPacketCountTx取得
 		//------------------------------------------------------------
 		case TestPacketCountTx:
-		case TestPacketCountTx+0x04:
 		
-			// 送信テストカウンタ取得
-			if ((status = cxpRegRead (TestErrorCountSelector_st, CXP_REG_TEST_MODE_TX_LOW_ADRS, (unsigned int *)&data1, 4)) != AVAL_STATUS_SUCCESS)
+			// Get Test Packet Rx Count
+			if ((status = cxpGetTestPacketRxCount (port, &TestPacketCountTx_st)) != AVAL_STATUS_SUCCESS)
 				break;
 
-			if ((status = cxpRegRead (TestErrorCountSelector_st, CXP_REG_TEST_MODE_TX_HIGH_ADRS, (unsigned int *)&data2, 4)) != AVAL_STATUS_SUCCESS)
-				break;
-
-			TestPacketCountTx_st =  (unsigned long long)((unsigned long long)data2<<32 | data1);
-
-			pCxpSt->ackSize = 8;
-			*pData = (unsigned int)(TestPacketCountTx_st>>32);
-			pData++;
-			*pData = (unsigned int)TestPacketCountTx_st;
+			pCxpSt->ackSize = 4;
+			*pData = TestPacketCountTx_st;
 			break;
 
 		//------------------------------------------------------------
 		// TestPacketCountRx取得
 		//------------------------------------------------------------
 		case TestPacketCountRx:
-		case TestPacketCountRx+0x04:
 
 			// Get Test Packet Rx Count
-			if ((status = cxpGetTestPacketRxCount (TestErrorCountSelector_st, &TestPacketCountRx_st)) != AVAL_STATUS_SUCCESS)
+			if ((status = cxpGetTestPacketRxCount (port, &TestPacketCountRx_st)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			pCxpSt->ackSize = 8;
-			*pData = (unsigned int)(TestPacketCountRx_st>>32);
-			pData++;
-			*pData = (unsigned int)TestPacketCountRx_st;
+			*pData = TestPacketCountRx_st;
 			break;
 
 		//------------------------------------------------------------
@@ -2804,7 +2846,7 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	if (pCxpSt == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Ack Packet pCxpSt NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Ack Packet pCxpSt NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2828,7 +2870,7 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	if ((pCxpSt->ackSize/4) > CXP_REG_DATA_SIZE_MAX)
 	{
 		status = CXP_ACK_CODE_LARGE_SIZE;
-		printf (gLogMsgBuff, "CXP Fifo Ack Size(0x%x) Error. Max=0x%x\n", pCxpSt->ackSize, CXP_REG_DATA_SIZE_MAX);
+		printf (gLogMsgBuff, "CXP Fifo Ack Size(0x%x) Error.(Max:0x%x)\n", pCxpSt->ackSize, CXP_REG_DATA_SIZE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		pCxpSt->size = 0;
 		//goto _DONE;
@@ -2840,6 +2882,13 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	//------------------------------------------------------------
 	ptrL = (unsigned int *)(unsigned long)(FIRM_CXP_SEND_DATA_CMD_ADRS + port * FIRM_CXP_DATA_INTERVAL);
 
+	
+	//------------------------------------------------------------
+	// Recive Interrupt Disable
+	//------------------------------------------------------------
+	if ((status = cxpSetRecvIntMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+	
 	//------------------------------------------------------------
 	// コメント
 	//------------------------------------------------------------
@@ -3011,6 +3060,11 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	cxpSendCount++;						// CXPレジスタ設定用
 
 _DONE:
+	//------------------------------------------------------------
+	// Recive Interrupt Enable
+	//------------------------------------------------------------
+	cxpSetRecvIntMode (MODE_ENABLE);
+
 	return (status);
 }
 
@@ -3042,7 +3096,7 @@ int cxpCalculateCrc32 (unsigned int *pCrc, unsigned int *pData, unsigned int cou
 	if (pCrc == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP CRC pCrc NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP CRC pCrc NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3151,8 +3205,6 @@ int cxpReadFifo (int port, unsigned int *pData, int *pKcode)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int data32;
 	unsigned int timeout;
-	unsigned int count;
-	unsigned int loop = 0;
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -3167,7 +3219,7 @@ int cxpReadFifo (int port, unsigned int *pData, int *pKcode)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP FIFO Read pData NULL Parameter Error\n");
+		sprintf (gLogMsgBuff, "CXP FIFO Read pData NULL Parameter Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -3176,22 +3228,16 @@ int cxpReadFifo (int port, unsigned int *pData, int *pKcode)
 	if (pKcode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP FIFO Read pKcode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP FIFO Read pKcode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
 	// カウントCheck
 	for (timeout=0; timeout<CXP_COMMAND_PACKET_TIMEOUT; timeout++)
 	{
-		// FIFOデータ数取得
-		if ((status = cxpGetFifoSizeCount (port, &count)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		// カウントCheck
-		if (count >= 1)
+		data32 = IN32 (FPGA_CXP_LSUC_RX_SW_PKT_STATUS_ADRS);
+		if (data32 & FPGA_CXP_LSUC_RX_SW_PKT_VAL_BIT)
 			break;
-
-		loop++;
 
 		usDelay (2);
 	}
@@ -3200,12 +3246,12 @@ int cxpReadFifo (int port, unsigned int *pData, int *pKcode)
 	if (timeout >= CXP_COMMAND_PACKET_TIMEOUT)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP FIFO Read Timeout\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP FIFO Read Timeout.\n");
 		goto _DONE;
 	}
 
 	// データ取得
-	data32 = IN32 (FPGA_CXP_LSUC_SW_RX_PKT_DATA);
+	data32 = IN32 (FPGA_CXP_LSUC_SW_RX_PKT_DATA_ADRS);
 	*pData = data32;
 
 //@@@@@@@@@@@@@@@@@@@@@
@@ -3215,40 +3261,6 @@ int cxpReadFifo (int port, unsigned int *pData, int *pKcode)
 	// 受信データをバッファに格納
 	cxpRecvBuffer (port, (unsigned char)*pData);
 
-	
-	
-#if 0
-	// FIFO Read
-	data32 = IN32 ((FPGA_CXP_RX_CMD_FIFO_DATA_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
-
-	// データ取得
-	*pData = (unsigned char)(data32 & FPGA_CXP_RX_CMD_FIFO_DATA_MASK);
-
-	// 受信データをバッファに格納
-	cxpRecvBuffer (port, (unsigned char)*pData);
-
-
-	// K Code取得
-	if (data32 & FPGA_CXP_RX_CMD_FIFO_K_MASK)
-		*pKcode = 1;
-	else
-		*pKcode = 0;
-
-	// FIFO Read Ack
-	data32 = IN32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
-	data32 &= ~FPGA_CXP_RX_CMD_FIFO_CTRL_RESET;
-	data32 |= FPGA_CXP_RX_CMD_FIFO_CTRL_READ_ACK;
-	OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port), data32);
-
-	// 受信カウント減算
-	data32 = IN32 ((FIRM_DATA_CXP_DATA_COUNT_MULTI_ADRS + port * 4));
-	data32--;
-	OUT32 ((FIRM_DATA_CXP_DATA_COUNT_MULTI_ADRS + port * 4), data32);
-
-	// FIFO Count Read Ack
-	if (data32 == 0)
-		OUT32 ((FPGA_CXP_RX_CMD_FIFO_SIZE_CTRL_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port), FPGA_CXP_RX_CMD_FIFO_SIZE_READ_ACK);
-#endif
 _DONE:
 	return (status);
 }
@@ -3282,7 +3294,7 @@ int cxpGetFifoSizeCount (int port, unsigned int *pCount)
 	if (pCount == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP FIFO Size Count pCount NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP FIFO Size Count pCount NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3503,7 +3515,7 @@ int cxpWriteFifo32 (int port, unsigned int data, unsigned int mark)
 	//--------------------------------------------------------------------------------
 	for (ix = 0; ix <CXP_TX_READY_TIMEOUT; ix++)
 	{
-		data32 = IN32(FPGA_CXP_LSUC_RX_SW_PKT_STATUS);
+		data32 = IN32(FPGA_CXP_LSUC_RX_SW_PKT_STATUS_ADRS);
 
 		if ((data32&FPGA_CXP_HSDC_TX_READY_BIT) != 0)
 			break;
@@ -3514,12 +3526,12 @@ int cxpWriteFifo32 (int port, unsigned int data, unsigned int mark)
 	if (ix >= CXP_TX_READY_TIMEOUT)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_TIMEOUT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP TX Ready Tiemout Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP TX Ready Tiemout Error.\n");
 		goto _DONE;
 	}
 
 	// FIFO Data Write
-	OUT32 ((FPGA_CXP_LSUC_SW_TX_PKT_DATA), data);
+	OUT32 (FPGA_CXP_LSUC_SW_TX_PKT_DATA_ADRS, data);
 
 _DONE:
 
@@ -3529,45 +3541,6 @@ _DONE:
 
 	return (status);
 }
-
-#if 0
-//**********************************************************************************
-//	CCXPxp Read FIFO to DDR
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		port				：ポート番号
-//		adrs				：データを格納するアドレス
-//		size				：サイズ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int cxpFifoToDdr (int port, unsigned int adrs, unsigned int size)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int i;
-	int kCode;
-	unsigned int adrs2 = adrs;
-
-	// Check port Parameter
-	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP FIFO Read port(%d) Parameter Error.(Min:%d / Max:%d)\n", port, CXP_PORT_MIN, CXP_PORT_MAX);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	for (i=0; i<size; i++, adrs2++)
-	{
-		if ((status = cxpReadFifo (port, (unsigned char *)adrs2, &kCode)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-
-_DONE:
-	return (status);
-}
-#endif
 
 
 //**********************************************************************************
@@ -3644,7 +3617,7 @@ int cxpGetSendCurrentAdrs (int port, unsigned int *pAdrs)
 	if (pAdrs == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Send Adrs pAdrs NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Send Adrs pAdrs NULL Parameter Error.\n");
 		goto _DONE;
 	}	
 
@@ -3687,7 +3660,7 @@ int cxpGetRecvCurrentAdrs (int port, unsigned int *pAdrs)
 	if (pAdrs == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Recv Adrs pAdrs NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Recv Adrs pAdrs NULL Parameter Error.\n");
 		goto _DONE;
 	}	
 
@@ -3816,7 +3789,7 @@ int cxpGetConectionConfig (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Connection Config pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Connection Config pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3871,10 +3844,10 @@ int cxpSetPixelFormat (int port, int bit)
 	if ((status = cxpRegWrite (port, CXP_REG_PIXEL_L_ADRS, data8, 1)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 #else
-	data32 = IN32 (FPGA_CXP_S0_TAPG_PIXEL);
+	data32 = IN32 (FPGA_CXP_S0_TAPG_PIXEL_ADRS);
 	data32 &= ~0xffff;
 	data32 |= (bitData32 & 0xffff);
-	OUT32 (FPGA_CXP_S0_TAPG_PIXEL, data32);
+	OUT32 (FPGA_CXP_S0_TAPG_PIXEL_ADRS, data32);
 #endif
 
 _DONE:
@@ -3920,7 +3893,7 @@ int cxpSetDSizeL (int port, int wSize)
 	if ((wSize <= wMin) || (wSize > wMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP D Size L(%d) Parameter Error. (Min:%d / Max:%d)\n", wSize, wMin, wMax);
+		sprintf (gLogMsgBuff, "CXP D Size L(%d) Parameter Error.(Min:%d / Max:%d)\n", wSize, wMin, wMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -3937,7 +3910,7 @@ int cxpSetDSizeL (int port, int wSize)
 	if ((status = cxpRegWrite (port, CXP_REG_DSIZEL_ADRS, data32, 4)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 #else
-	OUT32 (FPGA_CXP_S0_DSIZE, data32);
+	OUT32 (FPGA_CXP_S0_DSIZE_ADRS, data32);
 #endif
 
 _DONE:
@@ -4027,7 +4000,7 @@ int cxpSetWidth (int port, int size)
 	if ((size <= wMin) || (size > wMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP Width Size(%d) Parameter Error. (Min:%d / Max:%d)\n", size, wMin, wMax);
+		sprintf (gLogMsgBuff, "CXP Width Size(%d) Parameter Error.(Min:%d / Max:%d)\n", size, wMin, wMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -4036,10 +4009,10 @@ int cxpSetWidth (int port, int size)
 	if ((status = cxpRegWrite (port, CXP_REG_XSIZE_ADRS, size, 4)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 #else
-	data32 = IN32 (FPGA_CXP_S0_XSIZE_OFFSET);
+	data32 = IN32 (FPGA_CXP_S0_XSIZE_OFFSET_ADRS);
 	data32 &= ~0xffff;
 	data32 |= (size & 0xffff);
-	OUT32 (FPGA_CXP_S0_XSIZE_OFFSET, data32);
+	OUT32 (FPGA_CXP_S0_XSIZE_OFFSET_ADRS, data32);
 #endif
 
 	// Data Size設定
@@ -4086,7 +4059,7 @@ int cxpSetOffsetX (int port, int offset)
 	if ((offset < wMin) || (offset > (wMax-1)))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP Offsetx(%d) Parameter Error. (Min:%d / Max:%d)\n", offset, wMin, wMax-1);
+		sprintf (gLogMsgBuff, "CXP Offsetx(%d) Parameter Error.(Min:%d / Max:%d)\n", offset, wMin, wMax-1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -4096,10 +4069,10 @@ int cxpSetOffsetX (int port, int offset)
 	if ((status = cxpRegWrite (port, CXP_REG_XOFFSET_ADRS, offset, 4)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 #else
-	data32 = IN32 (FPGA_CXP_S0_XSIZE_OFFSET);
+	data32 = IN32 (FPGA_CXP_S0_XSIZE_OFFSET_ADRS);
 	data32 &= ~(0xffff0000);
 	data32 |= ((offset & 0xffff)<<16);
-	OUT32 (FPGA_CXP_S0_XSIZE_OFFSET, data32);
+	OUT32 (FPGA_CXP_S0_XSIZE_OFFSET_ADRS, data32);
 #endif
 
 _DONE:
@@ -4142,7 +4115,7 @@ int cxpSetHeight (int port, int size)
 	if ((size <= hMin) || (size > hMax))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP Height Size(%d) Parameter Error. (Min:%d / Max:%d)\n", size, hMin, hMax);
+		sprintf (gLogMsgBuff, "CXP Height Size(%d) Parameter Error.(Min:%d / Max:%d)\n", size, hMin, hMax);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -4152,10 +4125,10 @@ int cxpSetHeight (int port, int size)
 	if ((status = cxpRegWrite (port, CXP_REG_YSIZE_ADRS, size, 4)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 #else
-	data32 = IN32 (FPGA_CXP_S0_YSIZE_OFFSET);
+	data32 = IN32 (FPGA_CXP_S0_YSIZE_OFFSET_ADRS);
 	data32 &= ~0xffff;
 	data32 |= (size & 0xffff);
-	OUT32 (FPGA_CXP_S0_YSIZE_OFFSET, data32);
+	OUT32 (FPGA_CXP_S0_YSIZE_OFFSET_ADRS, data32);
 #endif
 	
 _DONE:
@@ -4198,7 +4171,7 @@ int cxpSetOffsetY (int port, int offset)
 	if ((offset < hMin) || (offset > (hMax-1)))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP Offsety(%d) Parameter Error. (Min:%d / Max:%d)\n", offset, hMin, hMax-1);
+		sprintf (gLogMsgBuff, "CXP Offsety(%d) Parameter Error.(Min:%d / Max:%d)\n", offset, hMin, hMax-1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status,gLogMsgBuff);
 		goto _DONE;
 	}
@@ -4208,10 +4181,10 @@ int cxpSetOffsetY (int port, int offset)
 	if ((status = cxpRegWrite (port, CXP_REG_YOFFSET_ADRS, offset, 4)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 #else
-	data32 = IN32 (FPGA_CXP_S0_YSIZE_OFFSET);
+	data32 = IN32 (FPGA_CXP_S0_YSIZE_OFFSET_ADRS);
 	data32 &= ~(0xffff0000);
 	data32 |= ((offset & 0xffff)<<16);
-	OUT32 (FPGA_CXP_S0_YSIZE_OFFSET, data32);
+	OUT32 (FPGA_CXP_S0_YSIZE_OFFSET_ADRS, data32);
 #endif
 
 _DONE:
@@ -4400,7 +4373,7 @@ int cxpDownloadBuffer (unsigned int adrs, unsigned char *pData, unsigned int siz
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Download Buffer pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Download Buffer pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4458,7 +4431,7 @@ int cxpUploadBuffer (unsigned int adrs, unsigned char *pData, unsigned int size)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Update Buffer pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Update Buffer pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4555,7 +4528,7 @@ int cxpRestTestPacketRxCount (int port)
 	}
 
 	// Rx Count Reset
-	OUT32 ((FPGA_CXP_LINK_TEST_CTRL_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port), FPGA_CXP_LINK_TEST_CTRL_RESET);
+	//@@@1OUT32 ((FPGA_CXP_LINK_TEST_CTRL_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port), FPGA_CXP_LINK_TEST_CTRL_RESET);
 
 _DONE:
 	return (status);
@@ -4589,12 +4562,51 @@ int cxpGetTestPacketRxCount (int port, unsigned long long *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Test Packet Rx Count NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Test Packet Rx Count NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
 	// Rx Count取得
-	*pData = IN64 ((FPGA_CXP_LINK_TEST_RX_COUNT_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
+	*pData = IN64 ((FPGA_CXP_LSUC_RX_TEST_NUM_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Cxp Get Test Packet Rx Count
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		port				：ポート番号
+//		pData				：Rx Countを格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int cxpGetTestPacketTxCount (int port, unsigned long long *pData)
+{
+	int status = AVAL_STATUS_SUCCESS;
+
+	// Check port Parameter
+	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "CXP Test Packet Tx Count port(%d) Parameter Error.(Min:%d / Max:%d)\n", port, CXP_PORT_MIN, CXP_PORT_MAX);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+
+	// Check pData Parameter
+	if (pData == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Test Packet Tx Count NULL Parameter Error.\n");
+		goto _DONE;
+	}
+
+	// Rx Count取得
+	*pData = IN64 ((FPGA_CXP_LSUC_TX_TEST_NUM_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
 
 _DONE:
 	return (status);
@@ -4628,12 +4640,12 @@ int cxpGetTestPacketErrCount (int port, unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Test Packet Error Count NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Test Packet Error Count NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
 	// Rx Error Count取得
-	*pData = IN32 ((FPGA_CXP_LINK_TEST_ERR_COUNT_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
+	*pData = IN32 ((FPGA_CXP_LSUC_RX_ERR_TEST_NUM_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
 
 _DONE:
 	return (status);
@@ -4687,7 +4699,7 @@ int cxpGetPort (int *pPort)
 	if (pPort == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Port NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Port NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4735,7 +4747,7 @@ int cxpGetRateData (unsigned int *pRate)
 	if (pRate == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Rate NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Rate NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4764,7 +4776,7 @@ int cxpGetRegToSpeed (unsigned int regData, double *pCxpRateBps)
 	if (pCxpRateBps == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Reg to Rate NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Reg to Rate NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4788,7 +4800,7 @@ int cxpGetRegToSpeed (unsigned int regData, double *pCxpRateBps)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP Get Reg to Rate Data(0x%x) Parameter Error\n", regData);
+		sprintf (gLogMsgBuff, "CXP Get Reg to Rate Data(0x%x) Parameter Erro.r\n", regData);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -4817,7 +4829,7 @@ int cxpGetDataToRegData (unsigned int data, unsigned int *pRegData)
 	if (pRegData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Data to Reg Data NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Data to Reg Data NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4882,7 +4894,7 @@ int cxpGetRegToConnection (unsigned int regData, unsigned int *pCxpConnection)
 	if (pCxpConnection == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Reg to Connection NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Reg to Connection NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4973,7 +4985,7 @@ int cxpGetPortDual (int port, int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Port Mode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Port Mode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -5070,7 +5082,7 @@ int cxpGetStreamMode (int port, int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Stream Mode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Stream Mode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -5157,7 +5169,7 @@ int cxpGetLed (int port, int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP LED NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP LED NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -5199,12 +5211,12 @@ int cxpGetStreamId (int port, unsigned int *pId)
 	if (pId == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Stream ID NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Stream ID NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
 	// Steram ID取得
-	*pId = INT32 (FPGA_CXP_S0_FLAG_SID_MZXSIZE) & FPGA_CXP_S0_SID_MASK;
+	*pId = INT32 (FPGA_CXP_S0_FLAG_SID_MZXSIZE_ADRS) & FPGA_CXP_S0_SID_MASK;
 
 _DONE:
 	return (status);
@@ -5236,10 +5248,10 @@ int cxpSetStreamId (int port, unsigned int id)
 	}
 
 	// Steram ID取得
-	data32 = INT32 (FPGA_CXP_S0_FLAG_SID_MZXSIZE);
+	data32 = IN32 (FPGA_CXP_S0_FLAG_SID_MZXSIZE_ADRS);
 	data32 &= ~FPGA_CXP_S0_SID_MASK;
 	data32 |= (id & FPGA_CXP_S0_SID_MASK);
-	OUT32 (FPGA_CXP_S0_FLAG_SID_MZXSIZE, data32);
+	OUT32 (FPGA_CXP_S0_FLAG_SID_MZXSIZE_ADRS, data32);
 
 _DONE:
 	return (status);
@@ -5261,14 +5273,16 @@ int cxpSetRateReg (unsigned int data)
 	unsigned int data32;
 	int ix;
 	int port = 0;
-
+//@@@@@
+//goto _DONE;
+//@@@@@
+	
 	//--------------------------------------------------------------------------------
 	// Check Busy
 	//--------------------------------------------------------------------------------
 	for (ix = 0; ix <CXP_REG_DRI_CTRL_BUSY_TIMEOUT; ix++)
 	{
-		if ((status = cxpRegRead (port, CXP_REG_DRI_CTRLADRS, &data32, 1)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
+		data32 = IN32( CXP_REG_DRI_CTRLADRS);
 
 		if ((data32&CXP_REG_DRI_CTRL_BUSY) == 0)
 			break;
@@ -5279,7 +5293,7 @@ int cxpSetRateReg (unsigned int data)
 	if (ix >= CXP_REG_DRI_CTRL_BUSY_TIMEOUT)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_TIMEOUT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Dynamic Reconfig Tiemout1 Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Dynamic Reconfig Tiemout1 Error.\n");
 		goto _DONE;
 	}
 
@@ -5287,8 +5301,7 @@ int cxpSetRateReg (unsigned int data)
 	//--------------------------------------------------------------------------------
 	// Dynamic Reconfig
 	//--------------------------------------------------------------------------------
-	if ((status = cxpRegWrite (port, CXP_REG_DRI_CTRLADRS, data, 1)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	OUT32 (CXP_REG_DRI_CTRLADRS, data);
 
 
 	//--------------------------------------------------------------------------------
@@ -5296,8 +5309,7 @@ int cxpSetRateReg (unsigned int data)
 	//--------------------------------------------------------------------------------
 	for (ix = 0; ix <CXP_REG_DRI_CTRL_BUSY_TIMEOUT; ix++)
 	{
-		if ((status = cxpRegRead (port, CXP_REG_DRI_CTRLADRS, &data32, 1)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
+		data32 = IN32( CXP_REG_DRI_CTRLADRS);
 
 		if ((data32&CXP_REG_DRI_CTRL_BUSY) == 0)
 			break;
@@ -5311,7 +5323,7 @@ int cxpSetRateReg (unsigned int data)
 	if (ix >= CXP_REG_DRI_CTRL_BUSY_TIMEOUT)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_TIMEOUT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Dynamic Reconfig Tiemout2 Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Dynamic Reconfig Tiemout2 Error.\n");
 		goto _DONE;
 	}
 
@@ -5338,18 +5350,21 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 	unsigned int uiExp;
 	int dataI1;
 
-	// 取り込み停止
-	acquisitionAbort ();
-//@@@2
-	goto _DONE;
-//@@@2
+//@@@@@@@@1
+	//goto _DONE;
+//@@@@@@@@1
 	
+	// 取り込み停止
+	//@@@1acquisitionAbort ();
+
 	//--------------------------------------------------------------------------------
 	// IPレジスタ設定値取得
 	//--------------------------------------------------------------------------------
 	data1 = configData & 0xffff;
 	if ((status = cxpGetDataToRegData (data1, &data2)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+
+#if 0	//@@@1
 
 	// 受信FIFO Disable
 	data3 = IN32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL));
@@ -5388,13 +5403,15 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 		// 露光時間取得
 		uiExp = IN32 (FIRM_DATA_EXPOSURE_DEFAULT);
 	}
-
+#endif //@@@1
+	
 	//--------------------------------------------------------------------------------
 	// CXP Rate設定
 	//--------------------------------------------------------------------------------
 	if ((status = cxpSetRateReg (data2)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
+#if 0	//@@@1
 	//--------------------------------------------------------------------------------
 	// Single / Dualモード設定
 	//--------------------------------------------------------------------------------
@@ -5408,6 +5425,7 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 		if ((status = cxpSetPortDual (port, data1)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
+#endif //@@@1
 
 	//--------------------------------------------------------------------------------
 	// ConnectionConfig設定
@@ -5419,12 +5437,13 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 	if ((status = cxpSetRateData (configData)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
+#if 0 //@@@1
 	//--------------------------------------------------------------------------------
 	// Set H Interval
 	//--------------------------------------------------------------------------------
 	// センサ有効?
-	//@@@1if ((status = sensorGetValidMode ((int *)&data3)) != AVAL_STATUS_SUCCESS)
-		//@@@1goto _DONE;
+	if ((status = sensorGetValidMode ((int *)&data3)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
 	if (data3 == MODE_ENABLE)
 	{
@@ -5452,7 +5471,8 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 
 	if ((status = acquisitionSetExposure (uiExp))!= AVAL_STATUS_SUCCESS)
 		goto _DONE;
-	
+#endif //@@@1
+
 _DONE:
 	return (status);
 }
@@ -5486,12 +5506,12 @@ int cxpGetReadFifoStatus (int port, unsigned int *pStatus)
 	if (pStatus == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Rx FIFO Status NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Rx FIFO Status NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
 	// 受信ステータス
-	*pStatus = IN32 (FPGA_CXP_LSUC_RX_SW_PKT_STATUS) & FPGA_CXP_LSUC_RX_SW_PKT_VAL_BIT;
+	*pStatus = IN32 (FPGA_CXP_LSUC_RX_SW_PKT_STATUS_ADRS) & FPGA_CXP_LSUC_RX_SW_PKT_VAL_BIT;
 
 _DONE:
 	return (status);

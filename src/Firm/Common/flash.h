@@ -7,11 +7,11 @@
 // The distribution policy is described in the file "COPYING"
 // furnished with this package.
 //
-// qspiFlash.h - QSPI Flash Program Header
+// flash.h - Flash Program Header
 //**********************************************************************************
 
-#ifndef __QSPI_FLASH_H__
-#define __QSPI_FLASH_H__
+#ifndef __FLASH_H__
+#define __FLASH_H__
 
 //----------------------------------------------------------------------------------
 // defined
@@ -30,6 +30,6 @@
 #define DONT_CARE						(0x00u)
 
 
-#endif // __QSPI_FLASH_H__
+#endif // _FLASH_H__
 
 // eof

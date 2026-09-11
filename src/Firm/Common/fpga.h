@@ -230,23 +230,31 @@
 #define FPGA_CXP_IP_ADRS											(CORECXP_BASE_ADDR)
 #define FPGA_CXP_PF_ADRS											(CORECXP_BASE_ADDR+0x00100000)
 
-#define FPGA_CXP_LSUC_SW_TX_PKT_DATA								(FPGA_CXP_IP_ADRS + 0x08)
-#define FPGA_CXP_LSUC_RX_SW_PKT_STATUS								(FPGA_CXP_IP_ADRS + 0x0C)
+#define FPGA_CXP_LSUC_SPEED_MODE_ADRS								(FPGA_CXP_IP_ADRS + 0x00)
+#define FPGA_CXP_LSUC_SW_TX_PKT_DATA_ADRS							(FPGA_CXP_IP_ADRS + 0x08)
+#define FPGA_CXP_LSUC_RX_SW_PKT_STATUS_ADRS							(FPGA_CXP_IP_ADRS + 0x0C)
 	#define FPGA_CXP_LSUC_RX_SW_PKT_VAL_BIT							(1<<0)
+	#define FPGA_CXP_LSUC_RX_SW_PKT_FIFI_EMPTY_BIT					(1<<4)
 	#define FPGA_CXP_HSDC_TX_READY_BIT								(1<<8)
 	#define CXP_TX_READY_TIMEOUT									(5000000)
-#define FPGA_CXP_LSUC_SW_RX_PKT_DATA								(FPGA_CXP_IP_ADRS + 0x10)
+#define FPGA_CXP_LSUC_SW_RX_PKT_DATA_ADRS							(FPGA_CXP_IP_ADRS + 0x10)
 
-#define FPGA_CXP_S0_FLAG_SID_MZXSIZE								(FPGA_CXP_IP_ADRS + 0x40)
+#define FPGA_CXP_LSUC_TX_TEST_NUM_ADRS								(FPGA_CXP_IP_ADRS + 0x24)
+#define FPGA_CXP_LSUC_RX_TEST_NUM_ADRS								(FPGA_CXP_IP_ADRS + 0x28)
+#define FPGA_CXP_LSUC_RX_ERR_TEST_NUM_ADRS							(FPGA_CXP_IP_ADRS + 0x2C)
+
+#define FPGA_CXP_HSDC_HB_EN_ADRS									(FPGA_CXP_IP_ADRS + 0x30)
+#define FPGA_CXP_HSDC_HB_ID_ADRS									(FPGA_CXP_IP_ADRS + 0x34)
+#define FPGA_CXP_S0_FLAG_SID_MZXSIZE_ADRS							(FPGA_CXP_IP_ADRS + 0x40)
 	#define FPGA_CXP_S0_SID_MASK									(0xff)
-#define FPGA_CXP_S0_XSIZE_OFFSET									(FPGA_CXP_IP_ADRS + 0x44)
-#define FPGA_CXP_S0_YSIZE_OFFSET									(FPGA_CXP_IP_ADRS + 0x48)
-#define FPGA_CXP_S0_DSIZE											(FPGA_CXP_IP_ADRS + 0x4C)
-#define FPGA_CXP_S0_TAPG_PIXEL										(FPGA_CXP_IP_ADRS + 0x50)
-#define FPGA_CXP_S0_STREAM_EN										(FPGA_CXP_IP_ADRS + 0x54)
+#define FPGA_CXP_S0_XSIZE_OFFSET_ADRS								(FPGA_CXP_IP_ADRS + 0x44)
+#define FPGA_CXP_S0_YSIZE_OFFSET_ADRS								(FPGA_CXP_IP_ADRS + 0x48)
+#define FPGA_CXP_S0_DSIZE_ADRS										(FPGA_CXP_IP_ADRS + 0x4C)
+#define FPGA_CXP_S0_TAPG_PIXEL_ADRS									(FPGA_CXP_IP_ADRS + 0x50)
+#define FPGA_CXP_S0_STREAM_EN_ADRS									(FPGA_CXP_IP_ADRS + 0x54)
 
 
-#define FPGA_CXP_REGISTER_PORT_INTERVAL								(0x1000)
+#define FPGA_CXP_REGISTER_PORT_INTERVAL								(0x40)
 
  #define FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS								(FPGA_CXP_ADRS + 0x00)
 	#define FPGA_CXP_RX_CMD_FIFO_CTRL_RESET							(1<<31)
@@ -1439,6 +1447,16 @@
   #define FPGA_SENSOR_REG_SERDES_CTRL_DATA_MASK						(0xff)
 #define FPGA_SENSOR_REG_SERDES_CTRL0_BYTE3_ADRS						(FPGA_SENSOR_MAX_ADRS+0x10103)
   #define FPGA_SENSOR_REG_SERDES_CTRL_MATCH_CLR						(1<<7)
+
+
+
+//------------------------------------------------------------------------------------------
+// CoaxPress Register
+//------------------------------------------------------------------------------------------
+#define FPGA_CXP_INT_ENABLE_ADRS									(FPGA_CXP_BASE_ADDR+0x10)
+	#define FPGA_CXP_INT_ENABLE_RX_PACKET							(1<<0)
+#define FPGA_CXP_INT_STATUS_ADRS									(FPGA_CXP_BASE_ADDR+0x14)
+	#define FPGA_CXP_INT_STATUS_RX_PACKET							(1<<0)
 
 
 //------------------------------------------------------------------------------------------

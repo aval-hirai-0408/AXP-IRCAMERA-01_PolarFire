@@ -2066,7 +2066,6 @@ u32 get_user_reg (u32 address, u16 *status)
 		case FlatFieldCorrectionWhiteGainX:
 			if ((*status = ffcGetWhiteGainX (&dblValue)) != AVAL_STATUS_SUCCESS)
 				break;
-
 			value = dblValue * FFC_WHITE_GAIN_UNIT;
 			break;
 #endif // #if defined (MODE_FFC_SHADING_LINE)
@@ -3068,7 +3067,8 @@ u32 get_user_reg (u32 address, u16 *status)
 		// DeviceAcesFlag取得
 		//--------------------------------------------------------------------------------
 		case DeviceAcesFlag:
-			value = IN32 (FIRM_DATA_CPU0_MAIN_ACCESS_FLAG);
+			///@@@1value = IN32 (FIRM_DATA_CPU0_MAIN_ACCESS_FLAG);
+			value = 0;	//@@@@1
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -3877,7 +3877,6 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 		default:
 
-
 			//====================================================================================
 			//
 			// Group: Spectrum Control
@@ -4258,7 +4257,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			if (value2nd == MODE_ENABLE)
 			{
 				*status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, *status, "Cannot write because multi mode is enabled\n");
+				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, *status, "Cannot write because multi mode is enabled.\n");
 				break;
 			}
 
@@ -4311,7 +4310,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			if (value2nd == MODE_ENABLE)
 			{
 				*status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, *status, "Cannot write because multi mode is enabled\n");
+				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, *status, "Cannot write because multi mode is enabled.\n");
 				break;
 			}
 
@@ -5600,7 +5599,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					bgfSetOverlapMode(MODE_DISABLE);
 
 					status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-					sprintf (gLogMsgBuff, "Overlap size(%d) Parameter Error. (Min=%d / Max=%d)\n", value3rd, SPECTRUM_YFLITER_HEIGHT_MIN, SPECTRUM_BAND_COUNT);
+					sprintf (gLogMsgBuff, "Overlap size(%d) Parameter Error.(Min=%d / Max=%d)\n", value3rd, SPECTRUM_YFLITER_HEIGHT_MIN, SPECTRUM_BAND_COUNT);
 					cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 					break;
 				}
@@ -10150,10 +10149,10 @@ void user_init(u32* status)
 
 			for (j = 0; j < FileOperationeSelector_MAX; j++)
 			{
-				fileOffset[i][j] = 0;     //
-				fileLength[i][j] = 0;     //
-				fileStatus[i][j] = 0;     //
-				fileResult[i][j] = 0;     //
+				fileOffset[i][j] = 0;
+				fileLength[i][j] = 0;
+				fileStatus[i][j] = 0;
+				fileResult[i][j] = 0;
 			}
 		}
 
@@ -11347,7 +11346,7 @@ int FileSelectorSpectrumWave (void)
 				if (i >= GE_UPDATE_SPECTRUM_WAVE_TIMEOUT)
 				{
 					status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_TIMEOUT);
-					cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Spectrum Wave Update Timeout Error\n");
+					cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Spectrum Wave Update Timeout Error.\n");
 					goto _DONE;
 				}
 			}
@@ -11666,7 +11665,7 @@ int FileSelectorIfFpgaWrite (void)
 				if (i >= GE_UPDATE_IF_FPGA_TIMEOUT)
 				{
 					status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_TIMEOUT);
-					cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "IF FPGA Update Timeout Error\n");
+					cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "IF FPGA Update Timeout Error.\n");
 					DEBUG_PRINT();
 					goto _DONE;
 				}

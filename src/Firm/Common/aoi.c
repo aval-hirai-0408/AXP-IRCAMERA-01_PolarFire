@@ -113,7 +113,7 @@ int aoiSetUpdate (int mode)
 	if ((mode != AOI_ENABLE) && (mode != AOI_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "AOI Update mode(%d) Parameter Error. (Disable=%d / Enable=%d)\n", mode, AOI_DISABLE, AOI_ENABLE);
+		sprintf (gLogMsgBuff, "AOI Update mode(%d) Parameter Error.\n", mode);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -152,7 +152,7 @@ int aoiGetUpdate (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "AOI Update pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "AOI Update pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -183,6 +183,18 @@ int aoiSetBitWidth (int bit)
 #if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
 	int autoGainMode, autoExpMode;
 #endif //defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
+	int startMode = 0;
+
+	// Start Status
+	acquisitionGetStartFlag (&startMode);
+
+	// 取り込み停止
+	if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// StandByモード移行
+	if ((status = sensorStandBy ()) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
 
 #if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
@@ -227,8 +239,15 @@ int aoiSetBitWidth (int bit)
 			goto _DONE;
 	}
 #endif //defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	
+
+	// StandByモード解除
+	if ((status = sensorStandByCancel ()) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
 _DONE:
+	if (startMode != 0)
+		acquisitionStart ();
+
 	return (status);
 }
 
@@ -254,7 +273,7 @@ int irSetBitWidth (int bit)
 	double rMax, rMin, frameRate;
 	unsigned int fpgaBit;
 	unsigned int expTime;
-	int startMode = 0;
+	//int startMode = 0;
 	int expMin, expMax;
 #if defined (MODE_SENSOR_GRADATION_COMPRESS)
 	int gcModeCurrent, gcModeReqest = 0;
@@ -366,15 +385,15 @@ _DONE_ERROR:
 	acTmg = 0;		// 即時アクセス
 
 	// Start Status
-	acquisitionGetStartFlag (&startMode);
+	//acquisitionGetStartFlag (&startMode);
 
 	// 取り込み停止
-	if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
+		//goto _DONE;
 
 	// StandByモード移行
-	if ((status = sensorStandBy ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//if ((status = sensorStandBy ()) != AVAL_STATUS_SUCCESS)
+		//goto _DONE;
 
 	// フレームレート取得
 	if ((status = acquisitionGetFrameRate (&frameRate)) != AVAL_STATUS_SUCCESS)
@@ -547,15 +566,15 @@ _DONE_ERROR:
 
 #if defined (MODE_SENSOR_IMX992) || defined (MODE_SENSOR_IMX993)
 	// StandByモード解除
-	if ((status = sensorStandByCancel ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//if ((status = sensorStandByCancel ()) != AVAL_STATUS_SUCCESS)
+		//goto _DONE;
 
 	OUT32 (FIRM_DATA_PIXEL_FORMAT, fpgaBit);
 #endif
 
 _DONE:
-	if (startMode != 0)
-		acquisitionStart ();
+	//if (startMode != 0)
+		//acquisitionStart ();
 
 	return (status);
 }
@@ -601,7 +620,7 @@ int irGetBitWidth (int *pBit)
 	if (pBit == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Bit pBit NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Bit pBit NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -626,7 +645,7 @@ int irGetBitWidth (int *pBit)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Bit data(0x%x) Parameter Error. mode = %d\n", data);
+		sprintf (gLogMsgBuff, "Bit data(0x%x) Parameter Error.\n", data);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -670,7 +689,7 @@ int cameraGetBitWidthGigE (int *pBit)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Bit data(0x%x) Parameter Error. mode = %d\n", data);
+		sprintf (gLogMsgBuff, "Bit data(0x%x) Parameter Error.\n", data);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -699,7 +718,7 @@ int aoiSetPad (int x, int y)
 	if (x > WidthMax())
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "AOI Pad X(%d) Parameter Error. (Min:0 / Max:%d)\n", x, WidthMax());
+		sprintf (gLogMsgBuff, "Pad X(%d) Parameter Error. (Min:0 / Max:%d)\n", x, WidthMax());
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -708,7 +727,7 @@ int aoiSetPad (int x, int y)
 	if (y > HeightMax())
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "AOI Pad Y(%d) Parameter Error. (Min:0 / Max:%d)\n", y, HeightMax());
+		sprintf (gLogMsgBuff, "Pad Y(%d) Parameter Error. (Min:0 / Max:%d)\n", y, HeightMax());
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -750,7 +769,7 @@ int aoiGetPad (int *pX, int *pY)
 	if (pX == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "AOI Pad pX NULL Parameter Error\n");
+		sprintf (gLogMsgBuff, "Pad pX NULL Parameter Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -759,7 +778,7 @@ int aoiGetPad (int *pX, int *pY)
 	if (pY == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "AOI Pad pY NULL Parameter Error\n");
+		sprintf (gLogMsgBuff, "Pad pY NULL Parameter Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -908,7 +927,7 @@ int aoiGetPattern (int *pIndex)
 	if (pIndex == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Test Pattern pIndex NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Test Pattern pIndex NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -939,7 +958,7 @@ int aoiSetTpInc (int horizon, int virtical)
 	if ((horizon < AOI_TP_HORIZON_INC_VERSION2_MIN) || (horizon > AOI_TP_HORIZON_INC_VERSION2_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Test Pattern X Increment(%d) Parameter Error. (Min:%d / Max:%d)\n", horizon, AOI_TP_HORIZON_INC_VERSION2_MIN, AOI_TP_HORIZON_INC_VERSION2_MAX);
+		sprintf (gLogMsgBuff, "Test Pattern X Inc(%d) Parameter Error. (Min:%d / Max:%d)\n", horizon, AOI_TP_HORIZON_INC_VERSION2_MIN, AOI_TP_HORIZON_INC_VERSION2_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -948,7 +967,7 @@ int aoiSetTpInc (int horizon, int virtical)
 	if ((virtical < AOI_TP_VIRTICAL_INC_VERSION2_MIN) || (virtical > AOI_TP_VIRTICAL_INC_VERSION2_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Test Pattern Y Increment(%d) Parameter Error. (Min:%d / Max:%d)\n", virtical, AOI_TP_VIRTICAL_INC_VERSION2_MIN, AOI_TP_VIRTICAL_INC_VERSION2_MAX);
+		sprintf (gLogMsgBuff, "Test Pattern Y Inc(%d) Parameter Error. (Min:%d / Max:%d)\n", virtical, AOI_TP_VIRTICAL_INC_VERSION2_MIN, AOI_TP_VIRTICAL_INC_VERSION2_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -990,7 +1009,7 @@ int aoiGetTpInc (int *pHorizon, int *pVirtical)
 	if (pHorizon == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Test Pattern pHorizon NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Test Pattern pHorizon NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -998,7 +1017,7 @@ int aoiGetTpInc (int *pHorizon, int *pVirtical)
 	if (pVirtical == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Test Pattern pVirtical NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Test Pattern pVirtical NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1028,7 +1047,7 @@ int aoiSetPatternPosition (int mode)
 	if ((mode != FPGA_AOI_TP_POSITION_NORMAL) && (mode != FPGA_AOI_TP_POSITION_PRE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff,  "Test Pattern Position(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, FPGA_AOI_TP_POSITION_NORMAL, FPGA_AOI_TP_POSITION_PRE);
+		sprintf (gLogMsgBuff,  "Test Pattern Position(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, FPGA_AOI_TP_POSITION_NORMAL, FPGA_AOI_TP_POSITION_PRE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1072,7 +1091,7 @@ int aoiGetPatternPosition (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Test Pattern Position pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Test Pattern Position pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1109,7 +1128,7 @@ int aoiSetXflip (int mode)
 	if ((mode != XFLIP_ENABLE) && (mode != XFLIP_DISABLE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Xflip Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, XFLIP_DISABLE, XFLIP_ENABLE);
+		sprintf (gLogMsgBuff, "Xflip Mode(%d) Parameter Error.\n", mode);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1223,7 +1242,7 @@ int aoiGetXflip (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Xflip pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Xflip pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1259,7 +1278,7 @@ int aoiGetShift (int bit, int *pShift)
 	if (pShift == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "AOI Shift pSize Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "AOI Shift pSize Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1275,7 +1294,7 @@ int aoiGetShift (int bit, int *pShift)
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "AOI Shift Bit(%d) Parameter Error. \n", bit);
+		sprintf (gLogMsgBuff, "Shift Bit(%d) Parameter Error. \n", bit);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1303,7 +1322,7 @@ int aoiGetShift2 (int bit, int *pShift)
 	if (pShift == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "AOI Shift pSize Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Shift pSize Parameter Error\n");
 		goto _DONE;
 	}
 
@@ -1408,7 +1427,7 @@ int aoiGetFlipX2 (int x, int *pFlipx, int flipMode)
 	if (pFlipx == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Get FlipX pFlipx Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Get FlipX pFlipx Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1615,7 +1634,7 @@ int aoiSetBinningX (int mode)
 	if ((status = aoiBinninCheckParam (mode)) != AVAL_STATUS_SUCCESS)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Binning x(%d) Set Parameter Error. (Min:%d / Max:%d)\n", mode, BINNING_MIN, BINNING_MAX);
+		sprintf (gLogMsgBuff, "Binning x(%d) Set Parameter Error.(Min:%d / Max:%d)\n", mode, BINNING_MIN, BINNING_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1789,7 +1808,7 @@ int aoiSetBinningY (int mode)
 	if ((status = aoiBinninCheckParam (mode)) != AVAL_STATUS_SUCCESS)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Binning y(%d) Set Parameter Error. (Min:%d / Max:%d)\n", mode, BINNING_MIN, BINNING_MAX);
+		sprintf (gLogMsgBuff, "Binning y(%d) Set Parameter Error.(Min:%d / Max:%d)\n", mode, BINNING_MIN, BINNING_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1804,7 +1823,7 @@ int aoiSetBinningY (int mode)
 		if ((mode != 1) && (mode != 2) && (mode != 4))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Binning y(%d) Set Parameter Error. (Min:%d / Max:4)\n", mode, BINNING_MIN);
+			sprintf (gLogMsgBuff, "Binning y(%d) Set Parameter Error.(Min:%d / Max:4)\n", mode, BINNING_MIN);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1966,7 +1985,7 @@ int aoiSetBinningMode (int mode)
 	if ((mode != FPGA_BINNING_MODE_SUM) && (mode != FPGA_BINNING_MODE_AVG))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Binning Set Mode(%d) Parameter Error. (Sum:%d / Average:%d)\n", mode, FPGA_BINNING_MODE_SUM, FPGA_BINNING_MODE_AVG);
+		sprintf (gLogMsgBuff, "Binning Set Mode(%d) Parameter Error.(Sum:%d / Average:%d)\n", mode, FPGA_BINNING_MODE_SUM, FPGA_BINNING_MODE_AVG);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1998,7 +2017,7 @@ int aoiGetBinningMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Binning Mode Get pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Binning Mode Get pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2030,7 +2049,7 @@ int aoiSetBinningOffsetBase (int offset)
 	if ((offset < FFC_BLACK_TARGET_MIN) || (offset > FFC_BLACK_TARGET_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Binning Offset Base Set Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", offset, FFC_BLACK_TARGET_MIN, FFC_BLACK_TARGET_MAX);
+		sprintf (gLogMsgBuff, "Binning Set Offset Base(%d) Parameter Error.(Min:%d / Max:%d)\n", offset, FFC_BLACK_TARGET_MIN, FFC_BLACK_TARGET_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2066,7 +2085,7 @@ int aoiGetBinningOffsetBase (int* pOffset)
 	if (pOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Binning Offset Base Get pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Binning Offset Base Get NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

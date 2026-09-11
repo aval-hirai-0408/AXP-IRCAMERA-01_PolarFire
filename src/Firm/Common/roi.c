@@ -79,7 +79,7 @@ int roiGetSelector (int *pSelector)
 	if (pSelector == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Selector pSelector NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Selector pSelector NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -406,7 +406,7 @@ int roiGetErrStatus (unsigned int *pStat)
 	if (pStat == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Check Error pStat NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Check Error pStat NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -467,7 +467,7 @@ int roiGetErrStatusMulti (int selector, unsigned int *pStat)
 	if ((selector < 0) || (selector >= IPU_COUNT))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "ROI Check Error selector(%d) Parameter Error. (Min=0 / Max=%d)\n", IPU_COUNT);
+		sprintf (gLogMsgBuff, "ROI Check Error selector(%d) Parameter Error.(Min=0 / Max=%d)\n", IPU_COUNT);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -476,7 +476,7 @@ int roiGetErrStatusMulti (int selector, unsigned int *pStat)
 	if (pStat == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Check Error pStat NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Check Error pStat NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -494,7 +494,7 @@ int roiGetErrStatusMulti (int selector, unsigned int *pStat)
 	if (vol != 0)
 	{
 		sprintf (gLogMsgBuff, "ROI Vertical OverLapping Error. Error = 0x%x\n", vol);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Check Error pStat NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 	}
 
 	// VOP取得
@@ -502,7 +502,7 @@ int roiGetErrStatusMulti (int selector, unsigned int *pStat)
 	if (vop != 0)
 	{
 		sprintf (gLogMsgBuff, "ROI Vertical Out of Active Pixel. Error = 0x%x\n", vop);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Check Error pStat NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 	}
 
 	// HOP取得
@@ -510,7 +510,7 @@ int roiGetErrStatusMulti (int selector, unsigned int *pStat)
 	if (hop != 0)
 	{
 		sprintf (gLogMsgBuff, "ROI Horizontal Out of Active Pixel. Error = 0x%x\n", hop);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Check Error pStat NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 	}
 
 	// エラー情報格納
@@ -569,7 +569,7 @@ int roiGetEntryCount (int *pCount)
 	if (pCount == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Entry Count pCount NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Entry Count pCount NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -662,7 +662,7 @@ int roiGetValid (int *pValid)
 	if (pValid == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Valid pValid NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Valid pValid NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -740,7 +740,7 @@ int aoiSetWidth (int size)
 		if ((size < CXP_WIDTH_MIN) || (size > widthMaxSize))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Width Set Size(%d) Parameter Error. (Min:%d / Max:%d)\n", size / binningNum, CXP_WIDTH_MIN, widthMaxSize / binningNum);
+			sprintf (gLogMsgBuff, "Width Set Size(%d) Parameter Error.(Min:%d / Max:%d)\n", size / binningNum, CXP_WIDTH_MIN, widthMaxSize / binningNum);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -752,7 +752,7 @@ int aoiSetWidth (int size)
 		if (((size/binningNum) < widthMinSize) || (size > widthMaxSize))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Width Set Size(%d) Parameter Error. (Min:%d / Max:%d)\n", size / binningNum, widthMinSize, widthMaxSize / binningNum);
+			sprintf (gLogMsgBuff, "Width Set Size(%d) Parameter Error.(Min:%d / Max:%d)\n", size / binningNum, widthMinSize, widthMaxSize / binningNum);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -824,7 +824,7 @@ int aoiSetWidth (int size)
 			if (size < (CXP_WIDTH_MIN * binningNum))
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "Width Set Size(%d) Parameter Error. (Min:%d / Max:%d)\n", size / binningNum, CXP_WIDTH_MIN * binningNum, widthMaxSize / binningNum);
+				sprintf (gLogMsgBuff, "Width Set Size(%d) Parameter Error.(Min:%d / Max:%d)\n", size / binningNum, CXP_WIDTH_MIN * binningNum, widthMaxSize / binningNum);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				goto _DONE;
 			}
@@ -955,7 +955,7 @@ int aoiGetWidth (int *pSize)
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Width Get pSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Width Get pSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1044,7 +1044,7 @@ int aoiSetWidthOffset (int offset)
 		if ((offset < 0) || (offset > widthMaxSize-CXP_WIDTH_MIN))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Width Set Offset(%d) Parameter Error. (Min:%d / Max:%d)\n", offset / binningNum, 0, (widthMaxSize / binningNum) - CXP_WIDTH_MIN);
+			sprintf (gLogMsgBuff, "Width Set Offset(%d) Parameter Error.(Min:%d / Max:%d)\n", offset / binningNum, 0, (widthMaxSize / binningNum) - CXP_WIDTH_MIN);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1055,7 +1055,7 @@ int aoiSetWidthOffset (int offset)
 		if ((offset < 0) || (offset > (widthMaxSize-ROI_FPGA_WIDTH_SIZE_ALIGH*binningNum)))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Width Set Offset(%d) Parameter Error. (Min:%d / Max:%d)\n", offset / binningNum, 0, (widthMaxSize / binningNum) - ROI_FPGA_WIDTH_SIZE_ALIGH);
+			sprintf (gLogMsgBuff, "Width Set Offset(%d) Parameter Error.(Min:%d / Max:%d)\n", offset / binningNum, 0, (widthMaxSize / binningNum) - ROI_FPGA_WIDTH_SIZE_ALIGH);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1088,7 +1088,7 @@ int aoiSetWidthOffset (int offset)
 			if (offsetHalf > maxSizeHalf)
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "Width Set Offset(%d) Parameter Error. (Min:%d / Max:%d)\n", offsetHalf, 0, maxSizeHalf);
+				sprintf (gLogMsgBuff, "Width Set Offset(%d) Parameter Error.(Min:%d / Max:%d)\n", offsetHalf, 0, maxSizeHalf);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				goto _DONE;
 			}
@@ -1213,7 +1213,7 @@ int aoiGetWidthOffset (int *pOffset)
 	if (pOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Width Get pOffset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Width Get pOffset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1447,7 +1447,7 @@ int aoiSetHeight (int size)
 	if ((size < heightMinSize) || (size > heightMaxSize))	// height = 0はエラーとしない。マルチroi時に削除する場合がある為
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Height Set Size(%d) Parameter Error. (Min:%d / Max:%d)\n", size / binningNum, heightMinSize, heightMaxSize / binningNum);
+		sprintf (gLogMsgBuff, "Height Set Size(%d) Parameter Error.(Min:%d / Max:%d)\n", size / binningNum, heightMinSize, heightMaxSize / binningNum);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1706,7 +1706,7 @@ int aoiGetHeight (int *pSize)
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Height Get pSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Height Get pSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1804,7 +1804,7 @@ int aoiSetHeightOffset (int offset)
 	if ((offset < 0) || (offset > heightMaxSize-ROI_FPGA_HEIGHT_SIZE_ALIGH))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Height Set Offset(%d) Parameter Error. (Min:%d / Max:%d)\n", offset / binningNum, 0, (heightMaxSize/binningNum)-ROI_FPGA_HEIGHT_SIZE_ALIGH);
+		sprintf (gLogMsgBuff, "Height Set Offset(%d) Parameter Error.(Min:%d / Max:%d)\n", offset / binningNum, 0, (heightMaxSize/binningNum)-ROI_FPGA_HEIGHT_SIZE_ALIGH);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1929,7 +1929,7 @@ int aoiGetHeightOffset (int *pOffset)
 	if (pOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Height Get pOffset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Height Get pOffset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2055,7 +2055,7 @@ int roiSetHeightMain (int offset, int size)
 	if (entryCount > ROI_SELECTOR_COUNT)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "ROI Height Set Entry=%d Check Max Error. (Min : %d / Max : %d)\n", entryCount, ROI_SELECTOR_MIN+1, ROI_SELECTOR_MAX+1);
+		sprintf (gLogMsgBuff, "ROI Height Set Entry=%d Check Max Error.(Min : %d / Max : %d)\n", entryCount, ROI_SELECTOR_MIN+1, ROI_SELECTOR_MAX+1);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2192,7 +2192,7 @@ _NEXT:
 		if (entryCount >= ROI_SELECTOR_COUNT)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "ROI Height Set Entry Count=%d Max Error. (Min : %d / Max : %d)\n", entryCount, ROI_SELECTOR_MIN+1, ROI_SELECTOR_MAX+1);
+			sprintf (gLogMsgBuff, "ROI Height Set Entry Count=%d Max Error.(Min : %d / Max : %d)\n", entryCount, ROI_SELECTOR_MIN+1, ROI_SELECTOR_MAX+1);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -2428,7 +2428,7 @@ int roiHeightAdd (int selector, int yOffset, int ySize)
 	if (entryCount >= ROI_SELECTOR_COUNT)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "ROI Add Full Entry(%d) Error. (Min : %d / Max : %d)\n", entryCount, ROI_SELECTOR_MIN, ROI_SELECTOR_COUNT);
+		sprintf (gLogMsgBuff, "ROI Add Full Entry(%d) Error.(Min : %d / Max : %d)\n", entryCount, ROI_SELECTOR_MIN, ROI_SELECTOR_COUNT);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -2673,7 +2673,7 @@ int roiGetHeightIndex (int *pIndex, int yOffset, int ySize)
 	if (pIndex == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Index pIndex NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Index pIndex NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2735,7 +2735,7 @@ int roiHeightPositionCheck (int selector, int yOffset, int ySize, int *pIndex)
 	if (pIndex == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Height Position pIndex NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Height Position pIndex NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2747,7 +2747,7 @@ int roiHeightPositionCheck (int selector, int yOffset, int ySize, int *pIndex)
 	if (entryCount >= ROI_SELECTOR_COUNT)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "ROI Height Position Full Entry(%d) Error. (Min : %d / Max : %d)\n", entryCount, ROI_SELECTOR_MIN, ROI_SELECTOR_COUNT);
+		sprintf (gLogMsgBuff, "ROI Height Position Full Entry(%d) Error.(Min : %d / Max : %d)\n", entryCount, ROI_SELECTOR_MIN, ROI_SELECTOR_COUNT);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -3524,7 +3524,7 @@ int roiGetAreaSize (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Size pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Size pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3566,7 +3566,7 @@ int roiGetAreaWidthSize (int mode, int *pFpgaSize, int *pFpgaOffset, int *pSenso
 	if (pFpgaSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Width Size pFpgaSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Width Size pFpgaSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3574,7 +3574,7 @@ int roiGetAreaWidthSize (int mode, int *pFpgaSize, int *pFpgaOffset, int *pSenso
 	if (pFpgaOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Width Size pFpgaOffset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Width Size pFpgaOffset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3582,7 +3582,7 @@ int roiGetAreaWidthSize (int mode, int *pFpgaSize, int *pFpgaOffset, int *pSenso
 	if (pSensorSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Width Size pSensorSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Width Size pSensorSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3590,7 +3590,7 @@ int roiGetAreaWidthSize (int mode, int *pFpgaSize, int *pFpgaOffset, int *pSenso
 	if (pSensorOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Width Size pSensorOffset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Width Size pSensorOffset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3672,7 +3672,7 @@ int roiGetAreaHeightSize (int mode, int *pFpgaSize, int *pFpgaOffset, int *pSens
 	if (pFpgaSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Height Size pFpgaSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Height Size pFpgaSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3680,7 +3680,7 @@ int roiGetAreaHeightSize (int mode, int *pFpgaSize, int *pFpgaOffset, int *pSens
 	if (pFpgaOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Height Size pFpgaOffset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Height Size pFpgaOffset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3688,7 +3688,7 @@ int roiGetAreaHeightSize (int mode, int *pFpgaSize, int *pFpgaOffset, int *pSens
 	if (pSensorSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Height Size pSensorSize NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Height Size pSensorSize NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3696,7 +3696,7 @@ int roiGetAreaHeightSize (int mode, int *pFpgaSize, int *pFpgaOffset, int *pSens
 	if (pSensorOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Height Size pSensorOffset NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Area Height Size pSensorOffset NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3910,7 +3910,7 @@ int roiGetAreaGridOffset (int *pX, int *pY)
 	if (pX == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Area Grid Offset pX NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Area Grid Offset pX NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3918,7 +3918,7 @@ int roiGetAreaGridOffset (int *pX, int *pY)
 	if (pY == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Area Grid Offset pY NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Area Grid Offset pY NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3956,7 +3956,7 @@ int roiGetAreaWidthMax (int *pWidth)
 	if (pWidth == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Area Width MAx pWidth NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Area Width MAx pWidth NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -3993,7 +3993,7 @@ int roiGetAreaHeightMax (int *pHeight)
 	if (pHeight == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Area Height Max pHeight NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Area Height Max pHeight NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4078,7 +4078,7 @@ int roiGetAdjustMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Adjust Mode pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Adjust Mode pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4151,7 +4151,7 @@ int roiGetAreaFlag (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Flag pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Get Flag pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4185,7 +4185,7 @@ int roiGetNoSelfValidCount (int selector, int *pCount)
 	if (pCount == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI No Self Valid Count pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI No Self Valid Count pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -4233,7 +4233,7 @@ int roiCheckMultiMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Check Multi Mode pMode NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Check Multi Mode pMode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

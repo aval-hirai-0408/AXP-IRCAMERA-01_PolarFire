@@ -386,22 +386,15 @@ void cmdCharGet (char *buff)
 				//------------------------------------------------------------
 				// CXPコマンド処理
 				//------------------------------------------------------------
-				//if (gCxpCmdInterruptFlag != 0)
+				
+				// FIFOデータ数確認
+				if (cxpGetFifoSizeCount (port, &fiftCount) == AVAL_STATUS_SUCCESS)
 				{
-					//@@@1 CXPの割り込み禁止
-					
-					// FIFOデータ数確認
-					if (cxpGetFifoSizeCount (port, &fiftCount) == AVAL_STATUS_SUCCESS)
+					// FIFOにデータあり？
+					if (fiftCount != 0)
 					{
-						// FIFOにデータあり？
-						if (fiftCount != 0)
-						{
-							cxpProcs (port);
-						}
+						cxpProcs (port);
 					}
-					
-					gCxpCmdInterruptFlag = 0;
-					//@@@1 CXPの割り込み許可
 				}
 			}
 
@@ -432,7 +425,11 @@ void cmdCharGet (char *buff)
 			//------------------------------------------------------------
 			// Sleep
 			//------------------------------------------------------------
-			//wfi ();   // sleep
+			if (cxpGetFifoSizeCount (port, &fiftCount) != AVAL_STATUS_SUCCESS)
+				fiftCount = 0;
+			
+			if (fiftCount == 0)
+				wfi ();   // sleep
 		}
 
 		//------------------------------------------------------------

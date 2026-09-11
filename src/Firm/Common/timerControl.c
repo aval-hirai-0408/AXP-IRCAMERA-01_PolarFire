@@ -66,7 +66,7 @@ int timerControlSetSelect (int select)
 	if ((select < TIMER_SELECT_MIN) || (select > TIMER_SELECT_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Timer Control Select(%d) Parameter Error. (Min:%d / Max:%d)\n", select, TIMER_SELECT_MIN, TIMER_SELECT_MAX);
+		sprintf (gLogMsgBuff, "Timer Control Select(%d) Parameter Error.(Min:%d / Max:%d)\n", select, TIMER_SELECT_MIN, TIMER_SELECT_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -125,7 +125,7 @@ int timerControlSetDuration (unsigned int count)
 	if (count > GENICAM_TIMER_DURATION_MAX)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Timer Control Duration(%d) Parameter Error. (Min:0 / Max:%d)\n", count, GENICAM_TIMER_DURATION_MAX);
+		sprintf (gLogMsgBuff, "Timer Control Duration(%d) Parameter Error.(Min:0 / Max:%d)\n", count, GENICAM_TIMER_DURATION_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -184,7 +184,7 @@ int timerControlSetDelay (unsigned int count)
 	if (count > GENICAM_TIMER_DELAY_MAX)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Timer Control Delay(%d) Parameter Error. (Min:0 / Max:%d)\n", count, GENICAM_TIMER_DELAY_MAX);
+		sprintf (gLogMsgBuff, "Timer Control Delay(%d) Parameter Error.(Min:0 / Max:%d)\n", count, GENICAM_TIMER_DELAY_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -477,7 +477,7 @@ int timerControlSetTrgActive (int mode)
 	if ((mode < TIMER_ACTIVE_MIN) || (mode > TIMER_ACTIVE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Timer Control Activation Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", mode, TIMER_ACTIVE_MIN, TIMER_ACTIVE_MAX);
+		sprintf (gLogMsgBuff, "Timer Control Activation Mode(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, TIMER_ACTIVE_MIN, TIMER_ACTIVE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}

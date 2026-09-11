@@ -54,6 +54,7 @@ int intcInitialize (void)
 	// Disable IRQ
     MIV_PLIC_disable_irq (&g_plic, MIV_PLIC_EXT0_IRQn);
     MIV_PLIC_disable_irq (&g_plic, MIV_PLIC_EXT1_IRQn);
+    MIV_PLIC_disable_irq (&g_plic, MIV_PLIC_EXT2_IRQn);
 
     // Enable
 	MRV_enable_local_irq (MIP_MEIP);

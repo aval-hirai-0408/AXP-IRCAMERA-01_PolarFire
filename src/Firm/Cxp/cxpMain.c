@@ -116,6 +116,9 @@ extern int gDrrsMode;
 
 extern int gUartInterruptFlag;
 
+extern miv_plic_instance_t g_plic;
+
+
 //----------------------------------------------------------------------------------
 // Function Define
 //----------------------------------------------------------------------------------
@@ -148,12 +151,14 @@ int cxpMain (void)
 	unsigned int timeout;
 	unsigned int data32;
 	int port = 0;
+	char c;
 
 	//------------------------------------------------------------
 	// CPU1 Boot Flag
 	//------------------------------------------------------------
 	OUT32 (FIRM_DATA_CPU1_BOOT_FLAG, 0);
 
+	
 //@@@1
 #if 0
 	//------------------------------------------------------------
@@ -193,14 +198,13 @@ int cxpMain (void)
 	//------------------------------------------------------------
     cxpUserInit ();
 
-//@@@1
-#if 0
+
 	//------------------------------------------------------------
 	// CXP Init2
 	//------------------------------------------------------------
     cxpInitialize2 ();
-#endif //@@@1
-	
+
+
 	//------------------------------------------------------------
 	// CPU1 Boot Flag
 	//------------------------------------------------------------
@@ -211,6 +215,19 @@ int cxpMain (void)
 	// Link Down
 	//------------------------------------------------------------
 	linkStatus = MODE_LINK_DOWN;
+
+
+	//------------------------------------------------------------
+	// CXP Interrupt Enable
+	//------------------------------------------------------------
+    MIV_PLIC_enable_irq (&g_plic, MIV_PLIC_EXT2_IRQn);
+
+
+	//------------------------------------------------------------
+	// CXP Rx Interrupt Enable
+	//------------------------------------------------------------
+	cxpSetRecvIntMode (MODE_ENABLE);
+
 
 	//------------------------------------------------------------
 	// Main Loop
@@ -260,9 +277,6 @@ int cxpMain (void)
 	return (status);
 }
 
-//@@@@@@@@@@@@@@@@
-extern int gConsolePassword;
-//@@@@@@@@@@@@@@@@
 
 //**********************************************************************************
 //	CXP User Init
@@ -285,6 +299,10 @@ int cxpUserInit (void)
 	char strXMLAddress[10] = { 0 };
 	char strXMLSize[6] = { 0 };
 
+//@@@@1
+	DEBUG_PRINT_FORCE("cxpUserInit\n");
+//@@@@1
+	
 //@@@1
 #if 0
 	//------------------------------------------------------------
@@ -408,11 +426,20 @@ int cxpUserInit (void)
 	memset((void*) gXmlFileName2, 0, CXP_XML_URL_SIZE);
 	memset((void*) gXmlFileNameUpdate, 0, CXP_XML_URL_SIZE);
 
+//@@@@1
+	DEBUG_PRINT_FORCE("Qspi Read XML  File Name\n");
+//@@@@1
+
 	// XML File Name取得
 	if ((status = qspiFlashRead((unsigned int)FLASH_XML_FILE_NAME_ADRS, (unsigned char*)gXmlFileName1, (unsigned int) CXP_XML_URL_SIZE)) != AVAL_STATUS_SUCCESS)
 	{
 		memset((void*) gXmlFileName1, 0, CXP_XML_URL_SIZE);
 	}
+
+//@@@@1
+	DEBUG_PRINT_FORCE("XML Search\n");
+//@@@@1
+
 
 	for (i = 0; i < CXP_XML_URL_SIZE; i++)
 	{
@@ -492,7 +519,11 @@ int cxpUserInit (void)
 		// XML Load
 		if (gXMLSize > FLASH_XML_SIZE)
 			gXMLSize = FLASH_XML_SIZE;
-		
+
+//@@@@1
+	DEBUG_PRINT_FORCE("Qspi Read XML\n");
+//@@@@1
+
 		qspiFlashRead (FLASH_XML_ADRS, (unsigned char *)FIRM_XML_FILE_ADRS, gXMLSize);
 	}
 	else
@@ -506,22 +537,42 @@ int cxpUserInit (void)
 	{
 	unsigned int data, wsize;
 
-	OUT32(FPGA_CXP_S0_XSIZE_OFFSET, 640);
-	OUT32(FPGA_CXP_S0_YSIZE_OFFSET, 512);
-	OUT32(FPGA_CXP_S0_DSIZE, (640*8/32));
+//@@@@1
+	DEBUG_PRINT_FORCE("Set Param Start1\n");
+//@@@@1
+	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, 640);
 
-	OUT32(FPGA_CXP_S0_TAPG_PIXEL, CXP_REG_PIXEL_MONO8);
-	OUT32(FPGA_CXP_S0_STREAM_EN, 1);
+//@@@@1
+	DEBUG_PRINT_FORCE("Set Param Start2\n");
+//@@@@1
+	OUT32(FPGA_CXP_S0_YSIZE_OFFSET_ADRS, 512);
 
-		
-	data = IN32((CORECXP2_BASE_ADDR+0x08));
-	wsize = data & 0xffff;
-	wsize /= 8;
-	data &= ~0xffff;
-	data |= wsize;
-	OUT32((CORECXP2_BASE_ADDR+0x08), data);
+//@@@@1
+	DEBUG_PRINT_FORCE("Set Param Start3\n");
+//@@@@1
+
+	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (640*8/32));
+//@@@@1
+	DEBUG_PRINT_FORCE("Set Param Start4\n");
+//@@@@1
+	
+	OUT32(FPGA_CXP_S0_TAPG_PIXEL_ADRS, CXP_REG_PIXEL_MONO8);
+//@@@@1
+	DEBUG_PRINT_FORCE("Set Param Start5\n");
+//@@@@1
+	
+	//@@@OUT32(FPGA_CXP_S0_STREAM_EN_ADRS, 1);
+
+	//data = IN32((CORECXP2_BASE_ADDR+0x08));
+	//wsize = data & 0xffff;
+	//wsize /= 8;
+	//data &= ~0xffff;
+	//data |= wsize;
+	//OUT32((CORECXP2_BASE_ADDR+0x08), data);
 	}
 //@@@@@@@@@@@@@@@@@@
+
+	DEBUG_PRINT_FORCE("@@@1\n")	;
 	
 	// ---- Initiates Global variables for File Access Control --------------------------------
 	fileSelector = 0;
@@ -540,7 +591,7 @@ int cxpUserInit (void)
 			//------------------------------------------------------------
 			case FileSelector_FPGA:
 				fileBuffer[i] = (u32*)FIRM_UPDATE_ADRS;
-				memset((void*) fileBuffer[i], 0, FIRM_UPDATE_SIZE);
+				//memset((void*) fileBuffer[i], 0, FIRM_UPDATE_SIZE);
 
 			//------------------------------------------------------------
 			// XML
@@ -594,12 +645,16 @@ int cxpUserInit (void)
 		}
 	}
 
+	DEBUG_PRINT_FORCE("@@@2\n")	;
+
 	//------------------------------------------------------------
 	// Register Callback
 	//------------------------------------------------------------
 #if defined(MODE_CAMERA_INTERRUPT)
 	status = cameraIntRegister((p_user_event_callback)user_event_callback_cxp);
 #endif // #if defined(MODE_CAMERA_INTERRUPT)
+
+	DEBUG_PRINT_FORCE("@@@3\n")	;
 
 	return (status);
 }
@@ -813,7 +868,7 @@ int cxpGetLinkCount (unsigned int *pCount)
 	if (pCount == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Link Count NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Link Count NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -853,32 +908,90 @@ static void user_event_callback_cxp (u32 event_mask)
 
 
 //**********************************************************************************
-//	CXP Cmd Interrupt
+//	CXP Packet Recive Interrupt
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		-
 //	[ OUTPUT ]
 //		-
 //==================================================================================
-void cxpCmdInterruptHandler (void)
+int MIV_PLIC_EXT2_IRQHandler (void)
 {
-	// コマンド処理中?
-	if (gCxpCmdInterruptFlag == 0)
+	unsigned int intState, intEaable;
+	
+	// Get Interrupt Status
+	intState = IN32 (FPGA_CXP_INT_STATUS_ADRS);
+
+	// Get Interrupt Mode
+	intEaable = IN32 (FPGA_CXP_INT_ENABLE_ADRS);
+	
+	// Mask
+	intState &= intEaable;
+
+	// RX Interrupt?
+	if (intState & FPGA_CXP_INT_STATUS_RX_PACKET)
 	{
-		// コマンド割り込み発生フラグ
-		gCxpCmdInterruptFlag = 1;
-	}
-	else
-	{
-		// コマンド処理中Flag
-		gCxpCmdProcessFlag = 1;
-		
-		// コマンド処理中なので、割り込みルーチン内でコマンド解析
-		cxpProcs (0);
+		// コマンド処理中?
+		if (gCxpCmdInterruptFlag == 0)
+		{
+			// コマンド割り込み発生フラグ
+			gCxpCmdInterruptFlag = 1;
+			
+			// CXP Rx Int Disable
+			//cxpSetRecvIntMode (MODE_DISABLE);
+		}
+		else
+		{
+			// コマンド処理中Flag
+			//gCxpCmdProcessFlag = 1;
+			
+			// コマンド処理中なので、割り込みルーチン内でコマンド解析
+			//@@@1cxpProcs (0);
+		}
 	}
 	
-	return;
+	return (EXT_IRQ_KEEP_ENABLED);
 }
+
+
+//**********************************************************************************
+//	CXP Packet Recive Interrupt Mode
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		mode : 0 = Interrupt Disable / 1 = Interrupt Enable
+//	[ OUTPUT ]
+//		-
+//==================================================================================
+int cxpSetRecvIntMode (int mode)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	unsigned int data32;
+
+	// Check data Parameter
+	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "CXP Packet Recive Int mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+
+	// Get Interrupt Mode
+	data32 = IN32 (FPGA_CXP_INT_ENABLE_ADRS);
+	
+	if (mode == MODE_ENABLE)
+		data32 |= FPGA_CXP_INT_ENABLE_RX_PACKET;
+	else
+		data32 &= ~FPGA_CXP_INT_ENABLE_RX_PACKET;
+	
+	// Set Interrupt Mode
+	OUT32 (FPGA_CXP_INT_ENABLE_ADRS, data32);
+	
+_DONE:
+	return (status);
+}
+
+
 #endif // #if defined (IF_CXP)
 
 // eof

@@ -314,7 +314,7 @@ int cameraParamUserAllWrite (int userNum)
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save (User ROM Write) User Parameter Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Save UserNum(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -323,7 +323,7 @@ int cameraParamUserAllWrite (int userNum)
 	if (gpCameraUserParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(User ROM Write) gpCameraUserParameter NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save pCameraUserParameter NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -365,7 +365,7 @@ int cameraParamUserAllRead (int userNum)
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff,  "Camera Save(User ROM Read) User Parameter Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff,  "UserSet Load Num(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -374,7 +374,7 @@ int cameraParamUserAllRead (int userNum)
 	if (gpCameraUserParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(User ROM Read) gpCameraUserParameter NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Load gpCameraUserParameter NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -409,7 +409,7 @@ int cameraParamSpectrumAllWrite (int userNum)
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save (User Spectrum ROM Write) User Parameter Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Save Spectrum UserNum(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -418,7 +418,7 @@ int cameraParamSpectrumAllWrite (int userNum)
 	if (gpCameraUserParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(User Spectrum ROM Write) gpCameraUserParameter NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Spectrum  gpCameraUserParameter NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -462,7 +462,7 @@ int cameraParamSpectrumAllRead (int userNum)
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(User Spectrum ROM Read) User Parameter Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Load Spectrum UserNum(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -471,7 +471,7 @@ int cameraParamSpectrumAllRead (int userNum)
 	if (gpCameraUserParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(User Spectrum ROM Read) gpCameraUserParameter NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Load Spectrum gpCameraUserParameter NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -510,7 +510,7 @@ int cameraParamUserWriteRomMulti (int userNum, unsigned int saveAdrs, unsigned c
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(User ROM Write) UserNum(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Save UserNum(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -519,7 +519,7 @@ int cameraParamUserWriteRomMulti (int userNum, unsigned int saveAdrs, unsigned c
 	if ((saveAdrs + CAMERA_SAVE_USER_SIZE) < size)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(User ROM Write) Size Parameter Error. Size = %d\n", size);
+		sprintf (gLogMsgBuff, "UserSet Save Size(%d) Parameter Error.\n", size);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -528,7 +528,7 @@ int cameraParamUserWriteRomMulti (int userNum, unsigned int saveAdrs, unsigned c
 	if ((pBuffer = malloc (CAMERA_SAVE_USER_SIZE)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(User ROM Write) Malloc Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Memory Reqest Error.\n");
 		goto _DONE;
 	}
 
@@ -581,7 +581,7 @@ int cameraParamSpectrumWriteRomMulti (int userNum, unsigned int saveAdrs, unsign
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(Spectrum ROM Write) UserNum(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Save Spectrum UserNum(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -590,7 +590,7 @@ int cameraParamSpectrumWriteRomMulti (int userNum, unsigned int saveAdrs, unsign
 	if ((saveAdrs + CAMERA_SAVE_SPECTRUM_COMMON_SIZE) < size)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(Spectrum ROM Write) Size Parameter Error. Size = %d\n", size);
+		sprintf (gLogMsgBuff, "UserSet Save Spectrum Size(%d) Parameter Error.\n", size);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -599,7 +599,7 @@ int cameraParamSpectrumWriteRomMulti (int userNum, unsigned int saveAdrs, unsign
 	if ((pBuffer = malloc (CAMERA_SAVE_SPECTRUM_COMMON_SIZE)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Spectrum ROM Write) Malloc Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Spectrum Reqest Error.\n");
 		goto _DONE;
 	}
 
@@ -647,7 +647,7 @@ int cameraParamCommonAllWrite (void)
 	if (gpCameraCommonParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common ROM Write) gpCameraUserParameter NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save gpCameraUserParameter NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -685,7 +685,7 @@ int cameraParamCommonAllRead (void)
 	if (gpCameraCommonParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common ROM Read) gpCameraUserParameter NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save gpCameraUserParameter NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -717,7 +717,7 @@ int cameraParamCommonWriteRom (unsigned int saveAdrs, unsigned int data)
 	if ((pBuffer = malloc (CAMERA_SAVE_COMMON_SIZE)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common ROM Write) Malloc Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Memory Reqest Error.\n");
 		goto _DONE;
 	}
 
@@ -763,7 +763,7 @@ int cameraParamCommonReadRom (unsigned int saveAdrs, unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common ROM Read) pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -799,7 +799,7 @@ int cameraParamCommonWriteRomMulti (unsigned int saveAdrs, unsigned char *pData,
 	if ((saveAdrs + CAMERA_SAVE_COMMON_SIZE) < size)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(Common ROM Write) Size Parameter Error. Size = %d\n", size);
+		sprintf (gLogMsgBuff, "UserSet Save Size(%d) Parameter Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -808,7 +808,7 @@ int cameraParamCommonWriteRomMulti (unsigned int saveAdrs, unsigned char *pData,
 	if ((pBuffer = malloc (CAMERA_SAVE_COMMON_SIZE)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common ROM Write) Malloc Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Memory Reqest Error.\n");
 		goto _DONE;
 	}
 
@@ -860,7 +860,7 @@ int cameraParamUserWriteMem (int userNum, unsigned int saveAdrs, unsigned int ad
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(Common Mem Write) userNum(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Save Mem UserNum(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -869,7 +869,7 @@ int cameraParamUserWriteMem (int userNum, unsigned int saveAdrs, unsigned int ad
 	if (saveAdrs > CAMERA_SAVE_USER_SIZE)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(Common Mem Write) Save Address(0x%x) Parameter Error. (Max:%d)\n", saveAdrs, CAMERA_SAVE_USER_SIZE);
+		sprintf (gLogMsgBuff, "UserSet Save Mem Address(0x%x) Parameter Error.(Max:%d)\n", saveAdrs, CAMERA_SAVE_USER_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;	
 	}
@@ -878,7 +878,7 @@ int cameraParamUserWriteMem (int userNum, unsigned int saveAdrs, unsigned int ad
 	if (gpCameraUserParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common Mem Write) gpCameraUserParameter NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Mem gpCameraUserParameter NULL Parameter Error.\n");
 		goto _DONE;	
 	}
 
@@ -919,7 +919,7 @@ int cameraParamUserReadMem (int userNum, unsigned int saveAdrs, unsigned int *pA
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(Common Mem Read) Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Load Mem  UserNum(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -928,7 +928,7 @@ int cameraParamUserReadMem (int userNum, unsigned int saveAdrs, unsigned int *pA
 	if (saveAdrs > CAMERA_SAVE_USER_SIZE)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(Common Mem Read)  Save Address(0x%x) Parameter Error. (Max = %d)\n", saveAdrs, CAMERA_SAVE_USER_SIZE);
+		sprintf (gLogMsgBuff, "UserSet Load Mem Address(0x%x) Parameter Error.(Max = %d)\n", saveAdrs, CAMERA_SAVE_USER_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -937,7 +937,7 @@ int cameraParamUserReadMem (int userNum, unsigned int saveAdrs, unsigned int *pA
 	if (pAdrs == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common Mem Read) pAdrs NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Load Mem pAdrs NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -945,7 +945,7 @@ int cameraParamUserReadMem (int userNum, unsigned int saveAdrs, unsigned int *pA
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common Mem Read) pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Load Mem pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -953,7 +953,7 @@ int cameraParamUserReadMem (int userNum, unsigned int saveAdrs, unsigned int *pA
 	if (gpCameraUserParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common Mem Read) gpCameraUserParameter NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Load Mem gpCameraUserParameter NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -992,7 +992,7 @@ int cameraParamCommonWriteMem (unsigned int saveAdrs, unsigned int data)
 	if (saveAdrs > CAMERA_SAVE_COMMON_SIZE)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(Common Mem Write) User Parameter Save Address(0x%x) Parameter Error. (Max:%d)\n", saveAdrs, CAMERA_SAVE_COMMON_SIZE);
+		sprintf (gLogMsgBuff, "UserSet Save Mem Address(0x%x) Parameter Error.(Max:%d)\n", saveAdrs, CAMERA_SAVE_COMMON_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1001,7 +1001,7 @@ int cameraParamCommonWriteMem (unsigned int saveAdrs, unsigned int data)
 	if (gpCameraCommonParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common Mem Write) gpCameraUserParameter NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Mem gpCameraUserParameter NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1039,7 +1039,7 @@ int cameraParamCommonReadMem (unsigned int saveAdrs, unsigned int *pData)
 	if (saveAdrs > CAMERA_SAVE_COMMON_SIZE)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(Common Mem Read) User Parameter Save Address(0x%x) Parameter Error. (Max:%d)\n", saveAdrs, CAMERA_SAVE_COMMON_SIZE);
+		sprintf (gLogMsgBuff, "UserSet Load Mem Address(0x%x) Parameter Error.(Max:%d)\n", saveAdrs, CAMERA_SAVE_COMMON_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1048,7 +1048,7 @@ int cameraParamCommonReadMem (unsigned int saveAdrs, unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common Mem Read) pData NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Load Mem pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1056,7 +1056,7 @@ int cameraParamCommonReadMem (unsigned int saveAdrs, unsigned int *pData)
 	if (gpCameraCommonParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common Mem Read) gpCameraUserParameter NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Load Mem gpCameraUserParameter NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1100,7 +1100,7 @@ int cameraParamWriteRegister (int userNum, unsigned int offset, unsigned int siz
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(Register Write) User Parameter Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Save UserNum(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1109,7 +1109,7 @@ int cameraParamWriteRegister (int userNum, unsigned int offset, unsigned int siz
 	if ((offset + size) > CAMERA_SAVE_USER_SIZE)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(Register Write) User Parameter Save Size(0x%x) Parameter Error. (Max:%d)\n", (offset + size), CAMERA_SAVE_USER_SIZE);
+		sprintf (gLogMsgBuff, "UserSet Save Size(0x%x) Parameter Error.(Max:%d)\n", (offset + size), CAMERA_SAVE_USER_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1216,7 +1216,7 @@ int cameraParamWriteRegisterOffsetAdrs (int userNum, unsigned int offset, unsign
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save2(Register Write) User Parameter Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Save IPU Multi UserNum(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1225,7 +1225,7 @@ int cameraParamWriteRegisterOffsetAdrs (int userNum, unsigned int offset, unsign
 	if ((offset + size) > CAMERA_SAVE_USER_SIZE)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save2(Register Write) User Parameter Save Size(0x%x) Parameter Error. (Max:%d)\n", (offset + size), CAMERA_SAVE_USER_SIZE);
+		sprintf (gLogMsgBuff, "UserSet Save IPU Multi Size(0x%x) Parameter Error.(Max:%d)\n", (offset + size), CAMERA_SAVE_USER_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1333,7 +1333,7 @@ int cameraParamSpectrumWriteRegister (int userNum, unsigned int offset, unsigned
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(Register Write) Spectrum Parameter Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Save Spectrum UserNum(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1342,7 +1342,7 @@ int cameraParamSpectrumWriteRegister (int userNum, unsigned int offset, unsigned
 	if ((offset + size) > CAMERA_SAVE_SPECTRUM_COMMON_SIZE)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(Register Write) Spectrum Parameter Save Size(0x%x) Parameter Error. (Max:%d)\n", (offset + size), CAMERA_SAVE_SPECTRUM_COMMON_SIZE);
+		sprintf (gLogMsgBuff, "UserSet Save Write Spectrum Save Size(0x%x) Parameter Error.(Max:%d)\n", (offset + size), CAMERA_SAVE_SPECTRUM_COMMON_SIZE);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1421,7 +1421,7 @@ int cameraParamUserMarkClear (int userNum)
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "UserSet Default UserNum(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Default UserNum(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1430,7 +1430,7 @@ int cameraParamUserMarkClear (int userNum)
 	if (gpCameraUserParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "UserSet Default UserNum(%d) NULL Parameter Error\n", userNum);
+		sprintf (gLogMsgBuff, "UserSet Default NULL Parameter Error.\n", userNum);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1473,7 +1473,7 @@ int cameraParamSpectrumMarkClear (int userNum)
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "UserSet Spectrum Mark Clear UserNum(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Spectrum Mark Clear UserNum(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1482,7 +1482,7 @@ int cameraParamSpectrumMarkClear (int userNum)
 	if (gpCameraSpectrumParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "UserSet Spectrum Mark Clear UserNum(%d) NULL Parameter Error\n", userNum);
+		sprintf (gLogMsgBuff, "UserSet Spectrum Mark Clear UserNum(%d) NULL Parameter Error.\n", userNum);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1525,7 +1525,7 @@ int cameraParamCommonMarkClear (void)
 	if (gpCameraCommonParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common Mark Clear) gpCameraUserParameter NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save(Common Mark Clear) gpCameraUserParameter NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1566,7 +1566,7 @@ int cameraParamGetUserAdrs (int userNum, unsigned int **pAdrs)
 	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Camera Save(User Adrs) User Parameter Mode(%d) Parameter Error. (Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
+		sprintf (gLogMsgBuff, "UserSet Save UserNum(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -1575,7 +1575,7 @@ int cameraParamGetUserAdrs (int userNum, unsigned int **pAdrs)
 	if (pAdrs == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(User Adrs) pAdrs NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save pAdrs NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1583,7 +1583,7 @@ int cameraParamGetUserAdrs (int userNum, unsigned int **pAdrs)
 	if (gpCameraUserParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(User Adrs) gpCameraUserParameter NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save gpCameraUserParameter NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1612,7 +1612,7 @@ int cameraParamGetCommonAdrs (unsigned int **pAdrs)
 	if (pAdrs == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common Adrs) pAdrs NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save pAdrs NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1620,7 +1620,7 @@ int cameraParamGetCommonAdrs (unsigned int **pAdrs)
 	if (gpCameraCommonParameter == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Camera Save(Common Adrs) gpCameraUserParameter NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save gpCameraUserParameter NULL Parameter Error.\n");
 		goto _DONE;
 	}
 

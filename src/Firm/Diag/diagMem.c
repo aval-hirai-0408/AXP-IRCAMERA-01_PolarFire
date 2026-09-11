@@ -369,7 +369,7 @@ int cmdDiagMemLong (unsigned int tloop, unsigned int addr, unsigned int size)
 		if (readData1 != (unsigned int)ptr1)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Long Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%08x\nRead  = 0x%08x\n", (unsigned int)ptr1, (unsigned int)ptr1, readData1);
+			sprintf (gLogMsgBuff, "DDR Long Compare Error.\nAdrs = 0x%lx\nWrite = 0x%08x\nRead = 0x%08x\n", (unsigned int)ptr1, (unsigned int)ptr1, readData1);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -378,7 +378,7 @@ int cmdDiagMemLong (unsigned int tloop, unsigned int addr, unsigned int size)
 		if (readData2 != (unsigned int)ptr2)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Long Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%08x\nRead  = 0x%08x\n", (unsigned int)ptr2, (unsigned int)ptr2, readData2);
+			sprintf (gLogMsgBuff, "DDR Long Compare Error.\nAdrs = 0x%lx\nWrite = 0x%08x\nRead = 0x%08x\n", (unsigned int)ptr2, (unsigned int)ptr2, readData2);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -449,7 +449,7 @@ int cmdDiagMemLong (unsigned int tloop, unsigned int addr, unsigned int size)
 		if (readData1 != ~(unsigned int)ptr1)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Long Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%08x\nRead  = 0x%08x\n", (unsigned int)ptr1, ~(unsigned int)ptr1, readData1);
+			sprintf (gLogMsgBuff, "DDR Long Compare Error.\nAdrs = 0x%lx\nWrite = 0x%08x\nRead = 0x%08x\n", (unsigned int)ptr1, ~(unsigned int)ptr1, readData1);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -458,7 +458,7 @@ int cmdDiagMemLong (unsigned int tloop, unsigned int addr, unsigned int size)
 		if (readData2 != ~(unsigned int)ptr2)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Long Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%08x\nRead  = 0x%08x\n", (unsigned int)ptr2, ~(unsigned int)ptr2, readData2);
+			sprintf (gLogMsgBuff, "DDR Long Compare Error.\nAdrs = 0x%lx\nWrite = 0x%08x\nRead = 0x%08x\n", (unsigned int)ptr2, ~(unsigned int)ptr2, readData2);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -557,7 +557,7 @@ int cmdDiagMemWord (unsigned int tloop, unsigned int addr, unsigned int size)
 		if (readData1 != data1)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Word Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%04x\nRead  = 0x%04x\n", (unsigned int)ptr1, data1, readData1);
+			sprintf (gLogMsgBuff, "DDR Word Compare Error.\nAdrs = 0x%lx\nWrite = 0x%04x\nRead = 0x%04x\n", (unsigned int)ptr1, data1, readData1);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -566,7 +566,7 @@ int cmdDiagMemWord (unsigned int tloop, unsigned int addr, unsigned int size)
 		if (readData2 != data2)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Word Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%04x\nRead  = 0x%04x\n", (unsigned int)ptr2, data2, readData2);
+			sprintf (gLogMsgBuff, "DDR Word Compare Error.\nAdrs = 0x%lx\nWrite = 0x%04x\nRead = 0x%04x\n", (unsigned int)ptr2, data2, readData2);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -640,7 +640,7 @@ int cmdDiagMemWord (unsigned int tloop, unsigned int addr, unsigned int size)
 		if (readData1 != (unsigned short)~data1)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Word Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%04x\nRead  = 0x%04x\n", (unsigned int)ptr1, ~data1, readData1);
+			sprintf (gLogMsgBuff, "DDR Word Compare Error.\nAdrs = 0x%lx\nWrite = 0x%04x\nRead = 0x%04x\n", (unsigned int)ptr1, ~data1, readData1);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -649,7 +649,7 @@ int cmdDiagMemWord (unsigned int tloop, unsigned int addr, unsigned int size)
 		if (readData2 != (unsigned short)~data2)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Word Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%04x\nRead  = 0x%04x\n", (unsigned int)ptr2, ~data2, readData2);
+			sprintf (gLogMsgBuff, "DDR Word Compare Error.\nAdrs = 0x%lx\nWrite = 0x%04x\nRead = 0x%04x\n", (unsigned int)ptr2, ~data2, readData2);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -750,7 +750,7 @@ int cmdDiagMemByte (unsigned int tloop, unsigned int addr, unsigned int size)
 		if (readData1 != data1)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Byte Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%02x\nRead  = 0x%02x\n", (unsigned int)ptr1, data1, readData1);
+			sprintf (gLogMsgBuff, "DDR Byte Compare Error.\nAdrs = 0x%lx\nWrite = 0x%02x\nRead = 0x%02x\n", (unsigned int)ptr1, data1, readData1);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -759,7 +759,7 @@ int cmdDiagMemByte (unsigned int tloop, unsigned int addr, unsigned int size)
 		if (readData2 != data2)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Byte Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%02x\nRead  = 0x%02x\n", (unsigned int)ptr2, data2, readData2);
+			sprintf (gLogMsgBuff, "DDR Byte Compare Error.\nAdrs = 0x%lx\nWrite = 0x%02x\nRead = 0x%02x\n", (unsigned int)ptr2, data2, readData2);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -831,7 +831,7 @@ int cmdDiagMemByte (unsigned int tloop, unsigned int addr, unsigned int size)
 		if (readData1 != data1)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Byte Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%02x\nRead  = 0x%02x\n", (unsigned int)ptr1, data1, readData1);
+			sprintf (gLogMsgBuff, "DDR Byte Compare Error.\nAdrs = 0x%lx\nWrite = 0x%02x\nRead = 0x%02x\n", (unsigned int)ptr1, data1, readData1);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -840,7 +840,7 @@ int cmdDiagMemByte (unsigned int tloop, unsigned int addr, unsigned int size)
 		if (readData2 != data2)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Byte Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%02x\nRead  = 0x%02x\n", (unsigned int)ptr2, data2, readData2);
+			sprintf (gLogMsgBuff, "DDR Byte Compare Error.\nAdrs = 0x%lx\nWrite = 0x%02x\nRead = 0x%02x\n", (unsigned int)ptr2, data2, readData2);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -941,7 +941,7 @@ int cmdDiagMemLongShift (unsigned int tloop, unsigned int addr, unsigned int siz
 		readData = *ptr1;
 		if (readData != (unsigned int)shiftData)
 		{
-			sprintf (gLogMsgBuff, "DDR Long Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%08x\nRead  = 0x%08x\n", (unsigned int)ptr1, shiftData, readData);
+			sprintf (gLogMsgBuff, "DDR Long Compare Error.\nAdrs = 0x%lx\nWrite = 0x%08x\nRead = 0x%08x\n", (unsigned int)ptr1, shiftData, readData);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1018,7 +1018,7 @@ int cmdDiagMemLongShift (unsigned int tloop, unsigned int addr, unsigned int siz
 		readData = *ptr1;
 		if (readData != (unsigned int)~shiftData)
 		{
-			sprintf (gLogMsgBuff, "DDR Long Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%08x\nRead  = 0x%08x\n", (unsigned int)ptr1, ~shiftData, readData);
+			sprintf (gLogMsgBuff, "DDR Long Compare Error.\nAdrs = 0x%lx\nWrite = 0x%08x\nRead = 0x%08x\n", (unsigned int)ptr1, ~shiftData, readData);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1074,7 +1074,7 @@ int cmdDiagMemDataLine (unsigned int bus)
 		if (testData != readData)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Data Line Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%08x\nRead  = 0x%08x\n", (unsigned int)(baseAddr+addr), (unsigned long long)testData, readData);
+			sprintf (gLogMsgBuff, "DDR Data Line Compare Error.\nAdrs = 0x%lx\nWrite = 0x%08x\nRead = 0x%08x\n", (unsigned int)(baseAddr+addr), (unsigned long long)testData, readData);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1144,7 +1144,7 @@ int cmdDiagMemCAS (unsigned int cas)
 		if(readData != testData)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Data Line Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%08x\nRead  = 0x%08x\n", (unsigned int)(baseAddr+addr), (unsigned long long)testData, readData);
+			sprintf (gLogMsgBuff, "DDR Data Line Compare Error.\nAdrs = 0x%lx\nWrite = 0x%08x\nRead = 0x%08x\n", (unsigned int)(baseAddr+addr), (unsigned long long)testData, readData);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1211,7 +1211,7 @@ int cmdDiagMemRAS(unsigned int cas, unsigned int ras)
 		if(readData != testData)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Data Line Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%08x\nRead  = 0x%08x\n", (unsigned int)(baseAddr+addr), (unsigned long long)testData, readData);
+			sprintf (gLogMsgBuff, "DDR Data Line Compare Error.\nAdrs = 0x%lx\nWrite = 0x%08x\nRead = 0x%08x\n", (unsigned int)(baseAddr+addr), (unsigned long long)testData, readData);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1283,7 +1283,7 @@ int cmdDiagMemBank (unsigned int bank)
 		if(readData != testData)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "DDR Data Line Compare Error.\nAdrs  = 0x%lx\nWrite = 0x%08x\nRead  = 0x%08x\n", (unsigned int)(baseAddr+addr), (unsigned long long)testData, readData);
+			sprintf (gLogMsgBuff, "DDR Data Line Compare Error.\nAdrs = 0x%lx\nWrite = 0x%08x\nRead = 0x%08x\n", (unsigned int)(baseAddr+addr), (unsigned long long)testData, readData);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__,  __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -1334,7 +1334,7 @@ int diagDdrGetMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Diag Ddr pMode Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Diag Ddr pMode Parameter Error.\n");
 		goto _DONE;
 	}
 

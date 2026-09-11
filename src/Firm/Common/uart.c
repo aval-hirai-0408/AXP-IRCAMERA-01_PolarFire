@@ -193,7 +193,7 @@ _DONE:
 //	UART受信ハンドラ
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
-//		pDrvInfo				：ドライバ情報を格納するポインタ
+//		-
 //	[ OUTPUT ]
 //		受信データ数
 //==================================================================================
@@ -290,7 +290,7 @@ int uartRecv (int port, unsigned char *pBuffer, int size)
 	if (pBuffer == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_UART, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UART Recv Buff pBuffer NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UART Recv Buff pBuffer NULL Parameter Error.\n");
 		return (status);
 	}
 
@@ -368,7 +368,7 @@ int uartSend (int port, unsigned char *pBuffer, int size)
 	if (pBuffer == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_UART, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UART Send Buff pBuffer NULL Parameter Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UART Send Buff pBuffer NULL Parameter Error.\n");
 		return (status);
 	}
 

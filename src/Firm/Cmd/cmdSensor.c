@@ -1336,6 +1336,9 @@ int cmdSensorVirtualHeightHelp (void *str)
 }
 #endif // #if defined (MODE_FRAMERATE_HIGH_SPEED)
 
+//@@@1
+extern int gDebugAAA;
+//@@@1
 
 //**********************************************************************************
 //	Sensor Standby
@@ -1375,6 +1378,9 @@ int cmdSensorStandby (void *str)
 			goto _DONE;
 		}
 
+		gDebugAAA = mode;	//@@@1
+		
+		#if 0	//@@@1
 		if (mode == 0)
 		{
 			// Standby Cancel
@@ -1387,6 +1393,7 @@ int cmdSensorStandby (void *str)
 			if ((status = sensorStandBy ()) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
 		}
+		#endif //@@@1
 	}
 	else
 	{
