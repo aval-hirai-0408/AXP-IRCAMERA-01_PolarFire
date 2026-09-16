@@ -122,10 +122,6 @@ extern miv_plic_instance_t g_plic;
 //----------------------------------------------------------------------------------
 // Function Define
 //----------------------------------------------------------------------------------
-#if defined(MODE_CAMERA_INTERRUPT)
-static void user_event_callback_cxp (u32 event_mask); // Add: an interruption of critical events [Masahide: 8th May 2019]
-#endif
-
 extern int ElectricalComplianceTest_st;
 
 //@@@@@@@@@@
@@ -532,8 +528,6 @@ int cxpUserInit (void)
 		memset((void*) gXmlFileName2, 0, CXP_XML_URL_SIZE);
 	}
 
-
-//@@@@@@@@@@@@@@@@@@
 	{
 	unsigned int data, wsize;
 
@@ -570,7 +564,6 @@ int cxpUserInit (void)
 	//data |= wsize;
 	//OUT32((CORECXP2_BASE_ADDR+0x08), data);
 	}
-//@@@@@@@@@@@@@@@@@@
 
 	DEBUG_PRINT_FORCE("@@@1\n")	;
 	
@@ -646,15 +639,6 @@ int cxpUserInit (void)
 	}
 
 	DEBUG_PRINT_FORCE("@@@2\n")	;
-
-	//------------------------------------------------------------
-	// Register Callback
-	//------------------------------------------------------------
-#if defined(MODE_CAMERA_INTERRUPT)
-	status = cameraIntRegister((p_user_event_callback)user_event_callback_cxp);
-#endif // #if defined(MODE_CAMERA_INTERRUPT)
-
-	DEBUG_PRINT_FORCE("@@@3\n")	;
 
 	return (status);
 }
@@ -892,22 +876,6 @@ _DONE:
 
 
 //**********************************************************************************
-//	User callback function
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-#if defined(MODE_CAMERA_INTERRUPT)
-static void user_event_callback_cxp (u32 event_mask)
-{
-}
-#endif //#if defined(MODE_CAMERA_INTERRUPT)
-
-
-//**********************************************************************************
 //	CXP Packet Recive Interrupt
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
@@ -990,7 +958,6 @@ int cxpSetRecvIntMode (int mode)
 _DONE:
 	return (status);
 }
-
 
 #endif // #if defined (IF_CXP)
 

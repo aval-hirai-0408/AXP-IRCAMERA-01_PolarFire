@@ -1002,7 +1002,7 @@ int cmdDiagTimer (void *str)
 		// タイマカウンタ初期化
 		timerSetSec (0);
 		timerSetMs (0);
-		timerStart ();
+		//timerStart ();
 
 		while (1)
 		{

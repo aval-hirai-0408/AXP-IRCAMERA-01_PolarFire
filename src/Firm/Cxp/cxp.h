@@ -48,23 +48,10 @@
 
 
 //----------------------------------------------------------------------------------
-// ACB-531 Register
+// CoaXPress
 //----------------------------------------------------------------------------------
-#define CXP_REG_VERSION_ADRS				(FPGA_CXP_PF_BASE_ADRS + 0x00)
-#define CXP_REG_RC_INDEX_ADRS				(FPGA_CXP_PF_BASE_ADRS + 0x05)
-	#define CXP_REG_RC_INDEX				(2)
-#define CXP_REG_RC_TRG_ADRS					(FPGA_CXP_PF_BASE_ADRS + 0x06)
-#define CXP_REG_I2C_RC_TRG_ADRS				(0x06)
-	#define CXP_REG_RC_TRG					(1)
-#define CXP_REG_CXP_CTRL_ADRS				(FPGA_CXP_PF_BASE_ADRS + 0x0c)
-	#define CXP_REG_CXP_CH1_PWR_CTRL_BIT	(1<<0)
-	#define CXP_REG_CXP_CH1_PWR_AUTO_BIT	(1<<1)
-	#define CXP_REG_CXP_CH2_PWR_CTRL_BIT	(1<<4)
-	#define CXP_REG_CXP_CH2_PWR_AUTO_BIT	(1<<5)
-	#define CXP_REG_CXP_EXP_PWR_BIT			(1<<30)
-	#define CXP_REG_CXP_IF_PWR_BIT			(1<<31)
-#define CXP_REG_DRI_CTRLADRS				(FPGA_CXP_PF_BASE_ADRS + 0x40)
-//@@@1#define CXP_REG_DRI_CTRLADRS				(FPGA_CXP_BASE_ADDR + 0x04)
+#define CXP_REG_VERSION_ADRS				(FPGA_CXP_BASE_ADDR + 0x00)
+#define CXP_REG_DRI_CTRLADRS				(FPGA_CXP_BASE_ADDR + 0x04)
 	#define CXP_REG_DRI_CTRL_1_25G			(0x00)
 	#define CXP_REG_DRI_CTRL_2_5G			(0x01)
 	#define CXP_REG_DRI_CTRL_3_125G			(0x02)

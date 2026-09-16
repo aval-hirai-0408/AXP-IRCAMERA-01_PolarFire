@@ -1534,6 +1534,13 @@ int autoBrightGetHeightOffset (int *pOffset);
 int autoBrightSetTargetArea (int area);
 int autoBrightGetTargetArea (int *area);
 
+// asm.c
+void cpu_wfi (void);
+void enable_global_irq (void);
+void disable_global_irq (void);
+void irq_restore_Mie (uintptr_t old_mstatus);
+uintptr_t irq_save_disable_Mie (void);
+
 // board.c
 int cameraInformationInitialize (void);
 int getSpectrumType (int *pType);
@@ -1658,8 +1665,6 @@ int cxpSetRecvIntMode (int mode);
 int cxpInitialize (void);
 int cxpInitialize2 (void);
 int cxpInitializeImageParam (void);
-int cxpRegWrite (int port, unsigned long adrs, unsigned int data, unsigned int size);
-int cxpRegRead (int port, unsigned long adrs, unsigned int *pData, unsigned int size);
 int cxpProcs (int port);
 int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt);
 int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt);
@@ -1679,11 +1684,10 @@ int cxpSetCmdMode (int mode);
 int cxpGetCmdMode (int *pMode);
 int cxpGetFifoCount (unsigned int *pCount);
 int cxpSendTestPacketAckCmd (unsigned int size);
-int cxpReadFifo (int port, unsigned int *pData, int *pKcode);
 int cxpSendBuffer (int port, unsigned int data);
 int cxpGetSendCurrentAdrs (int port, unsigned int *pAdrs);
 int cxpGetRecvCurrentAdrs (int port, unsigned int *pAdrs);
-int cxpRecvBuffer (int port, unsigned char data);
+int cxpRecvBuffer (int port, unsigned int data);
 int cxpGetSendCount (unsigned int *pData);
 int cxpGetFifoSizeCount (int port, unsigned int *pCount);
 int cxpCheckFpgaMemAdrs (unsigned int *pAdrs, unsigned int size);
@@ -1704,7 +1708,6 @@ int cxpDownloadBuffer (unsigned int adrs, unsigned char *pData, unsigned int siz
 int cxpUploadBuffer (unsigned int adrs, unsigned char *pData, unsigned int size);
 int cxpUpdateIfFpga (unsigned int flashAdrs, unsigned char *pData, unsigned int size);
 int cxpGetCableConnection (int port, int *pMode);
-int cxpRestTestPacketRxCount (int port);
 int cxpGetTestPacketRxCount (int port, unsigned long long *pData);
 int cxpGetTestPacketTxCount (int port, unsigned long long *pData);
 int cxpGetTestPacketErrCount (int port, unsigned int *pData);

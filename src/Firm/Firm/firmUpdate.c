@@ -663,7 +663,7 @@ int fpgaUpdatePolarFireReconfig (void)
 	int status = AVAL_STATUS_SUCCESS;
 	int i;
 	unsigned char data;
-
+#if 0	//@@@1
 	// PolarFire リコンフィグIndex設定
 	if ((status = cxpRegWrite (0, CXP_REG_RC_INDEX_ADRS, CXP_REG_RC_INDEX, 1))!= AVAL_STATUS_SUCCESS)
 	{
@@ -691,6 +691,7 @@ int fpgaUpdatePolarFireReconfig (void)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface FPGA Update Timeout Erro.r\n");
 		goto _DONE;
 	}
+#endif //@@1
 
 _DONE:
 	return (status);

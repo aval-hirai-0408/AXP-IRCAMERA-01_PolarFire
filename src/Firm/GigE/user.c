@@ -776,7 +776,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// 露光時間(us単位)取得
 		//----------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_EXPOSURE_ADRS:
-			*status = toG (acquisitionGetExposure ((unsigned int*) &value));
+			//@@@*status = toG (acquisitionGetExposure ((unsigned int*) &value));
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -804,7 +804,8 @@ u32 get_user_reg (u32 address, u16 *status)
 		// ExposureMode取得
 		//----------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_EXPOSURE_MODE_ADRS:
-			*status = toG (acquisitionGetExposureMode ((int*) &value));
+			//@@@1*status = toG (acquisitionGetExposureMode ((int*) &value));
+			value = 0;
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -4930,6 +4931,9 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// PixelFormat設定
 		//--------------------------------------------------------------------------------
 		case FPGA_AOI_BITWIDTH_ADRS:
+			//@@@1
+			break;
+			//@@@1
 			switch (value)
 			{
 				case GVSP_PIX_MONO14:
@@ -5088,7 +5092,8 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// ExposureTime 露光時間(us単位)設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_EXPOSURE_ADRS:
-			*status = toG(acquisitionSetExposure((unsigned int) value));
+			//@@1*status = toG(acquisitionSetExposure((unsigned int) value));
+			value = 10000;	//@@@1
 
 			// フレームレートを正式に変更してきたので、以下領域はクリア
 			// この領域がクリアされるまでは、CXPのConnectionConfigの
@@ -5117,7 +5122,8 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// ExposureMode設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_EXPOSURE_MODE_ADRS:
-			*status = toG(acquisitionSetExposureMode((unsigned int) value));
+			//@@@1*status = toG(acquisitionSetExposureMode((unsigned int) value));
+			value = 0; //@@@1
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -10343,7 +10349,6 @@ void user_userid_init(u32* status)
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-
 void user_info_get(u8* strVendor, u8* strModel, u8* strManufacturer)
 {
 	//unsigned int regAddress32 = 0;
@@ -10359,7 +10364,7 @@ void user_info_get(u8* strVendor, u8* strModel, u8* strManufacturer)
 	{
 		memset((void*) strVendor, 0, GIGE_EEPROM_CUST_VENDOR_SIZE);
 		memcpy((void*) strVendor, (void*) FIRM_DATA_VENDOR_ADRS, GIGE_EEPROM_CUST_VENDOR_SIZE);
-		DEBUG_PRINT("%s Vendor: %s\r\n", GIGE_EEPROM_OUT,(char*) strVendor);
+		//DEBUG_PRINT("%s Vendor: %s\r\n", GIGE_EEPROM_OUT,(char*) strVendor);
 	}
 
 	//---------------------------------------------------------------

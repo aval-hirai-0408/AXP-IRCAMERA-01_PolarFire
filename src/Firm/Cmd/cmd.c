@@ -355,7 +355,8 @@ void cmdCharGet (char *buff)
 	int port = 0;
 	unsigned int fiftCount;
 	unsigned int linkStatus;
-
+	uintptr_t old_mstatus;
+	
 	for (i=0; i<(CONSOLE_BUFF_SIZE-1); )
 	{
 		while (1)
@@ -386,7 +387,7 @@ void cmdCharGet (char *buff)
 				//------------------------------------------------------------
 				// CXPコマンド処理
 				//------------------------------------------------------------
-				
+
 				// FIFOデータ数確認
 				if (cxpGetFifoSizeCount (port, &fiftCount) == AVAL_STATUS_SUCCESS)
 				{
@@ -422,14 +423,64 @@ void cmdCharGet (char *buff)
 					break;
 			}
 
+			#if 0
+			#if 0
 			//------------------------------------------------------------
 			// Sleep
 			//------------------------------------------------------------
-			if (cxpGetFifoSizeCount (port, &fiftCount) != AVAL_STATUS_SUCCESS)
-				fiftCount = 0;
+			if (cxpGetReadFifoStatus (port, &fiftCount) != AVAL_STATUS_SUCCESS)
+				fiftCount = 1;
+			
+			//fiftCount = IN32 (FPGA_CXP_LSUC_RX_SW_PKT_STATUS_ADRS) & FPGA_CXP_LSUC_RX_SW_PKT_VAL_BIT;
+
+			if (fiftCount == 0)
+			{
+				wfi ();   // sleep
+			}
+			#else
+			
+			//------------------------------------------------------------
+			// Sleep
+			//------------------------------------------------------------
+			
+			// Disable IRQ
+			disable_global_irq ();
+
+			// Get Fifo Status
+			if (cxpGetReadFifoStatus (port, &fiftCount) != AVAL_STATUS_SUCCESS)
+				fiftCount = 1;
 			
 			if (fiftCount == 0)
-				wfi ();   // sleep
+			{
+				// Sleep
+				cpu_wfi();
+			}
+			
+			// Enable Enable
+			enable_global_irq ();
+
+			#endif
+			#endif
+
+			//------------------------------------------------------------
+			// Sleep
+			//------------------------------------------------------------
+			
+			// Disable IRQ
+			old_mstatus = irq_save_disable_Mie ();
+
+			// Get Fifo Status
+			if (cxpGetReadFifoStatus (port, &fiftCount) != AVAL_STATUS_SUCCESS)
+				fiftCount = 1;
+			
+			if (fiftCount == 0)
+			{
+				// Sleep
+				cpu_wfi();
+			}
+			
+			// Enable Enable
+			irq_restore_Mie (old_mstatus);
 		}
 
 		//------------------------------------------------------------
