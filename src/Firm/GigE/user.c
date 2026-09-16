@@ -10351,11 +10351,6 @@ void user_userid_init(u32* status)
 //==================================================================================
 void user_info_get(u8* strVendor, u8* strModel, u8* strManufacturer)
 {
-	//unsigned int regAddress32 = 0;
-	int value = 0;
-
-	consoleGetMode (&value);
-
 	//---------------------------------------------------------------
 	//
 	// Reads the DeviceVendorName in the eeprom on the I2C bus via GigE IP Core
@@ -10375,7 +10370,7 @@ void user_info_get(u8* strVendor, u8* strModel, u8* strManufacturer)
 	{
 		memset((void*) strModel, 0, GIGE_EEPROM_CUST_MODEL_SIZE);
 		memcpy((void*) strModel, (void*) FIRM_DATA_MODEL_ADRS, GIGE_EEPROM_CUST_MODEL_SIZE);
-		DEBUG_PRINT("%s Model: %s\r\n", GIGE_EEPROM_OUT, (char*) strModel);
+		//DEBUG_PRINT("%s Model: %s\r\n", GIGE_EEPROM_OUT, (char*) strModel);
 	}
 
 	//---------------------------------------------------------------
@@ -10386,7 +10381,7 @@ void user_info_get(u8* strVendor, u8* strModel, u8* strManufacturer)
 	{
 		memset((void*) strManufacturer, 0, GIGE_EEPROM_CUST_MANUFACTURER_SIZE);
 		memcpy((void*) strManufacturer, (void*) FIRM_DATA_MANUFACTURE_ADRS, GIGE_EEPROM_CUST_MANUFACTURER_SIZE);
-		DEBUG_PRINT("%s Manufacture: %s\r\n", GIGE_EEPROM_OUT,(char*) strManufacturer);
+		//DEBUG_PRINT("%s Manufacture: %s\r\n", GIGE_EEPROM_OUT,(char*) strManufacturer);
 	}
 }
 
