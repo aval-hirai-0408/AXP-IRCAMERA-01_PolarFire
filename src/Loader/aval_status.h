@@ -69,8 +69,7 @@
 //============================================================================
 #define AVAL_STATUS_INTC				(-1)  // Interrupt Controller
 #define AVAL_STATUS_TIMER				(-2)  // Timer Controller
-#define AVAL_STATUS_QSPI_FLASH			(-3)  // QSPI Flash Controller
-#define AVAL_STATUS_AXI_QSPI_FLASH		(-4)  // AXI QSPI Flash Controller
+#define AVAL_STATUS_FLASH				(-3)  // Flash Controller
 #define AVAL_STATUS_DMA					(-7)  // DMA Controller
 #define AVAL_STATUS_PELTIER				(-8)  // Pelter Controller
 #define AVAL_STATUS_BOARD				(-11) // Board Function

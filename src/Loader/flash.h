@@ -7,7 +7,7 @@
 // The distribution policy is described in the file "COPYING"
 // furnished with this package.
 //
-// qspiFlash.h - QSPI Flash Program Header
+// flash.h - Flash Program Header
 //**********************************************************************************
 
 #ifndef __QSPI_FLASH_H__

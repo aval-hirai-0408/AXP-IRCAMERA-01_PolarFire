@@ -28,7 +28,8 @@ int gQspiFlashStatus = 0;
 int gQspiFlashSelect = -1;
 
 // Buffer
-unsigned char QspiFlashWriteBuffer[(QSPI_FLASH_BUFFER_SIZE+4)];	// Writeコマンド用に+4
+//unsigned char QspiFlashWriteBuffer[(QSPI_FLASH_BUFFER_SIZE+4)];	// Writeコマンド用に+4
+unsigned int QspiFlashWriteBuffer[((QSPI_FLASH_BUFFER_SIZE/4)+1)];	// Writeコマンド用に+4
 
 // Instance
 spi_instance_t g_flash_core_spi; 

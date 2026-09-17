@@ -224,95 +224,6 @@
 
 
 //----------------------------------------------------------------------
-// CXP
-//----------------------------------------------------------------------
-#define FPGA_CXP_ADRS												(CORECXP_BASE_ADDR)
-#define FPGA_CXP_IP_ADRS											(CORECXP_BASE_ADDR)
-#define FPGA_CXP_PF_ADRS											(CORECXP_BASE_ADDR+0x00100000)
-
-#define FPGA_CXP_LSUC_SPEED_MODE_ADRS								(FPGA_CXP_IP_ADRS + 0x00)
-#define FPGA_CXP_LSUC_SW_TX_PKT_DATA_ADRS							(FPGA_CXP_IP_ADRS + 0x08)
-#define FPGA_CXP_LSUC_RX_SW_PKT_STATUS_ADRS							(FPGA_CXP_IP_ADRS + 0x0C)
-	#define FPGA_CXP_LSUC_RX_SW_PKT_VAL_BIT							(1<<0)
-	#define FPGA_CXP_LSUC_RX_SW_PKT_FIFI_EMPTY_BIT					(1<<4)
-	#define FPGA_CXP_HSDC_TX_READY_BIT								(1<<8)
-	#define CXP_TX_READY_TIMEOUT									(5000000)
-#define FPGA_CXP_LSUC_SW_RX_PKT_DATA_ADRS							(FPGA_CXP_IP_ADRS + 0x10)
-
-#define FPGA_CXP_LSUC_TX_TEST_MODE_ADRS								(FPGA_CXP_IP_ADRS + 0x20)
-	#define FPGA_CXP_LSUC_TX_TEST_EN								(1<<0)
-#define FPGA_CXP_LSUC_TX_TEST_NUM_ADRS								(FPGA_CXP_IP_ADRS + 0x24)
-#define FPGA_CXP_LSUC_RX_TEST_NUM_ADRS								(FPGA_CXP_IP_ADRS + 0x28)
-#define FPGA_CXP_LSUC_RX_ERR_TEST_NUM_ADRS							(FPGA_CXP_IP_ADRS + 0x2C)
-
-#define FPGA_CXP_HSDC_HB_EN_ADRS									(FPGA_CXP_IP_ADRS + 0x30)
-#define FPGA_CXP_HSDC_HB_ID_ADRS									(FPGA_CXP_IP_ADRS + 0x34)
-#define FPGA_CXP_S0_FLAG_SID_MZXSIZE_ADRS							(FPGA_CXP_IP_ADRS + 0x40)
-	#define FPGA_CXP_S0_SID_MASK									(0xff)
-#define FPGA_CXP_S0_XSIZE_OFFSET_ADRS								(FPGA_CXP_IP_ADRS + 0x44)
-#define FPGA_CXP_S0_YSIZE_OFFSET_ADRS								(FPGA_CXP_IP_ADRS + 0x48)
-#define FPGA_CXP_S0_DSIZE_ADRS										(FPGA_CXP_IP_ADRS + 0x4C)
-#define FPGA_CXP_S0_TAPG_PIXEL_ADRS									(FPGA_CXP_IP_ADRS + 0x50)
-#define FPGA_CXP_S0_STREAM_EN_ADRS									(FPGA_CXP_IP_ADRS + 0x54)
-
-
-#define FPGA_CXP_REGISTER_PORT_INTERVAL								(0x40)
-
- #define FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS								(FPGA_CXP_ADRS + 0x00)
-	#define FPGA_CXP_RX_CMD_FIFO_CTRL_RESET							(1<<31)
-	#define FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE						(1<<4)
-	#define FPGA_CXP_RX_CMD_FIFO_CTRL_READ_ACK						(1<<0)
- #define FPGA_CXP_RX_CMD_FIFO_STATUS_ADRS							(FPGA_CXP_ADRS + 0x04)
-	#define FPGA_CXP_RX_CMD_FIFO_STATUS_ERROR						(1<<2)
-	#define FPGA_CXP_RX_CMD_FIFO_STATUS_BUSY						(1<<1)
-	#define FPGA_CXP_RX_CMD_FIFO_STATUS_EMPTY						(1<<0)
- #define FPGA_CXP_RX_CMD_FIFO_DATA_ADRS								(FPGA_CXP_ADRS + 0x08)
-	#define FPGA_CXP_RX_CMD_FIFO_DISP_ERROR							(1<<10)
-	#define FPGA_CXP_RX_CMD_FIFO_CODE_ERROR							(1<<9)
-	#define FPGA_CXP_RX_CMD_FIFO_K_MASK								(1<<8)
-	#define FPGA_CXP_RX_CMD_FIFO_DATA_MASK							(0xff)
- #define FPGA_CXP_RX_CMD_FIFO_COUNT_ADRS							(FPGA_CXP_ADRS + 0x0C)
-	#define FPGA_CXP_RX_CMD_FIFO_COUNT_MASK							(0x1ff)
- #define FPGA_CXP_RX_CMD_FIFO_SIZE_CTRL_ADRS						(FPGA_CXP_ADRS + 0x10)
-	#define FPGA_CXP_RX_CMD_FIFO_SIZE_READ_ACK						(1<<0)
- #define FPGA_CXP_RX_CMD_FIFO_SIZE_STATUS_ADRS						(FPGA_CXP_ADRS + 0x14)
- 	#define FPGA_CXP_RX_CMD_FIFO_SIZE_STATUS_TIMEOUT				(1<<3)
-	#define FPGA_CXP_RX_CMD_FIFO_SIZE_STATUS_EMPTY					(1<<0)
-	#define FPGA_CXP_RX_CMD_FIFO_SIZE_STATUS_COUNT_MASK2			(0x1ff0000)
-	#define FPGA_CXP_RX_CMD_FIFO_SIZE_STATUS_COUNT_MASK				(0x1ff)
-	#define FPGA_CXP_RX_CMD_FIFO_SIZE_STATUS_COUNT_SHIFT			(16)
- #define FPGA_CXP_RX_CMD_FIFO_SIZE_COUNT_ADRS						(FPGA_CXP_ADRS + 0x18)
-	#define FPGA_CXP_RX_CMD_FIFO_SIZE_COUNT_MASK					(0x1ff)
- #define FPGA_CXP_RX_CMD_FIFO_SIZE_DATA_ADRS						(FPGA_CXP_ADRS + 0x1C)
-	#define FPGA_CXP_RX_CMD_FIFO_SIZE_DATA_MASK						(0x1ff)
- 
- #define FPGA_CXP_TX_CMD_FIFO_CTRL_ADRS								(FPGA_CXP_ADRS + 0x20)
-	#define FPGA_CXP_TX_CMD_FIFO_CTRL_RESET							(1<<31)
-	#define FPGA_CXP_TX_CMD_FIFO_CTRL_ENABLE						(1<<4)
-	#define FPGA_CXP_TX_CMD_FIFO_CTRL_START							(1<<0)
- #define FPGA_CXP_TX_CMD_FIFO_STATUS_ADRS							(FPGA_CXP_ADRS + 0x24)
-	#define FPGA_CXP_TX_CMD_FIFO_STATUS_EMPTY						(1<<0)
- #define FPGA_CXP_TX_CMD_FIFO_DATA_ADRS								(FPGA_CXP_ADRS + 0x28)
- #define FPGA_CXP_TX_CMD_FIFO_COUNT_ADRS							(FPGA_CXP_ADRS + 0x2c)
- #define FPGA_CXP_LINK_STATUS_ADRS									(FPGA_CXP_ADRS + 0x30)
-	#define FPGA_CXP_LINK_STATUS_CONNECTION							(1<<0)
- #define FPGA_CXP_LSUC_CTRL_ADRS									(FPGA_CXP_ADRS + 0x34)
-	#define FPGA_CXP_LSUC_LINK_SPEED_41M							(1<<0)
-
- #define FPGA_CXP_LINK_TEST_CTRL_ADRS								(FPGA_CXP_ADRS + 0x40)
-	#define FPGA_CXP_LINK_TEST_CTRL_RESET							(1<<0)
- #define FPGA_CXP_LINK_TEST_RX_COUNT_ADRS							(FPGA_CXP_ADRS + 0x44)
- #define FPGA_CXP_LINK_TEST_ERR_COUNT_ADRS							(FPGA_CXP_ADRS + 0x4C)
-
- #define FPGA_CXP_TRG_CTRL_ADRS										(FPGA_CXP_ADRS + 0x70)
-	#define FPGA_CXP_TRG_CTRL_RESET									(1<<0)
- #define FPGA_CXP_TRG_GPIO_STATUS_ADRS								(FPGA_CXP_ADRS + 0x74)
-	 #define FPGA_CXP_TRG_GPIO_STATUS_MASK							(0x0f)
- #define FPGA_CXP_TRG_H_COUNT_ADRS									(FPGA_CXP_ADRS + 0x78)
- #define FPGA_CXP_TRG_L_COUNT_ADRS									(FPGA_CXP_ADRS + 0x7C)
-
-
-//----------------------------------------------------------------------
 // GPIO
 //----------------------------------------------------------------------
 #define FPGA_GPIO_ADRS												(FPGA_BASE_ADRS+0x02000000)
@@ -702,6 +613,7 @@
  #define FPGA_DPC_DIV_FIFO_CTRL_ADRS								(FPGA_DPC_ADRS+0x124)
  #define FPGA_DPC_MEM_ADRS											(FPGA_DPC_ADRS+0x800)
 
+
 //----------------------------------------------------------------------
 // DPC2
 //----------------------------------------------------------------------
@@ -954,38 +866,6 @@
 	#define FPGA_XFLIP_DISABLE_BIT 									(0<<0)
 	#define XFLIP_ENABLE											(1)
 	#define XFLIP_DISABLE											(0)
-	#define FPGA_YFLIP_ENABLE_BIT 									(1<<31)
-	#define FPGA_YFLIP_DISABLE_BIT 									(0<<31)
-	#define YFLIP_ENABLE											(1)
-	#define YFLIP_DISABLE											(0)
-#define FPGA_YFILTER_CTRL_ADRS										(FPGA_AOI_ADRS+0x80)
-	#define YFILTER_UPDATE_BIT										(1<<0)
-	#define YFILTER_ENABLE_BIT										(1<<2)
-	#define YFILTER_ENABLE 											(1)
-	#define YFILTER_DISABLE											(0)
-#define FPGA_YFILTER_TOP_ADRS										(FPGA_AOI_ADRS+0x84)
-	#define YFILTER_TOP_MIN											(0)
-	#define YFILTER_TOP_MAX											(1024)
-#define FPGA_YFILTER_CENTER_ADRS									(FPGA_AOI_ADRS+0x88)
-	#define YFILTER_CENTER_MIN										(0)
-	#define YFILTER_CENTER_MAX										(1024)
-#define FPGA_YFILTER_BOTTOM_ADRS									(FPGA_AOI_ADRS+0x8c)
-	#define YFILTER_BOTTOM_MIN										(0)
-	#define YFILTER_BOTTOM_MAX										(1024)
-#define FPGA_XFILTER_CTRL_ADRS										(FPGA_AOI_ADRS+0x90)
-	#define XFILTER_UPDATE_BIT										(1<<0)
-	#define XFILTER_ENABLE_BIT										(1<<2)
-	#define XFILTER_ENABLE 											(1)
-	#define XFILTER_DISABLE											(0)
-#define FPGA_XFILTER_TOP_ADRS										(FPGA_AOI_ADRS+0x94)
-	#define XFILTER_TOP_MIN											(0)
-	#define XFILTER_TOP_MAX											(1024)
-#define FPGA_XFILTER_CENTER_ADRS									(FPGA_AOI_ADRS+0x98)
-	#define XFILTER_CENTER_MIN										(0)
-	#define XFILTER_CENTER_MAX										(1024)
-#define FPGA_XFILTER_BOTTOM_ADRS									(FPGA_AOI_ADRS+0x9c)
-	#define XFILTER_BOTTOM_MIN										(0)
-	#define XFILTER_BOTTOM_MAX										(1024)
 
 
 //----------------------------------------------------------------------
@@ -1058,6 +938,7 @@
 	#define FPGA_ROI_CAMERA_SIZE_CLEAR(x)							(x&~(FPGA_ROI_CAMERA_SIZE_MASK<<FPGA_ROI_CAMERA_SIZE_SHIFT))
 	#define FPGA_ROI_CAMERA_SIZE_MASK								(0xfff)
 	#define FPGA_ROI_CAMERA_SIZE_SHIFT								(0)
+
 
 //----------------------------------------------------------------------
 // ROI2
@@ -1451,10 +1332,55 @@
   #define FPGA_SENSOR_REG_SERDES_CTRL_MATCH_CLR						(1<<7)
 
 
+//----------------------------------------------------------------------
+// CoaXPress IP Register
+//----------------------------------------------------------------------
+#define FPGA_CXP_IP_ADRS											(CORECXP_BASE_ADDR)
+#define FPGA_CXP_REGISTER_PORT_INTERVAL								(0x40)
+#define CXP_REG_DATA_SIZE_MAX										(0x400)
 
-//------------------------------------------------------------------------------------------
-// CoaxPress Register
-//------------------------------------------------------------------------------------------
+#define FPGA_CXP_LSUC_SPEED_MODE_ADRS								(FPGA_CXP_IP_ADRS + 0x00)
+	#define FPGA_CXP_LSUC_LINK_SPEED_41M							(1<<0)
+#define FPGA_CXP_LSUC_SW_TX_PKT_DATA_ADRS							(FPGA_CXP_IP_ADRS + 0x08)
+#define FPGA_CXP_LSUC_RX_SW_PKT_STATUS_ADRS							(FPGA_CXP_IP_ADRS + 0x0C)
+	#define FPGA_CXP_LSUC_RX_SW_PKT_VAL_BIT							(1<<0)
+	#define FPGA_CXP_LSUC_RX_SW_PKT_FIFI_EMPTY_BIT					(1<<4)
+	#define FPGA_CXP_HSDC_TX_READY_BIT								(1<<8)
+	#define CXP_TX_READY_TIMEOUT									(5000000)
+#define FPGA_CXP_LSUC_SW_RX_PKT_DATA_ADRS							(FPGA_CXP_IP_ADRS + 0x10)
+#define FPGA_CXP_LSUC_TX_TEST_MODE_ADRS								(FPGA_CXP_IP_ADRS + 0x20)
+	#define FPGA_CXP_LSUC_TX_TEST_EN								(1<<0)
+#define FPGA_CXP_LSUC_TX_TEST_NUM_ADRS								(FPGA_CXP_IP_ADRS + 0x24)
+#define FPGA_CXP_LSUC_RX_TEST_NUM_ADRS								(FPGA_CXP_IP_ADRS + 0x28)
+#define FPGA_CXP_LSUC_RX_ERR_TEST_NUM_ADRS							(FPGA_CXP_IP_ADRS + 0x2C)
+#define FPGA_CXP_HSDC_HB_EN_ADRS									(FPGA_CXP_IP_ADRS + 0x30)
+#define FPGA_CXP_HSDC_HB_ID_ADRS									(FPGA_CXP_IP_ADRS + 0x34)
+#define FPGA_CXP_S0_FLAG_SID_MZXSIZE_ADRS							(FPGA_CXP_IP_ADRS + 0x40)
+	#define FPGA_CXP_S0_SID_MASK									(0xff)
+#define FPGA_CXP_S0_XSIZE_OFFSET_ADRS								(FPGA_CXP_IP_ADRS + 0x44)
+#define FPGA_CXP_S0_YSIZE_OFFSET_ADRS								(FPGA_CXP_IP_ADRS + 0x48)
+#define FPGA_CXP_S0_DSIZE_ADRS										(FPGA_CXP_IP_ADRS + 0x4C)
+#define FPGA_CXP_S0_TAPG_PIXEL_ADRS									(FPGA_CXP_IP_ADRS + 0x50)
+	#define CXP_REG_PIXEL_MONO8										(0x0101)
+	#define CXP_REG_PIXEL_MONO10									(0x0102)
+	#define CXP_REG_PIXEL_MONO12									(0x0103)
+#define FPGA_CXP_S0_STREAM_EN_ADRS									(FPGA_CXP_IP_ADRS + 0x54)
+
+
+//----------------------------------------------------------------------------------
+// CoaXPress FPGA Register
+//----------------------------------------------------------------------------------
+#define CXP_REG_VERSION_ADRS										(FPGA_CXP_BASE_ADDR + 0x00)
+#define CXP_REG_DRI_CTRLADRS										(FPGA_CXP_BASE_ADDR + 0x04)
+	#define CXP_REG_DRI_CTRL_1_25G									(0x00)
+	#define CXP_REG_DRI_CTRL_2_5G									(0x01)
+	#define CXP_REG_DRI_CTRL_3_125G									(0x02)
+	#define CXP_REG_DRI_CTRL_5G										(0x03)
+	#define CXP_REG_DRI_CTRL_6_25G									(0x04)
+	#define CXP_REG_DRI_CTRL_10_0G									(0x05)
+	#define CXP_REG_DRI_CTRL_12_5G									(0x06)
+	#define CXP_REG_DRI_CTRL_BUSY									(1<<31)
+	#define CXP_REG_DRI_CTRL_BUSY_TIMEOUT							(1000)
 #define FPGA_CXP_INT_ENABLE_ADRS									(FPGA_CXP_BASE_ADDR+0x10)
 	#define FPGA_CXP_INT_ENABLE_RX_PACKET							(1<<0)
 #define FPGA_CXP_INT_STATUS_ADRS									(FPGA_CXP_BASE_ADDR+0x14)

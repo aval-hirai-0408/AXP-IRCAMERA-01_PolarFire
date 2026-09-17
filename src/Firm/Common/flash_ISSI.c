@@ -88,7 +88,7 @@ extern int gQspiFlashSelect;
 extern spi_instance_t g_flash_core_spi; 
 
 // Write Buffer
-extern unsigned char QspiFlashWriteBuffer[];
+extern unsigned int QspiFlashWriteBuffer[];
 
 
 //**********************************************************************************
@@ -180,6 +180,7 @@ int qspiFlashWrite_ISSI (unsigned int adrs, unsigned char *pBuffer, unsigned int
 	unsigned int bank;
 	unsigned char cmdBuff[4];
 	unsigned int qspiFlashCurrentBank_ISSI;
+	unsigned char *ptr8;
 
 	// Check adrs Parameter
 	if (adrs >= QSPI_FLASH_SIZE)
@@ -298,28 +299,70 @@ int qspiFlashWrite_ISSI (unsigned int adrs, unsigned char *pBuffer, unsigned int
 		//------------------------------------------------------------
 		// Writeコマンド発行
 		//------------------------------------------------------------
-		QspiFlashWriteBuffer[0] = QSPI_WRITE_CMD_ISSI;				// Write Command
-		//QspiFlashWriteBuffer[0] = QUAD_QSPI_WRITE_CMD_ISSI;		// Quad Write Command
-		QspiFlashWriteBuffer[1] = (u8)((adrs >> 16) & 0xff);
-		QspiFlashWriteBuffer[2] = (u8)((adrs >> 8) & 0xff);
-		QspiFlashWriteBuffer[3] = (u8)(adrs & 0xFF);
+		ptr8 = (unsigned char *)QspiFlashWriteBuffer;
 
+		*ptr8 = QSPI_WRITE_CMD_ISSI;			// Write Command
+		ptr8++;
+		//*ptr8 = QUAD_QSPI_WRITE_CMD_ISSI;		// Quad Write Command
+		*ptr8 = (u8)((adrs >> 16) & 0xff);
+		ptr8++;
+		*ptr8 = (u8)((adrs >> 8) & 0xff);
+		ptr8++;
+		*ptr8 = (u8)(adrs & 0xFF);
+		ptr8++;
+		
 		//------------------------------------------------------------
 		// Writeデータ
 		//------------------------------------------------------------
-		// intでデータコピーする為の計算
+		transSizeL = transSize / 4;
 		transSizeB = transSize;
 
-		// 転送元/転送先アドレス
+		// 転送元/転送先アドレス(4Byte)
+		srcPtrL = (unsigned int *)&pBuffer[transed];
+		desPtrL = (unsigned int *)&QspiFlashWriteBuffer[1];
+
+		// 転送元/転送先アドレス(1Byte)
 		srcPtrB = (unsigned char *)&pBuffer[transed];
-		desPtrB = (unsigned char *)&QspiFlashWriteBuffer[4];
+		desPtrB = (unsigned char *)&QspiFlashWriteBuffer[1];
+
+		//------------------------------------------------------------
+		// Writeデータ 4Byte Copy
+		//------------------------------------------------------------
+
+		// アドレスは4Byte単位?
+		if ((((unsigned int)srcPtrL & 0x03) == 0) && (((unsigned int)desPtrL & 0x03) == 0))
+		{
+			// データコピー
+			for (Index=0; Index<transSizeL; Index++, srcPtrL++, desPtrL++)
+				*desPtrL = *srcPtrL;
+			
+			// 残りのデータ
+			transSizeB = transSizeL % 4;
+
+			// 転送元/転送先アドレス(1Byte)
+			srcPtrB = (unsigned char *)&pBuffer[(transed+transSizeL*4)];
+			desPtrB = (unsigned char *)&QspiFlashWriteBuffer[(1+transSizeL)];
+
+			//@@@1
+			//DEBUG_PRINT_FORCE("@@@4Byte Size = %d, %d\n", transSizeL, transSizeB);
+			//DEBUG_PRINT_FORCE("@@@4Byte Adrs = 0x%x, 0x%x\n", srcPtrB, desPtrB);
+			//DEBUG_PRINT_FORCE("@@@4Byte Base = 0x%x, 0x%x\n", &pBuffer[transed], &QspiFlashWriteBuffer[1]);
+			//@@@1
+		}
+		
+		//------------------------------------------------------------
+		// Writeデータ 1Byte Copy
+		//------------------------------------------------------------
 
 		// データコピー
 		for (Index=0; Index<transSizeB; Index++, srcPtrB++, desPtrB++)
 			*desPtrB = *srcPtrB;
 
+		//------------------------------------------------------------
 		// Write
-		SPI_transfer_block (&g_flash_core_spi, QspiFlashWriteBuffer, (transSize+4), 0, 0);    
+		//------------------------------------------------------------
+		SPI_transfer_block (&g_flash_core_spi, (unsigned char *)QspiFlashWriteBuffer, (transSize+4), 0, 0);    
+
 
 		//------------------------------------------------------------
 		// ステータスCheck

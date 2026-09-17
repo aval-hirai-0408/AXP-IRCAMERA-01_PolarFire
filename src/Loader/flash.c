@@ -7,13 +7,13 @@
 // The distribution policy is described in the file "COPYING"
 // furnished with this package.
 //
-// qspiFlash.c - QSPI Flash Program
+// flash.c - Flash Program
 //**********************************************************************************
 
 //----------------------------------------------------------------------------------
 // includes
 //----------------------------------------------------------------------------------
-#include "qspiFlash.h"
+#include "flash.h"
 #include "aval_status.h"
 #include "core_spi.h"
 #include "hw_platform.h"
@@ -127,7 +127,7 @@ int qspiFlashRead (unsigned int adrs, unsigned char *pBuffer, unsigned int size)
 	}
 	else
 	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_QSPI_FLASH, AVAL_STATUS_IO);
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
 	}
 
 _DONE:

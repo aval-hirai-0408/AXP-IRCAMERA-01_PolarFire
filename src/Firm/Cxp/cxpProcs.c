@@ -63,9 +63,6 @@ extern int gLinkStatusCheck;
 
 extern int gCxpCmdProcessFlag;
 
-//@@@@@@@@@@
-int gDebugAAA = 0;
-//@@@@@@@@@@
 
 //**********************************************************************************
 //	CXP Initialize(受信関連レジスタのみ：ARM0から初期化)
@@ -167,7 +164,7 @@ int cxpInitialize2 (void)
 		ConnectionDeviceConnection_st[port] = port;
 
 //@@@1
-	ConnectionConfig_st = ((1<<16) | 0x38);
+	//ConnectionConfig_st = ((1<<16) | 0x38);
 goto _DONE;
 //@@@1
 
@@ -184,18 +181,19 @@ goto _DONE;
 	// Set CXP Rate
 	//--------------------------------------------------------------------------------
 #if defined (MODE_BOARD_ACB531CXP)
+
 	// 受信FIFO Disable
-	data32 = IN32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL));
-	OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 & ~FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
+	//@@@@data32 = IN32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL));
+	//@@@@OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 & ~FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
 
 	// Up Link Rate変更
-	OUT32 (FPGA_CXP_LSUC_CTRL_ADRS, 0);
+	OUT32 (FPGA_CXP_LSUC_SPEED_MODE_ADRS, 0);
 
 	// 受信FIFO Reset
-	OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 | FPGA_CXP_RX_CMD_FIFO_CTRL_RESET));
+	//@@@@OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 | FPGA_CXP_RX_CMD_FIFO_CTRL_RESET));
 
 	// 受信FIFO ENABLE
-	OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 | FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
+	//@@@@OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 | FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
 	
 	// IPレジスタ設定値取得
 	data32 = CXP_RATE_3_125G;
@@ -303,20 +301,20 @@ goto _DONE;
 
 		port = 0;
 		// 受信FIFO Disable
-		data32 = IN32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL));
-		OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 & ~FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
+		//@@@1data32 = IN32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL));
+		//@@@1OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 & ~FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
 
 		// Up Link Rate変更
 		if ((cxpSpeed == CXP_RATE_10_000GBPS) || (cxpSpeed == CXP_RATE_12_500GBPS))
-			OUT32 (FPGA_CXP_LSUC_CTRL_ADRS, FPGA_CXP_LSUC_LINK_SPEED_41M);
+			OUT32 (FPGA_CXP_LSUC_SPEED_MODE_ADRS, FPGA_CXP_LSUC_LINK_SPEED_41M);
 		else
-			OUT32 (FPGA_CXP_LSUC_CTRL_ADRS, 0);
+			OUT32 (FPGA_CXP_LSUC_SPEED_MODE_ADRS, 0);
 
 		// 受信FIFO Reset
-		OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 | FPGA_CXP_RX_CMD_FIFO_CTRL_RESET));
+		//@@@1OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 | FPGA_CXP_RX_CMD_FIFO_CTRL_RESET));
 
 		// 受信FIFO ENABLE
-		OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 | FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
+		//@@@1OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 | FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
 
 		// CXP Rate設定
 		if ((status = cxpSetRateReg (regData)) != AVAL_STATUS_SUCCESS)
@@ -329,8 +327,8 @@ goto _DONE;
 		// 送信テストモード開始
 		for (port=0; port<1/*CXP_PORT_COUNT*/; port++)
 		{
-			if ((status = cxpRegWrite (port, CXP_REG_TEST_MODE_ADRS, 1, 1)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
+			//@@@1if ((status = cxpRegWrite (port, CXP_REG_TEST_MODE_ADRS, 1, 1)) != AVAL_STATUS_SUCCESS)
+				//@@@1goto _DONE;
 		}
 
 		// TestModeステータス設定
@@ -704,6 +702,7 @@ _NEXT_NOTAG:
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "End Code No Data\n");
 		goto _DONE;
 	}
+
 
 	//------------------------------------------------------------
 	// CRC計算
@@ -1246,7 +1245,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			acquisitionAbort ();
 
 			// Speed & Connection
-			//@@@1cxpSetConnectionConfig (0/*port*/, ((1<<16) | CXP_RATE_3_125G));
+			cxpSetConnectionConfig (0/*port*/, ((1<<16) | CXP_RATE_3_125G));
 
 			// Activate the master connection. Extension connections shall not be activated.
 			// マスター接続をアクティブにします。 拡張接続はアクティブにしてはなりません。
@@ -1370,6 +1369,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 		// クション 10.1.5 を参照
 		//------------------------------------------------------------
 		case StreamPacketSizeMax:
+
 			if (*pDataRecv > 2048)
 				*pDataRecv = 2048;
 
@@ -1403,10 +1403,9 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 		// 12.500 0x58
 		//------------------------------------------------------------
 		case ConnectionConfig:
-			if (gDebugAAA != 0)	//@@@@@1
 			status = cxpSetConnectionConfig (port, *pDataRecv);
 			break;
-
+		
 		//------------------------------------------------------------
 		// 10.3.34 ConnectionConfigDefault設定
 		// このレジスタは、デバイスがデフォルト モードで動作できるようにする
@@ -2365,16 +2364,15 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 		// ConnectionConfig取得
 		//------------------------------------------------------------
 		case ConnectionConfig:
+		case CXP_CONNECTION_CONFIG_STATUS:
 			*pData = ConnectionConfig_st;
-			//@@@1*pData  = ((1<<16) | 0x38);
 			break;
 
 		//------------------------------------------------------------
 		// ConnectionConfigDefault取得
 		//------------------------------------------------------------
 		case ConnectionConfigDefault:
-			//@@@*pData = ConnectionConfigDefault_st;
-			*pData = ((1<<16) | 0x38);
+			*pData = ConnectionConfigDefault_st;
 			break;
 
 		//------------------------------------------------------------
@@ -2544,7 +2542,6 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 
 			*pData = data1;
 			break;
-
 
 		//--------------------------------------------------------------------------------
 		// Encoder At Value取得
@@ -2727,7 +2724,7 @@ int cxpGetCmdPacket (int port, unsigned int *pData)
 	*pData = data32;
 
 //@@@@@@@@@@@@@@@@@@@@@
-	//DEBUG_PRINT_FORCE("[%d]0x%08x\n", ++gCxpAllRecvCount, data32);
+	DEBUG_PRINT_FORCE("[%d]0x%08x\n", ++gCxpAllRecvCount, data32);
 //@@@@@@@@@@@@@@@@@@@@@
 	
 	// 受信データをバッファに格納
@@ -2863,7 +2860,7 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	{
 		if (pCxpSt->ackSize == 0)	 // 返信データなし
 			ackCode = CXP_ACK_CODE_OK_NO_REPLY;
-		else	 		// 返信データあり
+		else	 					// 返信データあり
 			ackCode = CXP_ACK_CODE_OK;
 	}
 	else if (pCxpSt->status == CXP_ACK_CODE_WAIT)
@@ -4145,7 +4142,7 @@ int cxpGetCableConnection (int port, int *pMode)
     }
 
 	// Cable Connection状態を取得する
-	*pMode = IN32 ((FPGA_CXP_LINK_STATUS_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port)) & FPGA_CXP_LINK_STATUS_CONNECTION;
+	//@@@1*pMode = IN32 ((FPGA_CXP_LINK_STATUS_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port)) & FPGA_CXP_LINK_STATUS_CONNECTION;
 
 _DONE:
 	return (status);
@@ -4607,7 +4604,7 @@ int cxpGetPortDual (int port, int *pMode)
 	}
 
 	// CTRL取得
-	if ((status = cxpRegRead (0, CXP_REG_CTRL_ADRS, &data32, 4)) != AVAL_STATUS_SUCCESS)
+	//@@@1if ((status = cxpRegRead (0, CXP_REG_CTRL_ADRS, &data32, 4)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	if ((data32 & CXP_REG_CTRL_PORT_DUAL) == 0)
@@ -4704,8 +4701,8 @@ int cxpGetStreamMode (int port, int *pMode)
 	}
 
 	// CTRL取得
-	if ((status = cxpRegRead (0, CXP_REG_CTRL_ADRS, &data32, 4)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//@@@1if ((status = cxpRegRead (0, CXP_REG_CTRL_ADRS, &data32, 4)) != AVAL_STATUS_SUCCESS)
+		//@@@1goto _DONE;
 
 	if ((data32 & CXP_REG_CTRL_2PORT_2STREAM) == 0)
 		*pMode = CXP_MODE_MULTI_STREAM;
@@ -4983,21 +4980,6 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 
 #if 0	//@@@1
 
-	// 受信FIFO Disable
-	data3 = IN32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL));
-	OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data3 & ~FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
-
-	// Up Link Rate変更
-	if ((data1 == CXP_RATE_10_000GBPS) || (data1 == CXP_RATE_12_500GBPS))
-		OUT32 (FPGA_CXP_LSUC_CTRL_ADRS, FPGA_CXP_LSUC_LINK_SPEED_41M);
-	else
-		OUT32 (FPGA_CXP_LSUC_CTRL_ADRS, 0);
-
-	// 受信FIFO Reset
-	OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data3 | FPGA_CXP_RX_CMD_FIFO_CTRL_RESET));
-
-	// 受信FIFO ENABLE
-	OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data3 | FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
 
 	//--------------------------------------------------------------------------------
 	// 現在のフレームレート/露光時間設定取得
@@ -5028,6 +5010,26 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 	if ((status = cxpSetRateReg (data2)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
+	
+	//--------------------------------------------------------------------------------
+	// UpLink設定
+	//--------------------------------------------------------------------------------
+	// 受信FIFO Disable
+	//@@@1data3 = IN32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL));
+	//@@@1OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data3 & ~FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
+
+	// Up Link Rate変更
+	if ((data1 == CXP_RATE_10_000GBPS) || (data1 == CXP_RATE_12_500GBPS))
+		OUT32 (FPGA_CXP_LSUC_SPEED_MODE_ADRS, FPGA_CXP_LSUC_LINK_SPEED_41M);
+	else
+		OUT32 (FPGA_CXP_LSUC_SPEED_MODE_ADRS, 0);
+
+	// 受信FIFO Reset
+	//@@@1OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data3 | FPGA_CXP_RX_CMD_FIFO_CTRL_RESET));
+
+	// 受信FIFO ENABLE
+	//@@@1OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data3 | FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
+
 #if 0	//@@@1
 	//--------------------------------------------------------------------------------
 	// Single / Dualモード設定
@@ -5053,6 +5055,14 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 	// 設定値保存
 	if ((status = cxpSetRateData (configData)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+
+//@@@@@@@@@@@@	
+	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, 640);
+	OUT32(FPGA_CXP_S0_YSIZE_OFFSET_ADRS, 512);
+	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (640*8/32));
+	OUT32(FPGA_CXP_S0_TAPG_PIXEL_ADRS, CXP_REG_PIXEL_MONO8);
+//@@@@@@@@@@@@	
+	
 
 #if 0 //@@@1
 	//--------------------------------------------------------------------------------

@@ -25,7 +25,7 @@
 #include "core_spi.h"
 
 #include "common.h"
-#include "qspiFlash.h"
+#include "flash.h"
 
 
 //----------------------------------------------------------------------------------

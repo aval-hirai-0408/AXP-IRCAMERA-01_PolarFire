@@ -155,30 +155,28 @@ int cxpMain (void)
 	OUT32 (FIRM_DATA_CPU1_BOOT_FLAG, 0);
 
 	
-//@@@1
-#if 0
 	//------------------------------------------------------------
 	// Get manufacturer information from the eeprom on the ARM0
 	//------------------------------------------------------------
-	user_info_get ((u8*)GIGE_MANUF,(u8*)GIGE_MODEL,(u8*)GIGE_MINFO);
+	//@@@1user_info_get ((u8*)GIGE_MANUF,(u8*)GIGE_MODEL,(u8*)GIGE_MINFO);
 
 
 	//------------------------------------------------------------
 	// Gets the version on the FPGA and boards
 	//------------------------------------------------------------
 	boardVersion (boardVer);
-	fpgaVersion (fpgaVer);
+	//@@@1fpgaVersion (fpgaVer);
 	firmVersion (firmVer);
 
-
+	
 	//------------------------------------------------------------
 	// Make the version string of the camera
 	//------------------------------------------------------------
-	strcpy((char*)deviceVendorName,(char*)GIGE_MANUF);		// ベンダ名
-	strcpy((char*)deviceModelName,(char*)GIGE_MODEL);		// モデル名
-	strcpy((char*)deviceManufacturerInfo,(char*)GIGE_MINFO);// ベンダ情報
+	strcpy((char*)deviceVendorName,(char*)FIRM_DATA_VENDOR_ADRS);
+	strcpy((char*)deviceModelName,(char*)FIRM_DATA_MODEL_ADRS);
+	strcpy((char*)deviceManufacturerInfo,(char*)FIRM_DATA_MANUFACTURE_ADRS);
 
-	sprintf(deviceVersion,"%s",CAMERA_VERSION_STR);			// バージョン決定
+	sprintf(deviceVersion,"%s",CAMERA_VERSION_STR);
 	sprintf(deviceFirmwareVersion,"%s;%s;%s;%s",ARM1_VERSION_STR ,firmVer,fpgaVer,boardVer);
 	sprintf((char*)GIGE_DVER,"%s",(const char*)deviceVersion);
 
@@ -186,8 +184,8 @@ int cxpMain (void)
 	//------------------------------------------------------------
 	// Detection of Connection in progress
 	//------------------------------------------------------------
-	cxpLedConnectionDetection();
-#endif //@@@1
+	//@@@1cxpLedConnectionDetection();
+
 
 	//------------------------------------------------------------
 	// User Init
@@ -229,46 +227,6 @@ int cxpMain (void)
 	// Main Loop
 	//------------------------------------------------------------
     cmd ();
-
-#if 0 //@@@1
-	while (1)
-	{
-		//------------------------------------------------------------
-		// Link Status制御
-		//------------------------------------------------------------
-		cxpLedLinkState (&linkStatus);
-
-		//------------------------------------------------------------
-		// LED制御
-		//------------------------------------------------------------
-		cxpLedControl (linkStatus);
-
-		//------------------------------------------------------------
-		// Sleep
-		//------------------------------------------------------------
-		wfi ();
-
-		//------------------------------------------------------------
-		// CXPコマンド処理
-		//------------------------------------------------------------
-		if (gCxpCmdInterruptFlag != 0)
-		{
-			//@@@1 CXPの割り込み禁止
-			
-			// FIFOデータ数確認
-			if ((status = cxpGetFifoSizeCount (port, &fiftCount)) != AVAL_STATUS_SUCCESS)
-				continue;
-
-			// FIFOにデータあり？
-			if (fiftCount != 0)
-			{
-				cxpProcs (port);
-			}
-			
-			//@@@1 CXPの割り込み許可
-		}
-	}
-#endif //@@@1
 
 	return (status);
 }
@@ -532,27 +490,31 @@ int cxpUserInit (void)
 	unsigned int data, wsize;
 
 //@@@@1
-	DEBUG_PRINT_FORCE("Set Param Start1\n");
+	DEBUG_PRINT_FORCE("Param0\n");
 //@@@@1
+
 	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, 640);
 
 //@@@@1
-	DEBUG_PRINT_FORCE("Set Param Start2\n");
+	DEBUG_PRINT_FORCE("Param1\n");
 //@@@@1
+
 	OUT32(FPGA_CXP_S0_YSIZE_OFFSET_ADRS, 512);
 
 //@@@@1
-	DEBUG_PRINT_FORCE("Set Param Start3\n");
+	DEBUG_PRINT_FORCE("Param2\n");
 //@@@@1
 
 	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (640*8/32));
+
 //@@@@1
-	DEBUG_PRINT_FORCE("Set Param Start4\n");
+	DEBUG_PRINT_FORCE("Param3\n");
 //@@@@1
-	
+
 	OUT32(FPGA_CXP_S0_TAPG_PIXEL_ADRS, CXP_REG_PIXEL_MONO8);
+
 //@@@@1
-	DEBUG_PRINT_FORCE("Set Param Start5\n");
+	DEBUG_PRINT_FORCE("Param4\n");
 //@@@@1
 	
 	//@@@OUT32(FPGA_CXP_S0_STREAM_EN_ADRS, 1);

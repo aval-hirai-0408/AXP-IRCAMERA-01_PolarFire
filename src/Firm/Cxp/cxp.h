@@ -16,7 +16,8 @@
 //----------------------------------------------------------------------------------
 // defines
 //----------------------------------------------------------------------------------
-#define CXP_XML_URL_SIZE					(0x200)		// GIGE_EEPROM_XML_URL_SIZE
+// URL Size
+#define CXP_XML_URL_SIZE					(0x200)
 
 // Bit Rate
 #define CXP_RATE_1_25G						(0x28)
@@ -27,46 +28,13 @@
 #define CXP_RATE_10_00G						(0x50)
 #define CXP_RATE_12_50G						(0x58)
 
+//@@@1
 // StreamID
 #define CXP_STREAM_ID1_NUMBER				(0x00)
 #define CXP_STREAM_ID2_NUMBER				(0x01)
 
 
-//----------------------------------------------------------------------------------
 // PolaFire Register
-//----------------------------------------------------------------------------------
-#define FPGA_CXP_PF_BASE_ADRS				(FPGA_CXP_PF_ADRS)
-
-#define FPGA_CXP_PF_OFFSET					(0x400)
-#define FPGA_CXP_PF_INTERVAL				(0x80)
-
-#define FPGA_CXP_PF_DEV_OFFSET				(0x1400)
-#define FPGA_CXP_PF_IP_OFFSET				(0x1800)
-#define FPGA_CXP_PF_IP_INTERVAL				(0x1000)
-
-#define CXP_REG_DATA_SIZE_MAX				(0x800)
-
-
-//----------------------------------------------------------------------------------
-// CoaXPress
-//----------------------------------------------------------------------------------
-#define CXP_REG_VERSION_ADRS				(FPGA_CXP_BASE_ADDR + 0x00)
-#define CXP_REG_DRI_CTRLADRS				(FPGA_CXP_BASE_ADDR + 0x04)
-	#define CXP_REG_DRI_CTRL_1_25G			(0x00)
-	#define CXP_REG_DRI_CTRL_2_5G			(0x01)
-	#define CXP_REG_DRI_CTRL_3_125G			(0x02)
-	#define CXP_REG_DRI_CTRL_5G				(0x03)
-	#define CXP_REG_DRI_CTRL_6_25G			(0x04)
-	#define CXP_REG_DRI_CTRL_10_0G			(0x05)
-	#define CXP_REG_DRI_CTRL_12_5G			(0x06)
-	#define CXP_REG_DRI_CTRL_BUSY			(1<<31)
-	#define CXP_REG_DRI_CTRL_BUSY_TIMEOUT	(1000)
-
-
-//----------------------------------------------------------------------------------
-// CXP Register
-//----------------------------------------------------------------------------------
-#define CXP_REG_CTRL_ADRS					(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_OFFSET + 0x00)
 	#define CXP_REG_CTRL_FIFO_RESET			(1<<0)
 	#define CXP_REG_CTRL_2PORT_2STREAM		(1<<8)
 	#define CXP_REG_CTRL_PORT_DUAL			(1<<16)
@@ -76,52 +44,9 @@
 
 	#define CXP_MODE_SINGLE_STREAM			(1)
 	#define CXP_MODE_MULTI_STREAM			(2)
+//@@@1
 
-#define CXP_REG_XSIZE_ADRS					(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_OFFSET + 0x40)
-#define CXP_REG_XOFFSET_ADRS				(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_OFFSET + 0x44)
-#define CXP_REG_YSIZE_ADRS					(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_OFFSET + 0x48)
-#define CXP_REG_YOFFSET_ADRS				(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_OFFSET + 0x4c)
-#define CXP_REG_DSIZEL_ADRS					(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_OFFSET + 0x50)
-#define CXP_REG_PIXEL_L_ADRS				(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_OFFSET + 0x54)
-	#define CXP_REG_PIXEL_MONO8				(0x0101)
-	#define CXP_REG_PIXEL_MONO10			(0x0102)
-	#define CXP_REG_PIXEL_MONO12			(0x0103)
-#define CXP_REG_TAP_GEO_ADRS				(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_OFFSET + 0x58)
-#define CXP_REG_IMG_FLG_ADRS				(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_OFFSET + 0x5C)
-#define CXP_REG_STREAM_ID_ADRS				(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_OFFSET + 0x60)
-
-
-//----------------------------------------------------------------------------------
-// CXP Dev Register
-//----------------------------------------------------------------------------------
-#define CXP_REG_TEST_MODE_ADRS				(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_DEV_OFFSET + 0x00)
-#define CXP_REG_TEST_MODE_TX_LOW_ADRS		(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_DEV_OFFSET + 0x04)
-#define CXP_REG_TEST_MODE_TX_HIGH_ADRS		(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_DEV_OFFSET + 0x08)
-#define CXP_REG_LED_ADRS					(FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_DEV_OFFSET + 0x20)
-
-
-//----------------------------------------------------------------------------------
-// CXP IP Register
-//----------------------------------------------------------------------------------
-#define CXP_REG_IP_STREAM1_ID_ADRS 			((FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_IP_OFFSET + 0x00 * 4))
-#define CXP_REG_IP_STREAM2_ID_ADRS 			((FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_IP_OFFSET + 0x02 * 4))
-
-#define FPGA_CXP_TX_CMD_CTRL_ADRS			((FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_IP_OFFSET + 0x10 * 4))
-	#define FPGA_CXP_TX_CMD_END				(1<<0)
-	#define FPGA_CXP_TX_CMD_START			(1<<1)
-	#define FPGA_CXP_TX_CMD_DATA_HL			(1<<2)
-	#define FPGA_CXP_TX_CMD_DATA_WRITE		(1<<8)
-
-#define FPGA_CXP_TX_CMD_LOW_DATA_ADRS		((FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_IP_OFFSET + 0x11 * 4))
-#define FPGA_CXP_TX_CMD_HIGH_DATA_ADRS 		((FPGA_CXP_PF_BASE_ADRS + FPGA_CXP_PF_IP_OFFSET + 0x12 * 4))
-
-
-//----------------------------------------------------------------------------------
-// Common
-//----------------------------------------------------------------------------------
-// Mode Parallel
-#define MODE_PARALLEL
-
+// Version
 #define CXP_VERSION_10						(0x00010000)
 #define CXP_VERSION_11						(0x00010001)
 #define CXP_VERSION_20						(0x00020000)
@@ -210,19 +135,5 @@
 
 // Send Data Offset
 #define CXP_SEND_DATA_OFFSET				(8)
-
-// Send Packet Fix Count
-#define CXP_SEND_DATA_FIX_COUNT				(6)
-#define CXP_SEND_DATA_FIX_NO_DATA_COUNT		(4)
-
-// Send DMA Timeout
-#define CXP_SEND_DMA_TIMEOUT				(3000)		// 3s
-
-// Send Fifo Timeout
-#define CXP_FIRO_SEND_TIMEOUT				(50000)		//5s
-
-// Align
-#define CXP_FPGA_ADRS_ALIGN					(0x8)
-#define CXP_FPGA_ADRS_ALIGN_MASK			(CXP_FPGA_ADRS_ALIGN-1)
 
 #endif // CXP_H

@@ -3637,7 +3637,7 @@ int acquisitionGetTrgCountHigh (int port, unsigned int *pCount)
 		else if (source == GENICAM_ACQUISITION_TRG_SOURCE_CC1)
 		{
 			// Trg High Count取得
-			*pCount = IN32 ((FPGA_CXP_TRG_H_COUNT_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
+			//@@@1*pCount = IN32 ((FPGA_CXP_TRG_H_COUNT_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
 		}
 	}
 	else
@@ -3719,7 +3719,7 @@ int acquisitionGetTrgCountLow (int port, unsigned int *pCount)
 		else if (source == GENICAM_ACQUISITION_TRG_SOURCE_CC1)
 		{
 			// Trg Low Count取得
-			*pCount = IN32 ((FPGA_CXP_TRG_L_COUNT_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
+			//@@@1*pCount = IN32 ((FPGA_CXP_TRG_L_COUNT_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
 		}
 	}
 	else
@@ -3801,7 +3801,7 @@ int acquisitionRestLinkTrgCount (void)
 	if ((status = cxpGetPort (&cxpPort)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	OUT32 ((FPGA_CXP_TRG_CTRL_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * cxpPort), FPGA_CXP_TRG_CTRL_RESET);
+	//@@@1OUT32 ((FPGA_CXP_TRG_CTRL_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * cxpPort), FPGA_CXP_TRG_CTRL_RESET);
 
 _DONE:
 #endif
