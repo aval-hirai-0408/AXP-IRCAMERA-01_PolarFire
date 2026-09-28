@@ -254,6 +254,7 @@ int cxpUserInit (void)
 	char strXMLSize[6] = { 0 };
 
 //@@@@1
+	char c;
 	DEBUG_PRINT_FORCE("cxpUserInit\n");
 //@@@@1
 	
@@ -489,8 +490,25 @@ int cxpUserInit (void)
 	{
 	unsigned int data, wsize;
 
+		
+//@@@@1
+	DEBUG_PRINT_FORCE("Param Start111\n");
+//@@@@1
+	data = IN32 (0x6b100040);
+		
+//@@@@1
+	DEBUG_PRINT_FORCE("DATA = 0x%x\n", data);
+//@@@@1
 //@@@@1
 	DEBUG_PRINT_FORCE("Param0\n");
+		while(1)
+		{
+            if (_kbhit(&c))
+            {
+                if (c == 'q')
+                    break;
+            }
+		}
 //@@@@1
 
 	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, 640);

@@ -1120,7 +1120,7 @@ int kermitGzipDataCheck (unsigned char **pUnCompress, int *pUncomprLen, unsigned
 				#else // #if !defined (MODE_FFC_MEM_EXTERNAL_MALLOC)
 
 				//@@@@1pTemp = (unsigned char *)FFC_BLACK_MEMORY_ADRS;
-				pTemp = (unsigned char *)0x8a000000;
+				pTemp = (unsigned char *)FIRM_UPDATE_UNCOMP_ADRS;
 
 				#endif // #if !defined (MODE_FFC_MEM_EXTERNAL_MALLOC)
 

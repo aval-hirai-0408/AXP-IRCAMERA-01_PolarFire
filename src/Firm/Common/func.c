@@ -21,6 +21,9 @@
 //----------------------------------------------------------------------------------
 extern int gInterFaceID;
 
+//@@@1
+extern unsigned int gDIPSW;
+//@@@1
 
 //**********************************************************************************
 //	Error Message Function
@@ -60,7 +63,7 @@ int cameraLogMsg (int level, const char *fileName, const char *funcName, unsigne
     errCode = (short)(errorNumber&0xffff);
 
 //@@@@@@@@@
-	dipsw = 0;
+	dipsw = gDIPSW;
 //@@@@@@@@@
 	// Checl Error Level & dipsw mode
 	//if ((level != MSG_LEVEL_ERROR) && (dipsw != 0x3))

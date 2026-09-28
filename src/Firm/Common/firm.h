@@ -1544,6 +1544,7 @@ uintptr_t irq_save_disable_Mie (void);
 // board.c
 int cameraInformationInitialize (void);
 int getSpectrumType (int *pType);
+int setDipsw (unsigned int dipsw);
 int getDipsw (unsigned int *pDipsw);
 int boardReset (void);
 int setBoardParam (char *pParam, int offset, int size);

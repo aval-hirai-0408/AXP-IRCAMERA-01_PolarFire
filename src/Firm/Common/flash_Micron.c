@@ -337,7 +337,7 @@ int qspiFlashWrite_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int
 				*desPtrL = *srcPtrL;
 			
 			// 残りのデータ
-			transSizeB = transSizeL % 4;
+			transSizeB = transSize % 4;
 
 			// 転送元/転送先アドレス(1Byte)
 			srcPtrB = (unsigned char *)&pBuffer[(transed+transSizeL*4)];

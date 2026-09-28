@@ -713,6 +713,20 @@ int aoiSetWidth (int size)
 	int abMode = AUTO_BRIGHT_TARGET_AREA_ALL_RANGE;
 #endif
 
+	//@@@1
+	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, size);
+	//OUT32(FPGA_CXP_S0_DSIZE_ADRS, (size*8/32));
+	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (size/4));
+	
+	rOffset = IN32(0x6b200008);
+	rOffset &= 0xffff0000;
+	rOffset |= size;
+	OUT32(0x6b200008, rOffset);
+	
+	goto _DONE;
+	//@@@1
+	
+	
 	// Width Min取得
 	widthMinSize = ROI_WIDTH_ALIGH;
 
@@ -951,6 +965,11 @@ int aoiGetWidth (int *pSize)
 	int mode = MODE_DISABLE;
 #endif
 
+	//@@@1
+	*pSize = IN32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS)&0xffff;
+	goto _DONE;
+	//@@@1
+	
 	// Check pSize Parameter
 	if (pSize == NULL)
 	{
@@ -1394,6 +1413,18 @@ int aoiSetHeight (int size)
 	double frameRateMax, frameRateMin;
 #endif
 
+//@@@1
+	OUT32 (FPGA_CXP_S0_YSIZE_OFFSET_ADRS, size);
+	
+	rOffset = IN32(0x6b200008);
+	rOffset &= 0xffff;
+	rOffset |= (size << 16);
+	OUT32(0x6b200008, rOffset);
+	
+
+	goto _DONE;
+//@@@1
+
 	// Start Status
 	acquisitionGetStartFlag (&startMode);
 
@@ -1701,6 +1732,12 @@ int aoiGetHeight (int *pSize)
 #if defined(MODE_BINNING)
 	int mode = MODE_DISABLE;
 #endif
+
+//@@@1
+	*pSize = IN32 (FPGA_CXP_S0_YSIZE_OFFSET_ADRS) & 0xffff;
+	goto _DONE;
+//@@@1
+	
 
 	// Check pSize Parameter
 	if (pSize == NULL)

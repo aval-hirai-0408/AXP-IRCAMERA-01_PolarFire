@@ -164,7 +164,6 @@ int cxpInitialize2 (void)
 		ConnectionDeviceConnection_st[port] = port;
 
 //@@@1
-	//ConnectionConfig_st = ((1<<16) | 0x38);
 goto _DONE;
 //@@@1
 
@@ -919,8 +918,8 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned char *ptrSrc8, *ptrDes8, *ptrDes8_DDR;
 	unsigned int *ptrL;
 
-	sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size, status);
-	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	//sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size, status);
+	//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -1878,8 +1877,8 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned int ix;
 	unsigned int amari;
 
-	sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size);
-	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	//sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size);
+	//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 	
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -2685,6 +2684,7 @@ int cxpGetCmdPacket (int port, unsigned int *pData)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int data32;
 	unsigned int timeout;
+	unsigned int data32Save;
 
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
@@ -2695,7 +2695,7 @@ int cxpGetCmdPacket (int port, unsigned int *pData)
 		goto _DONE;
 	}
 
-	// カウントCheck
+	// Status Check
 	for (timeout=0; timeout<CXP_COMMAND_PACKET_TIMEOUT; timeout++)
 	{
 #if 1
@@ -2720,15 +2720,16 @@ int cxpGetCmdPacket (int port, unsigned int *pData)
 	}
 
 	// データ取得
-	data32 = IN32 (FPGA_CXP_LSUC_SW_RX_PKT_DATA_ADRS);
-	*pData = data32;
+	*pData = IN32 (FPGA_CXP_LSUC_SW_RX_PKT_DATA_ADRS);
+	//*pData = data32;
 
 //@@@@@@@@@@@@@@@@@@@@@
-	DEBUG_PRINT_FORCE("[%d]0x%08x\n", ++gCxpAllRecvCount, data32);
+	//data32Save = IN32 (FPGA_CXP_LSUC_RX_SW_PKT_STATUS_ADRS);
+	//DEBUG_PRINT_FORCE("[%d]0x%08x:0x%08x\n", ++gCxpAllRecvCount, *pData, data32Save);
 //@@@@@@@@@@@@@@@@@@@@@
 	
 	// 受信データをバッファに格納
-	cxpRecvBuffer (port, *pData);
+	//cxpRecvBuffer (port, *pData);
 
 _DONE:
 	return (status);
@@ -2808,8 +2809,8 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	//------------------------------------------------------------
 	// Recive Interrupt Disable
 	//------------------------------------------------------------
-	if ((status = cxpSetRecvIntMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//@@@1if ((status = cxpSetRecvIntMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+		//@@@1goto _DONE;
 	
 	//------------------------------------------------------------
 	// コメント
@@ -2903,8 +2904,17 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	{
 		ackCode = CXP_ACK_CODE_MALFORMED_PACKET;
 	}
+	else if ((pCxpSt->status & 0xffff) == AVAL_STATUS_INVALID_PARAMETER)
+	{
+		ackCode = CXP_ACK_CODE_INVALID_DATA;
+	}
+	else if ((pCxpSt->status & 0xffff)  == AVAL_STATUS_INVALID_ADDRESS)
+	{
+		ackCode = CXP_ACK_CODE_INVALID_ADRS;
+	}
 	else
 	{
+		//@@@1ackCode = CXP_ACK_CODE_INVALID_DATA;
 		ackCode = CXP_ACK_CODE_INVALID_CODE;
 	}
 
@@ -2985,7 +2995,7 @@ _DONE:
 	//------------------------------------------------------------
 	// Recive Interrupt Enable
 	//------------------------------------------------------------
-	cxpSetRecvIntMode (MODE_ENABLE);
+	//@@@1cxpSetRecvIntMode (MODE_ENABLE);
 
 	return (status);
 }
@@ -4008,10 +4018,13 @@ int  eeprom_read_byte(unsigned short address)
 int cxpDownloadBuffer (unsigned int adrs, unsigned char *pData, unsigned int size)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned char *pSrc, *pDst, *ptrB;
+	unsigned int *pSrc32, *pDst32, *ptrL;
+	unsigned char *pSrc8, *pDst8, *ptrB;
 	unsigned int offset;
 	int i;
-	unsigned int adrs2;
+	unsigned int adrs2, transed;
+	unsigned int tempL;
+	unsigned int sizeL, sizeB;
 
 	// Check pData Parameter
 	if (pData == NULL)
@@ -4030,22 +4043,71 @@ int cxpDownloadBuffer (unsigned int adrs, unsigned char *pData, unsigned int siz
 		goto _DONE;
 	}
 
+#if 1	//@@@1
+	//------------------------------------------------------------
+	// Set Param
+	//------------------------------------------------------------
+
+	// 転送サイズ
+	sizeL = size / 4;
+	sizeB = size;
+
+	// オフセット
+	offset = adrs - FileAccessBuffer;
+
+	// 転送先格納アドレス
+	tempL = (unsigned int)fileBuffer[fileSelector];
+	pDst32 = (unsigned int *)(tempL + offset);
+
+	// 転送元格納アドレス
+	pSrc32 = pData;
+
+	//------------------------------------------------------------
+	// データCopy(4Byte)
+	//------------------------------------------------------------
+	if ((((unsigned int)pDst32 & 0x03) == 0) && (((unsigned int)pSrc32 & 0x03) == 0))
+	{
+		// Copy
+		for (i=0; i<sizeL; i++, pSrc32++, pDst32++)
+			*pDst32 = *pSrc32;
+		
+		// 残りのデータ
+		sizeB = size % 4;
+	}
+	
+	//------------------------------------------------------------
+	// データCopy(1Byte)
+	//------------------------------------------------------------
+	if (sizeB != 0)
+	{
+		pSrc8 = (unsigned char *)pSrc32;
+		pDst8 = (unsigned char *)pDst32;
+		
+		// データCopy(1Byte)
+		for (i=0; i<sizeB; i++, pSrc8++, pDst8++)
+			*pDst8 = *pSrc8;
+	}
+
+	adrs2 = adrs & BASE_FILE_BUFFER_MASK;
+	fileResult[fileSelector][fileSel[fileSelector]] = adrs2 + size;
+#else	//@@@1
 	// オフセット
 	offset = adrs - FileAccessBuffer;
 
 	// 転送先格納アドレス
 	ptrB = (unsigned char *)fileBuffer[fileSelector];
-	pDst = (unsigned char *)(ptrB + offset);
+	pDst8 = (unsigned char *)(ptrB + offset);
 
 	// 転送元格納アドレス
-	pSrc = pData;
+	pSrc8 = pData;
 
 	// データCopy
-	for (i=0; i<size; i++, pSrc++, pDst++)
-		*pSrc = *pDst;
+	for (i=0; i<size; i++, pSrc8++, pDst8++)
+		*pDst8 = *pSrc8;
 
 	adrs2 = adrs & BASE_FILE_BUFFER_MASK;
 	fileResult[fileSelector][fileSel[fileSelector]] = adrs2 + size;
+#endif	//@@@1
 
 _DONE:
 	return (status);
@@ -4088,6 +4150,7 @@ int cxpUploadBuffer (unsigned int adrs, unsigned char *pData, unsigned int size)
 		goto _DONE;
 	}
 
+#if 1
 	// オフセット
 	offset = adrs - FileAccessBuffer;
 
@@ -4099,8 +4162,23 @@ int cxpUploadBuffer (unsigned int adrs, unsigned char *pData, unsigned int size)
 	pSrc = pData;
 
 	// データCopy
-	//@@@1for (i=0; i<size; i++, pSrc++, pDst++)
-		//@@@1*pDst = *pSrc;
+	for (i=0; i<size; i++, pSrc++, pDst++)
+		*pDst = *pSrc;
+#else
+	// オフセット
+	offset = adrs - FileAccessBuffer;
+
+	// 転送先格納アドレス
+	ptrB = (unsigned char *)fileBuffer[fileSelector];
+	pDst = (unsigned char *)(ptrB + offset);
+
+	// 転送元格納アドレス
+	pSrc = pData;
+
+	// データCopy
+	for (i=0; i<size; i++, pSrc++, pDst++)
+		*pDst = *pSrc;
+#endif
 
 	adrs2 = adrs & BASE_FILE_BUFFER_MASK;
 	fileResult[fileSelector][fileSel[fileSelector]] = adrs2 + size;
@@ -4429,7 +4507,7 @@ _DONE:
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		data				：規格値
-//		pCxpRateBps			：CXP IP設定値を格納するポインタ
+//		pRegData			：CXP IP設定値を格納するポインタ
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
@@ -4446,40 +4524,26 @@ int cxpGetDataToRegData (unsigned int data, unsigned int *pRegData)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get Data to Reg Data NULL Parameter Error.\n");
 		goto _DONE;
 	}
-
-	if (data == CXP_RATE_1_250GBPS)
-	{
-		data2 = CXP_REG_DRI_CTRL_1_25G;
-	}
-	else if (data == CXP_RATE_2_500GBPS)
-	{
-		data2 = CXP_REG_DRI_CTRL_2_5G;
-	}
-	else if (data == CXP_RATE_3_125GBPS)
+	
+	if (data == CXP_RATE_3_125GBPS)
 	{
 		data2 = CXP_REG_DRI_CTRL_3_125G;
-	}
-	else if (data == CXP_RATE_5_000GBPS)
-	{
-		data2 = CXP_REG_DRI_CTRL_5G;
 	}
 	else if (data == CXP_RATE_6_250GBPS)
 	{
 		data2 = CXP_REG_DRI_CTRL_6_25G;
 	}
-#if defined (MODE_CXP_VERSION_20)
-	else if (data == CXP_RATE_10_000GBPS)
-	{
-		data2 = CXP_REG_DRI_CTRL_10_0G;
-	}
+	#if defined (MODE_CXP_VERSION_20)
 	else if (data == CXP_RATE_12_500GBPS)
 	{
 		data2 = CXP_REG_DRI_CTRL_12_5G;
 	}
-#endif
+	#endif
 	else
 	{
-		data2 = CXP_REG_DRI_CTRL_3_125G;
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Speed Data Parameter Error.\n");
+		goto _DONE;
 	}
 
 	// 設定
@@ -4963,13 +5027,18 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 	double dbFrameRate, dbFrameRateMax;
 	unsigned int uiExp;
 	int dataI1;
+	int widthSize, heightSize;
 
-//@@@@@@@@1
-	//goto _DONE;
-//@@@@@@@@1
-	
 	// 取り込み停止
 	//@@@1acquisitionAbort ();
+
+	// Get Width
+	if ((status = aoiGetWidth (&widthSize)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// Get Height
+	if ((status = aoiGetHeight (&heightSize)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
 	//--------------------------------------------------------------------------------
 	// IPレジスタ設定値取得
@@ -4979,8 +5048,6 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 		goto _DONE;
 
 #if 0	//@@@1
-
-
 	//--------------------------------------------------------------------------------
 	// 現在のフレームレート/露光時間設定取得
 	//--------------------------------------------------------------------------------
@@ -5056,10 +5123,10 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 	if ((status = cxpSetRateData (configData)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-//@@@@@@@@@@@@	
-	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, 640);
-	OUT32(FPGA_CXP_S0_YSIZE_OFFSET_ADRS, 512);
-	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (640*8/32));
+//@@@@@@@@@@@@
+	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, widthSize);
+	OUT32(FPGA_CXP_S0_YSIZE_OFFSET_ADRS, heightSize);
+	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (widthSize*8/32));
 	OUT32(FPGA_CXP_S0_TAPG_PIXEL_ADRS, CXP_REG_PIXEL_MONO8);
 //@@@@@@@@@@@@	
 	

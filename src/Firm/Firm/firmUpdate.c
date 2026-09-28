@@ -302,6 +302,10 @@ int firmUpdateFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned in
 		goto _DONE;
 	}
 
+//@@@1
+	DEBUG_PRINT_FORCE("Erase..\n");
+//@@@1
+	
 	// Erase
 	for (sec=adrs; sec<(adrs + size); sec+=secSize)
 	{
@@ -309,6 +313,10 @@ int firmUpdateFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned in
 		if ((status = qspiFlashSectorErase (sec)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
+
+//@@@1
+	DEBUG_PRINT_FORCE("Blacnk Check..\n");
+//@@@1
 
 	// Blank Check
 	for (sec=adrs; sec<(adrs + size); sec+=secSize)
@@ -331,9 +339,17 @@ int firmUpdateFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned in
 		}
 	}
 
+//@@@1
+	DEBUG_PRINT_FORCE("Write..\n");
+//@@@1
+
 	// Write
 	if ((status = qspiFlashWrite (adrs, (unsigned char *)pBuffer, size)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+
+//@@@1
+	DEBUG_PRINT_FORCE("Verify..\n");
+//@@@1
 
 	// Read & ベリファイ
 	for (sec=adrs, offset=0; sec<(adrs + size); sec+=secSize, offset+=secSize)
@@ -362,6 +378,10 @@ int firmUpdateFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned in
 			}
 		}
 	}
+
+//@@@1
+	DEBUG_PRINT_FORCE("End..\n");
+//@@@1
 
 _DONE:
 	if (pTempBuff != NULL)

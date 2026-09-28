@@ -42,7 +42,7 @@ int gigeCmdFirmUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned 
 	unsigned int buff;
 	unsigned char *pUpdatePtr;
 	unsigned int updateSize;
-	int *pUncomprLen = NULL; // 解凍データサイズを格納するポインタ
+	int uncomprLen;
 	int saveLed0 = -1;
 #ifdef COMPRESS_MODE
 	unsigned char *pUnCompBuf = NULL;
@@ -55,15 +55,19 @@ int gigeCmdFirmUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned 
 	pUpdatePtr = (unsigned char *)pBuffer;
 	updateSize = size;
 
+	//@@@@@@@@@@@@@@@@
+	DEBUG_PRINT_FORCE("UnComp!!!!!!!!!!\n");
+	//@@@@@@@@@@@@@@@@
+
 	// 圧縮データ?
 #ifdef COMPRESS_MODE
 	if ((pUpdatePtr[0] == COMPRESS_GZIP_ID1) && (pUpdatePtr[1] == COMPRESS_GZIP_ID2))
 	{
 		// 解凍データサイズを格納するポインタ
-		*pUncomprLen = FIRM_UPDATE_UNCOMP_SIZE;
+		uncomprLen = FIRM_UPDATE_UNCOMP_SIZE;
 
 		// Uncompress
-		if ((status = gzipUncomp ((unsigned char *)FIRM_UPDATE_UNCOMP_ADRS, pUncomprLen, (unsigned char *)FIRM_UPDATE_ADRS, size)) != 0)
+		if ((status = gzipUncomp ((unsigned char *)FIRM_UPDATE_UNCOMP_ADRS, &uncomprLen, (unsigned char *)FIRM_UPDATE_ADRS, size)) != 0)
 		{
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Uncompress Error.");
 			goto _DONE;
@@ -71,12 +75,12 @@ int gigeCmdFirmUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned 
 
 		// バッファ&サイズ更新
 		pUpdatePtr = (unsigned char *)FIRM_UPDATE_UNCOMP_ADRS;
-		updateSize = *pUncomprLen;
+		updateSize = uncomprLen;
 	}
 #endif
 
 	//@@@@@@@@@@@@@@@@
-	DEBUG_PRINT_FORCE("Update!!!!!!!!!!\n");
+	DEBUG_PRINT_FORCE("Update Start!!!!!!!!!!\n");
 	//@@@@@@@@@@@@@@@@
 	
 	// Flash Write
@@ -92,6 +96,10 @@ _DONE:
 
 	// LEDの設定を元に戻す
 	ledReturnState (saveLed0, -1);
+
+	//@@@@@@@@@@@@@@@@
+	DEBUG_PRINT_FORCE("Update End!!!!!!!!!!\n");
+	//@@@@@@@@@@@@@@@@
 
 	return (status);
 }

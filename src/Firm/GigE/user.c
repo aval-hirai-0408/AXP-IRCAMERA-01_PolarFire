@@ -277,7 +277,8 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Sensor Width取得
 		//----------------------------------------------------------------------------------
 		case SensorWidth:
-			value = sensorWidth();
+			//@@@1value = sensorWidth();
+			value = 8192;
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -292,10 +293,10 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case CameraWidthMax:
 			//@@@@@@@@@@@@@@@@@@@@@@@@@@
-			value = 2560;
+			value = 8192;
 			break;
 			//@@@@@@@@@@@@@@@@@@@@@@@@@@
-			if ((*status = toG (roiGetAreaSize ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetAreaSize ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				value2nd = 0;
 
 			if (value2nd == 1)
@@ -307,7 +308,7 @@ u32 get_user_reg (u32 address, u16 *status)
 				value = WidthMax ();
 
 				#if defined(MODE_BINNING)
-				if ((*status = toG(aoiGetBinningX ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+				if ((*status = aoiGetBinningX ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 					value2nd = 0;
 
 				if(value2nd != MODE_DISABLE)
@@ -328,7 +329,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			break;
 			//@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-			if ((*status = toG (roiGetAreaSize ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetAreaSize ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				value2nd = 0;
 
 			if (value2nd == 1)
@@ -341,7 +342,7 @@ u32 get_user_reg (u32 address, u16 *status)
 
 				// High Speed Mode
 				#if defined (MODE_FRAMERATE_HIGH_SPEED)
-				if ((*status = toG (sensorGetFrameRateHighSpeedMode ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+				if ((*status = sensorGetFrameRateHighSpeedMode ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 					break;
 
 				if (value3rd == MODE_ENABLE)
@@ -356,7 +357,7 @@ u32 get_user_reg (u32 address, u16 *status)
 
 
 				#if defined(MODE_BINNING)
-				if ((*status = toG(aoiGetBinningY ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+				if ((*status = aoiGetBinningY ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 					value2nd = 0;
 	
 				if(value2nd != MODE_DISABLE)
@@ -370,11 +371,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Width取得
 		//----------------------------------------------------------------------------------
 		case FPGA_AOI_XSIZE_ADRS:
-			//@@@@@@@@@@@@@@@@@@@@@@@@@@
-			value = 640;
-			break;
-			//@@@@@@@@@@@@@@@@@@@@@@@@@@
-			*status = toG (aoiGetWidth ((int*)&value));
+			*status = aoiGetWidth ((int*)&value);
 			video_width = value;
 			break;
 
@@ -382,20 +379,16 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Height取得
 		//----------------------------------------------------------------------------------
 		case FPGA_AOI_YSIZE_ADRS:
-			//@@@@@@@@@@@@@@@@@@@@@@@@@@
-			value = 512;
-			break;
-			//@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 			// High Speed Mode
 			#if defined (MODE_FRAMERATE_HIGH_SPEED)
-			if ((*status = toG (sensorGetFrameRateHighSpeedMode ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = sensorGetFrameRateHighSpeedMode ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			if (value3rd == MODE_ENABLE)
 			{
 				// Get Virtual Height
-				if ((*status = toG (sensorGetVirtualHeight ((int *)&value))) != AVAL_STATUS_SUCCESS)
+				if ((*status = sensorGetVirtualHeight ((int *)&value)) != AVAL_STATUS_SUCCESS)
 					break;
 
 				// Set Video Height
@@ -404,23 +397,25 @@ u32 get_user_reg (u32 address, u16 *status)
 			}
 			#endif // #if defined (MODE_FRAMERATE_HIGH_SPEED)
 
+#if 0	//@@@1
 			// ROIモード取得
-			if ((*status = toG (roiCheckMultiMode ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiCheckMultiMode ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// ROIマルチモード有効ならばTotal Sizeを取得
 			if (value2nd == MODE_ENABLE)
 			{
 				// Total Height Size取得
-				if ((*status = toG (fpgaRoiGetCameraHeightTotalSize ((int *)&value))) != AVAL_STATUS_SUCCESS)
+				if ((*status = fpgaRoiGetCameraHeightTotalSize ((int *)&value)) != AVAL_STATUS_SUCCESS)
 					break;;
 
 				video_height = value;
 			}
 			else
+#endif//@@@1
 			{
 				// Height取得
-				*status = toG(aoiGetHeight((int*) &value));
+				*status = aoiGetHeight((int*) &value);
 
 				video_height = value;
 
@@ -439,7 +434,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			value = 0;
 			break;
 			//@@@@@@@@@@@@@@@@@@@@@@@@@@
-			*status = toG(aoiGetWidthOffset((int*) &value));
+			*status = aoiGetWidthOffset((int*) &value);
 			video_offs_x = value;
 
 			#if defined(MODE_BINNING)
@@ -458,7 +453,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			//@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 			// ROIモード取得
-			if ((*status = toG (roiCheckMultiMode ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiCheckMultiMode ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// ROIマルチモード有効ならばOffsetyは0
@@ -470,7 +465,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			else
 			{
 				// Offset取得
-				*status = toG(aoiGetHeightOffset((int*) &value));
+				*status = aoiGetHeightOffset((int*) &value);
 				video_offs_y = value;
 
 				#if defined(MODE_BINNING)
@@ -485,7 +480,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case FPGA_XFLIP_CTRL_ADRS:
 		case FPGA_XFLIP_CTRL_ADRS_FPGA:
-			*status = toG(aoiGetXflip((int*) &value));
+			*status = aoiGetXflip((int*) &value);
 
 			#if defined (MODE_XFLIP_INVERT)
 			if (*status == AVAL_STATUS_SUCCESS)
@@ -503,7 +498,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// ROI Selector取得
 		//----------------------------------------------------------------------------------
 		case FIRM_DATA_ROI_SELECTOR_ADRS:
-			*status = toG (roiGetSelector ((int *)&value));
+			*status = roiGetSelector ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -512,18 +507,18 @@ u32 get_user_reg (u32 address, u16 *status)
 		case RoiHeightSize:
 
 			// Get Selector
-			if ((*status = toG (roiGetSelector ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetSelector ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Get Valid
-			if ((*status = toG (roiGetValid ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetValid ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Get Height
 			if (value3rd == 0)
 				value = roiHeightSizeGe[value2nd];
 			else
-				*status = toG (aoiGetHeight ((int *)&value));
+				*status = aoiGetHeight ((int *)&value);
 
 			break;
 		
@@ -533,18 +528,18 @@ u32 get_user_reg (u32 address, u16 *status)
 		case RoiHeightOffset:
 
 			// Get Selector
-			if ((*status = toG (roiGetSelector ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetSelector ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Get Valid
-			if ((*status = toG (roiGetValid ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetValid ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Get Height
 			if (value3rd == 0)
 				value = roiHeightOffsetGe[value2nd];
 			else
-				*status = toG (aoiGetHeightOffset ((int *)&value));
+				*status = aoiGetHeightOffset ((int *)&value);
 
 
 			break;
@@ -553,28 +548,28 @@ u32 get_user_reg (u32 address, u16 *status)
 		// ROI Height Valid
 		//----------------------------------------------------------------------------------
 		case RoiHeightValid:
-			*status = toG (roiGetValid ((int *)&value));
+			*status = roiGetValid ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// ROI Area Flag
 		//----------------------------------------------------------------------------------
 		case FIRM_DATA_ROI_AREA_MODE_ADRS:
-			*status = toG (roiGetAreaFlag ((int *)&value));
+			*status = roiGetAreaFlag ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// ROI Area Size取得
 		//----------------------------------------------------------------------------------
 		case FIRM_DATA_ROI_AREA_SIZE_ADRS:
-			*status = toG (roiGetAreaSize ((int *)&value));
+			*status = roiGetAreaSize ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// SensorTotalHeight取得
 		//----------------------------------------------------------------------------------
 		case SensorTotalHeight:
-			*status = toG (fpgaRoiGetSensorHeightTotalSize ((int *)&value));
+			*status = fpgaRoiGetSensorHeightTotalSize ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -583,7 +578,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		case RoiHeightDefault:
 			#if defined(AXP_AHS052VIR_01)
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_SPECTRUM_DEFAULTY,	(u32*) &value);
-			*status = toG (cmdExecuteStatus (&value));
+			*status = cmdExecuteStatus (&value);
 			#else
 			value = IN32 (FIRM_DATA_ROI_DEFAULT_ADRS);
 			#endif
@@ -594,14 +589,14 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Padding X取得
 		//----------------------------------------------------------------------------------
 		case FPGA_AOI_XPAD_ADRS:
-			*status = toG (aoiGetPad ((int*)&value, (int*)&value2nd));
+			*status = aoiGetPad ((int*)&value, (int*)&value2nd);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Padding Y取得
 		//----------------------------------------------------------------------------------
 		case FPGA_AOI_YPAD_ADRS:
-			*status = toG (aoiGetPad ((int*)&value2nd, (int*)&value));
+			*status = aoiGetPad ((int*)&value2nd, (int*)&value);
 			break;
 #endif // defined (IF_GIGE)
 
@@ -648,7 +643,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// PixelFormat取得
 		//----------------------------------------------------------------------------------
 		case FPGA_AOI_BITWIDTH_ADRS:
-			if ((*status = toG (cameraGetBitWidthGigE ((int *)&value))) == AVAL_STATUS_SUCCESS)
+			if ((*status = cameraGetBitWidthGigE ((int *)&value)) == AVAL_STATUS_SUCCESS)
 			{
 				video_pixfmt = value;
 //@@@@@@@@@@@@@@@@				
@@ -697,7 +692,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Acquisition Mode取得
 		//----------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_MODE_ADRS:
-			*status = toG (acquisitionGetMode((int*)&value));
+			*status = acquisitionGetMode((int*)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -712,7 +707,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_FRAMERATE_ADRS:	//@@@1
 		case AcquisitionFrameRate:
-	    	*status = toG( acquisitionGetFrameRate(&dblValue) );
+	    	*status = acquisitionGetFrameRate(&dblValue);
 			value = (unsigned int)(dblValue * 100);
 			break;
 
@@ -720,7 +715,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Acquisition Frame Rate最大値取得
 		//----------------------------------------------------------------------------------
 		case AcquisitionFrameRateMax:
-			*status = toG (rateMax ((double*)&dblValue));
+			*status = rateMax ((double*)&dblValue);
 			dblValue *= 100;
 			value = (u32)dblValue;
 			break;
@@ -729,7 +724,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Acquisition Frame Rate最小値取得
 		//----------------------------------------------------------------------------------
 		case AcquisitionFrameRateMin:
-			*status = toG (rateMin ((double*)&dblValue));
+			*status = rateMin ((double*)&dblValue);
 			dblValue *= 100;
 			value = (u32)dblValue;
 			break;
@@ -738,8 +733,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Acquisition Frame Rate Raw(Time)最大値取得
 		//----------------------------------------------------------------------------------
 		case AcquisitionFrameRateRawMax:
-			// Rate取得
-			if ((*status = toG (rateMax (&dblValue))) != AVAL_STATUS_SUCCESS)
+			if ((*status = rateMax (&dblValue)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Rate時間取得
@@ -750,8 +744,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Acquisition Frame Rate Raw(Time)最小値取得
 		//----------------------------------------------------------------------------------
 		case AcquisitionFrameRateRawMin:
-			// Rate取得
-			if ((*status = toG (rateMin (&dblValue))) != AVAL_STATUS_SUCCESS)
+			if ((*status = rateMin (&dblValue)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Rate時間取得
@@ -776,21 +769,21 @@ u32 get_user_reg (u32 address, u16 *status)
 		// 露光時間(us単位)取得
 		//----------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_EXPOSURE_ADRS:
-			//@@@*status = toG (acquisitionGetExposure ((unsigned int*) &value));
+			//@@@*status = acquisitionGetExposure ((unsigned int*) &value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// 露光時間最大値(us単位)取得
 		//----------------------------------------------------------------------------------
 		case ExposureTimeMax:
-			*status =  toG (exposureMax ((int*)&value));
+			*status =  exposureMax ((int*)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// 露光時間最小値(us単位)取得
 		//----------------------------------------------------------------------------------
 		case ExposureTimeMin:
-			*status =  toG (exposureMin ((int*)&value));
+			*status =  exposureMin ((int*)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -804,7 +797,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// ExposureMode取得
 		//----------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_EXPOSURE_MODE_ADRS:
-			//@@@1*status = toG (acquisitionGetExposureMode ((int*) &value));
+			//@@@1*status = acquisitionGetExposureMode ((int*) &value);
 			value = 0;
 			break;
 
@@ -812,14 +805,14 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Sensor Read Out時間取得(us単位)取得
 		//----------------------------------------------------------------------------------
 		case SensorReadOutTime:
-			*status =  toG (sensoreGetReadOut ((int*)&value));
+			*status =  sensoreGetReadOut ((int*)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Test Pattern取得
 		//----------------------------------------------------------------------------------
 		case FPGA_AOI_TP_INDEX_ADRS:
-			*status = toG(aoiGetPattern ((int *)&value));
+			*status = aoiGetPattern ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -875,7 +868,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Acquisition Trigger Delay取得
 		//----------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_TRG_DELAY_ADRS:
-			*status = toG(acquisitionGetTrgDelay((unsigned int*) &value));
+			*status = acquisitionGetTrgDelay((unsigned int*) &value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -906,41 +899,39 @@ u32 get_user_reg (u32 address, u16 *status)
          	value = IN32(address);
            	break;
 
-        	break;
-
 		//----------------------------------------------------------------------------------
-		// AcquisitionTrgHighCount取得取得
+		// AcquisitionTrgHighCount取得
 		//----------------------------------------------------------------------------------
         case AcquisitionTrgHighCount:
-			*status = toG (acquisitionGetTrgCountHigh (0, (unsigned int *)&value));
+			*status = acquisitionGetTrgCountHigh (0, (unsigned int *)&value);
 	      	break;
 
 		//----------------------------------------------------------------------------------
-		// AcquisitionTrgLowCount取得取得
+		// AcquisitionTrgLowCount取得
 		//----------------------------------------------------------------------------------
         case AcquisitionTrgLowCount:
-			*status = toG (acquisitionGetTrgCountLow (0, (unsigned int *)&value));
+			*status = acquisitionGetTrgCountLow (0, (unsigned int *)&value);
 	      	break;
 
 		//----------------------------------------------------------------------------------
 		// AcquisitionTrgCountMode取得
 		//----------------------------------------------------------------------------------
         case AcquisitionTrgCountMode:
-			*status = toG (counterGetTrgMode ((int *)&value));
+			*status = counterGetTrgMode ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// AcquisitionTrgSignalCount取得
 		//----------------------------------------------------------------------------------
         case AcquisitionTrgSignalCount:
-			*status = toG (counterGetTrgInputCount ((int *)&value));
+			*status = counterGetTrgInputCount ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// AcquisitionTrgImageCount取得
 		//----------------------------------------------------------------------------------
         case AcquisitionTrgImageCount:
-			*status = toG (counterGetImageOutputCount ((int *)&value));
+			*status = counterGetImageOutputCount ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -992,11 +983,11 @@ u32 get_user_reg (u32 address, u16 *status)
 	    case SpectrumBandValue:
 
 			// Get Selector
-			if ((*status = toG (spectrumGetBandIndex ((SpectrumBand_Index + value3rd), (int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = spectrumGetBandIndex ((SpectrumBand_Index + value3rd), (int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Band Peak Wave取得
-			if((*status = toG (spectrumBandPeakWave2 (value2nd, &dblValue))) != AVAL_STATUS_SUCCESS)
+			if((*status = spectrumBandPeakWave2 (value2nd, &dblValue)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			value = (u32)(dblValue * SPECTRUM_BAND_WAVE_UNIT);
@@ -1009,7 +1000,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		case SpectrumBandAllValue:
 
 			// Band Peak Wave取得
-			if((*status = toG (spectrumBandPeakWave2 (SpectrumBand_Index, &dblValue))) != AVAL_STATUS_SUCCESS)
+			if((*status = spectrumBandPeakWave2 (SpectrumBand_Index, &dblValue)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			value = (u32)(dblValue * SPECTRUM_BAND_WAVE_UNIT);
@@ -1020,7 +1011,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Spectrum Band Width取得
 		//----------------------------------------------------------------------------------
 	    case SpectrumBandWidth:
-			*status = toG (spectrumBandHalfWidth2 (SpectrumBand_Index, &dblValue));
+			*status = spectrumBandHalfWidth2 (SpectrumBand_Index, &dblValue);
 			value = (u32)dblValue;
          	break;
 
@@ -1028,14 +1019,14 @@ u32 get_user_reg (u32 address, u16 *status)
 		// SpectrumBandValueRange取得
 		//----------------------------------------------------------------------------------
 	    case SpectrumBandValueRange:
-	    	value = IN32(FIRM_DATA_SPECTRUM_BANDVALUE_RANGE_ADRS);
+	    	value = IN32 (FIRM_DATA_SPECTRUM_BANDVALUE_RANGE_ADRS);
 	    	break;
 
 		//----------------------------------------------------------------------------------
 		// SpectrumBandDefaultMode取得
 		//----------------------------------------------------------------------------------
     	case SpectrumBandDefaultMode:
-    		*status = toG (spectrumGetDefaultMode ((int *)&value));
+    		*status = spectrumGetDefaultMode ((int *)&value);
     		break;
 
 		//----------------------------------------------------------------------------------
@@ -1043,7 +1034,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 	#if defined(MODE_SPECTRUM_BANDGAIN_FILTER)
 		case SpectrumOverlap:
-			*status = toG (bgfGetOverlapMode((int*) &value));
+			*status = bgfGetOverlapMode((int*) &value);
 			break;
 	#endif
 		
@@ -1059,7 +1050,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Band Wave Index取得
 		//----------------------------------------------------------------------------------
 		case SpectrumBandWaveToIndex:
-			*status = toG (spectrumBandIndex2 ((double)SpectrumBand_Wave, (int *)&value));
+			*status = spectrumBandIndex2 ((double)SpectrumBand_Wave, (int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1068,11 +1059,11 @@ u32 get_user_reg (u32 address, u16 *status)
 		case SpectrumBandStart:
 		
 			// Get Selector
-			if ((*status = toG (roiGetSelector ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetSelector ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Get Valid
-			if ((*status = toG (roiGetValid ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetValid ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Get Height
@@ -1086,20 +1077,20 @@ u32 get_user_reg (u32 address, u16 *status)
 			}
 			else
 			{
-				*status = toG (aoiGetHeightOffset ((int *)&value));
+				*status = aoiGetHeightOffset ((int *)&value);
 			}
 
 			#if defined(AXP_AHS052VIR_01) || defined(AXP_AHS052VIR_02)
 
 			// 現在のモードを取得
-			if ((*status = toG(aoiGetBinningY ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetBinningY ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			value *= value2nd;
 			#endif
 
 			// 開始波長取得
-			if ((*status = toG (spectrumBandPeakWave2 (value, &dblValue))) != AVAL_STATUS_SUCCESS)
+			if ((*status = spectrumBandPeakWave2 (value, &dblValue)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// 波長情報を整数に変換
@@ -1113,11 +1104,11 @@ u32 get_user_reg (u32 address, u16 *status)
 		case SpectrumBandEnd:
 
 			// Get Selector
-			if ((*status = toG (roiGetSelector ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetSelector ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Get Valid
-			if ((*status = toG (roiGetValid ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetValid ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Get Height
@@ -1135,17 +1126,17 @@ u32 get_user_reg (u32 address, u16 *status)
 			else
 			{
 				// Height
-				if ((*status = toG (aoiGetHeight ((int *)&value))) != AVAL_STATUS_SUCCESS)
+				if ((*status = aoiGetHeight ((int *)&value)) != AVAL_STATUS_SUCCESS)
 					break;
 
 				// Offset
-				if ((*status = toG (aoiGetHeightOffset ((int *)&intValue))) != AVAL_STATUS_SUCCESS)
+				if ((*status = aoiGetHeightOffset ((int *)&intValue)) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 
 			#if defined(AXP_AHS052VIR_01) || defined(AXP_AHS052VIR_01)
 			// 現在のモードを取得
-			if ((*status = toG(aoiGetBinningY ((int *)&value4th))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetBinningY ((int *)&value4th)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			intValue *= value4th;
@@ -1155,7 +1146,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			value3rd = intValue + value - 1;
 
 			// 終了波長取得
-			if ((*status = toG (spectrumBandPeakWave2 (value3rd, &dblValue))) != AVAL_STATUS_SUCCESS)
+			if ((*status = spectrumBandPeakWave2 (value3rd, &dblValue)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// 波長情報を整数に変換
@@ -1168,7 +1159,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			//----------------------------------------------------------------------------------
 			case SpectrumBandValid:
 
-				if ((*status = toG (roiGetSelector ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+				if ((*status = roiGetSelector ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 					break;
 
 				value = roiHeightValidGe[value2nd];
@@ -1240,7 +1231,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DeviceVendoroWriteCmd:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_CAMERA_VENDOR,(u32*)&value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1248,7 +1239,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DeviceModelWriteCmd:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_CAMERA_MODEL,(u32*)&value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1256,7 +1247,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DeviceManufacturerInfoWriteCmd:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_CAMERA_MANUFACTURE,(u32*)&value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1405,7 +1396,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// GevLinkSpeed取得
 		//----------------------------------------------------------------------------------
 		case GevLinkSpeed:
-			*status = toG (gigeGetSpeedBps ((int *)&value));
+			*status = gigeGetSpeedBps ((int *)&value);
 			break;
 #endif // defined (IF_GIGE) && defined (MODE_GIGE_10G)
 
@@ -1415,7 +1406,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// GevLinkSpeedConfig取得
 		//----------------------------------------------------------------------------------
 		case GevLinkSpeedConfig:
-			*status = toG (gevGetSpeedConfig ((unsigned int *)&value));
+			*status = gevGetSpeedConfig ((unsigned int *)&value);
 			break;
 #endif // #if defined (MODE_GE_SPEED)
 
@@ -1438,7 +1429,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case UserSetLoad:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_USERSET_LOAD, (u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			//@@@1LUTFormat_Selector = LUT_FORMAT_FLASH;
 			//@@@1Flash_UserSetLoad = !value;
 			break;
@@ -1448,7 +1439,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case UserSetSave:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_USERSET_SAVE, (u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			//@@@1Flash_UserSetSave = !value;
 			break;
 
@@ -1457,7 +1448,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case UserSetFactory:
 			//*status = (u32) isExecuteCommandDone((u32) 1, 0x15, (u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1499,7 +1490,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// LUT Control取得
 		//----------------------------------------------------------------------------------
 		case FPGA_LUT_CTRL_ADRS:
-			*status = toG (lutGetEnable( (int*)&value2nd, (int*)&value3rd));
+			*status = lutGetEnable( (int*)&value2nd, (int*)&value3rd);
 			value = value3rd;
 			break;
 
@@ -1507,7 +1498,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// LUT Format取得
 		//----------------------------------------------------------------------------------
 		case LUTFormat:
-			*status = toG (lutGetFormat ((int)LUTSelector_Selector, (int *)&value));
+			*status = lutGetFormat ((int)LUTSelector_Selector, (int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1522,7 +1513,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			else
 			{
 				// Chose the threshold of LUT_FORMAT_BIN LUT format
-				if ((*status = toG(lutGetBinThreshold(LUTSelector_Selector , (int*) &value))) != AVAL_STATUS_SUCCESS)
+				if ((*status = lutGetBinThreshold(LUTSelector_Selector , (int*) &value)) != AVAL_STATUS_SUCCESS)
 					break;
 
 				// データサイズ取得
@@ -1534,7 +1525,7 @@ u32 get_user_reg (u32 address, u16 *status)
 					value = value2nd;
 
 				// Get Lut Mode
-				if ((*status = toG(lutGetEnable((int*) &value2nd, (int*) &value3rd))) != AVAL_STATUS_SUCCESS)
+				if ((*status = lutGetEnable((int*) &value2nd, (int*) &value3rd)) != AVAL_STATUS_SUCCESS)
 					break;
 
 				#if defined (IF_CXP)
@@ -1553,14 +1544,14 @@ u32 get_user_reg (u32 address, u16 *status)
 		// LUTGamma取得
 		//--------------------------------------------------------------------------------
 		case LUTGamma:
-			if ((*status = toG( lutGetGamma (LUTSelector_Selector, &fltValue))) == AVAL_STATUS_SUCCESS)
+			if ((*status = lutGetGamma (LUTSelector_Selector, &fltValue)) == AVAL_STATUS_SUCCESS)
 			{
 				value = (int)(fltValue * LUT_GAMMA_DATA_ADJUST);
 			}
 			else
 			{
 				value = (int)(1.0 * LUT_GAMMA_DATA_ADJUST);
-				*status = toG (AVAL_STATUS_SUCCESS);
+				*status = AVAL_STATUS_SUCCESS;
 			}
 
 			break;
@@ -1577,11 +1568,11 @@ u32 get_user_reg (u32 address, u16 *status)
 			}
 			#endif
 		
-			if ((*status = toG(lutGetMemAdrs (LUTSelector_Selector, (unsigned int *)&value))) != AVAL_STATUS_SUCCESS)
+			if ((*status = lutGetMemAdrs (LUTSelector_Selector, (unsigned int *)&value)) != AVAL_STATUS_SUCCESS)
 			{
 				if (gInterFaceID == INTERFACE_CXP)
 				{
-					*status = toG (AVAL_STATUS_SUCCESS);
+					*status = AVAL_STATUS_SUCCESS;
 					value = 0;
 				}
 			}
@@ -1601,7 +1592,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelCorrectionSelector:
 			value2nd = 0x0;
-			*status = toG (cameraParamUserReadMem (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_DPC_NUMBER_ADRS, (unsigned int*)&value2nd, (unsigned int*)&DefectPixelCorrection_Selector));
+			*status = cameraParamUserReadMem (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_DPC_NUMBER_ADRS, (unsigned int*)&value2nd, (unsigned int*)&DefectPixelCorrection_Selector);
 			value = DefectPixelCorrection_Selector;
 			break;
 
@@ -1610,7 +1601,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		 //--------------------------------------------------------------------------------
 		 case DefectivePixelCorrectionLoad:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_DPC_LOAD,(u32*)&value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -1618,14 +1609,14 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 		case DefectivePixelCorrectionLoadAdmin:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_DPC_LOAD_ADMIN,(u32*)&value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Defective Pixel Correction Control取得
 		//----------------------------------------------------------------------------------
 		case DefectivePixelCorrection:
-			*status = toG (dpcGetEnableMode ((int *)&value));
+			*status = dpcGetEnableMode ((int *)&value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -1640,7 +1631,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelCorrectionAdjustment:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC2_FACTORY,(u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1648,7 +1639,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelCorrectionDetection:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC3_FACTORY,(u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1658,17 +1649,17 @@ u32 get_user_reg (u32 address, u16 *status)
 			#if defined (MODE_DPC_GRID_UPDATE)
 
 			// 欠陥座標数取得
-			*status = toG (dpcGetDefectionCountVersion2 ((int *)&value));
+			*status = dpcGetDefectionCountVersion2 ((int *)&value);
 
 			#else // #if defined (MODE_DPC_GRID_UPDATE)
 			
 			// Get Area
-			if  ((*status = toG (roiGetAreaFlag ((int*)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if  ((*status = roiGetAreaFlag ((int*)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			if (value2nd == ROI_AREA_MODE_DEFAULT_SIZE)
 			{
-				if ((*status = toG (dpcEndSearch2 (DPC_MEMORY_ADRS, (int *)&value))) != AVAL_STATUS_SUCCESS)
+				if ((*status = dpcEndSearch2 (DPC_MEMORY_ADRS, (int *)&value)) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 			else
@@ -1709,7 +1700,7 @@ u32 get_user_reg (u32 address, u16 *status)
 				value = DefectPixelCoordinate_X;
 			else
 				//*status = executeCommandDPCEdit(DefectPixel_Index,FIRM_CMD_DPC_GET_GRID,(u32*)&value,(u32*)&value2nd);
-				*status = toG (cmdExecuteStatus ((int *)&value));
+				*status = cmdExecuteStatus ((int *)&value);
 
 			break;
 		
@@ -1721,7 +1712,7 @@ u32 get_user_reg (u32 address, u16 *status)
 				value = DefectPixelCoordinate_Y;
 			else
 				//*status = executeCommandDPCEdit(DefectPixel_Index,FIRM_CMD_DPC_GET_GRID,(u32*)&value2nd,(u32*)&value);
-				*status = toG (cmdExecuteStatus ((int *)&value));
+				*status = cmdExecuteStatus ((int *)&value);
 
 			break;
 
@@ -1730,7 +1721,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelApply:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC_ADD_GRID,(u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1738,7 +1729,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelRemove:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC_DEL_GRID,(u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1746,7 +1737,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelReset:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC_CLR_GRID,(u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1754,7 +1745,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		 case DefectivePixelCorrectionSave:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_DPC_SAVE_FACTORY,(u32*)&value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1762,7 +1753,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		 case DefectivePixelCorrectionSaveAdmin:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_DPC_SAVE_ADMIN,(u32*)&value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1770,7 +1761,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelCorrectionFactory:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC_DEFAULT,	(u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1859,7 +1850,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelCorrectionAdjustUpdate:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC_ADJUST_UPDATE, (u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1896,7 +1887,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Flat Filed Correction Selector取得
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionSelector:
-			*status = toG (ffcGetLoadNum ((int*)&FlatFieldCorrection_Selector));
+			*status = ffcGetLoadNum ((int*)&FlatFieldCorrection_Selector);
 			value = FlatFieldCorrection_Selector;
 			break;
 
@@ -1912,14 +1903,14 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionSetLoad:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_FFC_LOAD, (u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// FlatFieldCorrectionSetSave取得
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionSetSave:
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 #if 0
 			switch (FlatFieldCorrectionAdjustment_Selector)
@@ -1946,11 +1937,11 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionBrightMode:
 			if (FlatFieldCorrectionModeSelector == 1)
-				*status = toG (ffcGetMode ((int *)&value2nd, (int *)&value));
+				*status = ffcGetMode ((int *)&value2nd, (int *)&value);
 
 			#if defined (MODE_FFC_SHADING_LINE)
 			else if (FlatFieldCorrectionModeSelector == 4)
-				*status = toG (ffcGetMode ((int *)&value2nd, (int *)&value));
+				*status = ffcGetMode ((int *)&value2nd, (int *)&value);
 			#endif
 		
 			break;
@@ -1960,10 +1951,10 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case FPGA_FFC_BLACK_TARGET_ADRS:
 			#if defined (MODE_FFC_BIT_CALC)
-			if ((*status = toG (ffcGetBlackTarget ((unsigned int *)&value))) != AVAL_STATUS_SUCCESS)
+			if ((*status = ffcGetBlackTarget ((unsigned int *)&value)) != AVAL_STATUS_SUCCESS)
 				break;
 
-			if ((*status = toG (ffcGetBitCalc ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = ffcGetBitCalc ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			value /= value2nd;
@@ -1981,10 +1972,10 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionBrightTarget:
 			#if defined (MODE_FFC_BIT_CALC)
-			if ((*status = toG (ffcGetWhiteTarget ((unsigned int *)&value))) != AVAL_STATUS_SUCCESS)
+			if ((*status = ffcGetWhiteTarget ((unsigned int *)&value)) != AVAL_STATUS_SUCCESS)
 				break;
 
-			if ((*status = toG (ffcGetBitCalc ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = ffcGetBitCalc ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			value /= value2nd;
@@ -2006,7 +1997,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Flat Filed Correction 黒レベル調整取得
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionDarkAdjustment:
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 #if 0
 			switch (FlatFieldCorrection_Selector)
@@ -2025,7 +2016,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Flat Filed Correction 白レベル調整取得
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionBrightAdjustment:
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 #if 0
 			switch (FlatFieldCorrection_Selector)
@@ -2045,7 +2036,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Flat Filed Correction Shading Lineレベル調整取得
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionShadinLinegAdjustment:
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 #if 0
@@ -2076,7 +2067,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionFactory:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_FFC_DEFAULT,(u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -2098,7 +2089,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		 case FlatFieldCorrectionSetCorrectionMode:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_FFC_CORRECTION_MODE,(u32*)&value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -2204,7 +2195,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionAdjustUpdate:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_FFC_ADJUST_UPDATE, (u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -2234,7 +2225,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		case FlatFieldCorrectionOffset:
 			if ((FlatFieldCorrectionModeSelector == 1) || (FlatFieldCorrectionModeSelector == 4))
 			{
-				*status = toG (ffcGetOffsetData (0, FlatFieldCorrectionX_Index, FlatFieldCorrectionY_Index, (unsigned int *)&value));
+				*status = ffcGetOffsetData (0, FlatFieldCorrectionX_Index, FlatFieldCorrectionY_Index, (unsigned int *)&value);
 			}
 			else if (FlatFieldCorrectionModeSelector == 2)
 			{
@@ -2249,7 +2240,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		case FlatFieldCorrectionGain:
 			if ((FlatFieldCorrectionModeSelector == 1) || (FlatFieldCorrectionModeSelector == 4))
 			{
-				*status = toG (ffcGetGainData (0, FlatFieldCorrectionX_Index, FlatFieldCorrectionY_Index, (unsigned int *)&value));
+				*status = ffcGetGainData (0, FlatFieldCorrectionX_Index, FlatFieldCorrectionY_Index, (unsigned int *)&value);
 			}
 			else if (FlatFieldCorrectionModeSelector == 2)
 			{
@@ -2271,7 +2262,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// GainX Float取得
 		//--------------------------------------------------------------------------------
 		case GainxFloat:
-			*status = toG (digitalGetGainX (&fltValue));
+			*status = digitalGetGainX (&fltValue);
 			fltValue += 0.05;	// 四捨五入（小数点第１位まで有効）
 			value = (int)(fltValue * DEVICE_GAINX_UNIT);
 			break;
@@ -2280,14 +2271,14 @@ u32 get_user_reg (u32 address, u16 *status)
 		// BlackLevel Offset1取得
 		//--------------------------------------------------------------------------------
 		case FPGA_DOG_OFFSET1_ADRS:
-			*status = toG(digitalGetOffset1 ((int*)&value));
+			*status = digitalGetOffset1 ((int*)&value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// BlackLevel Offset2取得
 		//--------------------------------------------------------------------------------
 		case FPGA_DOG_OFFSET2_ADRS:
-			*status = toG(digitalGetOffset ((int*)&value));
+			*status = digitalGetOffset ((int*)&value);
 			break;
 
 #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
@@ -2304,7 +2295,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Sensor Conversion Gain取得
 		//--------------------------------------------------------------------------------
 		case SensorConversionGain:
-			*status = toG (sensorGetConversionGain ((int *)&value));
+			*status = sensorGetConversionGain ((int *)&value);
 			break;
 #endif
 
@@ -2313,7 +2304,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Sensor Gradation Compress 8Bit Convert取得
 		//--------------------------------------------------------------------------------
 		case SensorGradComp8BitConvert:
-			if ((*status = toG (aoiGetBitWidth ((int*) &value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetBitWidth ((int*) &value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 			
 			if (value2nd == 8)
@@ -2404,7 +2395,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			value = IN32 (GENICAM_DIGITAL_LINE_SELECT_ADRS);
 
 			// パルス取得
-			*status = toG (gpioGetPulseTime((int)value,(unsigned int*)&address2nd,(unsigned int*)&address3rd));
+			*status = gpioGetPulseTime((int)value,(unsigned int*)&address2nd,(unsigned int*)&address3rd);
 
 			// パルス格納
 			value = address2nd;
@@ -2419,7 +2410,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			value = IN32 (GENICAM_DIGITAL_LINE_SELECT_ADRS);
 
 			// パルス取得
-			*status = toG (gpioGetPulseTime((int)value,(unsigned int*)&address2nd,(unsigned int*)&address3rd));
+			*status = gpioGetPulseTime((int)value,(unsigned int*)&address2nd,(unsigned int*)&address3rd);
 
 			// パルス格納
 			value = address3rd;
@@ -2782,7 +2773,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// EncoderFrequency取得
 		//----------------------------------------------------------------------------------
 		case GENICAM_ENCODER_0_FREQ_ADRS:
-			*status = toG (encoderGetFrequency (&dblValue));
+			*status = encoderGetFrequency (&dblValue);
 			value = (long)dblValue;
 			break;
 
@@ -2883,10 +2874,10 @@ u32 get_user_reg (u32 address, u16 *status)
 		// GENICAM_ENCODER_FREQ_ADRS取得
 		//----------------------------------------------------------------------------------
 		case GENICAM_ENCODER_FREQ_ADRS:
-			if ((*status = toG (encoderGetFrequency (&dblValue))) != AVAL_STATUS_SUCCESS)
+			if ((*status = encoderGetFrequency (&dblValue)) != AVAL_STATUS_SUCCESS)
 			{
 				value = 0;
-				*status = toG (AVAL_STATUS_SUCCESS);
+				*status = AVAL_STATUS_SUCCESS;
 				break;
 			}
 			
@@ -3010,7 +3001,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// DeviceDipsw取得
 		//--------------------------------------------------------------------------------
 		case DeviceDipsw:
-			*status = toG (getDipsw((unsigned int *)&value));
+			*status = getDipsw((unsigned int *)&value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -3018,7 +3009,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 		case DeviceFactory:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DEFAULT_ALL,	(u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -3045,9 +3036,9 @@ u32 get_user_reg (u32 address, u16 *status)
 	#if defined (MODE_BOARD_ACB532GE) || defined (MODE_BOARD_ACB531CXP)
 		case DeviceMainVolt:
 			if (gInterFaceID == INTERFACE_CXP)
-				*status = toG (voltIfGet90va (&dblValue));
+				*status = voltIfGet90va (&dblValue);
 			else
-				*status = toG (voltIfGet240v (&dblValue));
+				*status = voltIfGet240v (&dblValue);
 			fltValue = (float) dblValue;
 			value = (int)(fltValue * DEVICE_VOLT_UNIT);
 			break;
@@ -3060,7 +3051,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
 		case SensorBlackPixel:
-			*status = toG (sensorGetBlackPixel ((int *)&value));
+			*status = sensorGetBlackPixel ((int *)&value);
 			break;
 #endif
 
@@ -3077,7 +3068,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
 		case DeviceRateMode:
-			*status = toG (acquisitionGetRateMode ((int *)&value));
+			*status = acquisitionGetRateMode ((int *)&value);
 			break;
 #endif
 
@@ -3085,21 +3076,21 @@ u32 get_user_reg (u32 address, u16 *status)
 		// FPGA_TG_TGSE_ADRS取得
 		//--------------------------------------------------------------------------------
 		case FPGA_TG_TGSE_ADRS:
-			*status = toG (tgGetTgse ((unsigned int *)&value));
+			*status = tgGetTgse ((unsigned int *)&value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// FPGA_TG_TGES_ADRS取得
 		//--------------------------------------------------------------------------------
 		case FPGA_TG_TGES_ADRS:
-			*status = toG (tgGetTges ((unsigned int *)&value));
+			*status = tgGetTges ((unsigned int *)&value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// FPGA_TG_TGPD_ADRS取得
 		//--------------------------------------------------------------------------------
 		case FPGA_TG_TGPD_ADRS:
-			*status = toG (tgGetTgpd ((unsigned int *)&value));
+			*status = tgGetTgpd ((unsigned int *)&value);
 			break;
 
 
@@ -3115,7 +3106,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// HighSpeedMode取得
 		//--------------------------------------------------------------------------------
 		case HighSpeedMode:
-			*status = toG (sensorGetFrameRateHighSpeedMode ((int *)&value));
+			*status = sensorGetFrameRateHighSpeedMode ((int *)&value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -3123,14 +3114,14 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 		case HighSpeedModeCmd:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_HIGH_SPEED_MODE, (u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// HighSpeedModeLineCount取得
 		//--------------------------------------------------------------------------------
 		case HighSpeedModeLineCount:
-			//*status = toG(aoiGetHeight((int*) &value));
+			//*status = aoiGetHeight((int*) &value);
 			value = gHighSpeedModeLineCount;
 			break;
 
@@ -3190,7 +3181,7 @@ u32 get_user_reg (u32 address, u16 *status)
 					break;
 				case 1:
 					//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_AGING,(u32*) &value);
-					*status = toG (cmdExecuteStatus ((int *)&value));
+					*status = cmdExecuteStatus ((int *)&value);
 					break;
 				default:
 					break;
@@ -3258,7 +3249,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 		case FPGA_PELTIER_TARGET_ADRS:
 #if defined (MODE_PELTIER_MOUNTING_SWITCH)
-			if ((*status = toG (peltierGetMountState ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = peltierGetMountState ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 #else
 			value2nd = MODE_ENABLE;
@@ -3266,7 +3257,7 @@ u32 get_user_reg (u32 address, u16 *status)
 
 			if(value2nd == MODE_ENABLE)
 			{
-				*status = toG (peltierGetTarget (&dblValue));
+				*status = peltierGetTarget (&dblValue);
 
 				if (dblValue >= 0)
 					fltValue = (float)(dblValue + 0.5);
@@ -3281,7 +3272,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Sensor Temperature Float取得
 		//--------------------------------------------------------------------------------
 		case DeviceTemperature_Sensor_Float:
-			*status = toG (peltierGetSensorTemp (&dblValue));
+			*status = peltierGetSensorTemp (&dblValue);
 			fltValue = (float) dblValue;
 			value = (int)(fltValue * DEVICE_TEMP_UNIT);
 			break;
@@ -3290,7 +3281,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Case Temperature Float取得
 		//--------------------------------------------------------------------------------
 		case DeviceTemperature_Case_Float:
-			*status = toG (peltierGetCaseTemp (&dblValue));
+			*status = peltierGetCaseTemp (&dblValue);
 			fltValue = (float) dblValue;
 			value = (int)(fltValue * DEVICE_TEMP_UNIT);
 			break;
@@ -3299,7 +3290,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// FPGA Temperature Float取得
 		//--------------------------------------------------------------------------------
 		case DeviceTemperature_FPGA_Float:
-			*status = toG (xadcGetFpgaTemp (&dblValue));
+			*status = xadcGetFpgaTemp (&dblValue);
 			fltValue = (float) dblValue;
 			value = (int)(fltValue * DEVICE_TEMP_UNIT);
 			break;
@@ -3340,7 +3331,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Sensor Alarm Max Temperature取得
 		//--------------------------------------------------------------------------------
 		case FPGA_PELTIER_SENSOR_ALM_ADRS:
-			*status = toG (peltierGetSensorTempAlarm (&dblValue, &dblValue2nd));
+			*status = peltierGetSensorTempAlarm (&dblValue, &dblValue2nd);
 			fltValue = (float) dblValue;
 			value = (int) fltValue;
 			break;
@@ -3349,7 +3340,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Sensor Alarm Min Temperature取得
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureAlarmMin_Sensor:
-			*status = toG (peltierGetSensorTempAlarm (&dblValue, &dblValue2nd));
+			*status = peltierGetSensorTempAlarm (&dblValue, &dblValue2nd);
 			fltValue = (float) dblValue2nd;
 			value = (int) fltValue;
 			break;
@@ -3358,7 +3349,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Case Alarm Max Temperature取得
 		//--------------------------------------------------------------------------------
 		case FPGA_PELTIER_CASE_ALM_ADRS:
-			*status = toG (peltierGetCaseTempAlarm (&dblValue, &dblValue2nd));
+			*status = peltierGetCaseTempAlarm (&dblValue, &dblValue2nd);
 			fltValue = (float) dblValue;
 			value = (u32) fltValue;
 			break;
@@ -3367,7 +3358,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Case Alarm Min Temperature取得
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureAlarmMin_Housing:
-			*status = toG (peltierGetCaseTempAlarm (&dblValue, &dblValue2nd));
+			*status = peltierGetCaseTempAlarm (&dblValue, &dblValue2nd);
 			fltValue = (float) dblValue2nd;
 			value = (int) fltValue;
 			break;
@@ -3405,7 +3396,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// DevicePeltierPowerLevel取得
 		//--------------------------------------------------------------------------------
 		case DevicePeltierPowerLevel:
-			*status = toG (peltierGetPowerLevel ((int *)&value));
+			*status = peltierGetPowerLevel ((int *)&value);
 			break;
 #endif
 
@@ -3414,7 +3405,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Peltier Voltage取得取得
 		//--------------------------------------------------------------------------------
 		case DevicePeltierVolt:
-			*status = toG (peltierGetVolt (&dblValue));
+			*status = peltierGetVolt (&dblValue);
 			value = (int)(dblValue * DEVICE_VOLT_UNIT);
 			break;
 
@@ -3422,7 +3413,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Peltier Current取得取得
 		//--------------------------------------------------------------------------------
 		case DevicePeltierCurrent:
-			*status = toG (peltierGetCurrent (&dblValue));
+			*status = peltierGetCurrent (&dblValue);
 			value = (int)(dblValue * DEVICE_CURRENT_UNIT);
 			break;
 #endif
@@ -3432,14 +3423,14 @@ u32 get_user_reg (u32 address, u16 *status)
 		// 温度異常ステータス取得
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureAbnormalStatus:
-			*status = toG (tempGetAbnormalStatus ((unsigned int *)&value));
+			*status = tempGetAbnormalStatus ((unsigned int *)&value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// 温度異常カウント取得
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureAbnormalCount:
-			*status = toG (tempGetAbnormalCount ((unsigned int *)&value));
+			*status = tempGetAbnormalCount ((unsigned int *)&value);
 			break;
 #endif
 
@@ -3448,7 +3439,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// PHY温度取得
 		//--------------------------------------------------------------------------------
 		case DeviceTemperaturePhy:
-			if ((*status = toG (phyGetTemp (&fltValue))) == AVAL_STATUS_SUCCESS)
+			if ((*status = phyGetTemp (&fltValue)) == AVAL_STATUS_SUCCESS)
 				value = (int)(fltValue * DEVICE_TEMP_UNIT);
 			break;
 #endif
@@ -3466,7 +3457,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 		case DeviceDrrsCommand:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DRRS, (u32*) &value);
-			*status = toG (cmdExecuteStatus ((int *)&value));
+			*status = cmdExecuteStatus ((int *)&value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -3480,7 +3471,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// DeviceDrrsStatus取得
 		//--------------------------------------------------------------------------------
 		case DeviceDrrsStatus:
-			*status = toG (sensorGetDrrs ((int *)&value));
+			*status = sensorGetDrrs ((int *)&value);
 			break;
 #endif
 
@@ -3496,49 +3487,49 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Auto Bright Exposure Mode取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_EXPOSURE_MODE:
-			*status = toG (autoBrightGetExposureMode ((int *)&value));
+			*status = autoBrightGetExposureMode ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Exposure Once Status取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_EXPOSURE_STATUS:
-			*status = toG (autoBrightGetExposureStatus ((int *)&value));
+			*status = autoBrightGetExposureStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Exposure Min取得
 		//----------------------------------------------------------------------------------
 		//case AUTO_BRIGHT_EXPOSURE_MIN:
-			//*status = toG (autoBrightGetExposureMin ((int *)&value));
+			//*status = autoBrightGetExposureMin ((int *)&value);
 			//break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Exposure Max取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_EXPOSURE_MAX:
-			*status = toG (autoBrightGetExposureMax ((int *)&value));
+			*status = autoBrightGetExposureMax ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Gain Mode取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_GAIN_MODE:
-			*status = toG (autoBrightGetGainMode ((int *)&value));
+			*status = autoBrightGetGainMode ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Gain Once Status取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_GAIN_STATUS:
-			*status = toG (autoBrightGetGainStatus ((int *)&value));
+			*status = autoBrightGetGainStatus ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Gain Min取得
 		//----------------------------------------------------------------------------------
 		//case AUTO_BRIGHT_GAIN_MIN:
-			//*status = toG (autoBrightGetGainMin ((double *)&dblValue));
+			//*status = autoBrightGetGainMin ((double *)&dblValue);
 			//value = (int)dblValue;
 			//break;
 
@@ -3546,7 +3537,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Auto Bright Gain Max取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_GAIN_MAX:
-			*status = toG (autoBrightGetGainMax ((double *)&dblValue));
+			*status = autoBrightGetGainMax ((double *)&dblValue);
 			value = (int)dblValue;
 			break;
 
@@ -3554,56 +3545,56 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Auto Bright Area取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_OVERLAY:
-			*status = toG (autoBrightGetDetectArea ((int *)&value));
+			*status = autoBrightGetDetectArea ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Target取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_TARGET:
-			*status = toG (autoBrightGetTarget ((int *)&value));
+			*status = autoBrightGetTarget ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Average取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_AVERAGE:
-			*status = toG (autoBrightGetAverage ((int *)&value));
+			*status = autoBrightGetAverage ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Area取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_TARGET_AREA:
-			*status = toG (autoBrightGetTargetArea ((int *)&value));
+			*status = autoBrightGetTargetArea ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Width Size取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_WIDTH_SIZE:
-			*status = toG (autoBrightGetWidthSize ((int *)&value));
+			*status = autoBrightGetWidthSize ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Height Size取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_HEIGHT_SIZE:
-			*status = toG (autoBrightGetHeightSize ((int *)&value));
+			*status = autoBrightGetHeightSize ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Width Offset取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_WIDTH_OFFSET:
-			*status = toG (autoBrightGetWidthOffset ((int *)&value));
+			*status = autoBrightGetWidthOffset ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Height Offset取得
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_HEIGHT_OFFSET:
-			*status = toG (autoBrightGetHeightOffset ((int *)&value));
+			*status = autoBrightGetHeightOffset ((int *)&value);
 			break;
 #endif // #if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
 
@@ -3619,21 +3610,21 @@ u32 get_user_reg (u32 address, u16 *status)
 		// BinningX取得
 		//----------------------------------------------------------------------------------
 		case BINNING_HORIZONTAL:
-			*status = toG (aoiGetBinningX ((int *)&value));
+			*status = aoiGetBinningX ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// BinningY取得
 		//----------------------------------------------------------------------------------
 		case BINNING_VERTICAL:
-			*status = toG (aoiGetBinningY ((int *)&value));
+			*status = aoiGetBinningY ((int *)&value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Binningmode取得
 		//----------------------------------------------------------------------------------
 		case BINNING_MODE:
-			*status = toG (aoiGetBinningMode ((int *)&value));
+			*status = aoiGetBinningMode ((int *)&value);
 			break;
 #endif //#if defined(MODE_BINNING)
 
@@ -3815,7 +3806,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 		case FileOperationExecute:
 			// コマンドステータス取得
-			*status = toG (cmdExecuteStatus ((int *)&value2nd));
+			*status = cmdExecuteStatus ((int *)&value2nd);
 			if (value2nd == command_done)
 			{
 				fileExec[fileSelector] = 0;
@@ -3902,15 +3893,15 @@ u32 get_user_reg (u32 address, u16 *status)
 			    switch(value2nd)
 			    {
 					case 0x0: // SpectrumBlackLevel as FPGA_BGF_BAND_OFFSET1_ADRS
-						*status = toG(bgfGetBandOffset((int)value3rd,(int *)&value));
+						*status = bgfGetBandOffset((int)value3rd,(int *)&value);
 						break;
 					case 0x4: // SpectrumGain as FPGA_BGF_BAND_GAIN_ADRS
-						*status = toG(bgfGetBandGainX((int)value3rd, &fltValue));
+						*status = bgfGetBandGainX((int)value3rd, &fltValue);
 						fltValue += 0.005;	// 四捨五入（小数点第2位まで有効）
 						value = (int)(fltValue * DEVICE_GAIN_UNIT);
 						break;
 					case 0x8: // SpectrumBlackLevelPreceding as FPGA_BGF_BAND_OFFSET2_ADRS
-						*status = toG(bgfGetBandOffset1((int)value3rd,(int *)&value));
+						*status = bgfGetBandOffset1((int)value3rd,(int *)&value);
 						break;
 					case 0x10:
 						// Reserved
@@ -3921,6 +3912,7 @@ u32 get_user_reg (u32 address, u16 *status)
 						*status = GEV_STATUS_INVALID_PARAMETER;
 						break;
 			    }
+				break;
 			}
 			#endif // #if defined(MODE_SPECTRUM_BANDGAIN_FILTER)
 			#endif // #if 0	//@@@1
@@ -3942,6 +3934,7 @@ u32 get_user_reg (u32 address, u16 *status)
 					valueBuffer += (address2nd > 0) ? address2nd / 4 : 0;
 					value = *valueBuffer;
 				}
+				break;
 			}
 
 			//====================================================================================
@@ -4005,16 +3998,16 @@ u32 get_user_reg (u32 address, u16 *status)
 			//====================================================================================
 			//@@@1if ((address >= FPGA_LUT_MEM1_ADRS)	&& (address < FPGA_LUT_MEM1_ADRS + LUT_DATA_SIZE))
 			//@@@1{
-				//@@@1*status = toG(aoiGetBitWidth((int*) &value2nd));		// ビット幅取得
-				//@@@1*status = toG(aoiGetShift((int) value2nd, (int*) &value3rd));// シフト数取得
+				//@@@1*status = aoiGetBitWidth((int*) &value2nd);		// ビット幅取得
+				//@@@1*status = aoiGetShift((int) value2nd, (int*) &value3rd);// シフト数取得
 				//@@@1value2nd = (int) IN32(address);
 				//@@@1value = (value2nd & LUT_DATA_MASK) >> value3rd; // Mask the actual LUT address from a virtual address
 				//@@@1break;
 			//@@@1}
 			//@@@1else if ((address >= FPGA_LUT_MEM2_ADRS) && (address < FPGA_LUT_MEM2_ADRS + LUT_DATA_SIZE))
 			//@@@1{
-				//@@@1*status = toG(aoiGetBitWidth((int*) &value2nd)); // ビット幅取得
-				//@@@1*status = toG(aoiGetShift((int) value2nd, (int*) &value3rd)); // シフト数取得
+				//@@@1*status = aoiGetBitWidth((int*) &value2nd); // ビット幅取得
+				//@@@1*status = aoiGetShift((int) value2nd, (int*) &value3rd); // シフト数取得
 				//@@@1value2nd = (int) IN32(address);
 				//@@@1value = (value2nd & LUT_DATA_MASK) >> value3rd; // Mask the actual LUT address from a virtual address
 				//@@@1break;
@@ -4048,7 +4041,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			}
 			else
 			{
-
+				break;
 			}
 
 	        //====================================================================================
@@ -4080,18 +4073,28 @@ u32 get_user_reg (u32 address, u16 *status)
 		    	//value2nd = IN32 (address);
 		    	//value = SWAP_L (value2nd);
 		    	//@@1value = IN32 (address);
+				//break;
 		    //@@1}
-		}
 
-		// Indicates the current state at the LED of a rear-panel
-		ledSetState(LED_STATE,(*status == GEV_STATUS_SUCCESS) ? LED_COMMAND : LED_STREAMING_ERROR,*status);
+			// Undefined address space
+			*status = (unsigned short)AVAL_STATUS_INVALID_ADDRESS;
+	}	// switch (address)
+	
 
-		//@@1if(address < xmlStartAddress || (address >= FPGA_BASE_ADRS && address < GENICAM_ADRS+0x00FFFFFF))
-		//@@@1{
-			//@@@1DEBUG_PRINT("%s reads 0x%08X(%8d / %f / %f ) at 0x%08X(0x%08X) %s with 0x%08X\r\n",
-				//@@@1GIGE_TAG_OUT, (int)value, (int)value,(float)fltValue,(double)dblValue,(unsigned int)address,(unsigned int)address2nd,(*status==0)?"success":"failed",(unsigned int)*status);
-		//@@@1}
+	// Indicates the current state at the LED of a rear-panel
+	//ledSetState(LED_STATE,(*status == GEV_STATUS_SUCCESS) ? LED_COMMAND : LED_STREAMING_ERROR,*status);
 
+	//@@1if(address < xmlStartAddress || (address >= FPGA_BASE_ADRS && address < GENICAM_ADRS+0x00FFFFFF))
+	//@@@1{
+		//@@@1DEBUG_PRINT("%s reads 0x%08X(%8d / %f / %f ) at 0x%08X(0x%08X) %s with 0x%08X\r\n",
+			//@@@1GIGE_TAG_OUT, (int)value, (int)value,(float)fltValue,(double)dblValue,(unsigned int)address,(unsigned int)address2nd,(*status==0)?"success":"failed",(unsigned int)*status);
+	//@@@1}
+
+	if ((gInterFaceID == INTERFACE_GIGE) || (gInterFaceID == INTERFACE_GIGE20))
+	{
+		*status = toG (*status);
+	}
+	
 	return value;
 }
 
@@ -4176,9 +4179,9 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case FPGA_AOI_XSIZE_ADRS:
 			if (IN32(FIRM_DATA_CPU1_BOOT_FLAG) != 0)
-				*status = toG (aoiSetWidth((int) value));
+				*status = aoiSetWidth((int) value);
 
-			toG (aoiGetWidth((int*) &value));
+			aoiGetWidth((int*) &value);
 			video_width = value;
 
 			#if defined (MODE_GIGE_10G) && defined (IF_GIGE)
@@ -4198,7 +4201,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			// High Speed Mode
 			//--------------------------------------------------------------------------------
 			#if defined (MODE_FRAMERATE_HIGH_SPEED)
-			if ((*status = toG (sensorGetFrameRateHighSpeedMode ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = sensorGetFrameRateHighSpeedMode ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			if (value3rd == MODE_ENABLE)
@@ -4252,9 +4255,13 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//--------------------------------------------------------------------------------
 
 			// ROIモード取得
-			if ((*status = toG (roiCheckMultiMode ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiCheckMultiMode ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
+			//@@@1
+			value2nd = MODE_DISABLE;
+			//@@@1
+				
 			if (value2nd == MODE_ENABLE)
 			{
 				*status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
@@ -4265,12 +4272,12 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			// Height設定
 			if (IN32(FIRM_DATA_CPU1_BOOT_FLAG) != 0)
 			{
-				if ((*status = toG(aoiSetHeight((int) value))) != AVAL_STATUS_SUCCESS)
+				if ((*status = aoiSetHeight((int) value)) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 
 			// Height取得
-			if ((*status = toG(aoiGetHeight((int*) &value))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetHeight((int*) &value)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			video_height = value;
@@ -4288,9 +4295,9 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case FPGA_AOI_XOFFSET_ADRS:
 			if (IN32(FIRM_DATA_CPU1_BOOT_FLAG) != 0)
-				*status = toG (aoiSetWidthOffset((int)value));
+				*status = aoiSetWidthOffset((int)value);
 
-			toG (aoiGetWidthOffset((int*)&value));
+			aoiGetWidthOffset((int*)&value);
 			video_offs_x = value;
 
 			#if defined (MODE_GIGE_10G) && defined (IF_GIGE)
@@ -4305,7 +4312,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		case FPGA_AOI_YOFFSET_ADRS:
 
 			// ROIモード取得
-			if ((*status = toG (roiCheckMultiMode ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiCheckMultiMode ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			if (value2nd == MODE_ENABLE)
@@ -4318,12 +4325,12 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			if (IN32(FIRM_DATA_CPU1_BOOT_FLAG) != 0)
 			{
 				// Offset設定
-				if ((*status = toG( aoiSetHeightOffset((int)value))) != AVAL_STATUS_SUCCESS)
+				if ((*status = aoiSetHeightOffset((int)value)) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 			
 			// Offset取得
-			toG( aoiGetHeightOffset((int*)&value) );
+			aoiGetHeightOffset((int*)&value);
 
 			video_offs_y = value;
 
@@ -4347,15 +4354,15 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 
 			// X Flip Command
 			//value2nd = executeCommand(FIRM_CMD_SENSOR_XFLIP, CPU_CMD_SYNC_ON, (u32*) &value, 1);
-			//*status = toG (value2nd);
-			*status = toG (aoiSetXflip (value));
+			//*status = value2nd;
+			*status = aoiSetXflip (value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// ROI Selector設定
 		//----------------------------------------------------------------------------------
 		case FIRM_DATA_ROI_SELECTOR_ADRS:
-			*status = toG (roiSetSelector (value));
+			*status = roiSetSelector (value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -4363,21 +4370,21 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//----------------------------------------------------------------------------------
 		case RoiHeightSize:
 			// Get Selector
-			if ((*status = toG (roiGetSelector ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetSelector ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Get Valid
-			if ((*status = toG (roiGetValid ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetValid ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			if (value3rd == 1)
 			{
 				// Set Height
-				if ((*status = toG (aoiSetHeight (value))) != AVAL_STATUS_SUCCESS)
+				if ((*status = aoiSetHeight (value)) != AVAL_STATUS_SUCCESS)
 					break;
 
 				// Total Height
-				if ((*status = toG (fpgaRoiGetCameraHeightTotalSize ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+				if ((*status = fpgaRoiGetCameraHeightTotalSize ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 					break;
 
 				// Height Size
@@ -4400,21 +4407,21 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		case RoiHeightOffset:
 
 			// Get Selector
-			if ((*status = toG (roiGetSelector ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetSelector ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Get Valid
-			if ((*status = toG (roiGetValid ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetValid ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			if (value3rd == 1)
 			{
 				// Set Offset
-				if ((*status = toG (aoiSetHeightOffset (value))) != AVAL_STATUS_SUCCESS)
+				if ((*status = aoiSetHeightOffset (value)) != AVAL_STATUS_SUCCESS)
 					break;
 
 				// Total Height
-				if ((*status = toG (fpgaRoiGetCameraHeightTotalSize ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+				if ((*status = fpgaRoiGetCameraHeightTotalSize ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 					break;
 
 				// Height Size
@@ -4436,11 +4443,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		case RoiHeightValid:
 
 			// Get Selector
-			if ((*status = toG (roiGetSelector ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetSelector ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Get Valid
-			if ((*status = toG (roiGetValid ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetValid ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// 現在無効?
@@ -4452,18 +4459,18 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					// Set Height Offset
 					if (roiHeightOffsetGe[value2nd] != 0)
 					{
-						if ((*status = toG (aoiSetHeightOffset (roiHeightOffsetGe[value2nd]))) != AVAL_STATUS_SUCCESS)
+						if ((*status = aoiSetHeightOffset (roiHeightOffsetGe[value2nd])) != AVAL_STATUS_SUCCESS)
 							break;
 					}
 
 					// Set Height
-					if ((*status = toG (aoiSetHeight (roiHeightSizeGe[value2nd]))) != AVAL_STATUS_SUCCESS)
+					if ((*status = aoiSetHeight (roiHeightSizeGe[value2nd])) != AVAL_STATUS_SUCCESS)
 						break;
 
 					// Set Enable/Disable
 					if (roiHeightSizeGe[value2nd] != 0)
 					{
-						if ((*status = toG (roiSetValid (value))) != AVAL_STATUS_SUCCESS)
+						if ((*status = roiSetValid (value)) != AVAL_STATUS_SUCCESS)
 							break;
 					}
 				}
@@ -4485,7 +4492,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					}
 
 					// Set Valid
-					*status = toG (roiSetValid (value));
+					*status = roiSetValid (value);
 				}
 			}
 
@@ -4495,15 +4502,15 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				// CXP Height Param設定
 				#if !defined (MODE_CXP_MULTI_PORT)
 				
-				if ((*status = toG(cxpSetHeightParam (0))) != AVAL_STATUS_SUCCESS)
+				if ((*status = cxpSetHeightParam (0)) != AVAL_STATUS_SUCCESS)
 					break;
 
 				#else // #if !defined (MODE_CXP_MULTI_PORT)
 
-				if ((*status = toG(cxpGetPort ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+				if ((*status = cxpGetPort ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 					break;
 
-				if ((*status = toG(cxpSetHeightParam (value2nd))) != AVAL_STATUS_SUCCESS)
+				if ((*status = cxpSetHeightParam (value2nd)) != AVAL_STATUS_SUCCESS)
 					break;
 
 				#endif // #if !defined (MODE_CXP_MULTI_PORT)
@@ -4527,33 +4534,33 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//----------------------------------------------------------------------------------
 			// Set Mode
 			//----------------------------------------------------------------------------------
-			if  ((*status = toG (roiSetAreaFlag (value))) != AVAL_STATUS_SUCCESS)
+			if  ((*status = roiSetAreaFlag (value)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// ROI DMA Size
-			if ((*status = toG (roiSetAreaSize (value))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiSetAreaSize (value)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			//----------------------------------------------------------------------------------
 			// Get Width Size
 			//----------------------------------------------------------------------------------
-			//if ((*status = toG (roiGetAreaWidthSize (value, &fpgaSize, &fpgaOffset, &sensorSize, &sensorOffset))) != AVAL_STATUS_SUCCESS)
+			//if ((*status = roiGetAreaWidthSize (value, &fpgaSize, &fpgaOffset, &sensorSize, &sensorOffset)) != AVAL_STATUS_SUCCESS)
 				//break;
 
 			//Set Width Size
-			//if ((*status = toG(aoiSetWidth((int)fpgaSize))) != AVAL_STATUS_SUCCESS)
+			//if ((*status = aoiSetWidth((int)fpgaSize)) != AVAL_STATUS_SUCCESS)
 				//break;
 
-			if ((*status = toG(aoiGetWidth((int*) &value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetWidth((int*) &value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			video_width = value2nd;
 
 			//Set Width Offset
-			//if ((*status = toG (aoiSetWidthOffset((int)fpgaOffset))) != AVAL_STATUS_SUCCESS)
+			//if ((*status = aoiSetWidthOffset((int)fpgaOffset)) != AVAL_STATUS_SUCCESS)
 				//break;
 
-			if ((*status = toG (aoiGetWidthOffset((int*)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetWidthOffset((int*)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			video_offs_x = value2nd;
@@ -4562,29 +4569,29 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//----------------------------------------------------------------------------------
 			// Get Height Size
 			//----------------------------------------------------------------------------------
-			//if ((*status = toG (roiGetAreaHeightSize (value, &fpgaSize, &fpgaOffset, &sensorSize, &sensorOffset))) != AVAL_STATUS_SUCCESS)
+			//if ((*status = roiGetAreaHeightSize (value, &fpgaSize, &fpgaOffset, &sensorSize, &sensorOffset)) != AVAL_STATUS_SUCCESS)
 				//break;
 
 			// Set Height Size
-			//if ((*status = toG(aoiSetHeight((int)fpgaSize))) != AVAL_STATUS_SUCCESS)
+			//if ((*status = aoiSetHeight((int)fpgaSize)) != AVAL_STATUS_SUCCESS)
 				//break;
 
-			//if ((*status = toG( aoiGetHeightOffset((int*)&value2nd))) != AVAL_STATUS_SUCCESS)
+			//if ((*status = aoiGetHeightOffset((int*)&value2nd)) != AVAL_STATUS_SUCCESS)
 				//break;
 
 			//video_offs_y = value2nd;
 
 
-			if ((*status = toG( aoiGetHeight((int*)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetHeight((int*)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			video_height = value2nd;
 			
 			// Set Height Offset
-			//if ((*status = toG(aoiSetHeightOffset((int)fpgaOffset))) != AVAL_STATUS_SUCCESS)
+			//if ((*status = aoiSetHeightOffset((int)fpgaOffset)) != AVAL_STATUS_SUCCESS)
 				//break;
 
-			if ((*status = toG( aoiGetHeightOffset((int*)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetHeightOffset((int*)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			video_offs_y = value2nd;
@@ -4603,29 +4610,29 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//----------------------------------------------------------------------------------
 			// Set Mode
 			//----------------------------------------------------------------------------------
-			if  ((*status = toG (roiSetAreaFlag (value))) != AVAL_STATUS_SUCCESS)
+			if  ((*status = roiSetAreaFlag (value)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			//----------------------------------------------------------------------------------
 			// Get Width Size
 			//----------------------------------------------------------------------------------
-			if ((*status = toG (roiGetAreaWidthSize (value, &fpgaSize, &fpgaOffset, &sensorSize, &sensorOffset))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetAreaWidthSize (value, &fpgaSize, &fpgaOffset, &sensorSize, &sensorOffset)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			//Set Width Size
-			if ((*status = toG(aoiSetWidth((int)fpgaSize))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiSetWidth((int)fpgaSize)) != AVAL_STATUS_SUCCESS)
 				break;
 
-			if ((*status = toG(aoiGetWidth((int*) &value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetWidth((int*) &value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			video_width = value2nd;
 
 			//Set Width Offset
-			if ((*status = toG (aoiSetWidthOffset((int)fpgaOffset))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiSetWidthOffset((int)fpgaOffset)) != AVAL_STATUS_SUCCESS)
 				break;
 
-			if ((*status = toG (aoiGetWidthOffset((int*)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetWidthOffset((int*)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			video_offs_x = value2nd;
@@ -4634,28 +4641,28 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//----------------------------------------------------------------------------------
 			// Get Height Size
 			//----------------------------------------------------------------------------------
-			if ((*status = toG (roiGetAreaHeightSize (value, &fpgaSize, &fpgaOffset, &sensorSize, &sensorOffset))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetAreaHeightSize (value, &fpgaSize, &fpgaOffset, &sensorSize, &sensorOffset)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Set Height Size
-			if ((*status = toG(aoiSetHeight((int)fpgaSize))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiSetHeight((int)fpgaSize)) != AVAL_STATUS_SUCCESS)
 				break;
 
-			//if ((*status = toG( aoiGetHeightOffset((int*)&value2nd))) != AVAL_STATUS_SUCCESS)
+			//if ((*status = aoiGetHeightOffset((int*)&value2nd)) != AVAL_STATUS_SUCCESS)
 				//break;
 
 			//video_offs_y = value2nd;
 
-			if ((*status = toG( aoiGetHeight((int*)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetHeight((int*)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			video_height = value2nd;
 			
 			// Set Height Offset
-			if ((*status = toG(aoiSetHeightOffset((int)fpgaOffset))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiSetHeightOffset((int)fpgaOffset)) != AVAL_STATUS_SUCCESS)
 				break;
 
-			if ((*status = toG( aoiGetHeightOffset((int*)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetHeightOffset((int*)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			video_offs_y = value2nd;
@@ -4675,17 +4682,17 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		case FIRM_DATA_ROI_AREA_SIZE_ADRS:
 
 			//value2nd = executeCommand(FIRM_CMD_ROI_AREA, CPU_CMD_SYNC_ON, (u32*) &value, 1);
-			//*status = toG(value2nd);
+			//*status = value2nd;
 		
 			// Frame Rate High Speed Mode設定
-			if ((*status = toG (roiSetAreaSize (value))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiSetAreaSize (value)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			if (value == ROI_AREA_MODE_DMA_SIZE)
 				value = 0;
 
 			// Set Flag
-			if  ((*status = toG (roiSetAreaFlag (value))) != AVAL_STATUS_SUCCESS)
+			if  ((*status = roiSetAreaFlag (value)) != AVAL_STATUS_SUCCESS)
 				break;
 		
 
@@ -4725,11 +4732,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				//break;
 
 			// ROI DMA Size
-			//if ((*status = toG(roiSetDefaultY ())) != AVAL_STATUS_SUCCESS)
+			//if ((*status = roiSetDefaultY ()) != AVAL_STATUS_SUCCESS)
 				//break;
 
 			value2nd = executeCommand(FIRM_CMD_SPECTRUM_DEFAULTY, CPU_CMD_SYNC_ON, 0, 0);
-			if((*status = toG(value2nd)) != AVAL_STATUS_SUCCESS)
+			if((*status = value2nd) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Set Save Data
@@ -4745,10 +4752,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			}
 
 			// Spectrum default mode 取得
-			if((*status = toG(spectrumGetDefaultMode((int*)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if((*status = spectrumGetDefaultMode((int*)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
-			//if((*status = toG(aoiGetHeight((int*) &value3rd))) != AVAL_STATUS_SUCCESS)
+			//if((*status = aoiGetHeight((int*) &value3rd)) != AVAL_STATUS_SUCCESS)
 				//break;
 
 			if(value2nd == SPECTRUM_DEFAULTY_MODE_DEFAULT)
@@ -4760,10 +4767,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			video_height = roiHeightSizeGe[0];
 
 			// Set Offset
-			//if ((*status = toG (aoiGetHeightOffset ((int*) &value3rd))) != AVAL_STATUS_SUCCESS)
+			//if ((*status = aoiGetHeightOffset ((int*) &value3rd)) != AVAL_STATUS_SUCCESS)
 				//break;
 
-			if ((*status = toG (spectrumGetBandOffset ((int*) &value))) != AVAL_STATUS_SUCCESS)
+			if ((*status = spectrumGetBandOffset ((int*) &value)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			if(value2nd == SPECTRUM_DEFAULTY_MODE_DEFAULT)
@@ -4778,11 +4785,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			SpectrumBand_Index = 0;
 
 		#if defined(MODE_SPECTRUM_BANDGAIN_FILTER)
-			if((*status = toG(bgfSetBandGainIndex())) != AVAL_STATUS_SUCCESS)
+			if((*status = bgfSetBandGainIndex()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			//バンドインデックス設定
-			//if((*status = toG(spectrumSetBandIndex())) != AVAL_STATUS_SUCCESS)
+			//if((*status = spectrumSetBandIndex()) != AVAL_STATUS_SUCCESS)
 				//break;
 		#endif
 			#if defined (MODE_GIGE_10G) && defined (IF_GIGE)
@@ -4794,15 +4801,15 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 
 #else	// #if defined (MODE_SPECTRUM)
 		
-			if  ((*status = toG (roiSetDefaultY ())) != AVAL_STATUS_SUCCESS)
+			if  ((*status = roiSetDefaultY ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			#if defined(MODE_SPECTRUM_BANDGAIN_FILTER)
-			if((*status = toG(bgfSetBandGainIndex())) != AVAL_STATUS_SUCCESS)
+			if((*status = bgfSetBandGainIndex()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			//バンドインデックス設定
-			if((*status = toG(spectrumSetBandIndex()) ) != AVAL_STATUS_SUCCESS)
+			if((*status = spectrumSetBandIndex()) != AVAL_STATUS_SUCCESS)
 				break;
 			#endif
 
@@ -4834,16 +4841,16 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// PaddingX設定
 		//--------------------------------------------------------------------------------
 		case FPGA_AOI_XPAD_ADRS:
-			*status = toG(aoiGetPad((int*) &value2nd, (int*) &value3rd));
-			toG(aoiSetPad((int) value, (int) value3rd));
+			*status = aoiGetPad((int*) &value2nd, (int*) &value3rd);
+			aoiSetPad((int) value, (int) value3rd);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// PaddingY設定
 		//--------------------------------------------------------------------------------
 		case FPGA_AOI_YPAD_ADRS:
-			*status = toG(aoiGetPad((int*) &value2nd, (int*) &value3rd));
-			toG(aoiSetPad((int) value2nd, (int) value));
+			*status = aoiGetPad((int*) &value2nd, (int*) &value3rd);
+			aoiSetPad((int) value2nd, (int) value);
 			break;
 
 		
@@ -4969,7 +4976,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			{
 				if (*status == 0)
 				{
-					*status = toG (aoiSetBitWidth (intValue));
+					*status = aoiSetBitWidth (intValue);
 				}
 			}
 
@@ -4993,7 +5000,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Acquisition Start設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_START_ADRS:
-			*status = toG(acquisitionStart());
+			*status = acquisitionStart();
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -5007,7 +5014,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Acquisition Stop設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_STOP_ADRS:
-			*status = toG(acquisitionStop());
+			*status = acquisitionStop();
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -5024,7 +5031,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				case AcquisitionPreset_Default:     // Default as factory-setting
 					// Acquisition Stop
 					acquisitionAbort ();		//Area None
-					*status = toG(acquisitionReset());
+					*status = acquisitionReset();
 					Acquisition_Preset = AcquisitionPreset_Off;
 					break;
 				case AcquisitionPreset_Mode1:     // Mode*
@@ -5049,7 +5056,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Acquisition Mode設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_MODE_ADRS:
-			*status = toG (acquisitionSetMode (value));
+			*status = acquisitionSetMode (value);
 			video_acq_mode = value;
 			break;
 
@@ -5057,7 +5064,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Acquisition Frame Count設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_FRAME_COUNT_ADRS:
-			*status = toG (acquisitionSetFrameCount ((unsigned int )value));
+			*status = acquisitionSetFrameCount ((unsigned int )value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -5066,7 +5073,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		case GENICAM_ACQUISITION_FRAMERATE_ADRS:	//@@@1
 		case AcquisitionFrameRate:
 			dblValue = (double)value / 100;
-	    	*status = toG( acquisitionSetFrameRate(dblValue) );
+	    	*status = acquisitionSetFrameRate(dblValue);
 		
 			// フレームレートを正式に変更してきたので、以下領域はクリア
 			// この領域がクリアされるまでは、CXPのConnectionConfigの
@@ -5092,7 +5099,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// ExposureTime 露光時間(us単位)設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_EXPOSURE_ADRS:
-			//@@1*status = toG(acquisitionSetExposure((unsigned int) value));
+			//@@1*status = acquisitionSetExposure((unsigned int) value);
 			value = 10000;	//@@@1
 
 			// フレームレートを正式に変更してきたので、以下領域はクリア
@@ -5122,7 +5129,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// ExposureMode設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_EXPOSURE_MODE_ADRS:
-			//@@@1*status = toG(acquisitionSetExposureMode((unsigned int) value));
+			//@@@1*status = acquisitionSetExposureMode((unsigned int) value);
 			value = 0; //@@@1
 			break;
 
@@ -5137,7 +5144,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Test Pattern設定
 		//--------------------------------------------------------------------------------
 		case FPGA_AOI_TP_INDEX_ADRS:
-			*status = toG (aoiSetPatternMain (value));
+			*status = aoiSetPatternMain (value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -5158,42 +5165,42 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Acquisition Trigger Select設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_TRG_SELECT_ADRS:
-			*status = toG (acquisitionSetSelect (value));
+			*status = acquisitionSetSelect (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// Acquisition Trigger Mode設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_TRG_MODE_ADRS:
-			*status = toG (acquisitionSetTrgMode (value));
+			*status = acquisitionSetTrgMode (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// Acquisition Software Trigger設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_SOFT_TRG_ADRS:
-			*status = toG (acquisitionSetSoftTrg ());
+			*status = acquisitionSetSoftTrg ();
 			break;
 
 		//--------------------------------------------------------------------------------
 		// Acquisition Trigger Source設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_TRG_SOURCE_ADRS:
-			*status = toG (acquisitionSetTrgSource (value));
+			*status = acquisitionSetTrgSource (value);
         	break;
 
 		//--------------------------------------------------------------------------------
 		// Acquisition Trigger Activation設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_TRG_ACTIVATION_ADRS:
-			*status = toG (acquisitionSetTrgActivation (value));
+			*status = acquisitionSetTrgActivation (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// Acquisition Trigger Delay設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_TRG_DELAY_ADRS:
-			*status = toG(acquisitionSetTrgDelay (value));
+			*status = acquisitionSetTrgDelay (value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -5215,7 +5222,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Acquisition Trigger Reserved Mode設定
 		//--------------------------------------------------------------------------------
         case GENICAM_ACQUISITION_TRG_RESERVE_MODE_ADRS:
-			*status = toG(acquisitionSetTrgReserve (value));
+			*status = acquisitionSetTrgReserve (value);
            	break;
 
 		//----------------------------------------------------------------------------------
@@ -5236,7 +5243,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// AcquisitionTrgCountMode設定
 		//----------------------------------------------------------------------------------
         //case AcquisitionTrgCountMode:
-			//*status = toG (counterSetTrgMode (value));
+			//*status = counterSetTrgMode (value);
 			//break;
 
 		//----------------------------------------------------------------------------------
@@ -5272,14 +5279,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Spectrum Output Data Format設定
 		//--------------------------------------------------------------------------------
 			case FPGA_SPECTRUM_CTRL_ADRS:
-			*status = toG (spectrumSetPixelFormat (FPGA_SP_CTRL_GET_FORMAT(value)));
+			*status = spectrumSetPixelFormat (FPGA_SP_CTRL_GET_FORMAT(value));
 			break;
 
 		//--------------------------------------------------------------------------------
 		// Spectrum Line Per Frame設定
 		//--------------------------------------------------------------------------------
 		case FPGA_SPECTRUM_LINE_PER_FRAME_ADRS:
-			*status = toG (spectrumSetHeightPerBand (value));
+			*status = spectrumSetHeightPerBand (value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -5328,7 +5335,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// SpectrumBandDefaultMode設定
 		//----------------------------------------------------------------------------------
 		case SpectrumBandDefaultMode:
-			*status = toG(spectrumSetDefaultMode (value));
+			*status = spectrumSetDefaultMode (value);
 			break;
 
 #if defined(MODE_SPECTRUM_BANDGAIN_FILTER)
@@ -5336,7 +5343,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Overlap設定
 		//----------------------------------------------------------------------------------
 		case SpectrumOverlap:
-			*status = toG(bgfSetOverlapMode((int) value));
+			*status = bgfSetOverlapMode((int) value);
 			break;
 #endif
 
@@ -5363,7 +5370,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		case SpectrumBandStart:
 		case SpectrumBandEnd:
 
-	    	if((*status = toG(spectrumGetDefaultMode ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+	    	if((*status = spectrumGetDefaultMode ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 	    		break;
 
 	    	// Fullsizeならスキップ
@@ -5371,11 +5378,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 	    		break;
 
 			// Get Selector
-			if ((*status = toG (roiGetSelector ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetSelector ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Get Valid
-			if ((*status = toG (roiGetValid ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetValid ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			value4th = 0;
@@ -5390,10 +5397,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				if (value != 0)
 				{
 					// Offset/Size取得
-					if ((*status = toG (spectrumBandIndex2 (dblValue, (int *)&value))) != AVAL_STATUS_SUCCESS)
+					if ((*status = spectrumBandIndex2 (dblValue, (int *)&value)) != AVAL_STATUS_SUCCESS)
 						break;
 
-					if((*status = toG(spectrumGetBandOffset((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+					if((*status = spectrumGetBandOffset((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 						break;
 
 					// Start
@@ -5404,11 +5411,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 							value = value3rd; //410nmに設定
 						
 						// Get Offset
-						if ((*status = toG (aoiGetHeightOffset ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+						if ((*status = aoiGetHeightOffset ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 							break;
 
 						// Get Size
-						if ((*status = toG (aoiGetHeight ((int *)&value4th))) != AVAL_STATUS_SUCCESS)
+						if ((*status = aoiGetHeight ((int *)&value4th)) != AVAL_STATUS_SUCCESS)
 							break;
 
 						// Height Sizeが0ならばとりあえず1にする
@@ -5435,7 +5442,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 							value4th = intValue;
 
 						// Set Offset
-						if ((*status = toG (aoiSetHeightOffset (value))) != AVAL_STATUS_SUCCESS)
+						if ((*status = aoiSetHeightOffset (value)) != AVAL_STATUS_SUCCESS)
 							break;
 
 						#if defined(MODE_CXP)
@@ -5446,7 +5453,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						#endif
 
 						// Set Size
-						if ((*status = toG (aoiSetHeight (value4th))) != AVAL_STATUS_SUCCESS)
+						if ((*status = aoiSetHeight (value4th)) != AVAL_STATUS_SUCCESS)
 							break;
 					}
 					// End
@@ -5455,7 +5462,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						value++;
 
 						// Get Offset
-						if ((*status = toG (aoiGetHeightOffset ((int *)&value3rd)) )!= AVAL_STATUS_SUCCESS)
+						if ((*status = aoiGetHeightOffset ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 							break;
 
 						value4th = value - value3rd;
@@ -5466,7 +5473,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						#endif
 
 						// Set Height
-						if ((*status = toG (aoiSetHeight (value4th))) != AVAL_STATUS_SUCCESS)
+						if ((*status = aoiSetHeight (value4th)) != AVAL_STATUS_SUCCESS)
 							break;
 					}
 				}
@@ -5476,13 +5483,13 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					if (address == SpectrumBandStart)
 					{
 						// Set Offset
-						if ((*status = toG (aoiSetHeightOffset (value))) != AVAL_STATUS_SUCCESS)
+						if ((*status = aoiSetHeightOffset (value)) != AVAL_STATUS_SUCCESS)
 							break;
 					}
 					else
 					{
 						// Set Height
-						if ((*status = toG (aoiSetHeight (value))) != AVAL_STATUS_SUCCESS)
+						if ((*status = aoiSetHeight (value)) != AVAL_STATUS_SUCCESS)
 							break;
 					}
 
@@ -5493,11 +5500,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 
 #if defined (MODE_SPECTRUM_MULTI_HEIGHT)
 			// Total Height
-			if ((*status = toG (fpgaRoiGetCameraHeightTotalSize ((int *)&intValue))) != AVAL_STATUS_SUCCESS)
+			if ((*status = fpgaRoiGetCameraHeightTotalSize ((int *)&intValue)) != AVAL_STATUS_SUCCESS)
 				break;
 #else
 			// Set Height
-			if ((*status = toG (aoiGetHeight (&intValue))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetHeight (&intValue)) != AVAL_STATUS_SUCCESS)
 				break;
 #endif
 
@@ -5505,7 +5512,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			video_height = intValue;
 
 			// Get Offset
-			if ((*status = toG (aoiGetHeightOffset ((int *)&intValue))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetHeightOffset ((int *)&intValue)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			video_offs_y = intValue;
@@ -5523,21 +5530,21 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			}
 
 			//バンドインデックス設定
-			if((*status = toG(spectrumSetBandIndex())) != AVAL_STATUS_SUCCESS)
+			if((*status = spectrumSetBandIndex()) != AVAL_STATUS_SUCCESS)
 				break;
 
 
 			#if defined(MODE_SPECTRUM_BANDGAIN_FILTER)
 			//インデックス設定
-			if((*status = toG (bgfSetBandGainIndex())) != AVAL_STATUS_SUCCESS)
+			if((*status = bgfSetBandGainIndex()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			//ROI最大バンド数取得
-			if((*status = toG (spectrumBandROIMaxCount((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if((*status = spectrumBandROIMaxCount((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			//Overlap取得
-			if((*status = toG (bgfGetOverlapMode((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if((*status = bgfGetOverlapMode((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			//有効時
@@ -5567,33 +5574,33 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			case SpectrumBandValid:
 
 			// Set Valid
-			if ((*status = toG (roiSetValid (value))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiSetValid (value)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Get Selector
-			if ((*status = toG (roiGetSelector ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = roiGetSelector ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Vallid Save
 			roiHeightValidGe[value2nd] = value;
 
 			//バンドインデックス設定
-			if((*status = toG(spectrumSetBandIndex())) != AVAL_STATUS_SUCCESS)
+			if((*status = spectrumSetBandIndex()) != AVAL_STATUS_SUCCESS)
 				break;
 
 
 		#if defined(MODE_SPECTRUM_BANDGAIN_FILTER)
 
 			//インデックス設定
-			if((*status = toG(bgfSetBandGainIndex())) != AVAL_STATUS_SUCCESS)
+			if((*status = bgfSetBandGainIndex()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			//ROI最大バンド数取得
-			if((*status = toG(spectrumBandROIMaxCount((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if((*status = spectrumBandROIMaxCount((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			//Overlap取得
-			if((*status = toG(bgfGetOverlapMode((int *)&value4th))) != AVAL_STATUS_SUCCESS)
+			if((*status = bgfGetOverlapMode((int *)&value4th)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			//有効時
@@ -5644,14 +5651,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				//executeCommandVendorName((u8*) FIRM_DATA_VENDOR_ADRS);
 				
 				// Cmd Initialze
-				if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+				if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 					break;
 
 				memset(deviceVendorName, 0, GIGE_EEPROM_CUST_VENDOR_SIZE);
 				sprintf((char*) deviceVendorName, "%s", (char*) value);
 
 				// Set Vendor
-				if ((*status = toG (setVendor ((char *)FIRM_DATA_VENDOR_ADRS))) != AVAL_STATUS_SUCCESS)
+				if ((*status = setVendor ((char *)FIRM_DATA_VENDOR_ADRS)) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 			break;
@@ -5674,14 +5681,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				//executeCommandModelName((u8*) FIRM_DATA_MODEL_ADRS);
 				
 				// Cmd Initialze
-				if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+				if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 					break;
 				
 				memset(deviceModelName, 0, GIGE_EEPROM_CUST_MODEL_SIZE);
 				sprintf((char*) deviceModelName, "%s", (char*) value);
 
 				// Set Model
-				if ((*status = toG (setModel ((char *)FIRM_DATA_MODEL_ADRS))) != AVAL_STATUS_SUCCESS)
+				if ((*status = setModel ((char *)FIRM_DATA_MODEL_ADRS)) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 			break;
@@ -5708,14 +5715,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				//executeCommandManufactureInfo((u8*) FIRM_DATA_MANUFACTURE_ADRS);
 				
 				// Cmd Initialze
-				if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+				if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 					break;
 			
 				memset(deviceManufacturerInfo, 0, GIGE_EEPROM_CUST_MANUFACTURER_SIZE);
 				sprintf((char*) deviceManufacturerInfo, "%s", (char*) value);
 
 				// Set Manufacture
-				if ((*status = toG (setManufacture ((char *)FIRM_DATA_MANUFACTURE_ADRS))) != AVAL_STATUS_SUCCESS)
+				if ((*status = setManufacture ((char *)FIRM_DATA_MANUFACTURE_ADRS)) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 			break;
@@ -5727,14 +5734,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommand (FIRM_CMD_CAMERA_VENDOR, CPU_CMD_SYNC_OFF, 0, 0);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			memset(deviceVendorName, 0, GIGE_EEPROM_CUST_VENDOR_SIZE);
 			sprintf((char*) deviceVendorName, "%s", (char*) value);
 
 			// Set Vendor
-			if ((*status = toG (setVendor ((char *)FIRM_DATA_VENDOR_ADRS))) != AVAL_STATUS_SUCCESS)
+			if ((*status = setVendor ((char *)FIRM_DATA_VENDOR_ADRS)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			break;
@@ -5746,14 +5753,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommand (FIRM_CMD_CAMERA_MODEL, CPU_CMD_SYNC_OFF, 0, 0);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			memset(deviceModelName, 0, GIGE_EEPROM_CUST_MODEL_SIZE);
 			sprintf((char*) deviceModelName, "%s", (char*) value);
 
 			// Set Model
-			if ((*status = toG (setModel ((char *)FIRM_DATA_MODEL_ADRS))) != AVAL_STATUS_SUCCESS)
+			if ((*status = setModel ((char *)FIRM_DATA_MODEL_ADRS)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			break;
@@ -5765,14 +5772,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommand (FIRM_CMD_CAMERA_MANUFACTURE, CPU_CMD_SYNC_OFF, 0, 0);
 		
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			memset(deviceManufacturerInfo, 0, GIGE_EEPROM_CUST_MANUFACTURER_SIZE);
 			sprintf((char*) deviceManufacturerInfo, "%s", (char*) value);
 
 			// Set Manufacture
-			if ((*status = toG (setManufacture ((char *)FIRM_DATA_MANUFACTURE_ADRS))) != AVAL_STATUS_SUCCESS)
+			if ((*status = setManufacture ((char *)FIRM_DATA_MANUFACTURE_ADRS)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			break;
@@ -5837,7 +5844,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		case DeviceUserID + 12:
 			valueBuffer = (u32*) (((char*) deviceUserID) + (address & ~DeviceUserID));
 			memcpy((u8*) valueBuffer, (const u8*) &value, 4);
-			*status = toG(setUserId(deviceUserID));
+			*status = setUserId(deviceUserID);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -5974,7 +5981,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// GevLinkSpeedConfig設定
 		//----------------------------------------------------------------------------------
 		case GevLinkSpeedConfig:
-			*status = toG (gevSetSpeedConfig (value));
+			*status = gevSetSpeedConfig (value);
 			break;
 #endif // #if defined (MODE_GE_SPEED)
 
@@ -6007,11 +6014,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				//break;
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Load
-			if ((*status = toG (userSetLoad (value))) != AVAL_STATUS_SUCCESS)
+			if ((*status = userSetLoad (value)) != AVAL_STATUS_SUCCESS)
 				break;
 
 		#if defined (IF_GIGE)
@@ -6019,7 +6026,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			if ((gInterFaceID == INTERFACE_GIGE) || (gInterFaceID == INTERFACE_GIGE20))
 			{
 				// GigE Eventパラメータ
-				if ((*status = toG (gigeParamWriteRegister (value, CAMERA_SAVE_GIGE_ADRS, CAMERA_SAVE_GIGE_SIZE))) != AVAL_STATUS_SUCCESS)
+				if ((*status = gigeParamWriteRegister (value, CAMERA_SAVE_GIGE_ADRS, CAMERA_SAVE_GIGE_SIZE)) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 			#endif
@@ -6028,7 +6035,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			if ((gInterFaceID == INTERFACE_GIGE) || (gInterFaceID == INTERFACE_GIGE20))
 			{
 				// Update Buffer
-				if ((*status = toG (gigeUpdateBuffer ())) != AVAL_STATUS_SUCCESS)
+				if ((*status = gigeUpdateBuffer ()) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 			#endif
@@ -6054,11 +6061,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				//*status = executeCommandUserSetSave(Flash_UserSetSelector);
 				
 				// Cmd Initialze
-				if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+				if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 					break;
 
 				// UserSet Save
-				if ((*status = toG (userSetSave (value))) != AVAL_STATUS_SUCCESS)
+				if ((*status = userSetSave (value)) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 			else
@@ -6081,11 +6088,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				//*status = executeCommandUserSetFactory(Flash_UserSetSelector);
 				
 				// Cmd Initialze
-				if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+				if ((*status = cmdExecuteInit ())!= AVAL_STATUS_SUCCESS)
 					break;
 
 				// UserSet Default
-				if ((*status = toG (userSetDefault (value))) != AVAL_STATUS_SUCCESS)
+				if ((*status = userSetDefault (value)) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 			else
@@ -6109,11 +6116,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//executeCommandUserSetDefault(Flash_UserSetDefault);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// UserSet Boot
-			*status = toG (userSetBoot (value));
+			*status = userSetBoot (value);
 			break;
 
 
@@ -6151,12 +6158,12 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			if (LUTSelector_Selector == UserSet_Default)
 			{
 				// Chose LUT1 corresponding to UserSet1 or UserSet2
-				*status = toG(lutSetEnable((int) LUT_SELECT1, (int) value));
+				*status = lutSetEnable((int) LUT_SELECT1, (int) value);
 			}
 			else
 			{
 				// Chose LUT1 or LUT2 corresponding to UserSet1 or UserSet2
-				*status = toG(lutSetEnable((int) LUTSelector_Selector, (int) value));
+				*status = lutSetEnable((int) LUTSelector_Selector, (int) value);
 			}
 			break;
 
@@ -6168,7 +6175,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			if (value > LUT_FORMAT_MIN)
 			#endif
 			{
-				*status = toG(lutSetFormat((int) LUTSelector_Selector , (int) value));
+				*status = lutSetFormat((int) LUTSelector_Selector , (int) value);
 			}
 			LUTFormat_Selector = value;
 			break;
@@ -6177,7 +6184,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// LUTThreshold設定
 		//--------------------------------------------------------------------------------
 		case LUTThreshold:
-			*status = toG(lutSetBinThreshold(LUTSelector_Selector , (int) value));
+			*status = lutSetBinThreshold(LUTSelector_Selector , (int) value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -6185,7 +6192,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case LUTGamma:
 			fltValue = (float)((float)value / (float)LUT_GAMMA_DATA_ADJUST);
-			*status = toG( lutSetGamma (LUTSelector_Selector, fltValue));
+			*status = lutSetGamma (LUTSelector_Selector, fltValue);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -6217,11 +6224,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommandDPCLoad (DefectPixelCorrection_Selector);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// DPC Load
-			if ((*status =toG (dpcLoad (DefectPixelCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+			if ((*status = dpcLoad (DefectPixelCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 				break;
 		
 			break;
@@ -6233,11 +6240,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommandDPCLoadAdmin (DefectPixelCorrection_Selector);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// DPC Load
-			if ((*status = toG (dpcLoadAdmin (DefectPixelCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+			if ((*status = dpcLoadAdmin (DefectPixelCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			break;
@@ -6246,7 +6253,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// DefectPixelCorrection設定
 		//--------------------------------------------------------------------------------
 		case DefectivePixelCorrection:
-			*status = toG (dpcSetEnableMode (value));
+			*status = dpcSetEnableMode (value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -6277,7 +6284,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				//*status = executeCommand (FIRM_CMD_DPC2_FACTORY, CPU_CMD_SYNC_ON, (u32*) &cmd, sizeof(CPU_CMD) / 4);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// 補正回数取得
@@ -6286,12 +6293,12 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			if ((value2nd % 2) == 0)
 			{
 				// DPC1 Execute
-				if ((*status = toG (gigeCmdDpc1Main (DefectPixelCorrection_Selector, FlatFieldCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+				if ((*status = gigeCmdDpc1Main (DefectPixelCorrection_Selector, FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 
 			// DPC2  Execute
-			if ((*status = toG (gigeCmdDpc2Main (DefectPixelCorrection_Selector, FlatFieldCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+			if ((*status = gigeCmdDpc2Main (DefectPixelCorrection_Selector, FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			break;
@@ -6303,11 +6310,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommandDPCAdjustFactoryDetection(DefectPixelCorrection_Selector);
 		
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// DPC3  Execute
-			if ((*status = toG (gigeCmdDpc3Main (DefectPixelCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+			if ((*status = gigeCmdDpc3Main (DefectPixelCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 				break;
 		
 			break;
@@ -6353,11 +6360,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				//*status = executeCommandDPCEdit(DefectPixel_Index,FIRM_CMD_DPC_GET_GRID,(u32*)&value,(u32*)&value2nd);
 
 				// Cmd Initialze
-				if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+				if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 					break;
 
 				// DPC Get Grid
-				if ((*status = toG (dpcGetMapInfoIndex2 (DefectPixel_Index, (int *)&value, (int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+				if ((*status = dpcGetMapInfoIndex2 (DefectPixel_Index, (int *)&value, (int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 
@@ -6376,11 +6383,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				//*status = executeCommandDPCEdit(DefectPixel_Index,FIRM_CMD_DPC_GET_GRID,(u32*)&value2nd,(u32*)&value);
 
 				// Cmd Initialze
-				if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+				if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 					break;
 
 				// DPC Get Grid
-				if ((*status = toG (dpcGetMapInfoIndex2 (DefectPixel_Index, (int *)&value2nd, (int *)&value))) != AVAL_STATUS_SUCCESS)
+				if ((*status = dpcGetMapInfoIndex2 (DefectPixel_Index, (int *)&value2nd, (int *)&value)) != AVAL_STATUS_SUCCESS)
 					break;
 			}
 			break;
@@ -6392,11 +6399,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommandDPCEdit(DefectPixelCorrection_Selector,FIRM_CMD_DPC_ADD_GRID,(u32*)&DefectPixelCoordinate_X,(u32*)&DefectPixelCoordinate_Y);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// DPC Get Grid
-			if ((*status = toG (dpcAddGrid (DefectPixelCoordinate_X, DefectPixelCoordinate_Y))) != AVAL_STATUS_SUCCESS)
+			if ((*status = dpcAddGrid (DefectPixelCoordinate_X, DefectPixelCoordinate_Y)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			break;
@@ -6408,11 +6415,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommandDPCEdit(DefectPixelCorrection_Selector,FIRM_CMD_DPC_DEL_GRID,(u32*)&DefectPixelCoordinate_X,(u32*)&DefectPixelCoordinate_Y);
 		
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// DPC Delete Grid
-			if ((*status = toG (dpcDeleteGrid (DefectPixelCoordinate_X, DefectPixelCoordinate_Y))) != AVAL_STATUS_SUCCESS)
+			if ((*status = dpcDeleteGrid (DefectPixelCoordinate_X, DefectPixelCoordinate_Y)) != AVAL_STATUS_SUCCESS)
 				break;
 		
 			break;
@@ -6424,11 +6431,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommandDPCEdit(DefectPixelCorrection_Selector,FIRM_CMD_DPC_CLR_GRID,(u32*)&DefectPixelCoordinate_X,(u32*)&DefectPixelCoordinate_Y);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// DPC Delete Grid
-			if ((*status = toG (dpcClearGrid (DefectPixelCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+			if ((*status = dpcClearGrid (DefectPixelCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			break;
@@ -6440,11 +6447,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommandDPCAdjustSave(DefectPixelCorrection_Selector);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// DPC Save
-			if ((*status = toG (dpcSave (DefectPixelCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+			if ((*status = dpcSave (DefectPixelCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 				break;
 		
 			break;
@@ -6456,11 +6463,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommandDPCAdjustSaveAdmin(DefectPixelCorrection_Selector);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// DPC Save
-			if ((*status = toG (dpcSaveAdmin (DefectPixelCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+			if ((*status = dpcSaveAdmin (DefectPixelCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			break;
@@ -6472,11 +6479,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommandDPCFactory(DefectPixelCorrection_Selector);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// DPC Default
-			if ((*status = toG (dpcDefault ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = dpcDefault ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			break;
@@ -6486,14 +6493,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case DefectivePixelCorrectionDetectionAbort:
 			//*status = executeCommandDPCAbort(DefectPixelCorrection_Selector);
-			*status = toG (dpcClearBatchCount());
+			*status = dpcClearBatchCount();
 			break;
 
 		//--------------------------------------------------------------------------------
 		// DefectivePixelCorrectionMode設定
 		//--------------------------------------------------------------------------------
 		case DefectivePixelCorrectionMode:
-			*status = toG (dpcSetAdjustMode (value));
+			*status = dpcSetAdjustMode (value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -6574,7 +6581,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// DefectivePixelCorrectionAdjustUpdate設定
 		//----------------------------------------------------------------------------------
 		case DefectivePixelCorrectionAdjustUpdate:
-			*status = toG (dpcAdjustUpdate());
+			*status = dpcAdjustUpdate();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -6588,7 +6595,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// DefectivePixelCorrectionPixelCount設定
 		//----------------------------------------------------------------------------------
 		 case DefectivePixelCorrectionPixelCount:
-			*status = toG (dpcSetDefectionCount (value));
+			*status = dpcSetDefectionCount (value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -6611,7 +6618,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// FlatFieldCorrectionSelector設定
 		//--------------------------------------------------------------------------------
 		case FlatFieldCorrectionSelector:
-			*status = toG(ffcSetLoadNum((int) value));
+			*status = ffcSetLoadNum((int) value);
 			FlatFieldCorrection_Selector = value;
 			break;
 
@@ -6627,14 +6634,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case FlatFieldCorrectionSetLoad:
 			//*status = executeCommandFFCLoad(FlatFieldCorrection_Selector);
-			//*status = toG(ffcGetLoadNum((int*) &FlatFieldCorrection_Selector));
+			//*status = fcGetLoadNum((int*) &FlatFieldCorrection_Selector);
 		
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// FFC Load
-			if ((*status = toG (ffcLoadMain (FlatFieldCorrection_Selector, FFC_USER))) != AVAL_STATUS_SUCCESS)
+			if ((*status = ffcLoadMain (FlatFieldCorrection_Selector, FFC_USER)) != AVAL_STATUS_SUCCESS)
 				break;
 		
 			break;
@@ -6658,11 +6665,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					//*status = executeCommandFFCSave(FlatFieldCorrection_Selector);
 
 					// Cmd Initialze
-					if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+					if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 						break;
 
 					// FFC Save
-					if ((*status = toG (gigeCmdFfcSaveMain (FlatFieldCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+					if ((*status = gigeCmdFfcSaveMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 						break;
 
 					break;
@@ -6672,11 +6679,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					//*status = executeCommandFFCFactorySave(FlatFieldCorrection_Selector);
 
 					// Cmd Initialze
-					if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+					if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 						break;
 
 					// FFC Save
-					if ((*status = toG (gigeCmdFfcSaveMain (FlatFieldCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+					if ((*status = gigeCmdFfcSaveMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 						break;
 
 					break;
@@ -6701,11 +6708,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		case FlatFieldCorrectionBrightMode:
 
 			// 取得
-			if ((*status = toG (ffcGetMode ((int *)&value2nd, (int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = ffcGetMode ((int *)&value2nd, (int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// 設定
-			if ((*status = toG (ffcSetMode (value2nd, value))) != AVAL_STATUS_SUCCESS)
+			if ((*status = ffcSetMode (value2nd, value)) != AVAL_STATUS_SUCCESS)
 				break;
 		
 			break;
@@ -6714,25 +6721,25 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// FPGA_FFC_BLACK_TARGET_ADRS設定
 		//--------------------------------------------------------------------------------
 		case FPGA_FFC_BLACK_TARGET_ADRS:
-			if ((*status = toG (ffcGetBitCalc ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = ffcGetBitCalc ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			value *= value2nd;
 
-			*status = toG (ffcSetBlackTarget (value));
+			*status = ffcSetBlackTarget (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// FlatFieldCorrectionBrightTarget設定
 		//--------------------------------------------------------------------------------
 		case FlatFieldCorrectionBrightTarget:
-			if ((*status = toG (ffcGetBitCalc ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = ffcGetBitCalc ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			value *= value2nd;
 
 			FlatFieldCorrectionBrightAdjustment_Lumi = value;
-			*status = toG (ffcSetWhiteTarget (value));
+			*status = ffcSetWhiteTarget (value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -6747,11 +6754,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						//*status = executeCommandFFCDarkAdjust(FlatFieldCorrection_Selector);
 
 						// Cmd Initialze
-						if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+						if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 							break;
 
 						// FFC Black Adjust
-						if ((*status = toG (gigeCmdFfcBlackMain (FlatFieldCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+						if ((*status = gigeCmdFfcBlackMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 							break;
 					}
 					else
@@ -6763,11 +6770,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					//*status = executeCommandFFCFactoryDarkAdjust(FlatFieldCorrection_Selector);
 				
 					// Cmd Initialze
-					if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+					if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 						break;
 
 					// FFC Black Adjust
-					if ((*status = toG (gigeCmdFfcBlackMain (FlatFieldCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+					if ((*status = gigeCmdFfcBlackMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 						break;
 				
 					break;
@@ -6787,11 +6794,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						//*status = executeCommandFFCBrightAdjust(FlatFieldCorrection_Selector);
 						
 						// Cmd Initialze
-						if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+						if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 							break;
 
 						// FFC White Adjust
-						if ((*status = toG (gigeCmdFfcWhiteMain (FlatFieldCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+						if ((*status = gigeCmdFfcWhiteMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 							break;
 					}
 					else
@@ -6803,11 +6810,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					//*status = executeCommandFFCFactoryBrightAdjust(FlatFieldCorrection_Selector);
 				
 					// Cmd Initialze
-					if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+					if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 						break;
 
 					// FFC White Adjust
-					if ((*status = toG (gigeCmdFfcWhiteMain (FlatFieldCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+					if ((*status = gigeCmdFfcWhiteMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 						break;
 
 					break;
@@ -6828,11 +6835,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						//*status = executeCommandFFCShadingLineAdjust (FlatFieldCorrection_Selector);
 
 						// Cmd Initialze
-						if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+						if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 							break;
 
 						// FFC White Adjust
-						if ((*status = toG (gigeCmdFfcShadingLineMain (FlatFieldCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+						if ((*status = gigeCmdFfcShadingLineMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 							break;
 					}
 					else
@@ -6844,11 +6851,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					//*status = executeCommandFFCShadingLineAdjust (FlatFieldCorrection_Selector);
 				
 					// Cmd Initialze
-					if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+					if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 						break;
 
 					// FFC White Adjust
-					if ((*status = toG (gigeCmdFfcShadingLineMain (FlatFieldCorrection_Selector))) != AVAL_STATUS_SUCCESS)
+					if ((*status = gigeCmdFfcShadingLineMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
 						break;
 
 					break;
@@ -6871,11 +6878,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommandFFCFactory(FlatFieldCorrection_Selector);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// FFC Default
-			if ((*status = toG (gigeCmdFfcDefault ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = gigeCmdFfcDefault ()) != AVAL_STATUS_SUCCESS)
 				break;
 		
 			break;
@@ -6901,11 +6908,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = executeCommandFFCCorrectionMode(FlatFieldCorrectionModeSelector);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// FFC Defgaul
-			if ((*status = toG (gigeCmdFfcCorecctionMode (value))) != AVAL_STATUS_SUCCESS)
+			if ((*status = gigeCmdFfcCorecctionMode (value)) != AVAL_STATUS_SUCCESS)
 				break;
 		
 			break;
@@ -7013,7 +7020,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionAdjustUpdate:
 			//*status = executeCommandFFCAdjustUpdate();
-			*status = toG (ffcAdjustUpdate());
+			*status = ffcAdjustUpdate();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -7047,14 +7054,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// FlatFieldCorrectionOffset設定
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionOffset:
-			*status = toG (ffcSetOffsetData (0, FlatFieldCorrectionX_Index, FlatFieldCorrectionY_Index, value));
+			*status = ffcSetOffsetData (0, FlatFieldCorrectionX_Index, FlatFieldCorrectionY_Index, value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// FlatFieldCorrectionGain設定
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionGain:
-			*status = toG (ffcSetGainData (0, FlatFieldCorrectionX_Index, FlatFieldCorrectionY_Index, value));
+			*status = ffcSetGainData (0, FlatFieldCorrectionX_Index, FlatFieldCorrectionY_Index, value);
 			break;
 
 #endif // #if defined (MODE_FFC)
@@ -7071,21 +7078,21 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case GainxFloat:
 			fltValue = (float)((float)value / (float)DEVICE_GAINX_UNIT);
-			*status = toG (digitalSetGainX (fltValue));
+			*status = digitalSetGainX (fltValue);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// BlackLevel1設定
 		//--------------------------------------------------------------------------------
 		case FPGA_DOG_OFFSET1_ADRS:
-			*status = toG(digitalSetOffset1((int) value));
+			*status = digitalSetOffset1((int) value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// BlackLevel2設定
 		//--------------------------------------------------------------------------------
 		case FPGA_DOG_OFFSET2_ADRS:
-			*status = toG(digitalSetOffset((int) value));
+			*status = digitalSetOffset((int) value);
 			break;
 
 #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
@@ -7094,9 +7101,9 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case SensorGainX:
 			//value2nd = executeCommand(FIRM_CMD_SENSOR_GAIN, CPU_CMD_SYNC_ON, (u32*) &value, 1);
-			//*status = toG(value2nd);
+			//*status = value2nd;
 			fltValue = (float)((float)value / (float)SENSOR_GAIN_UNIT);
-			*status = toG (sensorSetGainX (fltValue));
+			*status = sensorSetGainX (fltValue);
 			break;
 #endif
 
@@ -7107,8 +7114,8 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case SensorConversionGain:
 			//value2nd = executeCommand(FIRM_CMD_SENSOR_CONVERSION_GAIN, CPU_CMD_SYNC_ON, (u32*) &value, 1);
-			//*status = toG(value2nd);
-			*status = toG (sensorSetConversionGain (value));
+			//*status = value2nd;
+			*status = sensorSetConversionGain (value);
 			break;
 #endif // #if defined (MODE_SENSOR_IMX992) || defined (MODE_SENSOR_IMX993)
 
@@ -7118,7 +7125,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Sensor Gradation Compress 8Bit Convert設定
 		//--------------------------------------------------------------------------------
 		case SensorGradComp8BitConvert:
-			if ((*status = toG(aoiGetBitWidth((int*) &value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = aoiGetBitWidth((int*) &value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			if (value2nd != 8)
@@ -7126,7 +7133,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				
 			#if defined (MODE_FRAMERATE_HIGH_SPEED)
 			// High Speed Mode取得
-			if ((*status = toG (sensorGetFrameRateHighSpeedMode ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = sensorGetFrameRateHighSpeedMode ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// High Speed Mode時は変更付加
@@ -7137,8 +7144,8 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			// Sensor Gradation Compress
 			//cmd.param0 = value;
 			//value2nd = executeCommand (FIRM_CMD_SENSOR_GRAD_8BIT_CONVERT, CPU_CMD_SYNC_ON, (u32*) &cmd,  sizeof(CPU_CMD) / 4);
-			//*status = toG(value2nd);
-			*status = toG (sensorSet8BitConvert (value));
+			//*status = value2nd;
+			*status = sensorSet8BitConvert (value);
 			break;
 #endif
 
@@ -7153,21 +7160,21 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// LineSelector設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_DIGITAL_LINE_SELECT_ADRS:
-			*status = toG (digitalIoSetLineSelect (value));
+			*status = digitalIoSetLineSelect (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// LineMode設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_DIGITAL_LINE_MODE_ADRS:
-			*status = toG (digitalIoSetMode (value));
+			*status = digitalIoSetMode (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// LineInverter設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_DIGITAL_LINE_INVERTER_ADRS:
-			*status = toG (digitalIoSetInverter (value));
+			*status = digitalIoSetInverter (value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -7189,7 +7196,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case GENICAM_DIGITAL_LINE_SOURCE_ADRS:
 #if 1
-			*status = toG (digitalIoSetLineSource (value));
+			*status = digitalIoSetLineSource (value);
 #else
 			value2nd = IN32(GENICAM_DIGITAL_LINE_SELECT_ADRS);
 
@@ -7215,7 +7222,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// LineFormat設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_DIGITAL_LINE_FORMAT_ADRS:
-			*status = toG (digitalIoSetLineFormat (value));
+			*status = digitalIoSetLineFormat (value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -7256,28 +7263,28 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// UserOutputSelector設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_DIGITAL_USER_SELECT_ADRS:
-			*status = toG (digitalIoSetUserSelect (value));
+			*status = digitalIoSetUserSelect (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// UserOutputValue設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_DIGITAL_USER_VALUE_ADRS:
-			*status = toG (digitalIoSetUserValue (value));
+			*status = digitalIoSetUserValue (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// UserOutputValueAll設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_DIGITAL_USER_ALL_VALUE_ADRS:
-			*status = toG (digitalIoSetAllValue (value));
+			*status = digitalIoSetAllValue (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// UserOutputValueAllMask設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_DIGITAL_USER_MASK_ADRS:
-			*status = toG (digitalIoSetUserMask (value));
+			*status = digitalIoSetUserMask (value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -7550,35 +7557,35 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// EncoderSourceA設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ENCODER_PASEA_TRG_SOURCE_ADRS:
-			*status = toG (encoderSetPhaseATrgSource (value));
+			*status = encoderSetPhaseATrgSource (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// EncoderSourceB設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ENCODER_PASEB_TRG_SOURCE_ADRS:
-			*status = toG (encoderSetPhaseBTrgSource (value));
+			*status = encoderSetPhaseBTrgSource (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// EncoderMode設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ENCODER_MODE_ADRS:
-			*status = toG (encoderSetMode (value));
+			*status = encoderSetMode (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// EncoderDivider設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ENCODER_DVIDER_ADRS:
-			*status = toG (encoderSetDivider(value));
+			*status = encoderSetDivider(value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// EncoderOutputMode設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ENCODER_OUTPUT_MODE_ADRS:
-			*status = toG (encoderSetOutputMode (value));
+			*status = encoderSetOutputMode (value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -7599,28 +7606,28 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// EncoderTimeout設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ENCODER_TIMEOUT_ADRS:
-			*status = toG (encoderSetTimeout (value));
+			*status = encoderSetTimeout (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// EncoderResetSource設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ENCODER_RESET_TRG_SOURCE_ADRS:
-			*status = toG (encoderSetResetTrgSource (value));
+			*status = encoderSetResetTrgSource (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// EncoderResetActivation設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ENCODER_RESET_ACTIVATION_ADRS:
-			*status = toG (encoderSetResetActivation (value));
+			*status = encoderSetResetActivation (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// EncoderReset設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ENCODER_RESET_ADRS:
-			*status = toG (encoderSetReset ());
+			*status = encoderSetReset ();
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -7825,7 +7832,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// DeviceBoot設定
 		//--------------------------------------------------------------------------------
 		case DeviceBoot:
-		    *status = toG (boardReset());
+		    *status = boardReset();
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -7876,8 +7883,8 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
 		case SensorBlackPixel:
-			//*status = toG (executeCommandSensorBlackPixel ((int)value));
-			*status = toG (sensorSetBlackPixel (value));
+			//*status = executeCommandSensorBlackPixel ((int)value);
+			*status = sensorSetBlackPixel (value);
 			break;
 #endif
 
@@ -7897,11 +7904,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			//*status = (u32) executeCommandHighSpeedMode (gHighSpeedMode, gHighSpeedModeLineCount);
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Frame Rate High Speed Mode設定
-			if ((*status = toG (sensorSetFrameRateHighSpeedMode (gHighSpeedMode))) != AVAL_STATUS_SUCCESS)
+			if ((*status = sensorSetFrameRateHighSpeedMode (gHighSpeedMode)) != AVAL_STATUS_SUCCESS)
 				break;
 	
 			break;
@@ -7910,7 +7917,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// HighSpeedModeLineCount設定
 		//--------------------------------------------------------------------------------
 		case HighSpeedModeLineCount:
-			//*status = toG(aoiSetHeight((int) value));
+			//*status = aoiSetHeight((int) value);
 			gHighSpeedModeLineCount = value;
 			break;
 
@@ -7934,7 +7941,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
 		case DeviceRateMode:
-			*status = toG (acquisitionSetRateMode (value));
+			*status = acquisitionSetRateMode (value);
 			break;
 #endif
 
@@ -7942,21 +7949,21 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// FPGA_TG_TGSE_ADRS設定
 		//--------------------------------------------------------------------------------
 		case FPGA_TG_TGSE_ADRS:
-			*status = toG (tgSetTgse (value));
+			*status = tgSetTgse (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// FPGA_TG_TGES_ADRS設定
 		//--------------------------------------------------------------------------------
 		case FPGA_TG_TGES_ADRS:
-			*status = toG (tgSetTges (value));
+			*status = tgSetTges (value);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// FPGA_TG_TGPD_ADRS設定
 		//--------------------------------------------------------------------------------
 		case FPGA_TG_TGPD_ADRS:
-			*status = toG (tgSetTgpd (value));
+			*status = tgSetTgpd (value);
 			break;
 
 
@@ -8016,11 +8023,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					//status = executeCommand(FIRM_CMD_AGING, CPU_CMD_SYNC_OFF, (u32*) &dummy, 1);
 				
 					// Cmd Initialze
-					if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+					if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 						break;
 
 					// Aging
-					if ((*status = toG (cmdDiagAgingMain (1, DIAG_MODE_AGING))) != AVAL_STATUS_SUCCESS)
+					if ((*status = cmdDiagAgingMain (1, DIAG_MODE_AGING)) != AVAL_STATUS_SUCCESS)
 						break;
 
 					break;
@@ -8138,7 +8145,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 
 			intValue = (int)value;
 			dblValue = (float) intValue;
-			if ((*status = toG(peltierSetTarget(dblValue))) != AVAL_STATUS_SUCCESS)
+			if ((*status = peltierSetTarget(dblValue)) != AVAL_STATUS_SUCCESS)
 				break;
 				
 			#if defined (MODE_PELTIER_CTRL)
@@ -8206,14 +8213,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case FPGA_PELTIER_SENSOR_ALM_ADRS:
 			// Alarm取得
-			if ((*status = toG(peltierGetSensorTempAlarm(&dblValue, &dblValue2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = peltierGetSensorTempAlarm(&dblValue, &dblValue2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			intValue = (int)value;
 			dblValue = (double)intValue;
 
 			// Alarm設定
-			*status = toG(peltierSetSensorTempAlarm(dblValue, dblValue2nd));
+			*status = peltierSetSensorTempAlarm(dblValue, dblValue2nd);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -8221,32 +8228,32 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureAlarmMin_Sensor:
 			// Alarm取得
-			if ((*status = toG(peltierGetSensorTempAlarm(&dblValue, &dblValue2nd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = peltierGetSensorTempAlarm(&dblValue, &dblValue2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			intValue = (int)value;
 			dblValue2nd = (double)intValue;
 
 			// Alarm設定
-			*status = toG(peltierSetSensorTempAlarm(dblValue, dblValue2nd));
+			*status = peltierSetSensorTempAlarm(dblValue, dblValue2nd);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// Case Alarm Max Temperature設定
 		//--------------------------------------------------------------------------------
 		case FPGA_PELTIER_CASE_ALM_ADRS:
-			*status = toG(peltierGetCaseTempAlarm(&dblValue, &dblValue2nd));
+			*status = peltierGetCaseTempAlarm(&dblValue, &dblValue2nd);
 			dblValue = value;
-			*status = toG(peltierSetCaseTempAlarm(dblValue, dblValue2nd));
+			*status = peltierSetCaseTempAlarm(dblValue, dblValue2nd);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// Case Alarm Min Temperature設定
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureAlarmMin_Housing:
-			*status = toG(peltierGetCaseTempAlarm(&dblValue, &dblValue2nd));
+			*status = peltierGetCaseTempAlarm(&dblValue, &dblValue2nd);
 			dblValue2nd = value;
-			*status = toG(peltierSetCaseTempAlarm(dblValue, dblValue2nd));
+			*status = peltierSetCaseTempAlarm(dblValue, dblValue2nd);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -8260,7 +8267,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// DeviceTemperatureAlarmClear設定
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureAlarmClear:
-			*status = toG (peltierClearTempAlarm (value));
+			*status = peltierClearTempAlarm (value);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -8286,7 +8293,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			peltierGetMode ((int *)&value2nd);
 
 			// Set Peltier Power Level
-			*status = toG (peltierSetPowerLevel(value));
+			*status = peltierSetPowerLevel(value);
 			
 			if (value2nd == 1)
 			{
@@ -8319,7 +8326,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// 温度異常ステータス設定
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureAbnormalStatus:
-			*status = toG (tempSetAbnormalStatus(value));
+			*status = tempSetAbnormalStatus(value);
 
 			// LED Clear
 			if (value == 0)
@@ -8331,7 +8338,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// 温度異常カウント設定
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureAbnormalCount:
-			*status = toG (tempSetAbnormalCount(value));
+			*status = tempSetAbnormalCount(value);
 			break;
 #endif // #if defined (MODE_TEMP_ABNORMAL_CHECK)
 
@@ -8357,14 +8364,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case DeviceDrrsCommand:
 			//value2nd = executeCommand(FIRM_CMD_DRRS, CPU_CMD_SYNC_OFF, (u32*) &gDrrsMode, 1);
-			//*status = toG(value2nd);
+			//*status = value2nd;
 
 			// Cmd Initialze
-			if ((*status = toG (cmdExecuteInit ())) != AVAL_STATUS_SUCCESS)
+			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// DRRS
-			if ((*status = toG (sensorSetDrrsMain2 (value))) != AVAL_STATUS_SUCCESS)
+			if ((*status = sensorSetDrrsMain2 (value)) != AVAL_STATUS_SUCCESS)
 				break;
 		
 			break;
@@ -8396,7 +8403,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Auto Bright Exposure Mode設定
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_EXPOSURE_MODE:
-			*status = toG (autoBrightSetExposureMode (value));
+			*status = autoBrightSetExposureMode (value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -8410,21 +8417,21 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Auto Bright Exposure Min設定
 		//----------------------------------------------------------------------------------
 		//case AUTO_BRIGHT_EXPOSURE_MIN:
-			//*status = toG (autoBrightSetExposureMin (value));
+			//*status = autoBrightSetExposureMin (value);
 			//break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Exposure Max設定
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_EXPOSURE_MAX:
-			*status = toG (autoBrightSetExposureMax (value));
+			*status = autoBrightSetExposureMax (value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Gain Mode設定
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_GAIN_MODE:
-			*status = toG (autoBrightSetGainMode (value));
+			*status = autoBrightSetGainMode (value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -8439,28 +8446,28 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//----------------------------------------------------------------------------------
 		//case AUTO_BRIGHT_GAIN_MIN:
 			//dblValue = (double)((double)value / (double)AUTO_GAIN_UNIT);
-			//*status = toG (autoBrightSetGainMin ((double)value));
+			//*status = autoBrightSetGainMin ((double)value);
 			//break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Gain Max設定
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_GAIN_MAX:
-			*status = toG (autoBrightSetGainMax ((double)value));
+			*status = autoBrightSetGainMax ((double)value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Area設定
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_OVERLAY:
-			*status = toG (autoBrightSetDetectArea (value));
+			*status = autoBrightSetDetectArea (value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Target設定
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_TARGET:
-			*status = toG (autoBrightSetTarget (value));
+			*status = autoBrightSetTarget (value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -8474,35 +8481,35 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Auto Bright Area設定
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_TARGET_AREA:
-			*status =  toG (autoBrightSetTargetArea (value));
+			*status =  autoBrightSetTargetArea (value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Width Size設定
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_WIDTH_SIZE:
-			*status = toG (autoBrightSetWidthSize (value));
+			*status = autoBrightSetWidthSize (value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Height Size設定
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_HEIGHT_SIZE:
-			*status = toG (autoBrightSetHeightSize (value));
+			*status = autoBrightSetHeightSize (value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Width Offset設定
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_WIDTH_OFFSET:
-			*status = toG (autoBrightSetWidthOffset (value));
+			*status = autoBrightSetWidthOffset (value);
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Auto Bright Height Offset設定
 		//----------------------------------------------------------------------------------
 		case AUTO_BRIGHT_HEIGHT_OFFSET:
-			*status = toG (autoBrightSetHeightOffset (value));
+			*status = autoBrightSetHeightOffset (value);
 			break;
 #endif // #if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
 
@@ -8519,10 +8526,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//----------------------------------------------------------------------------------
 		case BINNING_HORIZONTAL:
 
-			if((*status = toG (aoiSetBinningX(value))) != AVAL_STATUS_SUCCESS)
+			if((*status = aoiSetBinningX(value)) != AVAL_STATUS_SUCCESS)
 				break;
 
-			if((*status = toG (aoiGetWidth((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+			if((*status = aoiGetWidth((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			video_width = value2nd;
@@ -8539,11 +8546,12 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// BinningY設定
 		//----------------------------------------------------------------------------------
 		case BINNING_VERTICAL:
-			if((*status = toG(aoiSetBinningY(value))) != AVAL_STATUS_SUCCESS)
+			if((*status = aoiSetBinningY(value)) != AVAL_STATUS_SUCCESS)
 				break;
 
+		    #if defined (MODE_FRAMERATE_HIGH_SPEED)
 			// Height取得
-			if ((*status = toG (sensorGetFrameRateHighSpeedMode ((int *)&value3rd))) != AVAL_STATUS_SUCCESS)
+			if ((*status = sensorGetFrameRateHighSpeedMode ((int *)&value3rd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			if (value3rd == MODE_ENABLE)
@@ -8558,7 +8566,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				}
 				else
 				{
-					if((*status = toG(aoiGetHeight ((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+					if((*status = aoiGetHeight ((int *)&value2nd))!= AVAL_STATUS_SUCCESS)
 						break;
 	
 					video_height = value2nd;
@@ -8566,11 +8574,20 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			}
 			else
 			{
-				if((*status = toG(aoiGetHeight((int *)&value2nd))) != AVAL_STATUS_SUCCESS)
+				if((*status = aoiGetHeight((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 					break;
 
 				video_height = value2nd;
 			}
+			#else  // #if defined (MODE_FRAMERATE_HIGH_SPEED)
+			
+			if((*status = aoiGetHeight((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
+				break;
+
+			video_height = value2nd;
+
+			#endif // #if defined (MODE_FRAMERATE_HIGH_SPEED)
+
 
 			#if defined (MODE_GIGE_10G) && defined (IF_GIGE)
 			update_leader = 1;
@@ -8583,7 +8600,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Binningmode設定
 		//----------------------------------------------------------------------------------
 		case BINNING_MODE:
-			*status = toG (aoiSetBinningMode (value));
+			*status = aoiSetBinningMode (value);
 			break;
 
 #endif //#if defined(MODE_BINNING)
@@ -8770,11 +8787,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					break;
 
 				case FileSelector_FPGA:
-					*status = toG (FileSelectorFpga ());
+					*status = FileSelectorFpga ();
 					break;
 
 				case FileSelector_XML:
-					*status = toG (FileSelectorXML ());
+					*status = FileSelectorXML ();
 					break;
 
 				case FileSelector_LUTLuminance0:
@@ -8816,22 +8833,22 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					break;
 
 				case FileSelector_DPC0:
-					 *status = toG (FileSelectorDPC());
+					 *status = FileSelectorDPC();
 					 break;
 
 				case FileSelector_FFC0:
-					 *status = toG (FileSelectorFFC());
+					 *status = FileSelectorFFC();
 					 break;
 
 				#if defined (MODE_SPECTRUM)
 				case FileSelector_SPECTRUM_WAVE:
-					*status = toG (FileSelectorSpectrumWave ());
+					*status = FileSelectorSpectrumWave ();
 					 break;
 				#endif
 
 				#if defined (MODE_GIGE_10G)
 				case FileSelector_PHY:
-					*status = toG (FileSelectorPhyWrite());
+					*status = FileSelectorPhyWrite();
 					break;
 				#endif
 
@@ -8898,7 +8915,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			// Note:
 			//
 			//====================================================================================
-			if (address >= FPGA_DOG_BAND_OFFSET1_ADRS && address < (FPGA_DOG_BAND_OFFSET1_ADRS + (SPECTRUM_BAND_COUNT*FPGA_DOG_BAND_INTEVAL)) )
+			if (address >= FPGA_DOG_BAND_OFFSET1_ADRS && address < (FPGA_DOG_BAND_OFFSET1_ADRS + (SPECTRUM_BAND_COUNT*FPGA_DOG_BAND_INTEVAL)))
 			{
 				value3rd =  (address - FPGA_DOG_BAND_OFFSET1_ADRS);
 				value3rd =  ((long)value3rd >= (long)FPGA_DOG_BAND_INTEVAL)? value3rd / FPGA_DOG_BAND_INTEVAL : 0;
@@ -8906,7 +8923,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				switch(value2nd)
 				{
 					case 0x0: // SpectrumBlackLevel as FPGA_DOG_BAND_OFFSET1_ADRS_OFFSET
-						*status = toG(digitalSetBandOffset(value3rd,value));
+						*status = digitalSetBandOffset(value3rd,value);
 						break;
 					case 0x4: // SpectrumGain as FPGA_DOG_BAND_GAIN_ADRS
 						OUT32 (address,value);
@@ -8918,7 +8935,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						*status = GEV_STATUS_SUCCESS;
 						break;
 					case 0x8: // SpectrumBlackLevelPreceding as FPGA_DOG_BAND_OFFSET2_ADRS_OFFSET
-						*status = toG(digitalSetBandOffset1(value3rd,value));
+						*status = digitalSetBandOffset1(value3rd,value);
 						break;
 					case 0x10:
 						// Reserved
@@ -8949,14 +8966,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				switch(value2nd)
 				{
 					case 0x0: // SpectrumBlackLevel as FPGA_BGF_BAND_OFFSET1_ADRS
-						*status = toG(bgfSetBandOffset(value3rd,value));
+						*status = bgfSetBandOffset(value3rd,value);
 						break;
 					case 0x4: // SpectrumGain as FPGA_BGF_BAND_GAIN_ADRS
 						fltValue = (float)((float)value / (float)DEVICE_GAIN_UNIT);
-						*status = toG(bgfSetBandGainX(value3rd,fltValue));
+						*status = bgfSetBandGainX(value3rd,fltValue);
 						break;
 					case 0x8: // SpectrumBlackLevelPreceding as FPGA_BGF_BAND_OFFSET2_ADRS
-						*status = toG(bgfSetBandOffset1(value3rd,value));
+						*status = bgfSetBandOffset1(value3rd,value);
 						break;
 					case 0x10:
 						// Reserved
@@ -9031,9 +9048,9 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			    ((address >= FPGA_LUT_MEM2_ADRS) && (address < FPGA_LUT_MEM2_ADRS + LUT_DATA_SIZE)))
 			{
 				interval = offset = 0;
-				*status = toG(aoiGetBitWidth((int*) &bit));			// ビット幅取得
-				*status = toG(lutGetTablInterval(bit, (unsigned int*) &interval)); // interval = 8bit=64,10bit=16,12bit=4,14bit=1
-				*status = toG(aoiGetShift((int) bit, (int*) &value3rd)); // シフト数取得
+				*status = aoiGetBitWidth((int*) &bit);			// ビット幅取得
+				*status = lutGetTablInterval(bit, (unsigned int*) &interval); // interval = 8bit=64,10bit=16,12bit=4,14bit=1
+				*status = aoiGetShift((int) bit, (int*) &value3rd); // シフト数取得
 				address2nd = address & LUT_DATA_MASK; // Mask the actual LUT address from a virtual address
 
 				if (value2nd == 14)
@@ -9102,7 +9119,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;  // Success
 			}
 			
-
 			// ---------------------------------------------------------
 			// For IP Core Design
 			// Configuration EEPROM 8-64kByte, here 8k)
@@ -9113,6 +9129,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				eeprom_write_dword((u16) (address - 0xFBFF0000), value);
 				break;
 			}
+
 			// SPI flash memory
 			if (address >= 0xFE000000)
 			{
@@ -9137,182 +9154,112 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		
 			// Undefined address space
 			//*status = GEV_STATUS_INVALID_ADDRESS;
+			*status = (unsigned short)AVAL_STATUS_INVALID_ADDRESS;
 			#endif // #if defined (IF_GIGE)
 			break;
-		}
+	} // switch (address)
 
-		#if defined (IF_GIGE)
-		#if !defined (MODE_GIGE_10G)
-		//***********************************************
-		// Checks AOI and Update the settings of frame buffer controller
-		if( address == FPGA_AOI_BITWIDTH_ADRS
-			||address == FPGA_AOI_XSIZE_ADRS
-			|| address == FPGA_AOI_YSIZE_ADRS )
-		{
-			switch (video_pixfmt)
-			{
-			case GVSP_PIX_MONO8:
-				bpp = 1; // in unit of bytes
-				bit = 8; // in unit of bits
-				break;
-			case GVSP_PIX_BAYGR10:
-			case GVSP_PIX_BAYRG10:
-			case GVSP_PIX_BAYGB10:
-			case GVSP_PIX_BAYBG10:
-			case GVSP_PIX_MONO10:
-				bpp = 2; // in unit of bytes
-				bit = 10; // in unit of bits
-				break;
-			case GVSP_PIX_BAYGR12:
-			case GVSP_PIX_BAYRG12:
-			case GVSP_PIX_BAYGB12:
-			case GVSP_PIX_BAYBG12:
-			case GVSP_PIX_MONO12:
-				bpp = 2; // in unit of bytes
-				bit = 12; // in unit of bits
-				break;
-			case GVSP_PIX_MONO14:
-				bpp = 2; // in unit of bytes
-				bit = 14; // in unit of bits
-				break;
-			case GVSP_PIX_MONO16:
-				bpp = 2; // in unit of bytes
-				bit = 16; // in unit of bits
-				break;
-			case GVSP_PIX_YUV411_PACKED:
-			case GVSP_PIX_YUV422_PACKED:
-			case GVSP_PIX_YUV444_PACKED:
-				bpp = 2; // in unit of bytes
-				bit = 16; // in unit of bits
-				break;
-			case GVSP_PIX_RGB8_PACKED:
-			case GVSP_PIX_BGR8_PACKED:
-				bpp = 3; // in unit of bytes
-				bit = 8; // in unit of bits
-				break;
-			case GVSP_PIX_RGBA8_PACKED:
-			case GVSP_PIX_BGRA8_PACKED:
-				bpp = 4; // in unit of bytes
-				bit = 8; // in unit of bits
-				break;
-			case GVSP_PIX_RGB10_PACKED:
-			case GVSP_PIX_BGR10_PACKED:
-				bpp = 4; // in unit of bytes
-				bit = 10; // in unit of bits
-				break;
-			case GVSP_PIX_RGB12_PACKED:
-			case GVSP_PIX_BGR12_PACKED:
-				bpp = 6; // in unit of bytes
-				bit = 12; // in unit of bits
-				break;
-			default:
-				bpp = 1; // in unit of bytes
-				bit = 8; // in unit of bits
-				break;
-			}
 
-			// Adjust auxiliary registers
-			framebuf_padding(bpp, (framebuf_control & FRAMEBUF_C_DEINT ? 1 : 0), 4 * ((framebuf_status & FRAMEBUF_S_BURST) >> 8));
-		}
+	#if defined (IF_GIGE)
+	if( address == FPGA_AOI_BITWIDTH_ADRS
+	||  address == FPGA_AOI_XSIZE_ADRS
+	||  address == FPGA_AOI_YSIZE_ADRS
+	||  address == FPGA_AOI_XOFFSET_ADRS
+	||  address == FPGA_AOI_YOFFSET_ADRS
+	||  address == RoiHeightSize
+	||  address == RoiHeightOffset
+	||  address == RoiHeightValid
+	||  address == FIRM_DATA_ROI_AREA_MODE_ADRS
+	||  address == FIRM_DATA_ROI_AREA_SIZE_ADRS
+	||  address == RoiHeightDefault
+	||  address == BINNING_HORIZONTAL
+	||  address == BINNING_VERTICAL
+	||  address == SpectrumBandStart
+	||  address == SpectrumBandEnd)
+	{
+	    if ((video_chunk_ctrl & 0x80000000) == 0)       // Check if extended chunk mode is activated
+	    {
+	        chunk_size      = 0;
+	        chunk_layout_id = 0;
+	    }
+	    else
+	    {
+	        if (video_chunk_enable == 0)                // Check if framecounter chunk is activated
+	        {
+	            chunk_size      = 8;                    // Additional bytes to describe image chunk only (4 byte id, 4 byte size)
+	            chunk_layout_id = video_chunkid_img |
+	                              video_pixfmt      |
+	                              video_width       |
+	                              video_height;         // Set chunk layout id
+	        }
+	        else
+	        {
+	            chunk_size      = 20;                   // Additional bytes to describe image chunk (8 bytes) and frame counter chunk (4 bytes data, 4 bytes id, 4 bytes size)
+	            chunk_layout_id = video_chunkid_img |
+	                              video_chunkid_fc  |
+	                              video_pixfmt      |
+	                              video_width       |
+	                              video_height;         // Set chunk layout id
+	        }
 
-		#else // #if !defined (MODE_GIGE_10G)
-	
-		if( address == FPGA_AOI_BITWIDTH_ADRS
-		||  address == FPGA_AOI_XSIZE_ADRS
-		||  address == FPGA_AOI_YSIZE_ADRS
-		||  address == FPGA_AOI_XOFFSET_ADRS
-		||  address == FPGA_AOI_YOFFSET_ADRS
-		||  address == RoiHeightSize
-		||  address == RoiHeightOffset
-		||  address == RoiHeightValid
-		||  address == FIRM_DATA_ROI_AREA_MODE_ADRS
-		||  address == FIRM_DATA_ROI_AREA_SIZE_ADRS
-		||  address == RoiHeightDefault
-		||  address == BINNING_HORIZONTAL
-		||  address == BINNING_VERTICAL
-		||  address == SpectrumBandStart
-		||  address == SpectrumBandEnd)
-		{
-		    if ((video_chunk_ctrl & 0x80000000) == 0)       // Check if extended chunk mode is activated
-		    {
-		        chunk_size      = 0;
-		        chunk_layout_id = 0;
-		    }
-		    else
-		    {
-		        if (video_chunk_enable == 0)                // Check if framecounter chunk is activated
-		        {
-		            chunk_size      = 8;                    // Additional bytes to describe image chunk only (4 byte id, 4 byte size)
-		            chunk_layout_id = video_chunkid_img |
-		                              video_pixfmt      |
-		                              video_width       |
-		                              video_height;         // Set chunk layout id
-		        }
-		        else
-		        {
-		            chunk_size      = 20;                   // Additional bytes to describe image chunk (8 bytes) and frame counter chunk (4 bytes data, 4 bytes id, 4 bytes size)
-		            chunk_layout_id = video_chunkid_img |
-		                              video_chunkid_fc  |
-		                              video_pixfmt      |
-		                              video_width       |
-		                              video_height;         // Set chunk layout id
-		        }
-	
-		        // Verify that chunk_layout_id gets changed when chunk layout changes
-		        if (update_trailer == 1)
-		        {
-		            if (chunk_layout_id == old_chunk_layout_id)
-		                chunk_layout_id++;
-		            old_chunk_layout_id = chunk_layout_id;
-		        }
-		    }
-	
-		    // Adjust padding and total bytes per block
-		    framebuf_padding(video_pixfmt, video_width, video_height, chunk_size);
-		    gige_set_scmbs(0, framebuf_bpb);
-	
-		    // Set Payload Type
-		    if ((video_chunk_ctrl & 0x80000000) == 0)
-		        framebuf_set_pld_type(PLD_IMAGE);
-		    else
-		        framebuf_set_pld_type(PLD_IMAGE | PLD_EXTCHUNK_MODE);
-	
-		    // Update leader/trailer
-		    if (update_leader)
-		        framebuf_img_leader(video_pixfmt, video_width, video_height, video_offs_x, video_offs_y);
-		    if (update_trailer)
-		        framebuf_img_trailer(video_height, chunk_layout_id);
-		}
+	        // Verify that chunk_layout_id gets changed when chunk layout changes
+	        if (update_trailer == 1)
+	        {
+	            if (chunk_layout_id == old_chunk_layout_id)
+	                chunk_layout_id++;
+	            old_chunk_layout_id = chunk_layout_id;
+	        }
+	    }
 
-		#endif // #if !defined (MODE_GIGE_10G)
-		#endif // #if defined (IF_GIGE)
+	    // Adjust padding and total bytes per block
+	    framebuf_padding(video_pixfmt, video_width, video_height, chunk_size);
+	    gige_set_scmbs(0, framebuf_bpb);
 
-		// Indicates the current state at the LED of a rear-panel
-		ledSetState(LED_STATE, (*status == GEV_STATUS_SUCCESS) ? LED_COMMAND : LED_STREAMING_ERROR, *status);
+	    // Set Payload Type
+	    if ((video_chunk_ctrl & 0x80000000) == 0)
+	        framebuf_set_pld_type(PLD_IMAGE);
+	    else
+	        framebuf_set_pld_type(PLD_IMAGE | PLD_EXTCHUNK_MODE);
 
-		// Stores the status counter where indicates happened errors
-		if (*status == GEV_STATUS_SUCCESS)
-		{
-			//@@@1value2nd = IN32(BOARD_STATUS_GEV_CMDW_ADRS);
-			//@@@1OUT32(BOARD_STATUS_GEV_CMDW_ADRS, (value2nd + 1));
-		}
-		else
-		{
-			// Increment the number of written error counter
-			//@@@1ARM1_DIAG_INC_VALUE(CounterDiagnosticValue_NetworkCommandWriteError);
-		}
+	    // Update leader/trailer
+	    if (update_leader)
+	        framebuf_img_leader(video_pixfmt, video_width, video_height, video_offs_x, video_offs_y);
+	    if (update_trailer)
+	        framebuf_img_trailer(video_height, chunk_layout_id);
+	}
+	#endif // #if defined (IF_GIGE)
 
-		#if 0	//@@@1
-		if (address <= xmlStartAddress || (address >= FPGA_BASE_ADRS && address < GENICAM_ADRS + 0x00FFFFFF))
-		{
-				DEBUG_PRINT("%s writes 0x%08X(%8d) at 0x%08X(0x%08X) %s with 0x%08X\r\n",
-						GIGE_TAG_OUT, (unsigned int) value,
-						(unsigned int) value, (unsigned int) address,(unsigned int) address2nd,
-						(*status == 0) ? "success" : "failed",	(unsigned int) *status);
-		}
-		#endif //@@@1
+	// Indicates the current state at the LED of a rear-panel
+	//ledSetState(LED_STATE, (*status == GEV_STATUS_SUCCESS) ? LED_COMMAND : LED_STREAMING_ERROR, *status);
 
-		return;
+	// Stores the status counter where indicates happened errors
+	if (*status == GEV_STATUS_SUCCESS)
+	{
+		//@@@1value2nd = IN32(BOARD_STATUS_GEV_CMDW_ADRS);
+		//@@@1OUT32(BOARD_STATUS_GEV_CMDW_ADRS, (value2nd + 1));
+	}
+	else
+	{
+		// Increment the number of written error counter
+		//@@@1ARM1_DIAG_INC_VALUE(CounterDiagnosticValue_NetworkCommandWriteError);
+	}
+
+	#if 0	//@@@1
+	if (address <= xmlStartAddress || (address >= FPGA_BASE_ADRS && address < GENICAM_ADRS + 0x00FFFFFF))
+	{
+			DEBUG_PRINT("%s writes 0x%08X(%8d) at 0x%08X(0x%08X) %s with 0x%08X\r\n",
+					GIGE_TAG_OUT, (unsigned int) value,
+					(unsigned int) value, (unsigned int) address,(unsigned int) address2nd,
+					(*status == 0) ? "success" : "failed",	(unsigned int) *status);
+	}
+	#endif //@@@1
+
+	if ((gInterFaceID == INTERFACE_GIGE) || (gInterFaceID == INTERFACE_GIGE20))
+	{
+		*status = toG (*status);
+	}
+
+	return;
 }
 
 
@@ -11216,7 +11163,7 @@ int FileSelectorFFC (void)
 				break;
 
 			// FFC Download
-			status = toG (ffcGetMemoryNormal (valueBuffer, adrs, size, FlatFieldCorrectionModeSelector));
+			status = ffcGetMemoryNormal (valueBuffer, adrs, size, FlatFieldCorrectionModeSelector);
 			
 			// Stores the total written size of bit-stream image int the flash device
 			fileResult[fileSelector][fileSel[fileSelector]] = size; // in bytes
@@ -11235,7 +11182,7 @@ int FileSelectorFFC (void)
 				break;
 
 			// Upload
-			status = toG (ffcSetMemoryNormal (valueBuffer, adrs, size, FlatFieldCorrectionModeSelector));
+			status = ffcSetMemoryNormal (valueBuffer, adrs, size, FlatFieldCorrectionModeSelector);
 
 			// Stores the total written size of bit-stream image int the flash device
 			fileResult[fileSelector][fileSel[fileSelector]] = size; // in bytes
@@ -11330,7 +11277,7 @@ int FileSelectorSpectrumWave (void)
 				{
 					// コマンドステータス取得
 					//if ((status = isExecuteCommandDone(CPU_CMD_TIMEOUT*4, FIRM_CMD_SPECTRUM_WAVE, &isDone)) != 0)
-					if ((status = toG (cmdExecuteStatus ((int *)&isDone))) != AVAL_STATUS_SUCCESS)
+					if ((status = cmdExecuteStatus ((int *)&isDone)) != AVAL_STATUS_SUCCESS)
 					{
 						DEBUG_PRINT_FORCE ("Spectrum Wave Update Status Error = %d\r\n", status);
 						goto _DONE;
@@ -11422,21 +11369,14 @@ int FileSelectorFpga (void)
 			size = fileLength[fileSelector][fileSel[fileSelector]]; // Gets the address of offset by starting point
 			valueBuffer = fileBuffer[fileSelector]; //Gets the start pointer of temporary buffer
 
-//@@@1
-			//@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		DEBUG_PRINT_FORCE("@@@@@@Write\n");
-		//@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-#if 0
 			// Cmd Initialze
 			if ((status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Flash Write
-			if ((status = gigeCmdFirmUpload (adrs, (unsigned char *)valueBuffer, size)) != AVAL_STATUS_SUCCESS)
+			if ((status = gigeCmdFirmUpload (FLASH_UPDATE_ALL_ADRS, (unsigned char *)valueBuffer, size)) != AVAL_STATUS_SUCCESS)
 				break;
-#endif
-//@@@1
+
 			// Success or Failure
 			fileStatus[fileSelector][fileSel[fileSelector]] = status;
 
@@ -11523,7 +11463,7 @@ int FileSelectorXML (void)
 				break;
 
 			// Flash Write
-			if ((status = gigeCmdXmlUpload (adrs, (unsigned char *)valueBuffer, size)) != AVAL_STATUS_SUCCESS)
+			if ((status = gigeCmdXmlUpload (FLASH_XML_ADRS, (unsigned char *)valueBuffer, size)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			// Success or Failure

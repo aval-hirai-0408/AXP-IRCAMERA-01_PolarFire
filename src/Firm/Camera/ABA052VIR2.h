@@ -18,13 +18,13 @@
 //----------------------------------------------------------------------------------
 
 // Firmware Version
-#define FIRM_VERSION						"0.2"
+#define FIRM_VERSION						"0.1"
 
 // Main Version
-#define MAIN_VERSION						"0.2"
+#define MAIN_VERSION						"0.1"
 
 // HW Version
-#define HW_VERSION							"0.2"
+#define HW_VERSION							"0.1"
 
 
 //----------------------------------------------------------------------------------
@@ -99,7 +99,7 @@
 #define MODE_FPGA_PF						// InterfaceBoard FPGA TYPE PolarFire
 #define MODE_BINNING						// Binning Mode
 #define MODE_ACQUISITION_TRG_SOFT_COUNT		// Acquisition Trg Soft Count
-#define MODE_FRAMERATE_HIGH_SPEED			// Frame Rate High Speed
+//#define MODE_FRAMERATE_HIGH_SPEED			// Frame Rate High Speed
 #define MODE_XML_SCHEMA_VERSION				// XML SchemaVersion
 //#define MODE_SENSOR_MASTER				// Sensor Mode
 #define MODE_SENSOR_SHUTTER					// Sensor Shutter Mode

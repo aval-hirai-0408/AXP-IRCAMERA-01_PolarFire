@@ -18,7 +18,6 @@
 
 
 #if defined (MODE_CXP)
-#if 0	//@@@1
 //**********************************************************************************
 //	CXP FIFO Read
 //----------------------------------------------------------------------------------
@@ -34,6 +33,8 @@ int cmdCxpFifoRead (void *str)
 	int argc;
 	unsigned int adrs, size;
 	int port;
+	unsigned int data, data2, loop;
+	char c;
 
 	// Get Argument
 	argc = cmdCheckArg ((char *)str);
@@ -47,6 +48,32 @@ int cmdCxpFifoRead (void *str)
 			goto _DONE;
 		}
 	}
+	
+	loop = 0;
+	while (1)
+	{
+		data  = IN32 (0x6b000010);
+		data2 = IN32 (0x6b00000c);
+		
+		DEBUG_PRINT_FORCE("[%d]0x%08x : 0x%08x\n", loop, data, data2);
+		
+		loop++;
+		
+		if (DEBUG_INPUT_POLL(&c))
+		{
+			if (c == 's')
+			{
+				while (1)
+				{
+					if (DEBUG_INPUT_POLL(&c))
+						break;
+				}
+			}
+		}
+	}
+
+	
+#if 0	//@@@1
 
 	if (argc == 2)
 	{
@@ -106,6 +133,7 @@ int cmdCxpFifoRead (void *str)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
 		goto _DONE;
 	}
+#endif
 
 _DONE:
 	return (status);
@@ -136,6 +164,7 @@ int cmdCxpFifoReadHelp (void *str)
 	return (AVAL_STATUS_SUCCESS);
 }
 
+#if 0	//@@@1
 
 //**********************************************************************************
 //	CXP FIFO Write

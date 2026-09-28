@@ -240,7 +240,11 @@ int acquisitionStart (void)
 #if defined (MODE_TEMP_ABNORMAL_CHECK)
 	unsigned int tempStatus;
 #endif
-
+	//@@@1
+	int wSize, hSize;
+	unsigned int data32;
+	//@@@1
+	
 #if defined (MODE_TEMP_ABNORMAL_CHECK)
 	// Temp Abnormal Status取得
 	if ((status = tempGetAbnormalStatus (&tempStatus)) != AVAL_STATUS_SUCCESS)
@@ -273,6 +277,30 @@ int acquisitionStart (void)
 	OUT32(FPGA_CXP_S0_STREAM_EN_ADRS, 1);
 
 	usDelay(100);
+
+	// Get Width
+	if ((status = aoiGetWidth (&wSize)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+	
+	// Get Height
+	if ((status = aoiGetHeight (&hSize)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// Pixel
+	OUT32 (0x6b20000C, 8);
+
+	// Frame Blank
+	OUT32 (0x6b200010, 0xFE7F);
+
+	// Line Blank
+	if (wSize == 2560)
+		data32 = 0x11B3;
+	else if (wSize == 1280)
+		data32 = 0x2546;
+	else
+		data32 = 0x4bfb;
+	
+	OUT32 (0x6b200014, data32);
 	
 	// Test Pattern
 	OUT32 (0x6b200004, 1);
