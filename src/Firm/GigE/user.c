@@ -232,9 +232,6 @@ extern volatile uint64_t framebuf_bpb;		// Total bytes per block
 
 extern char firmUpdate[];					// For ARM1 Version string
 extern char deviceFirmwareVersion[];		// For ALL instances
-extern char deviceManufacturerInfo[];		// For ALL instances
-extern char deviceVendorName[];				// For ALL instances
-extern char deviceModelName[];				// For ALL instances
 extern char deviceUserID[];					// For DeviceUserID
 extern char deviceVersion[];				// For DeviceVersion
 
@@ -578,7 +575,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		case RoiHeightDefault:
 			#if defined(AXP_AHS052VIR_01)
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_SPECTRUM_DEFAULTY,	(u32*) &value);
-			*status = cmdExecuteStatus (&value);
+			value = cmdExecuteStatus ();
 			#else
 			value = IN32 (FIRM_DATA_ROI_DEFAULT_ADRS);
 			#endif
@@ -1188,7 +1185,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		case DeviceVendorNameOnEEPROM + 20:
 		case DeviceVendorNameOnEEPROM + 24:
 		case DeviceVendorNameOnEEPROM + 28:
-			memcpy(&value, ((char*) deviceVendorName) + (u8) (address - DeviceVendorNameOnEEPROM), 4);
+			memcpy(&value, ((char*) FIRM_DATA_VENDOR_ADRS) + (u8) (address - DeviceVendorNameOnEEPROM), 4);
 			value = SWAP_L(value); // with swapped endian
 			break;
 
@@ -1203,7 +1200,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		case DeviceModelNameOnEEPROM + 20:
 		case DeviceModelNameOnEEPROM + 24:
 		case DeviceModelNameOnEEPROM + 28:
-			memcpy(&value, ((char*) deviceModelName) + (u8) (address - DeviceModelNameOnEEPROM), 4);
+			memcpy(&value, ((char*) FIRM_DATA_MODEL_ADRS) + (u8) (address - DeviceModelNameOnEEPROM), 4);
 			value = SWAP_L(value); // with swapped endian
 			break;
 
@@ -1222,7 +1219,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		case DeviceManufacturerInfoOnEEPROM + 36:
 		case DeviceManufacturerInfoOnEEPROM + 40:
 		case DeviceManufacturerInfoOnEEPROM + 44:
-			memcpy(&value, ((char*) deviceManufacturerInfo) + (u8) (address - DeviceManufacturerInfoOnEEPROM), 4);
+			memcpy(&value, ((char*) FIRM_DATA_MANUFACTURE_ADRS) + (u8) (address - DeviceManufacturerInfoOnEEPROM), 4);
 			value = SWAP_L(value); // with swapped endian
 			break;
 
@@ -1231,7 +1228,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DeviceVendoroWriteCmd:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_CAMERA_VENDOR,(u32*)&value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1239,7 +1236,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DeviceModelWriteCmd:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_CAMERA_MODEL,(u32*)&value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1247,7 +1244,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DeviceManufacturerInfoWriteCmd:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_CAMERA_MANUFACTURE,(u32*)&value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1283,6 +1280,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		// DeviceFirmwareTimestamp取得
 		//----------------------------------------------------------------------------------
+		#if defined (IF_GIGE)
 		case DeviceFirmwareTimestamp:
 		case DeviceFirmwareTimestamp + 4:
 		case DeviceFirmwareTimestamp + 8:
@@ -1294,6 +1292,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			memcpy(&value, ((char*) firmUpdate) + (u8) (address - DeviceFirmwareTimestamp), 4);
 			value = SWAP_L(value); // with swapped endian
 			break;
+		#endif // #if defined (IF_GIGE)
 
 		//----------------------------------------------------------------------------------
 		// DeviceUserID取得
@@ -1429,7 +1428,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case UserSetLoad:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_USERSET_LOAD, (u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			//@@@1LUTFormat_Selector = LUT_FORMAT_FLASH;
 			//@@@1Flash_UserSetLoad = !value;
 			break;
@@ -1439,7 +1438,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case UserSetSave:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_USERSET_SAVE, (u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			//@@@1Flash_UserSetSave = !value;
 			break;
 
@@ -1448,7 +1447,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case UserSetFactory:
 			//*status = (u32) isExecuteCommandDone((u32) 1, 0x15, (u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1601,7 +1600,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		 //--------------------------------------------------------------------------------
 		 case DefectivePixelCorrectionLoad:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_DPC_LOAD,(u32*)&value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -1609,7 +1608,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 		case DefectivePixelCorrectionLoadAdmin:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_DPC_LOAD_ADMIN,(u32*)&value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1631,7 +1630,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelCorrectionAdjustment:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC2_FACTORY,(u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1639,7 +1638,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelCorrectionDetection:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC3_FACTORY,(u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1700,7 +1699,7 @@ u32 get_user_reg (u32 address, u16 *status)
 				value = DefectPixelCoordinate_X;
 			else
 				//*status = executeCommandDPCEdit(DefectPixel_Index,FIRM_CMD_DPC_GET_GRID,(u32*)&value,(u32*)&value2nd);
-				*status = cmdExecuteStatus ((int *)&value);
+				value = cmdExecuteStatus ();
 
 			break;
 		
@@ -1712,7 +1711,7 @@ u32 get_user_reg (u32 address, u16 *status)
 				value = DefectPixelCoordinate_Y;
 			else
 				//*status = executeCommandDPCEdit(DefectPixel_Index,FIRM_CMD_DPC_GET_GRID,(u32*)&value2nd,(u32*)&value);
-				*status = cmdExecuteStatus ((int *)&value);
+				value = cmdExecuteStatus ();
 
 			break;
 
@@ -1721,7 +1720,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelApply:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC_ADD_GRID,(u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1729,7 +1728,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelRemove:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC_DEL_GRID,(u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1737,7 +1736,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelReset:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC_CLR_GRID,(u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1745,7 +1744,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		 case DefectivePixelCorrectionSave:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_DPC_SAVE_FACTORY,(u32*)&value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1753,7 +1752,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		 case DefectivePixelCorrectionSaveAdmin:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_DPC_SAVE_ADMIN,(u32*)&value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1761,7 +1760,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelCorrectionFactory:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC_DEFAULT,	(u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1850,7 +1849,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case DefectivePixelCorrectionAdjustUpdate:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DPC_ADJUST_UPDATE, (u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -1903,14 +1902,14 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionSetLoad:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_FFC_LOAD, (u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
 		// FlatFieldCorrectionSetSave取得
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionSetSave:
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 #if 0
 			switch (FlatFieldCorrectionAdjustment_Selector)
@@ -1997,7 +1996,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Flat Filed Correction 黒レベル調整取得
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionDarkAdjustment:
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 #if 0
 			switch (FlatFieldCorrection_Selector)
@@ -2016,7 +2015,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Flat Filed Correction 白レベル調整取得
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionBrightAdjustment:
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 #if 0
 			switch (FlatFieldCorrection_Selector)
@@ -2036,7 +2035,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Flat Filed Correction Shading Lineレベル調整取得
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionShadinLinegAdjustment:
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 #if 0
@@ -2067,7 +2066,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionFactory:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_FFC_DEFAULT,(u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -2089,7 +2088,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		 case FlatFieldCorrectionSetCorrectionMode:
 			//*status = (u32)isExecuteCommandDone((u32)1,FIRM_CMD_FFC_CORRECTION_MODE,(u32*)&value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -2195,7 +2194,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case FlatFieldCorrectionAdjustUpdate:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_FFC_ADJUST_UPDATE, (u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -3009,7 +3008,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 		case DeviceFactory:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DEFAULT_ALL,	(u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -3114,7 +3113,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 		case HighSpeedModeCmd:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_HIGH_SPEED_MODE, (u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -3181,7 +3180,7 @@ u32 get_user_reg (u32 address, u16 *status)
 					break;
 				case 1:
 					//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_AGING,(u32*) &value);
-					*status = cmdExecuteStatus ((int *)&value);
+					value = cmdExecuteStatus ();
 					break;
 				default:
 					break;
@@ -3457,7 +3456,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 		case DeviceDrrsCommand:
 			//*status = (u32) isExecuteCommandDone((u32) 1, FIRM_CMD_DRRS, (u32*) &value);
-			*status = cmdExecuteStatus ((int *)&value);
+			value = cmdExecuteStatus ();
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -3806,9 +3805,12 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 		case FileOperationExecute:
 			// コマンドステータス取得
-			*status = cmdExecuteStatus ((int *)&value2nd);
-			if (value2nd == command_done)
+			value = cmdExecuteStatus ();
+			if (value == command_done)
 			{
+//@@@1
+DEBUG_PRINT_FORCE("@@@@@Done@@@@@\n");
+//@@@1
 				fileExec[fileSelector] = 0;
 				value = 0;
 
@@ -3818,6 +3820,10 @@ u32 get_user_reg (u32 address, u16 *status)
 			else
 			{
 				value = fileExec[fileSelector];
+//@@@1
+DEBUG_PRINT_FORCE("@@@@@Not Done@@@@@ Value = %d. Selector = %d\n", value, fileSelector);
+//@@@1
+
 			}
 
 			break;
@@ -4264,7 +4270,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				
 			if (value2nd == MODE_ENABLE)
 			{
-				*status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+				*status = (unsigned short)MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, *status, "Cannot write because multi mode is enabled.\n");
 				break;
 			}
@@ -4317,7 +4323,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 
 			if (value2nd == MODE_ENABLE)
 			{
-				*status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+				*status = (unsigned short)MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, *status, "Cannot write because multi mode is enabled.\n");
 				break;
 			}
@@ -4486,7 +4492,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 
 					if (value3rd == 0)
 					{
-						*status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+						*status = (unsigned short)MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
 						cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, *status, "ROI cannot be disabled.\n");
 						break;
 					}
@@ -5654,12 +5660,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 					break;
 
-				memset(deviceVendorName, 0, GIGE_EEPROM_CUST_VENDOR_SIZE);
-				sprintf((char*) deviceVendorName, "%s", (char*) value);
+				memset((void *)FIRM_DATA_VENDOR_ADRS, 0, GIGE_EEPROM_CUST_VENDOR_SIZE);
+				sprintf((char*) FIRM_DATA_VENDOR_ADRS, "%s", (char*) value);
 
 				// Set Vendor
-				if ((*status = setVendor ((char *)FIRM_DATA_VENDOR_ADRS)) != AVAL_STATUS_SUCCESS)
-					break;
+				*status = setVendor ((char *)FIRM_DATA_VENDOR_ADRS);
+				
+				// Cmd Done
+				cmdExecuteDone ();
 			}
 			break;
 
@@ -5684,12 +5692,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 					break;
 				
-				memset(deviceModelName, 0, GIGE_EEPROM_CUST_MODEL_SIZE);
-				sprintf((char*) deviceModelName, "%s", (char*) value);
+				memset((void *)FIRM_DATA_MODEL_ADRS, 0, GIGE_EEPROM_CUST_MODEL_SIZE);
+				sprintf((char*) FIRM_DATA_MODEL_ADRS, "%s", (char*) value);
 
 				// Set Model
-				if ((*status = setModel ((char *)FIRM_DATA_MODEL_ADRS)) != AVAL_STATUS_SUCCESS)
-					break;
+				*status = setModel ((char *)FIRM_DATA_MODEL_ADRS);
+		
+				// Cmd Done
+				cmdExecuteDone ();
 			}
 			break;
 
@@ -5718,12 +5728,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 					break;
 			
-				memset(deviceManufacturerInfo, 0, GIGE_EEPROM_CUST_MANUFACTURER_SIZE);
-				sprintf((char*) deviceManufacturerInfo, "%s", (char*) value);
+				memset((void *)FIRM_DATA_MANUFACTURE_ADRS, 0, GIGE_EEPROM_CUST_MANUFACTURER_SIZE);
+				sprintf((char*) FIRM_DATA_MANUFACTURE_ADRS, "%s", (char*) value);
 
 				// Set Manufacture
-				if ((*status = setManufacture ((char *)FIRM_DATA_MANUFACTURE_ADRS)) != AVAL_STATUS_SUCCESS)
-					break;
+				*status = setManufacture ((char *)FIRM_DATA_MANUFACTURE_ADRS);
+				
+				// Cmd Done
+				cmdExecuteDone ();
 			}
 			break;
 
@@ -5737,12 +5749,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
-			memset(deviceVendorName, 0, GIGE_EEPROM_CUST_VENDOR_SIZE);
-			sprintf((char*) deviceVendorName, "%s", (char*) value);
+			memset((void *)FIRM_DATA_VENDOR_ADRS, 0, GIGE_EEPROM_CUST_VENDOR_SIZE);
+			sprintf((char*) FIRM_DATA_VENDOR_ADRS, "%s", (char*) value);
 
 			// Set Vendor
-			if ((*status = setVendor ((char *)FIRM_DATA_VENDOR_ADRS)) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = setVendor ((char *)FIRM_DATA_VENDOR_ADRS);
+
+			// Cmd Done
+			cmdExecuteDone ();
 
 			break;
 
@@ -5756,12 +5770,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
-			memset(deviceModelName, 0, GIGE_EEPROM_CUST_MODEL_SIZE);
-			sprintf((char*) deviceModelName, "%s", (char*) value);
+			memset((void *)FIRM_DATA_MODEL_ADRS, 0, GIGE_EEPROM_CUST_MODEL_SIZE);
+			sprintf((char*) FIRM_DATA_MODEL_ADRS, "%s", (char*) value);
 
 			// Set Model
-			if ((*status = setModel ((char *)FIRM_DATA_MODEL_ADRS)) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = setModel ((char *)FIRM_DATA_MODEL_ADRS);
+
+			// Cmd Done
+			cmdExecuteDone ();
 
 			break;
 
@@ -5775,12 +5791,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
-			memset(deviceManufacturerInfo, 0, GIGE_EEPROM_CUST_MANUFACTURER_SIZE);
-			sprintf((char*) deviceManufacturerInfo, "%s", (char*) value);
+			memset((void *)FIRM_DATA_MANUFACTURE_ADRS, 0, GIGE_EEPROM_CUST_MANUFACTURER_SIZE);
+			sprintf((char*) FIRM_DATA_MANUFACTURE_ADRS, "%s", (char*) value);
 
 			// Set Manufacture
-			if ((*status = setManufacture ((char *)FIRM_DATA_MANUFACTURE_ADRS)) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = setManufacture ((char *)FIRM_DATA_MANUFACTURE_ADRS);
+
+			// Cmd Done
+			cmdExecuteDone ();
 
 			break;
 
@@ -5813,8 +5831,9 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			break;
 
 		//--------------------------------------------------------------------------------
-		// DeviceFirmwareTimestamp
+		// DeviceFirmwareTimestamp設定
 		//--------------------------------------------------------------------------------
+		#if defined (IF_GIGE)
 		case DeviceFirmwareTimestamp:
 		case DeviceFirmwareTimestamp + 4:
 		case DeviceFirmwareTimestamp + 8:
@@ -5834,6 +5853,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				}
 			}
 			break;
+		#endif // #if defined (IF_GIGE)
 
 		//--------------------------------------------------------------------------------
 		// DeviceUserID設定
@@ -6019,15 +6039,23 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 
 			// Load
 			if ((*status = userSetLoad (value)) != AVAL_STATUS_SUCCESS)
+			{
+				// Cmd Done
+				cmdExecuteDone ();
 				break;
+			}
 
-		#if defined (IF_GIGE)
+			#if defined (IF_GIGE)
 			#if defined (MODE_ACQUISITION_TRG_EXTEND) && defined (MODE_CAMERA_EVENT_VERSION2)
 			if ((gInterFaceID == INTERFACE_GIGE) || (gInterFaceID == INTERFACE_GIGE20))
 			{
 				// GigE Eventパラメータ
 				if ((*status = gigeParamWriteRegister (value, CAMERA_SAVE_GIGE_ADRS, CAMERA_SAVE_GIGE_SIZE)) != AVAL_STATUS_SUCCESS)
+				{
+					// Cmd Done
+					cmdExecuteDone ();
 					break;
+				}
 			}
 			#endif
 
@@ -6036,10 +6064,17 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			{
 				// Update Buffer
 				if ((*status = gigeUpdateBuffer ()) != AVAL_STATUS_SUCCESS)
+				{
+					// Cmd Done
+					cmdExecuteDone ();
 					break;
+				}
 			}
 			#endif
-		#endif // #if defined (IF_GIGE)
+			#endif // #if defined (IF_GIGE)
+		
+			// Cmd Done
+			cmdExecuteDone ();
 
 			break;
 
@@ -6065,8 +6100,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					break;
 
 				// UserSet Save
-				if ((*status = userSetSave (value)) != AVAL_STATUS_SUCCESS)
-					break;
+				*status = userSetSave (value);
+				
+				// Cmd Done
+				cmdExecuteDone ();
 			}
 			else
 			{
@@ -6092,8 +6129,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					break;
 
 				// UserSet Default
-				if ((*status = userSetDefault (value)) != AVAL_STATUS_SUCCESS)
-					break;
+				*status = userSetDefault (value);
+				
+				// Cmd Done
+				cmdExecuteDone ();
 			}
 			else
 			{
@@ -6121,6 +6160,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 
 			// UserSet Boot
 			*status = userSetBoot (value);
+		
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 
@@ -6228,9 +6271,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// DPC Load
-			if ((*status = dpcLoad (DefectPixelCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = dpcLoad (DefectPixelCorrection_Selector);
 		
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -6244,8 +6289,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// DPC Load
-			if ((*status = dpcLoadAdmin (DefectPixelCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = dpcLoadAdmin (DefectPixelCorrection_Selector);
+
+			// Cmd Done
+			cmdExecuteDone ();
 
 			break;
 
@@ -6294,12 +6341,23 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			{
 				// DPC1 Execute
 				if ((*status = gigeCmdDpc1Main (DefectPixelCorrection_Selector, FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
+				{
+					// Cmd Done
+					cmdExecuteDone ();
 					break;
+				}
 			}
 
 			// DPC2  Execute
 			if ((*status = gigeCmdDpc2Main (DefectPixelCorrection_Selector, FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
+			{
+				// Cmd Done
+				cmdExecuteDone ();
 				break;
+			}
+
+			// Cmd Done
+			cmdExecuteDone ();
 
 			break;
 
@@ -6314,9 +6372,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// DPC3  Execute
-			if ((*status = gigeCmdDpc3Main (DefectPixelCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-				break;
-		
+			*status = gigeCmdDpc3Main (DefectPixelCorrection_Selector);
+
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -6364,8 +6424,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					break;
 
 				// DPC Get Grid
-				if ((*status = dpcGetMapInfoIndex2 (DefectPixel_Index, (int *)&value, (int *)&value2nd)) != AVAL_STATUS_SUCCESS)
-					break;
+				*status = dpcGetMapInfoIndex2 (DefectPixel_Index, (int *)&value, (int *)&value2nd);
+				
+				// Cmd Done
+				cmdExecuteDone ();
 			}
 
 			break;
@@ -6387,8 +6449,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					break;
 
 				// DPC Get Grid
-				if ((*status = dpcGetMapInfoIndex2 (DefectPixel_Index, (int *)&value2nd, (int *)&value)) != AVAL_STATUS_SUCCESS)
-					break;
+				*status = dpcGetMapInfoIndex2 (DefectPixel_Index, (int *)&value2nd, (int *)&value);
+				
+				// Cmd Done
+				cmdExecuteDone ();
 			}
 			break;
 
@@ -6403,8 +6467,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// DPC Get Grid
-			if ((*status = dpcAddGrid (DefectPixelCoordinate_X, DefectPixelCoordinate_Y)) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = dpcAddGrid (DefectPixelCoordinate_X, DefectPixelCoordinate_Y);
+
+			// Cmd Done
+			cmdExecuteDone ();
 
 			break;
 
@@ -6419,9 +6485,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// DPC Delete Grid
-			if ((*status = dpcDeleteGrid (DefectPixelCoordinate_X, DefectPixelCoordinate_Y)) != AVAL_STATUS_SUCCESS)
-				break;
-		
+			*status = dpcDeleteGrid (DefectPixelCoordinate_X, DefectPixelCoordinate_Y);
+
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -6435,8 +6503,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// DPC Delete Grid
-			if ((*status = dpcClearGrid (DefectPixelCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = dpcClearGrid (DefectPixelCorrection_Selector);
+		
+			// Cmd Done
+			cmdExecuteDone ();
 
 			break;
 
@@ -6451,9 +6521,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// DPC Save
-			if ((*status = dpcSave (DefectPixelCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-				break;
-		
+			*status = dpcSave (DefectPixelCorrection_Selector);
+
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -6467,8 +6539,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// DPC Save
-			if ((*status = dpcSaveAdmin (DefectPixelCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = dpcSaveAdmin (DefectPixelCorrection_Selector);
+
+			// Cmd Done
+			cmdExecuteDone ();
 
 			break;
 
@@ -6483,8 +6557,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// DPC Default
-			if ((*status = dpcDefault ()) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = dpcDefault ();
+
+			// Cmd Done
+			cmdExecuteDone ();
 
 			break;
 
@@ -6641,9 +6717,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// FFC Load
-			if ((*status = ffcLoadMain (FlatFieldCorrection_Selector, FFC_USER)) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = ffcLoadMain (FlatFieldCorrection_Selector, FFC_USER);
 		
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -6669,8 +6747,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						break;
 
 					// FFC Save
-					if ((*status = gigeCmdFfcSaveMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-						break;
+					*status = gigeCmdFfcSaveMain (FlatFieldCorrection_Selector);
+
+					// Cmd Done
+					cmdExecuteDone ();
 
 					break;
 
@@ -6683,8 +6763,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						break;
 
 					// FFC Save
-					if ((*status = gigeCmdFfcSaveMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-						break;
+					*status = gigeCmdFfcSaveMain (FlatFieldCorrection_Selector);
+
+					// Cmd Done
+					cmdExecuteDone ();
 
 					break;
 			}
@@ -6758,8 +6840,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 							break;
 
 						// FFC Black Adjust
-						if ((*status = gigeCmdFfcBlackMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-							break;
+						*status = gigeCmdFfcBlackMain (FlatFieldCorrection_Selector);
+						
+						// Cmd Done
+						cmdExecuteDone ();
 					}
 					else
 					{
@@ -6774,9 +6858,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						break;
 
 					// FFC Black Adjust
-					if ((*status = gigeCmdFfcBlackMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-						break;
-				
+					*status = gigeCmdFfcBlackMain (FlatFieldCorrection_Selector);
+
+					// Cmd Done
+					cmdExecuteDone ();
+
 					break;
 			}
 			break;
@@ -6798,8 +6884,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 							break;
 
 						// FFC White Adjust
-						if ((*status = gigeCmdFfcWhiteMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-							break;
+						*status = gigeCmdFfcWhiteMain (FlatFieldCorrection_Selector);
+						
+						// Cmd Done
+						cmdExecuteDone ();
 					}
 					else
 					{
@@ -6814,8 +6902,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						break;
 
 					// FFC White Adjust
-					if ((*status = gigeCmdFfcWhiteMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-						break;
+					*status = gigeCmdFfcWhiteMain (FlatFieldCorrection_Selector);
+
+					// Cmd Done
+					cmdExecuteDone ();
 
 					break;
 			}
@@ -6839,8 +6929,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 							break;
 
 						// FFC White Adjust
-						if ((*status = gigeCmdFfcShadingLineMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-							break;
+						*status = gigeCmdFfcShadingLineMain (FlatFieldCorrection_Selector);
+						
+						// Cmd Done
+						cmdExecuteDone ();
 					}
 					else
 					{
@@ -6855,8 +6947,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						break;
 
 					// FFC White Adjust
-					if ((*status = gigeCmdFfcShadingLineMain (FlatFieldCorrection_Selector)) != AVAL_STATUS_SUCCESS)
-						break;
+					*status = gigeCmdFfcShadingLineMain (FlatFieldCorrection_Selector);
+
+					// Cmd Done
+					cmdExecuteDone ();
 
 					break;
 			}
@@ -6882,9 +6976,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// FFC Default
-			if ((*status = gigeCmdFfcDefault ()) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = gigeCmdFfcDefault ();
 		
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -6912,9 +7008,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// FFC Defgaul
-			if ((*status = gigeCmdFfcCorecctionMode (value)) != AVAL_STATUS_SUCCESS)
-				break;
-		
+			*status = gigeCmdFfcCorecctionMode (value);
+
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -7908,8 +8006,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// Frame Rate High Speed Mode設定
-			if ((*status = sensorSetFrameRateHighSpeedMode (gHighSpeedMode)) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = sensorSetFrameRateHighSpeedMode (gHighSpeedMode);
+		
+			// Cmd Done
+			cmdExecuteDone ();
 	
 			break;
 
@@ -8027,8 +8127,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						break;
 
 					// Aging
-					if ((*status = cmdDiagAgingMain (1, DIAG_MODE_AGING)) != AVAL_STATUS_SUCCESS)
-						break;
+					*status = cmdDiagAgingMain (1, DIAG_MODE_AGING);
+				
+					// Cmd Done
+					cmdExecuteDone ();
 
 					break;
 				default:
@@ -8371,8 +8473,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				break;
 
 			// DRRS
-			if ((*status = sensorSetDrrsMain2 (value)) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = sensorSetDrrsMain2 (value);
+		
+			// Cmd Done
+			cmdExecuteDone ();
 		
 			break;
 
@@ -9833,9 +9937,9 @@ void user_init(u32* status)
 
 	if (Flash_UserSetSelector == UserSet_Default)
 	{
-		if (strcmp (deviceModelName, "BV-C3103GE") == 0)
+		if (strcmp (FIRM_DATA_MODEL_ADRS, "BV-C3103GE") == 0)
 			xmlScemaVersionFlag = 1;
-		else if  (strcmp (deviceModelName, "BV-C3110GE") == 0)
+		else if  (strcmp (FIRM_DATA_MODEL_ADRS, "BV-C3110GE") == 0)
 			xmlScemaVersionFlag = 1;
 		else
 			xmlScemaVersionFlag = 0;
@@ -10116,6 +10220,7 @@ void user_init(u32* status)
 		memcpy((void*)deviceModelName,(void*)FIRM_DATA_MODEL_ADRS,GIGE_EEPROM_CUST_MODEL_SIZE);
 		memcpy((void*)deviceManufacturerInfo,(void*)FIRM_DATA_MANUFACTURE_ADRS,GIGE_EEPROM_CUST_MANUFACTURER_SIZE);
 #endif
+
 		// Frimware2 version
 		str = (u8*) deviceFirmwareVersion;
 		size_of_string = sizeof(deviceFirmwareVersion) + 1;
@@ -11080,10 +11185,17 @@ int FileSelectorDPC (void)
 
 			// Download
 			if ((status = dpcGetMemoryNormal (valueBuffer, adrs, size)) != AVAL_STATUS_SUCCESS)
+			{
+				cmdExecuteDone ();
 				break;
+			}
 
 			// Stores the total written size of bit-stream image int the flash device
 			fileResult[fileSelector][fileSel[fileSelector]] = size; // in bytes
+		
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		case FileOperationeSelector_Write:
@@ -11100,10 +11212,17 @@ int FileSelectorDPC (void)
 
 			// Upload
 			if ((status = gigeCmdDpcUpload (valueBuffer, adrs, size)) != AVAL_STATUS_SUCCESS)
+			{
+				cmdExecuteDone ();
 				break;
+			}
 
 			// Stores the total written size of bit-stream image int the flash device
 			fileResult[fileSelector][fileSel[fileSelector]] = size; // in bytes
+		
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		case FileOperationeSelector_Delete:
@@ -11163,10 +11282,18 @@ int FileSelectorFFC (void)
 				break;
 
 			// FFC Download
-			status = ffcGetMemoryNormal (valueBuffer, adrs, size, FlatFieldCorrectionModeSelector);
+			if ((status = ffcGetMemoryNormal (valueBuffer, adrs, size, FlatFieldCorrectionModeSelector)) != AVAL_STATUS_SUCCESS)
+			{
+				cmdExecuteDone ();
+				break;
+			}
 			
 			// Stores the total written size of bit-stream image int the flash device
 			fileResult[fileSelector][fileSel[fileSelector]] = size; // in bytes
+		
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		case FileOperationeSelector_Write:
@@ -11182,10 +11309,18 @@ int FileSelectorFFC (void)
 				break;
 
 			// Upload
-			status = ffcSetMemoryNormal (valueBuffer, adrs, size, FlatFieldCorrectionModeSelector);
+			if ((status = ffcSetMemoryNormal (valueBuffer, adrs, size, FlatFieldCorrectionModeSelector)) != AVAL_STATUS_SUCCESS)
+			{
+				cmdExecuteDone ();
+				break;
+			}
 
 			// Stores the total written size of bit-stream image int the flash device
 			fileResult[fileSelector][fileSel[fileSelector]] = size; // in bytes
+		
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		case FileOperationeSelector_Delete:
@@ -11268,7 +11403,10 @@ int FileSelectorSpectrumWave (void)
 
 			// Upload
 			if ((status = gigeCmdSpectrumWaveUpload (valueBuffer, size)) != AVAL_STATUS_SUCCESS)
+			{
+				cmdExecuteDone ();
 				break;
+			}
 
 #if 0
 			if (gInterFaceID != INTERFACE_CXP)
@@ -11277,12 +11415,7 @@ int FileSelectorSpectrumWave (void)
 				{
 					// コマンドステータス取得
 					//if ((status = isExecuteCommandDone(CPU_CMD_TIMEOUT*4, FIRM_CMD_SPECTRUM_WAVE, &isDone)) != 0)
-					if ((status = cmdExecuteStatus ((int *)&isDone)) != AVAL_STATUS_SUCCESS)
-					{
-						DEBUG_PRINT_FORCE ("Spectrum Wave Update Status Error = %d\r\n", status);
-						goto _DONE;
-					}
-
+					value = cmdExecuteStatus ();
 					// コマンド終了?
 					if (isDone == command_done)
 						break;
@@ -11307,6 +11440,10 @@ _DONE:
 
 			// Stores the total written size of bit-stream image int the flash device
 			fileResult[fileSelector][fileSel[fileSelector]] = size; // in bytes
+		
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		case FileOperationeSelector_Delete:
@@ -11350,7 +11487,6 @@ int FileSelectorFpga (void)
 			break;
 
 		case FileOperationeSelector_Close:
-			// Clear the temporary buffer of boot-rom image
 			memset((void*) fileBuffer[fileSelector], 0, UPDATE_DATA_SIZE);
 			break;
 
@@ -11375,13 +11511,20 @@ int FileSelectorFpga (void)
 
 			// Flash Write
 			if ((status = gigeCmdFirmUpload (FLASH_UPDATE_ALL_ADRS, (unsigned char *)valueBuffer, size)) != AVAL_STATUS_SUCCESS)
+			{
+				cmdExecuteDone ();
 				break;
+			}
 
 			// Success or Failure
 			fileStatus[fileSelector][fileSel[fileSelector]] = status;
 
 			// Stores the total written size of bit-stream image int the flash device
 			fileResult[fileSelector][fileSel[fileSelector]] = size; // in bytes
+		
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		case FileOperationeSelector_Delete:
@@ -11391,8 +11534,10 @@ int FileSelectorFpga (void)
 			{
 				// Erase
 				status = qspiFlashSectorErase((unsigned int) i);
-				fileResult[fileSelector][fileSel[fileSelector]] = i	+ QSPI_FLASH_SEC_SIZE;
-				fileStatus[fileSelector][fileSel[fileSelector]] = status; // Success or Failure
+				if (status == 0)
+					fileResult[fileSelector][fileSel[fileSelector]] = i	+ QSPI_FLASH_SEC_SIZE;
+				else
+					fileStatus[fileSelector][fileSel[fileSelector]] = status; // Success or Failure
 			}
 
 			// Clear the temporary buffer of boot-rom image
@@ -11429,7 +11574,7 @@ int FileSelectorXML (void)
 	switch (fileSel[fileSelector])
 	{
 		case FileOperationeSelector_Open:
-			memset((void*) fileBuffer[fileSelector], 0, XMLFILE_SIZE); // temporary DDR memories
+			//@@@1memset((void*) fileBuffer[fileSelector], 0, XMLFILE_SIZE); // temporary DDR memories
 			fileOffset[fileSelector][fileSel[fileSelector]] = 0; // Address
 			fileLength[fileSelector][fileSel[fileSelector]] = 0; // 0 bytes
 			fileStatus[fileSelector][fileSel[fileSelector]] = 0; // Success or Failure
@@ -11464,13 +11609,20 @@ int FileSelectorXML (void)
 
 			// Flash Write
 			if ((status = gigeCmdXmlUpload (FLASH_XML_ADRS, (unsigned char *)valueBuffer, size)) != AVAL_STATUS_SUCCESS)
+			{
+				cmdExecuteDone ();
 				break;
+			}
 
 			// Success or Failure
 			fileStatus[fileSelector][fileSel[fileSelector]] = status;
 
 			// Stores the total written size of bit-stream image int the flash device
 			fileResult[fileSelector][fileSel[fileSelector]] = size; // in bytes
+		
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		case FileOperationeSelector_Delete:
@@ -11481,13 +11633,9 @@ int FileSelectorXML (void)
 				// Erase
 				status = qspiFlashSectorErase ((unsigned int)i);
 				if (status == 0)
-				{
 					fileResult[fileSelector][fileSel[fileSelector]] = i + QSPI_FLASH_SEC_SIZE;
-				}
 				else
-				{
 					fileStatus[fileSelector][fileSel[fileSelector]] = status; // Success or Failure
-				}
 			}
 
 			// Clear the temporary buffer of boot-rom image
@@ -11583,7 +11731,10 @@ int FileSelectorIfFpgaWrite (void)
 
 			// Flash Write
 			if ((status = gigeCmdIfFpgaUpload (gIfFpgaFlashAdrs, (unsigned char *)valueBuffer, size)) != AVAL_STATUS_SUCCESS)
+			{
+				cmdExecuteDone ();
 				break;
+			}
 
 #if 0
 			if (gInterFaceID != INTERFACE_CXP)
@@ -11592,8 +11743,7 @@ int FileSelectorIfFpgaWrite (void)
 				{
 					// コマンドステータス取得
 					//if ((status = isExecuteCommandDone(CPU_CMD_TIMEOUT*4, FIRM_CMD_IF_FPGA_UPLOAD, &isDone)) != 0)
-					if ((status = cmdExecuteStatus ((int *)&isDone)) != AVAL_STATUS_SUCCESS)
-						goto _DONE;
+					value = cmdExecuteStatus ();
 			
 					// コマンド終了?
 					if (isDone == command_done)
@@ -11617,6 +11767,10 @@ _DONE:
 
 			// Success or Failure
 			fileStatus[fileSelector][fileSel[fileSelector]] = status;
+		
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		case FileOperationeSelector_Delete:
@@ -11673,7 +11827,7 @@ int FileSelectorPhyWrite (void)
 		case FileOperationeSelector_Write:
 			//adrs = fileOffset[fileSelector][fileSel[fileSelector]];
 			size = fileLength[fileSelector][fileSel[fileSelector]];
-			valueBuffer = fileBuffer[fileSelector];
+			valueBuffer = (unsigned char *)fileBuffer[fileSelector];
 
 			//if ((status = executeCommand(FIRM_CMD_PHY_UPLOAD, CPU_CMD_SYNC_OFF, (u32*)&cmd, sizeof(CPU_CMD) / 4)) != 0)
 				//goto _NEXT;
@@ -11684,15 +11838,17 @@ int FileSelectorPhyWrite (void)
 
 			// Write
 			if ((status = gigeCmdPhyUpload (FLASH_PHY_DATA_ADRS, valueBuffer, size)) != AVAL_STATUS_SUCCESS)
+			{
+				cmdExecuteDone ();
 				break;
+			}
 
 #if 0
 			for (i=0; i<GE_PHY_FPGA_TIMEOUT; i++)
 			{
 				// コマンドステータス取得
 				//if ((status = isExecuteCommandDone(CPU_CMD_TIMEOUT*4, FIRM_CMD_PHY_UPLOAD, &isDone)) != 0)
-				if ((status = cmdExecuteStatus ((int *)&isDone)) != AVAL_STATUS_SUCCESS)
-					goto _DONE;
+				value = cmdExecuteStatus ();
 
 				// コマンド終了?
 				if (isDone == command_done)
@@ -11713,6 +11869,10 @@ int FileSelectorPhyWrite (void)
 
 			// Success or Failure
 			fileStatus[fileSelector][fileSel[fileSelector]] = status;
+		
+			// Cmd Done
+			cmdExecuteDone ();
+
 			break;
 
 		case FileOperationeSelector_Delete:

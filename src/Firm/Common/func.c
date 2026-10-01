@@ -23,6 +23,7 @@ extern int gInterFaceID;
 
 //@@@1
 extern unsigned int gDIPSW;
+char gTemperature = 0;
 //@@@1
 
 //**********************************************************************************
@@ -80,6 +81,11 @@ int cameraLogMsg (int level, const char *fileName, const char *funcName, unsigne
 		dataS8 = (char)-127;
 	else
 		dataS8 = (char)tempD;
+	
+	//@@@1
+	dataS8  = gTemperature++;
+	//@@@1
+	
 	//DEBUG_PRINT_FORCE("%02x", (unsigned char)dataS8);
 	uartSend (UART_PORT0, (unsigned char *)&dataS8, 1);
 	
@@ -88,6 +94,11 @@ int cameraLogMsg (int level, const char *fileName, const char *funcName, unsigne
 		dataS8 = (char)-127;
 	else
 		dataS8 = (char)tempD;
+
+	//@@@1
+	dataS8  = gTemperature+5;
+	//@@@1
+
 	//DEBUG_PRINT_FORCE("%02x", (unsigned char)dataS8);
 	uartSend (UART_PORT0, (unsigned char *)&dataS8, 1);
 
@@ -324,96 +335,6 @@ int defaultAll (void)
 		if ((status = cameraParamUserMarkClear (userNo)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Cmd Interrupt Mode
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		mode				:MODE_DISABLE/MODE_ENABLE
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int cmdInterruptMode (int mode)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	
-	// Check mode Parameter
-	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP Cmd Interrupt Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,  __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-	
-	if (gInterFaceID == INTERFACE_CXP)
-	{
-		//@@@1
-	}
-	else if ((gInterFaceID == INTERFACE_GIGE) || (gInterFaceID == INTERFACE_GIGE20))
-	{
-		//@@@1
-	}
-	
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Cmd Execute Procs
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int cmdExecuteInit (void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-
-	// Execute
-	OUT32 (FIRM_DATA_CMD_EXE_FLAG, 1);
-
-	// Cmd Interrupt Enable
-	if ((status = cmdInterruptMode (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Cmd Execute Status
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		pStatus				：コマンドステータスを格納するポンタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int cmdExecuteStatus (int *pStatus)
-{
-	int status = AVAL_STATUS_SUCCESS;
-
-	// Check pStatus Parameter
-	if (pStatus == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,  __func__, __LINE__, status, "Cmd Exe Status NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// Execute
-	*pStatus = IN32 (FIRM_DATA_CMD_EXE_FLAG);
 
 _DONE:
 	return (status);

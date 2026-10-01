@@ -25,34 +25,18 @@
 //----------------------------------------------------------------------------------
 // globals
 //----------------------------------------------------------------------------------
-
-// ARM1 Version string
-static char* CAMERA_VERSION_STR = MAIN_VERSION;
-static char* ARM1_VERSION_STR   = FIRM_VERSION;
-
-char boardVer[]={0};					// For Board
-char fpgaVer[]={0};						// For FPGA
-char firmVer[]={0};						// For ARM0 Version string
-char firmUpdate[]={0};					// For ARM1 Version string
-char deviceFirmwareVersion[]={0};		// For ALL instances
-char deviceManufacturerInfo[]={0};		// For ALL instances
-char deviceVendorName[]={0};			// For ALL instances
-char deviceModelName[]={0};				// For ALL instances
-char deviceUserID[]={0};				// For DeviceUserID
-char deviceVersion[]={0};				// For DeviceVersion
+char deviceFirmwareVersion[32]={0};		// For ALL instances
+char deviceUserID[32]={0};				// For DeviceUserID
+char deviceVersion[32]={0};				// For DeviceVersion
 
 // GigE EEPROM Default Data
-unsigned char GIGE_MANUF[32]        = "\0";
-unsigned char GIGE_MODEL[32]        = "\0";
-unsigned char GIGE_MINFO[48]        = "\0";
-unsigned char GIGE_DVER [16]        = {0};
 unsigned char gXmlFileName1 [CXP_XML_URL_SIZE];
 unsigned char gXmlFileName2 [CXP_XML_URL_SIZE];
 unsigned char gXmlFileNameUpdate [CXP_XML_URL_SIZE];
 
 int gLinkStatusCheck = 0;
-int gCxpCmdInterruptFlag = 0;
 int gCxpCmdProcessFlag = 0;
+int gCxpIntProcsFlag = 0;
 unsigned int gXMLSize = 0;
 
 //----------------------------------------------------------------------------------
@@ -114,8 +98,6 @@ extern int gHighSpeedModeLineCount;
 extern int gDrrsMode;
 #endif
 
-extern int gUartInterruptFlag;
-
 extern miv_plic_instance_t g_plic;
 
 
@@ -123,11 +105,6 @@ extern miv_plic_instance_t g_plic;
 // Function Define
 //----------------------------------------------------------------------------------
 extern int ElectricalComplianceTest_st;
-
-//@@@@@@@@@@
-extern char gConsoleKey[CONSOLE_BUFF_COUNT];
-extern UART_instance_t g_uart;
-//@@@@@@@@@@
 
 
 //**********************************************************************************
@@ -142,86 +119,58 @@ extern UART_instance_t g_uart;
 int cxpMain (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned int linkStatus;
-	unsigned int fiftCount;
-	unsigned int timeout;
-	unsigned int data32;
 	int port = 0;
-	char c;
 
 	//------------------------------------------------------------
 	// CPU1 Boot Flag
 	//------------------------------------------------------------
 	OUT32 (FIRM_DATA_CPU1_BOOT_FLAG, 0);
-
-	
-	//------------------------------------------------------------
-	// Get manufacturer information from the eeprom on the ARM0
-	//------------------------------------------------------------
-	//@@@1user_info_get ((u8*)GIGE_MANUF,(u8*)GIGE_MODEL,(u8*)GIGE_MINFO);
-
-
-	//------------------------------------------------------------
-	// Gets the version on the FPGA and boards
-	//------------------------------------------------------------
-	boardVersion (boardVer);
-	//@@@1fpgaVersion (fpgaVer);
-	firmVersion (firmVer);
-
 	
 	//------------------------------------------------------------
 	// Make the version string of the camera
 	//------------------------------------------------------------
-	strcpy((char*)deviceVendorName,(char*)FIRM_DATA_VENDOR_ADRS);
-	strcpy((char*)deviceModelName,(char*)FIRM_DATA_MODEL_ADRS);
-	strcpy((char*)deviceManufacturerInfo,(char*)FIRM_DATA_MANUFACTURE_ADRS);
-
-	sprintf(deviceVersion,"%s",CAMERA_VERSION_STR);
-	sprintf(deviceFirmwareVersion,"%s;%s;%s;%s",ARM1_VERSION_STR ,firmVer,fpgaVer,boardVer);
-	sprintf((char*)GIGE_DVER,"%s",(const char*)deviceVersion);
-
-
-	//------------------------------------------------------------
-	// Detection of Connection in progress
-	//------------------------------------------------------------
-	//@@@1cxpLedConnectionDetection();
-
-
-	//------------------------------------------------------------
-	// User Init
-	//------------------------------------------------------------
-    cxpUserInit ();
-
-
-	//------------------------------------------------------------
-	// CXP Init2
-	//------------------------------------------------------------
-    cxpInitialize2 ();
-
+	sprintf (deviceVersion,"%s",MAIN_VERSION);
+	sprintf (deviceFirmwareVersion,"%s;%s;%s",FIRM_VERSION,"1.0"/*FPGA*/,FIRM_DATA_BOARD_VERSION_ADRS);
 
 	//------------------------------------------------------------
 	// CPU1 Boot Flag
 	//------------------------------------------------------------
 	OUT32 (FIRM_DATA_CPU1_BOOT_FLAG, 1);
 
+	//------------------------------------------------------------
+	// Detection of Connection in progress
+	//------------------------------------------------------------
+	//@@@1cxpLedConnectionDetection();
 
 	//------------------------------------------------------------
-	// Link Down
+	// User Init
 	//------------------------------------------------------------
-	linkStatus = MODE_LINK_DOWN;
+    cxpUserInit ();
 
+	//------------------------------------------------------------
+	// CXP IP Initialize
+	//------------------------------------------------------------
+    cxpIpInitialize ();
+
+	//------------------------------------------------------------
+	// CXP Init2
+	//------------------------------------------------------------
+    cxpInitialize2 ();
+
+	//------------------------------------------------------------
+	// CXP Command FIFO Reset
+	//------------------------------------------------------------
+	cxpCmdFifoReset ();
 
 	//------------------------------------------------------------
 	// CXP Interrupt Enable
 	//------------------------------------------------------------
     MIV_PLIC_enable_irq (&g_plic, MIV_PLIC_EXT2_IRQn);
 
-
 	//------------------------------------------------------------
 	// CXP Rx Interrupt Enable
 	//------------------------------------------------------------
 	cxpSetRecvIntMode (MODE_ENABLE);
-
 
 	//------------------------------------------------------------
 	// Main Loop
@@ -486,7 +435,8 @@ int cxpUserInit (void)
 		memset((void*) gXmlFileName1, 0, CXP_XML_URL_SIZE);
 		memset((void*) gXmlFileName2, 0, CXP_XML_URL_SIZE);
 	}
-
+	
+#if 0
 	{
 	unsigned int data, wsize;
 
@@ -494,12 +444,34 @@ int cxpUserInit (void)
 //@@@@1
 	DEBUG_PRINT_FORCE("Param Start111\n");
 //@@@@1
-	data = IN32 (0x6b100040);
-		
+	data = IN32 (FPGA_CXP_TOP_CTRL_ADRS);
 //@@@@1
 	DEBUG_PRINT_FORCE("DATA = 0x%x\n", data);
 //@@@@1
-//@@@@1
+
+	// CoaXPress IP Reset Cancel
+	data &= ~FPGA_CXP_TOP_CTRL_RSTN;
+	OUT32 (FPGA_CXP_TOP_CTRL_ADRS, data);
+
+	for (i=0; i<FPGA_CXP_TOP_CTRL_RSTN_TIMEOUT; i++)
+	{
+		data = IN32 (FPGA_CXP_TOP_CTRL_ADRS);
+		data &= (FPGA_CXP_TOP_CTRL_RSTN_STATUS | FPGA_CXP_TOP_CTRL_PIX_RSTN_STATUS | FPGA_CXP_TOP_CTRL_TX0_RSTN_STATUS);
+
+		// Check Status
+		if (data == (FPGA_CXP_TOP_CTRL_RSTN_STATUS | FPGA_CXP_TOP_CTRL_PIX_RSTN_STATUS | FPGA_CXP_TOP_CTRL_TX0_RSTN_STATUS))
+			break;
+		
+		usDelay (1000);
+	}
+	
+	if (i >= FPGA_CXP_TOP_CTRL_RSTN_TIMEOUT)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_TIMEOUT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Reset Cancel Timeout Error.\n");
+	}
+
+	//@@@@1
 	DEBUG_PRINT_FORCE("Param0\n");
 		while(1)
 		{
@@ -511,19 +483,19 @@ int cxpUserInit (void)
 		}
 //@@@@1
 
-	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, 640);
+	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, 2560);
 
 //@@@@1
 	DEBUG_PRINT_FORCE("Param1\n");
 //@@@@1
 
-	OUT32(FPGA_CXP_S0_YSIZE_OFFSET_ADRS, 512);
+	OUT32(FPGA_CXP_S0_YSIZE_OFFSET_ADRS, 2048);
 
 //@@@@1
 	DEBUG_PRINT_FORCE("Param2\n");
 //@@@@1
 
-	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (640*8/32));
+	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (2560*8/32));
 
 //@@@@1
 	DEBUG_PRINT_FORCE("Param3\n");
@@ -534,17 +506,10 @@ int cxpUserInit (void)
 //@@@@1
 	DEBUG_PRINT_FORCE("Param4\n");
 //@@@@1
-	
-	//@@@OUT32(FPGA_CXP_S0_STREAM_EN_ADRS, 1);
 
-	//data = IN32((CORECXP2_BASE_ADDR+0x08));
-	//wsize = data & 0xffff;
-	//wsize /= 8;
-	//data &= ~0xffff;
-	//data |= wsize;
-	//OUT32((CORECXP2_BASE_ADDR+0x08), data);
+	OUT32(0x6b200008, 0x08000A00);
 	}
-
+#endif
 	DEBUG_PRINT_FORCE("@@@1\n")	;
 	
 	// ---- Initiates Global variables for File Access Control --------------------------------
@@ -866,6 +831,7 @@ _DONE:
 int MIV_PLIC_EXT2_IRQHandler (void)
 {
 	unsigned int intState, intEaable;
+	int exeFlag;
 	
 	// Get Interrupt Status
 	intState = IN32 (FPGA_CXP_INT_STATUS_ADRS);
@@ -879,22 +845,17 @@ int MIV_PLIC_EXT2_IRQHandler (void)
 	// RX Interrupt?
 	if (intState & FPGA_CXP_INT_STATUS_RX_PACKET)
 	{
-		// コマンド処理中?
-		if (gCxpCmdInterruptFlag == 0)
+		// Exeコマンド実行中？
+		exeFlag = IN32 (FIRM_DATA_CMD_EXE_FLAG);
+		
+		if (exeFlag == 1)
 		{
-			// コマンド割り込み発生フラグ
-			gCxpCmdInterruptFlag = 1;
-			
-			// CXP Rx Int Disable
-			//cxpSetRecvIntMode (MODE_DISABLE);
-		}
-		else
-		{
-			// コマンド処理中Flag
-			//gCxpCmdProcessFlag = 1;
-			
+			gCxpIntProcsFlag = 1;
+
 			// コマンド処理中なので、割り込みルーチン内でコマンド解析
-			//@@@1cxpProcs (0);
+			cxpProcs (0);
+			
+			gCxpIntProcsFlag = 0;
 		}
 	}
 	
@@ -936,6 +897,193 @@ int cxpSetRecvIntMode (int mode)
 	OUT32 (FPGA_CXP_INT_ENABLE_ADRS, data32);
 	
 _DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	CXP IP Initialize
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		-
+//	[ OUTPUT ]
+//		-
+//==================================================================================
+int cxpIpInitialize (void)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	int i;
+	unsigned int data32;
+	char c;
+	unsigned int data, wsize;
+		
+//@@@@1
+	DEBUG_PRINT_FORCE("Param Start111\n");
+//@@@@1
+	data = IN32 (FPGA_CXP_TOP_CTRL_ADRS);
+//@@@@1
+	DEBUG_PRINT_FORCE("DATA = 0x%x\n", data);
+//@@@@1
+
+	// CoaXPress IP Reset Cancel
+	data &= ~FPGA_CXP_TOP_CTRL_RSTN;
+	OUT32 (FPGA_CXP_TOP_CTRL_ADRS, data);
+
+	for (i=0; i<FPGA_CXP_TOP_CTRL_RSTN_TIMEOUT; i++)
+	{
+		data = IN32 (FPGA_CXP_TOP_CTRL_ADRS);
+		data &= (FPGA_CXP_TOP_CTRL_RSTN_STATUS | FPGA_CXP_TOP_CTRL_PIX_RSTN_STATUS | FPGA_CXP_TOP_CTRL_TX0_RSTN_STATUS);
+
+		// Check Status
+		if (data == (FPGA_CXP_TOP_CTRL_RSTN_STATUS | FPGA_CXP_TOP_CTRL_PIX_RSTN_STATUS | FPGA_CXP_TOP_CTRL_TX0_RSTN_STATUS))
+			break;
+		
+		usDelay (1000);
+	}
+	
+	if (i >= FPGA_CXP_TOP_CTRL_RSTN_TIMEOUT)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_TIMEOUT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Reset Cancel Timeout Error.\n");
+	}
+
+	//@@@@1
+	DEBUG_PRINT_FORCE("Param0\n");
+		while(1)
+		{
+            if (_kbhit(&c))
+            {
+                if (c == 'q')
+                    break;
+            }
+		}
+//@@@@1
+
+	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, 2560);
+
+//@@@@1
+	DEBUG_PRINT_FORCE("Param1\n");
+//@@@@1
+
+	OUT32(FPGA_CXP_S0_YSIZE_OFFSET_ADRS, 2048);
+
+//@@@@1
+	DEBUG_PRINT_FORCE("Param2\n");
+//@@@@1
+
+	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (2560*8/32));
+
+//@@@@1
+	DEBUG_PRINT_FORCE("Param3\n");
+//@@@@1
+
+	OUT32(FPGA_CXP_S0_TAPG_PIXEL_ADRS, CXP_REG_PIXEL_MONO8);
+
+//@@@@1
+	DEBUG_PRINT_FORCE("Param4\n");
+//@@@@1
+
+	OUT32(0x6b200008, 0x08000A00);
+
+	return (status);
+}
+
+//**********************************************************************************
+//	Cmd Interrupt Mode
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		mode				:MODE_DISABLE/MODE_ENABLE
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int cmdInterruptMode (int mode)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	
+	// Check mode Parameter
+	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "CXP Cmd Interrupt Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,  __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+	
+	if (gInterFaceID == INTERFACE_CXP)
+	{
+		//@@@1
+	}
+	else if ((gInterFaceID == INTERFACE_GIGE) || (gInterFaceID == INTERFACE_GIGE20))
+	{
+		//@@@1
+	}
+	
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Cmd Execute Procs
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		-
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int cmdExecuteInit (void)
+{
+	int status = AVAL_STATUS_SUCCESS;
+
+	// Execute
+	OUT32 (FIRM_DATA_CMD_EXE_FLAG, 1);
+
+	// Cmd Interrupt Enable
+	//@@@1if ((status = cmdInterruptMode (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
+		//@@@1goto _DONE;
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Cmd Execute Done
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		-
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int cmdExecuteDone (void)
+{
+	int status = AVAL_STATUS_SUCCESS;
+
+	// Execute Clear
+	OUT32 (FIRM_DATA_CMD_EXE_FLAG, 0);
+
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Cmd Execute Status
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		pStatus				：コマンドステータスを格納するポンタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int cmdExecuteStatus (void)
+{
+	int status;
+	
+	status = IN32 (FIRM_DATA_CMD_EXE_FLAG);
+
 	return (status);
 }
 

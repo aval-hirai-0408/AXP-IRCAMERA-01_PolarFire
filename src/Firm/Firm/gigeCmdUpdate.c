@@ -125,6 +125,10 @@ int gigeCmdXmlUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned i
 	int i;
 	unsigned char data8;
 
+//@@@1
+DEBUG_PRINT_FORCE("Update XML Start\n")	;
+//@@@1
+
 	// 調整ステート
 	saveLed0 = ledSettingState ();
 
@@ -148,6 +152,10 @@ int gigeCmdXmlUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned i
 		goto _DONE;
 
 _DONE:
+//@@@1
+DEBUG_PRINT_FORCE("Update XML End\n")	;
+//@@@1
+
 	// LEDの設定を元に戻す
 	ledReturnState (saveLed0, -1);
 

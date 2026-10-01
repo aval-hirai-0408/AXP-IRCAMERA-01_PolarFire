@@ -75,7 +75,6 @@ char gLogMsgBuff[LOG_MSG_BUFF_SIZE];
 //----------------------------------------------------------------------------------
 // externs
 //----------------------------------------------------------------------------------
-extern int gCxpCmdInterruptFlag;
 extern int gConsolePassword;
 
 

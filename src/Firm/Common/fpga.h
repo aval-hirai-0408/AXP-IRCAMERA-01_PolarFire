@@ -1385,6 +1385,15 @@
 	#define FPGA_CXP_INT_ENABLE_RX_PACKET							(1<<0)
 #define FPGA_CXP_INT_STATUS_ADRS									(FPGA_CXP_BASE_ADDR+0x14)
 	#define FPGA_CXP_INT_STATUS_RX_PACKET							(1<<0)
+#define FPGA_CXP_TOP_CTRL_ADRS										(FPGA_CXP_BASE_ADDR+0x40)
+	#define FPGA_CXP_TOP_CTRL_RSTN									(1<<0)
+	#define FPGA_CXP_TOP_CTRL_PIX_RSTN								(1<<1)
+	#define FPGA_CXP_TOP_CTRL_TX0_RSTN								(1<<2)
+	#define FPGA_CXP_TOP_CTRL_RSTN_STATUS							(1<<8)
+	#define FPGA_CXP_TOP_CTRL_PIX_RSTN_STATUS						(1<<9)
+	#define FPGA_CXP_TOP_CTRL_TX0_RSTN_STATUS						(1<<10)
+
+	#define FPGA_CXP_TOP_CTRL_RSTN_TIMEOUT							(5000)
 
 
 //------------------------------------------------------------------------------------------

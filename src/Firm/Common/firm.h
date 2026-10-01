@@ -1661,10 +1661,16 @@ int cxpLedConnectionDetection (void);
 int cxpLedConnectioned (void);
 int cxpGetLinkCount (unsigned int *pCount);
 int cxpSetRecvIntMode (int mode);
+int cxpIpInitialize (void);
+int cmdInterruptMode (int mode);
+int cmdExecuteInit (void);
+int cmdExecuteDone (void);
+int cmdExecuteStatus (void);
 
 //cxpProcs.c
 int cxpInitialize (void);
 int cxpInitialize2 (void);
+int cxpCmdFifoReset (void);
 int cxpInitializeImageParam (void);
 int cxpProcs (int port);
 int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt);
@@ -1684,7 +1690,6 @@ int cxpSendFifoClearParallel (int port);
 int cxpSetCmdMode (int mode);
 int cxpGetCmdMode (int *pMode);
 int cxpGetFifoCount (unsigned int *pCount);
-int cxpSendTestPacketAckCmd (unsigned int size);
 int cxpSendBuffer (int port, unsigned int data);
 int cxpGetSendCurrentAdrs (int port, unsigned int *pAdrs);
 int cxpGetRecvCurrentAdrs (int port, unsigned int *pAdrs);
@@ -2189,9 +2194,6 @@ int cameraErrorFunc (int level, const char *fileName, const char *funcName, unsi
 unsigned int cameraGetCounter (void);
 unsigned char bitSwap (unsigned char byte);
 int defaultAll (void);
-int cmdInterruptMode (int mode);
-int cmdExecuteInit (void);
-int cmdExecuteStatus (int *pStatus);
 
 // gigeCmdDiag.c
 #if !defined (MODE_GIGE_10G)

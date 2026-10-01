@@ -64,7 +64,6 @@
 //----------------------------------------------------------------------------------
 //static char* CAMERA_VERSION_STR = GIGE_CAMERA_VERSION;
 static char* CAMERA_VERSION_STR = MAIN_VERSION;
-static char* ARM1_VERSION_STR   = GIGE_ARM1_VERSION;
 
 // ---- Global constants and variables -----------------------------------------
 

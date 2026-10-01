@@ -63,6 +63,15 @@ int cameraInformationInitialize (void)
 	// キャッシュFlash
 	cacheFlushRange (FIRM_DATA_ADRS, FIRM_DATA_SIZE);
 #else	//@@@1
+
+	// ボードID
+	memset ((void *)FIRM_DATA_BOARDID_ADRS, 0x00, BOARD_PARAM_ALIGN);
+	strcpy ((void *)FIRM_DATA_BOARDID_ADRS, (void *)"1234567890");
+
+	// センサID
+	memset ((void *)FIRM_DATA_SENSORID_ADRS, 0x00, BOARD_PARAM_ALIGN);
+	strcpy ((void *)FIRM_DATA_SENSORID_ADRS, (void *)"ABCDEF");
+
 	// ベンダ名取得
 	memset ((void *)FIRM_DATA_VENDOR_ADRS, 0x00, BOARD_PARAM_VENDOR_SIZE);
 	strcpy ((void *)FIRM_DATA_VENDOR_ADRS, (void *)VENDOR_NAME);
@@ -75,7 +84,10 @@ int cameraInformationInitialize (void)
 	memset ((void *)FIRM_DATA_MODEL_ADRS, 0x00, BOARD_PARAM_MODEL_SIZE);
 	strcpy ((void *)FIRM_DATA_MODEL_ADRS, (void *)MODEL_NAME_CXP);
 
-	
+	// ボードバージョン取得
+	memset ((void *)FIRM_DATA_BOARD_VERSION_ADRS, 0x00, BOARD_VERSION_SIZE+1);
+	strcpy ((void *)FIRM_DATA_BOARD_VERSION_ADRS, (void *)"1.0");
+
 #endif//@@@1
 
 	return (AVAL_STATUS_SUCCESS);

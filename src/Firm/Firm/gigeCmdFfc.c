@@ -32,6 +32,13 @@ int gigeCmdFfcSaveMain (int ffcNo)
 	FFC_PARAM ffcParam;
 	int corMode;
 
+	//@@@1
+	DEBUG_PRINT_FORCE("Start@@@@@\n");
+	msDelay(30000);
+	DEBUG_PRINT_FORCE("End@@@@@\n");
+	goto _DONE;
+	//@@@1
+	
 	// クリア
 	memset ((void *)&ffcParam, 0, sizeof(ffcParam));
 
