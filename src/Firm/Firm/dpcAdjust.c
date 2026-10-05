@@ -1647,19 +1647,12 @@ int dpcAdjustThreshold (double *pData, double threshold)
 	int x, y;
 	int dpcNo = 0;
 	unsigned int dpcAdrs;
-#if !defined (MODE_IPU_MULTI)
 	int xBitAma;
 	unsigned int adrs;
-#endif
 	unsigned char xBit;
 	unsigned int dpcCountNew;
 	unsigned char data8;
 	unsigned int yoffset;
-#if defined (MODE_IPU_MULTI)
-	int ipu, xIndex;
-	int xChange;
-	unsigned int offsetTemp;
-#endif
 
 	//--------------------------------------------------
 	// Check pData Parameter
@@ -1680,8 +1673,6 @@ int dpcAdjustThreshold (double *pData, double threshold)
 	//------------------------------------------------------------
 	// 欠陥検出
 	//------------------------------------------------------------
-#if !defined (MODE_IPU_MULTI)
-
 	dpcCountNew = 0;
 	for (y = 0; y < IMG_HEIGHT; y++)
 	{
@@ -1724,68 +1715,6 @@ int dpcAdjustThreshold (double *pData, double threshold)
 			}
 		}
 	}
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-	dpcCountNew = 0;
-	for (y = 0; y < IMG_HEIGHT; y++)
-	{
-		x = 0;
-		for (ipu=0; ipu < IPU_COUNT; ipu++)
-		{
-			// DPC Y Offsetアドレス取得
-			yoffset =  dpcAdrs + DPC_WIDTH_DATA_ALIGH * y + DPC_MEMORY_IPU_MULTI_INTERVAL * ipu;
-
-			if (ipu != 0)
-				yoffset += (IMG_WIDTH_OFFSET / 8);
-
-			for (xIndex=0; xIndex < IMG_WIDTH / IPU_COUNT; xIndex++, x++)
-			{
-				// 輝度値取得
-				if (threshold <= pData[x + y * IMG_STRIDE])
-				{
-					// 分割アドレス取得
-					if ((status = dpcGetDivAdrs (x, y, &xChange, &offsetTemp)) != AVAL_STATUS_SUCCESS)
-						goto _DONE;
-
-					// ビット毎に座標が割り付けられる
-					xBit = x % 8;
-
-					// Set DPC Flag(0にすると欠陥)
-					data8 = IN8 ((dpcAdrs + offsetTemp));
-
-					// すでに欠陥登録済み?
-					if ((data8 & (1<<xBit)) != 0)
-					{
-						// 欠陥座標追加
-						data8 &= ~(1<<xBit);
-						OUT8 ((dpcAdrs + offsetTemp), data8);
-
-						sprintf (gLogMsgBuff, "x = %d / y = %d / Threshold = %.2f\n",  x, y,  pData[x + y * IMG_STRIDE]);
-						cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-						dpcCountNew++;
-					}
-					
-					// 欠陥画素オーバー?
-					if (dpcCountNew >= NUM_DEFECTION_PIX)
-					{
-						status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-						sprintf (gLogMsgBuff, "Defective pixel(%d) over.(Max = %d)\n", dpcCountNew, NUM_DEFECTION_PIX);
-						cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-						goto _DONE;
-					}
-				}
-			}
-		}
-	}
-
-	// DPCマージン座標の追加
-	// ipuの1個目の最後の16画素の追加。
-	// ipuの2個目の最初の16画素の追加。
-	if ((status = dpcSetMarginGridData()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-#endif // #if !defined (MODE_IPU_MULTI)
 
 	//------------------------------------------------------------
 	// Mapに追加

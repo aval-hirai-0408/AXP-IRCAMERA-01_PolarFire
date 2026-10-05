@@ -27,6 +27,7 @@
 #define CAMERA_SAVE_MODE_REG_REF							(1)		// Default値はレジスタを参照する
 #define CAMERA_SAVE_MODE_DATA								(2)		// Default値はデータ領域/Save時はレジスタから読み込み
 #define CAMERA_SAVE_MODE_WRITE_OTHER						(3)		// Default値はデータ領域/Save時は別の箇所で設定
+#define CAMERA_SAVE_MODE_SELECTOR							(4)		// Selector
 
 
 //----------------------------------------------------------------------------------

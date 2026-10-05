@@ -62,16 +62,6 @@ int aoiInitialize (void)
 #endif
 
 
-#if defined (MODE_IPU_MULTI)
-	// Register Data Restore
-	if ((status = cameraParamWriteRegisterOffsetAdrs (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_AOI_BIT_ADRS, 0x08, FPGA_AOI2_OFFSET)) != AVAL_STATUS_SUCCESS)
-	{
-		gAoiStatus = status;
-		return (status);
-	}
-#endif
-
-
 #if !defined (MODE_ROI_VERSION2)
 	// 更新処理実行
 	if ((status = aoiSetUpdate (AOI_ENABLE)) != AVAL_STATUS_SUCCESS)
@@ -304,21 +294,12 @@ int irSetBitWidth (int bit)
 		//--------------------------------------------------------------------------------
 
 		// GC Mode取得
-#if defined (MODE_BIT8_GCMODE_ENABLE)
 		gcModeCurrent = IN32 (FIRM_DATA_BIT8_CONVERT_MODE);
 		if (gcModeCurrent == MODE_ENABLE)
 		{
 			bit = 0;		// Gradation Compress機能を有効な設定にする
 			goto _NEXT;
 		}
-#else
-		gcModeCurrent = IN32 (FIRM_DATA_GRADATION_COMPRESS_MODE_PRE);
-		if (gcModeCurrent == MODE_ENABLE)
-		{
-			bit = 0;		// Gradation Compress機能を有効な設定にする
-			goto _NEXT;
-		}
-#endif
 	}
 
 _NEXT:
@@ -405,9 +386,6 @@ _DONE_ERROR:
 
 	// Set Bit Width
 	OUT32 (FPGA_AOI_BITWIDTH_ADRS, fpgaBit);
-	#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_AOI2_BITWIDTH_ADRS, fpgaBit);
-	#endif
 
 	// Shutterモード取得
 	if ((status = sensorGetShutterMode (&shutterMode)) != AVAL_STATUS_SUCCESS)
@@ -735,16 +713,8 @@ int aoiSetPad (int x, int y)
 	// Set X Padding
 	OUT32 (FPGA_AOI_XPAD_ADRS, (x & FPGA_AOI_XPAD_MASK));
 
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_AOI2_XPAD_ADRS, (x & FPGA_AOI_XPAD_MASK));
-#endif
-
 	// Set Y Padding
 	OUT32 (FPGA_AOI_YPAD_ADRS, (y & FPGA_AOI_YPAD_MASK));
-
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_AOI2_YPAD_ADRS, (y & FPGA_AOI_XPAD_MASK));
-#endif
 
 _DONE:
 	return (status);
@@ -898,10 +868,6 @@ int aoiSetPattern (int index)
 	// Set Index
 	OUT32 (FPGA_AOI_TP_INDEX_ADRS, (index & FPGA_AOI_TP_MASK));
 
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_AOI2_TP_INDEX_ADRS, (index & FPGA_AOI_TP_MASK));
-#endif
-
 	if (startMode != 0)
 		acquisitionStart ();
 
@@ -975,16 +941,8 @@ int aoiSetTpInc (int horizon, int virtical)
 	// Set horizon Increment
 	OUT32 (FPGA_AOI_TP_XINC_ADRS, (horizon & FPGA_AOI_TP_XINC_VERSION2_MASK));
 
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_AOI2_TP_XINC_ADRS, (horizon & FPGA_AOI_TP_XINC_VERSION2_MASK));
-#endif
-
 	// Set virtical Increment
 	OUT32 (FPGA_AOI_TP_YINC_ADRS, (virtical & FPGA_AOI_TP_YINC_VERSION2_MASK));
-
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_AOI2_TP_YINC_ADRS, (virtical & FPGA_AOI_TP_YINC_VERSION2_MASK));
-#endif
 
 _DONE:
 	return (status);
@@ -1062,9 +1020,6 @@ int aoiSetPatternPosition (int mode)
 	// Set Test Pattern Position
 	OUT32 (FPGA_AOI_TP_POSITION_ADRS, (mode & FPGA_AOI_TP_POSITION_MASK));
 
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_AOI2_TP_POSITION_ADRS, (mode & FPGA_AOI_TP_POSITION_MASK));
-#endif
 
 _DONE:
 	if (startMode != 0)
@@ -1698,11 +1653,9 @@ int aoiSetBinningX (int mode)
 		cxpWidth  /= mode;
 		cxpOffset /= mode;
 
-		#if defined (MODE_CXP_MULTI_PORT)
 		// CXp Port取得
 		if ((status = cxpGetPort (&cxpPort)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-		#endif // #if !defined (MODE_CXP_MULTI_PORT)
 		
 		// Width設定
 		if ((status = cxpSetWidth (cxpPort, cxpWidth)) != AVAL_STATUS_SUCCESS)
@@ -1887,12 +1840,9 @@ int aoiSetBinningY (int mode)
 		cxpHeight /= mode;
 		cxpOffset /= mode;
 
-
-		#if defined (MODE_CXP_MULTI_PORT)
 		// CXp Port取得
 		if ((status = cxpGetPort (&cxpPort)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-		#endif // #if !defined (MODE_CXP_MULTI_PORT)
 
 		// Height設定
 		if ((status = cxpSetHeight (cxpPort, cxpHeight)) != AVAL_STATUS_SUCCESS)

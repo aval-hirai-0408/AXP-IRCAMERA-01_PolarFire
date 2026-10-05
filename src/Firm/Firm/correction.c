@@ -129,11 +129,6 @@ int calc_sd_sum (unsigned short* src_img)
 	int col = 0;
 	int calc = 1;
 	unsigned short data16;
-#if defined (MODE_IPU_MULTI)
-	int ipu;
-	int srcGrid, desGrid;
-	int xOffset;
-#endif
 
 	// Check src_img Parameter
 	if (src_img == NULL)
@@ -149,8 +144,6 @@ int calc_sd_sum (unsigned short* src_img)
 #endif
 
 	// 画素毎の平均輝度値と二乗平均輝度値を計算
-#if !defined (MODE_IPU_MULTI)
-
 	for (row = 0; row < IMG_HEIGHT; row++)
 	{
 		for (col = 0; col < IMG_WIDTH; col++)
@@ -160,31 +153,6 @@ int calc_sd_sum (unsigned short* src_img)
 			pDpcSdSquare[col + row * IMG_STRIDE] += (double)(data16 * data16);
 		}
 	}
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-	for (row = 0; row < IMG_HEIGHT; row++)
-	{
-		for (ipu=0; ipu < IPU_COUNT; ipu++)
-		{
-			if (ipu == 0)
-				xOffset = 0;
-			else
-				xOffset = IMG_WIDTH_OFFSET;
-
-			for (col = 0; col < IMG_WIDTH_IPU_SIZE; col++)
-			{
-				srcGrid = col + row * DMA_WIDTH_DATA_ALIGH_PIXEL + xOffset + (DMA_MEMORY_IPU_MULTI_INTERVAL * ipu) / 2;
-				desGrid = col + (ipu * IMG_WIDTH_IPU_SIZE) + (row * IMG_STRIDE);
-
-				data16 = src_img[srcGrid] * calc;
-				pDpcSdSum[desGrid] += (double)data16;
-				pDpcSdSquare[desGrid] += (double)(data16 * data16);
-			}
-		}
-	}
-
-#endif // #if !defined (MODE_IPU_MULTI)
 
 _DONE:
 	return (status);
@@ -220,13 +188,8 @@ int calc_sd_clear (void)
 	}
 
 	// 初期化
-#if !defined (MODE_IPU_MULTI)
 	memset (pDpcSdSum, 0, sizeof(double) * IMG_WIDTH * IMG_HEIGHT);
 	memset (pDpcSdSquare, 0, sizeof(double) * IMG_WIDTH * IMG_HEIGHT);
-#else
-	memset (pDpcSdSum, 0, sizeof(double) * IMG_WIDTH_IPU_MULTI_FULL * IMG_HEIGHT);
-	memset (pDpcSdSquare, 0, sizeof(double) * IMG_WIDTH_IPU_MULTI_FULL * IMG_HEIGHT);
-#endif
 
 _DONE:
 	return (status);
@@ -445,14 +408,6 @@ int calc_average2 (unsigned short *src_img, double *average)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int x = 0, y = 0;	// 画素座標
-#if defined (MODE_IPU_MULTI)
-	int ipu;
-	int srcGrid, desGrid;
-	int xOffset;
-	unsigned short data16;
-	unsigned short *ptr16;
-	double *desD;
-#endif
 
 	if (src_img == NULL)
 	{
@@ -470,8 +425,6 @@ int calc_average2 (unsigned short *src_img, double *average)
 	}
 
 	// 全画素走査
-#if !defined (MODE_IPU_MULTI)
-
 	for (y = 0; y < IMG_HEIGHT; y++)
 	{
 		for (x = 0; x < IMG_WIDTH; x++)
@@ -480,33 +433,6 @@ int calc_average2 (unsigned short *src_img, double *average)
 			average[x + y * IMG_WIDTH] += (double)src_img[x + y * DMA_WIDTH_DATA_ALIGH_PIXEL];
 		}
 	}
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-	for (y = 0; y < IMG_HEIGHT; y++)
-	{
-		for (ipu=0; ipu < IPU_COUNT; ipu++)
-		{
-			if (ipu == 0)
-				xOffset = 0;
-			else
-				xOffset = IMG_WIDTH_OFFSET;
-
-			for (x = 0; x < IMG_WIDTH_IPU_SIZE; x++)
-			{
-				srcGrid = x + y * (DMA_WIDTH_DATA_ALIGH / 2) + xOffset + (DMA_MEMORY_IPU_MULTI_INTERVAL * ipu) / 2;
-				desGrid = x + (ipu * IMG_WIDTH_IPU_SIZE) + (y * IMG_STRIDE);
-
-				// 入力画像の同画素輝度値を全て加算
-				ptr16 = &src_img[srcGrid];
-				data16 = *ptr16;
-				desD = &average[desGrid];
-				*desD += data16;
-			}
-		}
-	}
-
-#endif // #if !defined (MODE_IPU_MULTI)
 
 _DONE:
 	return (status);
@@ -526,11 +452,7 @@ _DONE:
 int calc_average_clear (double *average)
 {
 	// 平均値計算結果格納用領域を初期化
-#if !defined (MODE_IPU_MULTI)
 	memset (average, 0, sizeof(double) * IMG_WIDTH * IMG_HEIGHT);
-#else
-	memset (average, 0, sizeof(double) * IMG_WIDTH_IPU_MULTI_FULL * IMG_HEIGHT);
-#endif
 
 	return (AVAL_STATUS_SUCCESS);
 }

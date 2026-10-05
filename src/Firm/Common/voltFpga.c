@@ -15,9 +15,8 @@
 //----------------------------------------------------------------------------------
 #include "../Common/common.h"
 
-
+#if 0   //@@@1
 #if defined (MODE_VOLTAGE_FPGA_BOARD)
-#if defined (MODE_SYSTEM_MANAGEMENT)
 //**********************************************************************************
 // FPGA Board V09 取得
 //----------------------------------------------------------------------------------
@@ -753,7 +752,7 @@ int voltFpgaBoardShow (void)
 
 	return (status);
 }
-#endif // #if defined (MODE_SYSTEM_MANAGEMENT)
 #endif // #if defined (MODE_VOLTAGE_FPGA_BOARD)
 
+#endif //@@@1
 // eof

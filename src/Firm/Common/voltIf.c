@@ -31,7 +31,7 @@ int gBoardVoltStatus = 0;
 #define FPGA_INTERNAL_TEMP_COE										(0.0625)
 
 
-#if defined (MODE_BOARD_ACB531CXP) || defined (MODE_BOARD_ACB532GE)
+#if defined (MODE_BOARD_ACB533CXP)
 
 #define FPGA_VOLT_IF_LSB				(305.18)
 
@@ -91,6 +91,7 @@ int voltIfCheckValid (void)
 _DONE:
 	return (status);
 }
+
 
 
 //**********************************************************************************
@@ -398,6 +399,7 @@ int voltIfBoardShow (void)
 		else
 			DEBUG_PRINT_FORCE ("   Internal Temperature      Error\n\n");
 	}
+	#if 0	//@@@1
 	else if ((gInterFaceID == INTERFACE_GIGE) || (gInterFaceID == INTERFACE_GIGE20))
 	{
 			// +0.65V Voltage取得
@@ -442,6 +444,7 @@ int voltIfBoardShow (void)
 		else
 			DEBUG_PRINT_FORCE ("   Internal Temperature      Error\n\n");
 	}
+	#endif //@@@1
 
 	DEBUG_PRINT_FORCE ("\n");
 
@@ -449,6 +452,7 @@ int voltIfBoardShow (void)
 }
 
 
+#if 0//@@@1
 //**********************************************************************************
 // Interface Board +0.65V Voltage取得
 //----------------------------------------------------------------------------------
@@ -651,7 +655,8 @@ int voltIfGet240v (double *pData)
 _DONE:
 	return (status);
 }
-
+#endif
+//@@@1
 
 //**********************************************************************************
 // Interface Boardデバイス内部温度取得(LTC2990)
@@ -683,8 +688,7 @@ int ifGetInternalTemp (double *pData)
 _DONE:
 	return (status);
 }
-
-#endif // #if defined (MODE_BOARD_ACB531CXP) || defined (MODE_BOARD_ACB532GE)
+#endif // #if defined (MODE_BOARD_ACB533CXP)
 #endif // #if defined (MODE_VOLTAGE_IF_BOARD)
 
 // eof

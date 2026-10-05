@@ -61,7 +61,7 @@ int timingGeneratorNormalInitalize (void)
 	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_LOCK);
 
 	// Acquisition Abort解除
-	OUT32 (GENICAM_ACQUISITION_ABORT_ADRS, 0);
+	OUT32 (GENICAM_ACQUISITION_START_ADRS, 0);
 
 _DONE:
 	return (status);

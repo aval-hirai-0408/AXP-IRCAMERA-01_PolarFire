@@ -93,7 +93,6 @@ CMD_TBL mainCmdTbl [] =
 	{ (char *)"trg-activation",				(CMDFUNC)cmdAcquisitionTrgActivation,	(CMDFUNC)cmdAcquisitionTrgActivationHelp, 		OPT_NONE},
 	{ (char *)"trg-delay",					(CMDFUNC)cmdAcquisitionTrgDelay,		(CMDFUNC)cmdAcquisitionTrgDelayHelp, 			OPT_NONE},
 	{ (char *)"trg-reserved",				(CMDFUNC)cmdAcquisitionTrgReserved,		(CMDFUNC)cmdAcquisitionTrgReservedHelp, 		OPT_NONE},
-	{ (char *)"trg-invalidcount",			(CMDFUNC)cmdAcquisitionTrgInvalidCount,	(CMDFUNC)cmdAcquisitionTrgInvalidCountHelp, 	OPT_NONE},
 
 	{ (char *)"trg-count",				  	(CMDFUNC)cmdAcquisitionTrgCount,		(CMDFUNC)cmdAcquisitionTrgCountHelp, 			OPT_NONE},
 	{ (char *)"trg-countmode",				(CMDFUNC)cmdCounterSetTrgMode,			(CMDFUNC)cmdCounterSetTrgModeHelp, 				OPT_NONE},
@@ -432,6 +431,7 @@ CMD_TBL mainCmdTbl [] =
 //============================================================================================================================================
 // Voltage FPGA Board
 //============================================================================================================================================
+#if 0	//@@@1
 #if defined (MODE_VOLTAGE_FPGA_BOARD)
 	{ (char *)"voltfpgashow",				(CMDFUNC)cmdVoltFpgaShow,				(CMDFUNC)cmdVoltFpgaShowHelp, 					OPT_NONE},
 	{ (char *)"voltfpga09",					(CMDFUNC)cmdVoltFpga09v,				(CMDFUNC)cmdVoltFpga09vHelp, 					OPT_NONE},
@@ -474,8 +474,8 @@ CMD_TBL mainCmdTbl [] =
 	{ (char *)"voltif24v",					(CMDFUNC)cmdVoltIf240v,					(CMDFUNC)cmdVoltIf240vHelp, 					OPT_NONE},
 	{ (char *)"voltiftemp",					(CMDFUNC)cmdVoltIfTemp,					(CMDFUNC)cmdVoltIfTempHelp, 					OPT_NONE},
 #endif // #if defined (MODE_VOLTAGE_IF_BOARD)
+#endif //@@@1
 
-	
 //============================================================================================================================================
 // Line
 //============================================================================================================================================
@@ -634,13 +634,6 @@ CMD_TBL mainCmdTbl [] =
 	{ (char *)"cxpsendadrs", 		 		(CMDFUNC)cmdCxpSendAdrs,				(CMDFUNC)cmdCxpSendAdrsHelp, 					OPT_NONE},
 	{ (char *)"cxprecvadrs", 		 		(CMDFUNC)cmdCxpRecvAdrs,				(CMDFUNC)cmdCxpRecvAdrsHelp, 					OPT_NONE},
 
-	#if defined (MODE_BOARD_ACB525CXP)
-	{ (char *)"cxpsendstart", 			 	(CMDFUNC)cmdCxpSendFifoStart,			(CMDFUNC)cmdCxpSendFifoStartHelp, 				OPT_NONE},
-	{ (char *)"cxpfifoclear", 			 	(CMDFUNC)cmdCxpSendFifoClear,			(CMDFUNC)cmdCxpSendFifoClearHelp, 				OPT_NONE},
-	{ (char *)"cxpfifosize", 			 	(CMDFUNC)cmdCxpSendFifoSize,			(CMDFUNC)cmdCxpSendFifoSizeHelp, 				OPT_NONE},
-	{ (char *)"cxpsendcmdmode", 		 	(CMDFUNC)cmdCxpSendCmdMode,				(CMDFUNC)cmdCxpSendCmdModeHelp, 				OPT_NONE},
-	#endif
-
 	{ (char *)"iffpga-reconfig",		  	(CMDFUNC)cmdIfFpgaReConfig,				(CMDFUNC)cmdIfFpgaReConfigHelp, 				OPT_NONE},
 
 	{ (char *)"cxpi2c",	  		 			(CMDFUNC)cmdCxpI2c,						(CMDFUNC)cmdCxpI2cHelp, 						OPT_NONE},
@@ -650,14 +643,8 @@ CMD_TBL mainCmdTbl [] =
 	{ (char *)"packetrx",				  	(CMDFUNC)cmdCxpTestPacketRx,			(CMDFUNC)cmdCxpTestPacketRxHelp, 				OPT_NONE},
 	{ (char *)"packeterr",				  	(CMDFUNC)cmdCxpTestPacketErr,			(CMDFUNC)cmdCxpTestPacketErrHelp, 				OPT_NONE},
 
-	#if defined (MODE_BOARD_ACB525CXP)
-	{ (char *)"cxppowerctrl",			  	(CMDFUNC)cmdCxpPowerCtrl,				(CMDFUNC)cmdCxpPowerCtrlHelp, 					OPT_NONE},
-	#endif
-
-	#if defined (MODE_BOARD_ACB531CXP)
 	{ (char *)"cxprate",				  	(CMDFUNC)cmdCxpRate,					(CMDFUNC)cmdCxpRateHelp, 						OPT_NONE},
 	{ (char *)"cxpconnection",			  	(CMDFUNC)cmdCxpConnection,				(CMDFUNC)cmdCxpConnectionHelp, 					OPT_NONE},
-	#endif
 #endif
 
 

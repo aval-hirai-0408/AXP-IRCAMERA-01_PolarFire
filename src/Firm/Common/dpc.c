@@ -232,10 +232,6 @@ int dpcRegInit (unsigned int adrs, unsigned int size, int mode)
 	// Set Address
 	OUT32 (FPGA_DPC_DMA_ADRS, adrs);
 
-	#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_DPC2_DMA_ADRS, (adrs + DPC_MEMORY_IPU_MULTI_INTERVAL));
-	#endif
-
 	if (size == 0)
 	{
 		// DPC Disable
@@ -360,10 +356,6 @@ int dpcSetEnableMode (int mode)
 
 	// DPC Enable / Disable
 	OUT32 (FPGA_ROI_DPC_ADRS, mode);
-
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_ROI2_DPC_ADRS, mode);
-#endif
 
 	// ROI Set
 	if ((status = roiSetEnd()) != AVAL_STATUS_SUCCESS)
@@ -1330,10 +1322,6 @@ int lfDpcUploadBintoAscii (void *pAscii, void *pBinary, unsigned int size)
 	int widthMax, heightMax;
 	int x, y;
 	int j;
-#if defined (MODE_IPU_MULTI)
-	unsigned int offset;
-	int xChange;
-#endif
 
 	// Check pAscii Parameter
 	if (pAscii == NULL)
@@ -1386,34 +1374,12 @@ int lfDpcUploadBintoAscii (void *pAscii, void *pBinary, unsigned int size)
 				}
 			}
 	
-			#if !defined (MODE_IPU_MULTI)
-
 			// 1byteの書き込み
 			OUT8 ((adrs + x), saveData8);
-
-			#else
-
-			// 分割アドレス取得
-			if ((status = dpcGetDivAdrs (x*8, y, &xChange, &offset)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-
-			// 1byteの書き込み
-			OUT8 ((adrs + offset), saveData8);
-
-			#endif
 		}
 
-	#if !defined (MODE_IPU_MULTI)
 		adrs += DPC_WIDTH_DATA_ALIGH;
-	#endif
 	}
-
-#if defined (MODE_IPU_MULTI)
-	// ipuの1個目の最後の16画素の追加。
-	// ipuの2個目の最初の16画素の追加。
-	if ((status = dpcSetMarginGridData ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-#endif
 
 _DONE:
 	return (status);
@@ -1540,10 +1506,6 @@ int lfDpcDownloadBintoAscii (void *pAscii, void *pBinary, unsigned int *pSize, u
 	unsigned int adrs;
 	int widthMax, heightMax;
 	int x, y;
-#if defined (MODE_IPU_MULTI)
-	unsigned int offset;
-	int xChange;
-#endif
 
 	// Check pAscii Parameter
 	if (pAscii == NULL)
@@ -1630,22 +1592,9 @@ int lfDpcDownloadBintoAscii (void *pAscii, void *pBinary, unsigned int *pSize, u
 			//------------------------------------------------------------
 			// データ変換
 			//------------------------------------------------------------
-			#if !defined (MODE_IPU_MULTI)
 
 			// データ取得
 			data32 = (unsigned int)IN8((adrs + x));
-
-			#else // #if defined (MODE_IPU_MULTI)
-
-			// 分割アドレス取得
-			if ((status = dpcGetDivAdrs (x*8, y, &xChange, &offset)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-
-			// データ取得
-			data32 = (unsigned int)IN8((adrs + offset));
-
-			#endif // #if defined (MODE_IPU_MULTI)
-
 
 			sprintf ((char *)&temp, "%02X", data32);
 
@@ -1657,9 +1606,7 @@ int lfDpcDownloadBintoAscii (void *pAscii, void *pBinary, unsigned int *pSize, u
 			pAsciiBuffer[i++] = (unsigned char)((temp>>8)&0xff);
 		}
 
-	#if !defined (MODE_IPU_MULTI)
 		adrs += DPC_WIDTH_DATA_ALIGH;
-	#endif
 	}
 
 	// サイズ設定
@@ -1689,14 +1636,8 @@ int dpcSetMemory (int dpcNum, DEFECTIONINFO *pData, int index)
 	DEFECTIONINFO *ptr = pData;
 	int bit;
 	unsigned char data;
-#if !defined (MODE_IPU_MULTI)
 	int width;
 	int xOffset, yOffset;
-#endif
-#if defined (MODE_IPU_MULTI)
-	unsigned int offsetTemp;
-	int xChange;
-#endif
 
 	// 1度この領域に展開後Flashに書き込み
 	memset ((void *)DPC_MEMORY_ADRS, 0xff, DPC_MEMORY_NEW_ALL_SIZE);
@@ -1712,17 +1653,12 @@ int dpcSetMemory (int dpcNum, DEFECTIONINFO *pData, int index)
 	}
 
 	// Get Width
-#if !defined (MODE_IPU_MULTI)
-
 	width = DPC_WIDTH_DATA_ALIGH;
 
-#endif // #if !defined (MODE_IPU_MULTI)
 
 	// DPCに設定する為のメモリへ設定
 	for (i=0; i<index; i++, ptr++)
 	{
-		#if !defined (MODE_IPU_MULTI)
-
 		// 座標をアドレスに変換
 		yOffset = (ptr->y * width);
 
@@ -1734,32 +1670,7 @@ int dpcSetMemory (int dpcNum, DEFECTIONINFO *pData, int index)
 		data = IN8 ((adrs + yOffset + xOffset));
 		data &= ~(1<<bit);
 		OUT8 ((adrs + yOffset + xOffset), data);
-
-
-		#else // #if !defined (MODE_IPU_MULTI)
-
-
-		// 分割アドレス取得
-		if ((status = dpcGetDivAdrs (ptr->x, ptr->y, &xChange, &offsetTemp)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		// ビット毎に座標が割り付けられる
-		bit = ptr->x % 8;
-
-		// Set DPC Flag(0にすると欠陥)
-		data = IN8 ((adrs + offsetTemp));
-		data &= ~(1<<bit);
-		OUT8 ((adrs + offsetTemp), data);
-
-		#endif // #if !defined (MODE_IPU_MULTI)
 	}
-
-#if defined (MODE_IPU_MULTI)
-	// ipuの1個目の最後の16画素の追加。
-	// ipuの2個目の最初の16画素の追加。
-	if ((status = dpcSetMarginGridData ()) !=  AVAL_STATUS_SUCCESS)
-		goto _DONE;
-#endif
 
 _DONE:
 	// キャッシュFlash
@@ -1779,7 +1690,6 @@ _DONE:
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-#if !defined (MODE_IPU_MULTI)
 int dpcEndSearch (unsigned int adrs, int *pIndex)
 {
 	int status = AVAL_STATUS_SUCCESS;
@@ -1832,62 +1742,6 @@ _DONE:
 	return (status);
 }
 
-#else //#if !defined (MODE_IPU_MULTI)
-
-//**********************************************************************************
-// DPCデータ終端検索
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		adrs				：検索するアドレス
-//		pIndex				： 補正データが格納された個数を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int dpcEndSearch (unsigned int adrs, int *pIndex)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned char data;
-	int bit;
-	unsigned int index;
-	int x, y;
-	unsigned int offset;
-	int xChange;
-	
-	// Check pIndex Parameter
-	if (pIndex == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC End Search pIndex NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// 初期化
-	index = 0;
-	for (y=0; y<IMG_HEIGHT; y++)
-	{
-		for (x=0; x<(IMG_WIDTH / 8); x++)
-		{
-			// 分割アドレス取得
-			if ((status = dpcGetDivAdrs (x*8, y, &xChange, &offset)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-
-			data = IN8 ((adrs + offset));
-			for (bit=0; bit<8; bit++)
-			{
-				if ((data & (1<<bit)) == 0)
-					index++;
-			}
-		}
-	}
-
-	*pIndex = index;
-
-_DONE:
-	return (status);
-}
-#endif // #if !defined (MODE_IPU_MULTI)
-
 
 //**********************************************************************************
 // DPCデータ終端検索
@@ -1909,10 +1763,6 @@ int dpcEndSearch2 (unsigned int adrs, int *pIndex)
 	unsigned int memAdrs2;
 	int xPixel;
 	int widthMax, heightMax;
-#if defined (MODE_IPU_MULTI)
-	unsigned int offset;
-	int xChange;
-#endif
 
 	// Check pIndex Parameter
 	if (pIndex == NULL)
@@ -1938,21 +1788,8 @@ int dpcEndSearch2 (unsigned int adrs, int *pIndex)
 		xPixel = 0;
 		for (x=0; x<(widthMax/8); x++)
 		{
-			#if !defined (MODE_IPU_MULTI)
-
 			// 0=欠陥画素/1=正常画素
 			data = IN8 ((memAdrs2 + x));
-
-			#else // #if !defined (MODE_IPU_MULTI)
-
-			// 分割アドレス取得
-			if ((status = dpcGetDivAdrs (x*8, y, &xChange, &offset)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-
-			// 0=欠陥画素/1=正常画素
-			data = IN8 ((memAdrs2 + offset));
-
-			#endif // #if !defined (MODE_IPU_MULTI)
 
 			for (bit=0; bit<8; bit++, xPixel++)
 			{
@@ -1977,9 +1814,7 @@ int dpcEndSearch2 (unsigned int adrs, int *pIndex)
 			}
 		}
 
-#if !defined (MODE_IPU_MULTI)
 		memAdrs2 += DPC_WIDTH_DATA_ALIGH;
-#endif // #if !defined (MODE_IPU_MULTI)
 	}
 
 	*pIndex = index;
@@ -2053,6 +1888,7 @@ int dpcToFlashMain (unsigned int flashAdrs, unsigned int memAdrs)
 #endif
 	unsigned int flashAdrs2, memAdrs2;
 	int size2;
+	int y;
 
 	// DPCデータ反転
 #if defined (MODE_SENSOR_XFLIP)
@@ -2088,9 +1924,6 @@ int dpcToFlashMain (unsigned int flashAdrs, unsigned int memAdrs)
 		goto _DONE;
 	}
 	
-	#if !defined (MODE_IPU_MULTI)
-	int y;
-
 	flashAdrs2 = flashAdrs;
 	memAdrs2 = memAdrs;
 	size2 = IMG_WIDTH/8;
@@ -2102,24 +1935,6 @@ int dpcToFlashMain (unsigned int flashAdrs, unsigned int memAdrs)
 		flashAdrs2 += (IMG_WIDTH/8);
 		memAdrs2 += DPC_WIDTH_DATA_ALIGH;
 	}
-
-	#else // #if !defined (MODE_IPU_MULTI)
-
-	int ipu;
-
-	flashAdrs2 = flashAdrs;
-	memAdrs2 = memAdrs;
-	size2 = DPC_WIDTH_DATA_ALIGH * IMG_HEIGHT;
-	for (ipu=0; ipu < IPU_COUNT; ipu++)
-	{
-		if ((status = qspiFlashWrite (flashAdrs2, (unsigned char *)memAdrs2, size2)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		flashAdrs2 += size2;
-		memAdrs2 += DPC_MEMORY_IPU_MULTI_INTERVAL;
-	}
-
-	#endif // #if !defined (MODE_IPU_MULTI)
 
 	// DPCデータ反転
 #if defined (MODE_SENSOR_XFLIP)
@@ -2199,8 +2014,6 @@ int dpcToMemoryMain (unsigned int flashAdrs, unsigned int memAdrs)
 	int size = DPC_MEMORY_NEW_SIZE;
 	unsigned int flashAdrs2;
 	unsigned int memAdrs2;
-	
-	#if !defined (MODE_IPU_MULTI)
 	int y;
 
 	flashAdrs2 = flashAdrs;
@@ -2217,29 +2030,6 @@ int dpcToMemoryMain (unsigned int flashAdrs, unsigned int memAdrs)
 		flashAdrs2 += (IMG_WIDTH/8);
 		memAdrs2 += DPC_WIDTH_DATA_ALIGH;
 	}
-
-	#else // #if !defined (MODE_IPU_MULTI)
-
-	int ipu;
-	flashAdrs2 = flashAdrs;
-	memAdrs2 = memAdrs;
-	size = DPC_WIDTH_DATA_ALIGH * IMG_HEIGHT;
-
-	for (ipu=0; ipu < IPU_COUNT; ipu++)
-	{
-		if ((status = qspiFlashRead (flashAdrs2, (unsigned char *)memAdrs2, size)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		flashAdrs2 += size;
-		memAdrs2 += DPC_MEMORY_IPU_MULTI_INTERVAL;
-	}
-
-	// ipuの1個目の最後の16画素の追加。
-	// ipuの2個目の最初の16画素の追加。
-	if ((status = dpcSetMarginGridData()) !=  AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	#endif  // #if !defined (MODE_IPU_MULTI)
 
 	// DPCデータ反転
 #if defined (MODE_SENSOR_XFLIP)
@@ -2904,9 +2694,6 @@ int dpcGetGridLine (unsigned int memAdrs, unsigned char *dpcPtr, int checkX, int
 	unsigned int data;
 	int bit;
 	int dCount;
-#if defined (MODE_IPU_MULTI)
-	int xDiv, ipu;
-#endif
 
 	// Check dpcPtr Parameter
 	if (dpcPtr == NULL)
@@ -2932,7 +2719,6 @@ int dpcGetGridLine (unsigned int memAdrs, unsigned char *dpcPtr, int checkX, int
 	// 初期化
 	dCount = 0;
 
-#if !defined (MODE_IPU_MULTI)
 
 	// 欠陥座標検索
 	for (y=0; y<IMG_HEIGHT; y++)
@@ -2959,50 +2745,6 @@ int dpcGetGridLine (unsigned int memAdrs, unsigned char *dpcPtr, int checkX, int
 			}	// for (bit=0; bit<8; bit++)
 		}	// for (width=0; width<IMG_WIDTH; width+=8, adrs++)
 	}	// for (height=0; height<IMG_HEIGHT; height++)
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-	xDiv = IMG_WIDTH / IPU_COUNT;
-
-	// 欠陥座標検索
-	for (y=0; y<IMG_HEIGHT; y++)
-	{
-		for (ipu=0; ipu < IPU_COUNT; ipu++)
-		{
-			// DPCアドレス取得
-			adrs = (unsigned int)memAdrs + y * DPC_WIDTH_DATA_ALIGH + DPC_MEMORY_IPU_MULTI_INTERVAL * ipu;
-
-			if (ipu == 0)
-			{
-				xCount = 0;
-			}
-			else
-			{
-				xCount = xDiv * ipu;
-				adrs += (IMG_WIDTH_OFFSET/8);
-			}
-
-			for (x=0; x<xDiv; x+=8, adrs++)
-			{
-				// 欠陥データ取得
-				data = IN8 (adrs);
-
-				for (bit=0; bit<8; bit++)
-				{
-					if ((data&(1<<bit)) == 0)
-					{
-						*(dpcPtr + xCount + y * IMG_STRIDE) = 1;
-						if (checkX == xCount)
-							dCount++;
-					}
-
-					xCount++;
-				}	// for (bit=0; bit<8; bit++)
-			}	// for (width=0; width<IMG_WIDTH; width+=8, adrs++)
-		}	// for (ipu=0; ipu < IPU_COUNT; ipu++)
-	}	// for (height=0; height<IMG_HEIGHT; height++)
-
-#endif // #if !defined (MODE_IPU_MULTI)
 
 	// 重複と判断された欠陥の個数
 	*pCount = dCount;
@@ -3035,9 +2777,6 @@ int dpcGetGrid (unsigned int memAdrs, int index, int *pX, int *pY)
 	unsigned int data;
 	int bit;
 	int find;
-#if defined (MODE_IPU_MULTI)
-	int xDiv, ipu;
-#endif
 
 	// 欠陥画素最大補正数
 	dpcMaxCount = IN32 (FIRM_DATA_DPC_MAX_NUM_COUNT_ADRS);
@@ -3080,8 +2819,6 @@ int dpcGetGrid (unsigned int memAdrs, int index, int *pX, int *pY)
 	hit = 0;
 	find = 0;
 
-#if !defined (MODE_IPU_MULTI)
-
 	for (height=0; height<IMG_HEIGHT; height++)
 	{
 		// DPCアドレス取得
@@ -3111,46 +2848,7 @@ int dpcGetGrid (unsigned int memAdrs, int index, int *pX, int *pY)
 		}	// for (width=0; width<IMG_WIDTH; width+=8, adrs++)
 	}	// for (height=0; height<IMG_HEIGHT; height++)
 
-#else // #if !defined (MODE_IPU_MULTI)
-
-	xDiv = IMG_WIDTH / IPU_COUNT;
-	for (height=0; height<IMG_HEIGHT; height++)
-	{
-		for (ipu=0; ipu < IPU_COUNT; ipu++)
-		{
-			// DPCアドレス取得
-			adrs = (unsigned int)memAdrs + height * DPC_WIDTH_DATA_ALIGH + DPC_MEMORY_IPU_MULTI_INTERVAL * ipu;
-
-			for (width=0; width<xDiv; width+=8, adrs++)
-			{
-				// 欠陥データ取得
-				data = IN8 (adrs);
-
-				for (bit=0; bit<8; bit++)
-				{
-					if ((data&(1<<bit)) == 0)
-					{
-						// 欠陥Index一致?
-						if (hit == index)
-						{
-							*pX = width + bit;
-							*pY = height;
-							find = 1;
-							goto _NEXT;
-						}
-
-						hit++;
-					}
-				}	// for (bit=0; bit<8; bit++)
-			}	// for (width=0; width<IMG_WIDTH; width+=8, adrs++)
-		}	// for (ipu=0; ipu < IPU_COUNT; ipu++)
-	}	// for (height=0; height<IMG_HEIGHT; height++)
-
-#endif // #if !defined (MODE_IPU_MULTI)
-
-
 _NEXT:
-
 	// 発見できず？
 	if (find == 0)
 	{
@@ -3250,11 +2948,6 @@ int dpcGridMain (int x, int y, int mode)
 #if defined (MODE_DPC_GRID_UPDATE)
 	int count;
 #endif
-#if defined (MODE_IPU_MULTI)
-	int xChange;
-	int xLeft = -1, xRight = -1;
-	int xOffset;
-#endif
 
 	// Width Max
 	if ((status = roiGetAreaWidthMax (&width)) != AVAL_STATUS_SUCCESS)
@@ -3338,25 +3031,7 @@ int dpcGridMain (int x, int y, int mode)
 #endif
 
 	// 欠陥座標Adrs取得
-#if !defined (MODE_IPU_MULTI)
-
 	offset = x / 8 + DPC_WIDTH_DATA_ALIGH * y;
-
-#else
-
-	// 分割アドレス取得
-	if ((status = dpcGetDivAdrs (x, y, &xChange, &offset)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// 隠し座標の確認
-	if ((status = hideGridCalc (x, y, &xLeft, &xRight)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// X座標変換
-	x = xChange;
-
-#endif
-
 	adrs = dpcAdrs + offset;
 	xBitAma = x % 8;
 	xBit = (1<<xBitAma);
@@ -3379,49 +3054,6 @@ int dpcGridMain (int x, int y, int mode)
 			// 欠陥画素補正数設定
 			OUT32 (FIRM_DATA_DPC_NUM_ADRS, dpcCount);
 
-			//------------------------------------------------------------
-			// DPC 隠し座標設定
-			//------------------------------------------------------------
-
-			//--------------------------------------------------------------------------------
-			// IPU=0
-			// ABA-052VIR：左側の1280～1295の領域を書き換えたら、右側の0～15(1296～1311)の領域も書き換える
-			// 
-			// IPU=1
-			// ABA-052VIR：右側の0～15(1328～1343)の領域を書き換えたら、左側の1296～1311の領域も書き換える
-			//--------------------------------------------------------------------------------
-			#if defined (MODE_IPU_MULTI)
-			if ((xRight != -1) || (xLeft != -1))
-			{
-				if (xRight != -1)
-				{
-					adrs = dpcAdrs + y * DPC_WIDTH_DATA_ALIGH + DPC_MEMORY_IPU_MULTI_INTERVAL;
-					
-					xOffset = xRight / 8;
-					xBitAma = xRight % 8;
-				}
-				else if (xLeft != -1)
-				{
-					adrs = dpcAdrs + y * DPC_WIDTH_DATA_ALIGH;
-					adrs += (IMG_WIDTH / IPU_COUNT / 8);
-
-					xOffset = xLeft / 8;
-					xBitAma = xLeft % 8;
-				}
-				else
-				{
-					goto _NEXT;
-				}
-
-				xBit = (1<<xBitAma);
-				adrs += xOffset;
-
-				// 欠陥座標追加
-				data8 = IN8 (adrs);
-				data8 &= ~xBit;
-				OUT8 (adrs, data8);
-			}
-			#endif // #if defined (MODE_IPU_MULTI)
 		} // if ((data8 & xBit) == xBit)
 	} // if (mode == DPC_GRID_MODE_ADD)
 	else
@@ -3441,56 +3073,9 @@ int dpcGridMain (int x, int y, int mode)
 				// 欠陥画素補正数設定
 				OUT32 (FIRM_DATA_DPC_NUM_ADRS, dpcCount);
 			}
-
-			//------------------------------------------------------------
-			// DPC 隠し座標設定
-			//------------------------------------------------------------
-
-			//--------------------------------------------------------------------------------
-			// IPU=0
-			// ABA-052VIR：左側の1280～1295の領域を書き換えたら、右側の0～15(1296～1311)の領域も書き換える
-			// 
-			// IPU=1
-			// ABA-052VIR：右側の0～15(1328～1343)の領域を書き換えたら、左側の1296～1311の領域も書き換える
-			//--------------------------------------------------------------------------------
-			#if defined (MODE_IPU_MULTI)
-			if ((xRight != -1) || (xLeft != -1))
-			{
-				if (xRight != -1)
-				{
-					adrs = dpcAdrs + y * DPC_WIDTH_DATA_ALIGH + DPC_MEMORY_IPU_MULTI_INTERVAL;
-					
-					xOffset = xRight / 8;
-					xBitAma = xRight % 8;
-				}
-				else if (xLeft != -1)
-				{
-					adrs = dpcAdrs + y * DPC_WIDTH_DATA_ALIGH;
-					adrs += (IMG_WIDTH / IPU_COUNT / 8);
-
-					xOffset = xLeft / 8;
-					xBitAma = xLeft % 8;
-				}
-				else
-				{
-					goto _NEXT;
-				}
-
-				xBit = (1<<xBitAma);
-				adrs += xOffset;
-
-				// 欠陥座標追加
-				data8 = IN8 (adrs);
-				data8 |= xBit;
-				OUT8 (adrs, data8);
-			}
-			#endif // #if defined (MODE_IPU_MULTI)
 		} // if ((data8 & xBit) == 0)
 	} // if (mode == DPC_GRID_MODE_ADD)
 
-#if defined (MODE_IPU_MULTI)
-_NEXT:
-#endif
 	//------------------------------------------------------------
 	// DPC Enable
 	//------------------------------------------------------------
@@ -4178,10 +3763,6 @@ int dpcGetMapInfo (unsigned char *pAdrs, int *pCount)
 #if defined (MODE_DPC_GRID_UPDATE)
 	int dpcMapMode/*, dpcMapFlashMode*/;
 #endif
-#if defined (MODE_IPU_MULTI)
-	int xDiv = IMG_WIDTH / IPU_COUNT;
-	int ipu;
-#endif
 
 	// Check pAdrs Parameter
 	if (pAdrs == NULL)
@@ -4286,23 +3867,8 @@ int dpcGetMapInfo (unsigned char *pAdrs, int *pCount)
 
 		xPixel = 0;
 
-#if !defined (MODE_IPU_MULTI)
 		for (ix=0; ix<(widthMax/8); ix++)
 		{
-#else
-		for (ipu=0; ipu < IPU_COUNT; ipu++)
-		{
-			memadrs2 = adrs + (iy * DPC_WIDTH_DATA_ALIGH) + DPC_MEMORY_IPU_MULTI_INTERVAL * ipu;
-
-#if defined (MODE_IPU_MULTI)
-			if (ipu != 0)
-				memadrs2 += IMG_WIDTH_OFFSET / 8;
-#endif
-
-			for (ix=0; ix<(xDiv/8); ix++)
-			{
-#endif
-
 			// 0=欠陥画素/1=正常画素
 			data = IN8 ((memadrs2 + ix));
 			for (bit=0; bit<8; bit++, xPixel++)
@@ -4387,9 +3953,6 @@ int dpcGetMapInfo (unsigned char *pAdrs, int *pCount)
 					}
 				} // if ((data&(1<<bit)) == 0)
 			}	// for (bit=0; bit<8; bit++, xPixel++)
-#if defined (MODE_IPU_MULTI)
-		}	// for (ipu=0; ipu < IPU_COUNT; ipu++)
-#endif
 		}	// for (ix=0; ix<(IMG_WIDTH/8); ix++)
 	} // for (iy=IMG_HEIGHT_OFFSET; iy<CAMERA_HEIGHT_MAX; iy++)
 
@@ -5536,13 +5099,11 @@ int dpcSetMemoryNormal (void *srcAdrs, unsigned int offset, unsigned int size)
 	int status;
 	unsigned int memAdrs;
 	int sizeMax;
-#if !defined (MODE_IPU_MULTI)
 	unsigned int memAdrs2;
 	unsigned int data;
 	unsigned int i;
 	int widthMax, heightMax;
 	int x, y;
-#endif
 	int dpcNum = 0;
 
 	sizeMax = DPC_MEMORY_NEW_SIZE;
@@ -5560,7 +5121,6 @@ int dpcSetMemoryNormal (void *srcAdrs, unsigned int offset, unsigned int size)
 	if ((status = dpcGetMemAdrs (dpcNum, &memAdrs)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-#if !defined (MODE_IPU_MULTI)
 	// Width Max
 	widthMax = sensorWidth();
 
@@ -5579,20 +5139,6 @@ int dpcSetMemoryNormal (void *srcAdrs, unsigned int offset, unsigned int size)
 
 		memAdrs2 += DPC_WIDTH_DATA_ALIGH;
 	}
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-	// データCopy
-	dpcCopyBuffToExtMem (memAdrs, (unsigned int *)srcAdrs);
-
-	// DPCマージン座標の追加
-	// ipuの1個目の最後の16画素の追加。
-	// ipuの2個目の最初の16画素の追加。
-	if ((status = dpcSetMarginGridData ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-#endif // #if !defined (MODE_IPU_MULTI)
-
 
 _DONE:
 	return (status);
@@ -5614,13 +5160,11 @@ int dpcGetMemoryNormal (void *desAdrs, unsigned int offset, unsigned int size)
 	int status;
 	unsigned int memAdrs;
 	int sizeMax;
-#if !defined (MODE_IPU_MULTI)
 	unsigned int memAdrs2;
 	unsigned int data;
 	unsigned int i;
 	int widthMax, heightMax;
 	int x, y;
-#endif
 	int dpcNum = 0;
 
 	sizeMax = DPC_MEMORY_NEW_SIZE;
@@ -5638,7 +5182,6 @@ int dpcGetMemoryNormal (void *desAdrs, unsigned int offset, unsigned int size)
 	if ((status = dpcGetMemAdrs (dpcNum, &memAdrs)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-#if !defined (MODE_IPU_MULTI)
 	// Width Max
 	widthMax = sensorWidth();
 
@@ -5657,12 +5200,6 @@ int dpcGetMemoryNormal (void *desAdrs, unsigned int offset, unsigned int size)
 
 		memAdrs2 += DPC_WIDTH_DATA_ALIGH;
 	}
-
-#else // !defined (MODE_IPU_MULTI)
-
-	dpcCopyExtMemToBuff (memAdrs, (unsigned int *)desAdrs);
-
-#endif // !defined (MODE_IPU_MULTI)
 
 _DONE:
 	return (status);
@@ -5690,11 +5227,7 @@ int dpcGridCheck (int x, int y, int *pDetect)
 	unsigned char data8;
 	int areaMode;
 	unsigned int offset;
-#if defined (MODE_IPU_MULTI)
-	int xChange;
-#else
 	int yOffset;
-#endif
 
 	// 座標変換
 	if ((status = roiCoordinateTrans (x, y, &x, &y, TRANS_MODE_ADD)) != AVAL_STATUS_SUCCESS)
@@ -5773,9 +5306,6 @@ int dpcGridCheck (int x, int y, int *pDetect)
 	if ((status = dpcGetMemAdrs (dpcNum, &memAdrs)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	// 欠陥画素アドレス
-#if !defined (MODE_IPU_MULTI)
-
 	// Yオフセット
 	yOffset = y * DPC_WIDTH_DATA_ALIGH;
 
@@ -5784,23 +5314,6 @@ int dpcGridCheck (int x, int y, int *pDetect)
 
 	// 欠陥画素ビット
 	bit = x % 8;
-
-#else
-
-	// 分割アドレス取得
-	if ((status = dpcGetDivAdrs (x, y, &xChange, &offset)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// X座標変換
-	x = xChange;
-
-	// ベースアドレス加算
-	offset += memAdrs;
-
-	// 欠陥画素ビット
-	bit = xChange % 8;
-
-#endif
 
 	// データ取得
 	data8 = IN32 (offset);
@@ -5834,11 +5347,7 @@ int dpcGridCheckAll (int x, int y, int *pDetect)
 	int bit;
 	unsigned char data8;
 	unsigned int offset;
-#if defined (MODE_IPU_MULTI)
-	int xChange;
-#else
 	int yOffset;
-#endif
 
 	// Width Max
 	wMax = sensorWidth();
@@ -5876,9 +5385,6 @@ int dpcGridCheckAll (int x, int y, int *pDetect)
 	if ((status = dpcGetMemAdrs (dpcNum, &memAdrs)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	// 欠陥画素アドレス
-#if !defined (MODE_IPU_MULTI)
-
 	// Yオフセット
 	yOffset = y * DPC_WIDTH_DATA_ALIGH;
 
@@ -5887,22 +5393,6 @@ int dpcGridCheckAll (int x, int y, int *pDetect)
 
 	// 欠陥画素ビット
 	bit = x % 8;
-
-#else
-
-	// 分割アドレス取得
-	if ((status = dpcGetDivAdrs (x, y, &xChange, &offset)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// X座標変換
-	x = xChange;
-
-	// ベースアドレス加算
-	offset += memAdrs;
-
-	// 欠陥画素ビット
-	bit = xChange % 8;
-#endif
 
 	// データ取得
 	data8 = IN32 (offset);
@@ -5917,7 +5407,6 @@ _DONE:
 
 
 #if defined (MODE_SENSOR_XFLIP)
-#if !defined (MODE_IPU_MULTI)
 //**********************************************************************************
 //	DPC Data X Flip
 //----------------------------------------------------------------------------------
@@ -6043,194 +5532,6 @@ _DONE:
 
 	return (status);
 }
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-//**********************************************************************************
-//	DPC Data X Flip
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		mode				：0=正転する/1=反転する
-//		dpcMemAdrs			：メモリアドレス
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int dpcDataXFlip (int mode, unsigned int dpcMemAdrs)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int x, y;
-	unsigned int /*dpcMemAdrs,*/ dpcMemAdrs2;
-	int width;
-	int height;
-	unsigned int data8, dataRev8;
-	int bit, bit2;
-	int endX, remX;
-	unsigned char *pBuffTemp8;
-	unsigned int *pBuffLeft = NULL;
-	unsigned int *pBuffRight = NULL;
-	//int dpcNum = 0;
-	int size = DPC_WIDTH_DATA_ALIGH;
-	int ipu;
-
-	// データFlipあり／なし
-	if (dpcGetXFlipFlag () == MODE_DISABLE)
-		goto _DONE;
-
-	// Check mode Parameter
-	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "DPC X Flip mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// Width Max取得
-	width = IMG_WIDTH / IPU_COUNT;
-
-	// Height Max取得
-	height = sensorHeight ();
-
-	// メモリリクエスト
-	if ((pBuffLeft = (unsigned int *)malloc (size)) == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		sprintf (gLogMsgBuff, "DPC X Flip Malloc Error. size = 0x%x\n", size);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	if ((pBuffRight = (unsigned int *)malloc (size)) == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		sprintf (gLogMsgBuff, "DPC X Flip Malloc Error. size = 0x%x\n", size);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-
-	for (y=0; y<height; y++)
-	{
-		//------------------------------------------------------------
-		// データ取得
-		//------------------------------------------------------------
-		for (ipu=0; ipu < IPU_COUNT; ipu++)
-		{
-			dpcMemAdrs2 = dpcMemAdrs + DPC_MEMORY_IPU_MULTI_INTERVAL * ipu;
-
-			if (ipu == 0)
-			{
-				// 0xffにクリア
-				memset ((void *)pBuffLeft, 0xff, size);
-
-				// 1ラインバッファに読み込み
-				pBuffTemp8 = (unsigned char *)pBuffLeft;
-			}
-			else
-			{
-				// 右の最初の16画素は補正用のデータ
-				dpcMemAdrs2 += (IMG_WIDTH_OFFSET / 8);
-
-				// 0xffにクリア
-				memset ((void *)pBuffRight, 0xff, size);
-
-				// 1ラインバッファに読み込み
-				pBuffTemp8 = (unsigned char *)pBuffRight;
-			}
-
-			// X終端位置
-			endX = width / 8;
-			remX = width % 8;
-			if (remX != 0)
-				endX++;
-
-			bit2=0;
-			dataRev8 = 0xff;
-			for (x=0; x<endX; x++)
-			{
-				// 終端から確認
-				data8 = IN8 ((dpcMemAdrs2 + (endX - x - 1)));
-
-				// 終端から確認の為、最初の読み込みは終端となる為の調整シフト
-				if ((x==0) && (remX!=0))
-					bit = remX;
-				else
-					bit = 7;
-
-				// bitは現在の欠陥を検索
-				// bit2は反転した欠陥を格納
-				// widthが8で割り切れない場合、bitとbit2が異なる
-				for (; bit>=0; bit--, bit2++)
-				{
-					// 0=欠陥画素/1=正常画素
-					if ((data8 & (1<<bit)) == 0)
-					{
-						dataRev8 &= ~(1 << bit2);
-					}
-
-					// 8bit分設定したらメモリへ格納
-					if (bit2 >= 7)
-					{
-						// 一時バッファに設定
-						*pBuffTemp8 = dataRev8;
-						pBuffTemp8++;
-						dataRev8 = 0xff;		// 初期化
-						bit2 = 0;
-						break;
-					}
-				}
-			}
-		} // for (ipu=0; ipu < IPU_COUNT; ipu++)
-
-		//------------------------------------------------------------
-		// データ設定(左右上下入れ替え)
-		//------------------------------------------------------------
-		for (ipu=0; ipu < IPU_COUNT; ipu++)
-		{
-			if (ipu == 0)
-			{
-				dpcMemAdrs2 = dpcMemAdrs + DPC_MEMORY_IPU_MULTI_INTERVAL;
-
-				// 右の最初の16画素は補正用のデータ
-				dpcMemAdrs2 += (IMG_WIDTH_OFFSET / 8);
-
-				pBuffTemp8 = (unsigned char *)pBuffLeft;
-			}
-			else
-			{
-				dpcMemAdrs2 = dpcMemAdrs;
-				pBuffTemp8 = (unsigned char *)pBuffRight;
-			}
-
-			// Fill
-			for (x=0; x<size; x++)
-				OUT8 ((dpcMemAdrs2 + x), 0xff);
-
-			// 反転
-			for (x=0; x<endX; x++, pBuffTemp8++)
-				OUT8 ((dpcMemAdrs2 + x), *pBuffTemp8);
-		}
-
-		// Align
-		dpcMemAdrs += DPC_WIDTH_DATA_ALIGH;
-	}
-
-	// ipuの1個目の最後の16画素の追加。
-	// ipuの2個目の最初の16画素の追加。
-	if ((status = dpcSetMarginGridData ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-_DONE:
-	if (pBuffLeft != NULL)
-		free (pBuffLeft);
-
-	if (pBuffRight != NULL)
-		free (pBuffRight);
-
-	return (status);
-}
-#endif // #if !defined (MODE_IPU_MULTI)
 #endif // #if defined (MODE_SENSOR_XFLIP)
 
 
@@ -6265,317 +5566,5 @@ int dpcGetXFlipFlag (void)
 	return (data32);
 }
 #endif
-
-
-#if defined (MODE_IPU_MULTI)
-//**********************************************************************************
-//	DPCデータCopy(バッファからDPCメモリにCopy)
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		memAdrs				：DPCデータ格納アドレス
-//		pBuffer				：Copy元アドレス
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int dpcCopyBuffToExtMem (unsigned long memAdrs, unsigned int *pBuffer)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned char *ptrB;
-	int x, y;
-	unsigned char data;
-	int xChange;
-	unsigned int offset;
-
-	ptrB = (unsigned char *)pBuffer;
-
-	for (y=0; y<IMG_HEIGHT; y++)
-	{
-		for (x=0; x<(IMG_WIDTH / 8); x++, ptrB++)
-		{
-			// 分割アドレス取得
-			if ((status = dpcGetDivAdrs (x*8, y, &xChange, &offset)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-
-			data = *ptrB;
-			OUT8 ((memAdrs + offset), data);
-		}
-	}
-
-_DONE:
-	return (status);
-}
-#endif // #if defined (MODE_IPU_MULTI)
-
-
-#if defined (MODE_IPU_MULTI)
-//**********************************************************************************
-//	DPCデータCopy(DPCメモリからバッファにCopy)
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		memAdrs				：FFCデータ格納アドレス
-//		pBuffer				：Copy元アドレス
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int dpcCopyExtMemToBuff (unsigned long memAdrs, unsigned int *pBuffer)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned char *ptrB;
-	int x, y;
-	unsigned char data;
-	int xChange;
-	unsigned int offset;
-
-	ptrB = (unsigned char *)pBuffer;
-
-	for (y=0; y<IMG_HEIGHT; y++)
-	{
-		for (x=0; x<(IMG_WIDTH / 8); x++, ptrB++)
-		{
-			// 分割アドレス取得
-			if ((status = dpcGetDivAdrs (x*8, y, &xChange, &offset)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-
-			data = IN8 ((memAdrs + offset));
-			*ptrB = data;
-		}
-	}
-
-_DONE:
-	return (status);
-}
-#endif	// #if defined (MODE_IPU_MULTI)
-
-
-#if defined (MODE_IPU_MULTI)
-//**********************************************************************************
-// DPCマージン座標の追加
-// ipuの1個目の最後の16画素の追加。
-// ipuの2個目の最初の16画素の追加。
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int dpcSetMarginGridData (void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int ipu;
-	int x, y;
-	int dpcNum = 0;
-	unsigned int memAdrs;
-	unsigned int srcAdrs, desAdrs;
-	unsigned char data8;
-
-	// メモリアドレス取得
-	if ((status =dpcGetMemAdrs (dpcNum, &memAdrs)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	for (ipu=0; ipu < IPU_COUNT; ipu++)
-	{
-		for (y = 0; y < IMG_HEIGHT; y++)
-		{
-			if (ipu == 0)
-			{
-				// ipu1の最初の16画素
-				srcAdrs =  memAdrs;
-				srcAdrs += (y * DPC_WIDTH_DATA_ALIGH);
-				srcAdrs += (IMG_WIDTH_OFFSET/8);
-				srcAdrs += (DPC_MEMORY_IPU_MULTI_INTERVAL * (ipu + 1));
-
-				// ipu0の最後の16画素
-				desAdrs =  memAdrs;
-				desAdrs += ((y * DPC_WIDTH_DATA_ALIGH) + (IMG_WIDTH_IPU_SIZE/8));
-			}
-			else
-			{
-				// ipu0の最後の16画素
-				srcAdrs =  memAdrs;
-				srcAdrs += ((y * DPC_WIDTH_DATA_ALIGH) + (IMG_WIDTH_IPU_SIZE/8));
-				srcAdrs -= (IMG_WIDTH_OFFSET / 8);
-
-				// ipu1の最初の画素
-				desAdrs =  memAdrs;
-				desAdrs += (y * DPC_WIDTH_DATA_ALIGH);
-				desAdrs += (DPC_MEMORY_IPU_MULTI_INTERVAL * ipu);
-			}
-
-			for (x = 0; x < (IMG_WIDTH_OFFSET / 8)/*1画素=1bit*/; x++)
-			{
-				data8 = IN8 (srcAdrs);
-				OUT8 (desAdrs, data8);
-
-				srcAdrs++;
-				desAdrs++;
-			}
-		}
-	}
-
-_DONE:
-	return (status);
-}
-#endif // #if defined (MODE_IPU_MULTI)
-
-
-#if defined (MODE_IPU_MULTI)
-//**********************************************************************************
-// DPC 分割アドレスの取得
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		x					：x座標
-//		y					：y座標
-//		pX					：変換後のx座標を格納するポインタ
-//		pAdrs				：変換アドレスを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int dpcGetDivAdrs (int x, int y, int *pX, unsigned int *pAdrs)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int widthMax, heightMax;
-	int ipu, xAmari;
-	int yOffset;
-	int widthIpuUnit;
-
-	// Width Max
-	widthMax = sensorWidth();
-
-	// Height Max
-	heightMax = sensorHeight();
-
-	// Check x Parameter
-	if ((x < 0) || (x > widthMax))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "DPC Get Div Adrs x(%d) Parameter Error.(Min=0 / Max=%d)\n", x, widthMax);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// Check y Parameter
-	if ((y < 0) || (y > heightMax))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "DPC Get Div Adrs y(%d) Parameter Error.(Min=0 / Max=%d)\n", y, heightMax);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// Check pX Parameter
-	if (pX == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Get Div Adrs NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// Check pAdrs Parameter
-	if (pAdrs == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Get Div Adrs NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// Yオフセット
-	yOffset = y * DPC_WIDTH_DATA_ALIGH;
-
-	// widthをipuの個数で割る
-	widthIpuUnit = IMG_WIDTH / IPU_COUNT;
-
-	// ipuの何個目?
-	ipu = x / (IMG_WIDTH / IPU_COUNT);
-
-	// x座標は何画素目に該当するかを計算
-	xAmari = x % widthIpuUnit;
-
-	// ipu=0以外はオフセットが必要
-	if (ipu != 0)
-		xAmari += IMG_WIDTH_OFFSET;
-
-	// DPCアドレスの算出
-	*pAdrs = yOffset + (xAmari / 8) + DPC_MEMORY_IPU_MULTI_INTERVAL * ipu;
-
-	// 変換後のx座標
-	*pX = xAmari;
-
-_DONE:
-	return (status);
-}
-#endif // #if defined (MODE_IPU_MULTI)
-
-
-#if defined (MODE_IPU_MULTI)
-//**********************************************************************************
-// DPC 分割アドレスの取得
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		x					：x座標
-//		y					：y座標
-//		pX					：変換後のx座標を格納するポインタ
-//		pAdrs				：変換アドレスを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int hideGridCalc (int x, int y, int *pLeft, int *pRight)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int widthHalf;
-	int ipu;
-
-	// Check pLeft Parameter
-	if (pLeft == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Hide Grid pLeft NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// Check pRight Parameter
-	if (pRight == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Hide Grid pLeft NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// 初期化
-	*pLeft = -1;
-	*pRight = -1;
-
-	// ipuの何個目?
-	ipu = x / (IMG_WIDTH / IPU_COUNT);
-
-	//--------------------------------------------------------------------------------
-	// IPU=0
-	// ABA-052VIR：左側の1280～1295の領域を書き換えたら、右側の0～15(1296～1311)の領域も書き換える
-	// 
-	// IPU=1
-	// ABA-052VIR：右側の0～15(1328～1343)の領域を書き換えたら、左側の1296～1311の領域も書き換える
-	//--------------------------------------------------------------------------------
-	if (ipu == 0)
-	{
-		widthHalf = CAMERA_WIDTH_MAX / IPU_COUNT;
-
-		if (x >= widthHalf)
-			*pRight = x - widthHalf;
-	}
-	else
-	{
-		widthHalf = IMG_WIDTH / IPU_COUNT;
-		if ((x >= widthHalf) && (x < (widthHalf + 16)))
-			*pLeft = x - widthHalf;
-	}
-
-_DONE:
-	return (status);
-}
-#endif // #if defined (MODE_IPU_MULTI)
 
 // eof

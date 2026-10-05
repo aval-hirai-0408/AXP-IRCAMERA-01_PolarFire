@@ -36,9 +36,6 @@
 #define MODE_TEMP							// Temp Mode
 #define MODE_TEMP_ABNORMAL_CHECK			// Temp Abnormal Check
 #define MODE_FFC_BIT_CALC					// FFC Bit Calc Mode
-#define MODE_FFC_INFO_GAIN					// FFC Information Gain Mode
-#define MODE_FFC_INFO_BIT					// FFC Information Bit Mode
-//#define MODE_FFC_SHADING_DIGITAL_GAIN		// FFC Shading Digital Gain Mode
 #define MODE_FFC_MEM_EXTERNAL_MALLOC		// FFC External Memory Malloc
 //#define MODE_SPECTRUM						// Spectrum
 //#define MODE_SPECTRUM_MULTI_HEIGHT		// Spectrum Multi Height
@@ -63,7 +60,6 @@
 #define MODE_GENICAM_TIMER					// Genicam Timer
 //#define MODE_CAMERA_INTERRUPT				// Camera Interrupt Mode
 //#define MODE_USERSET_SPECTRUM_PARAM		// Userset Spectrum Parameter Mode
-#define MODE_QSPI_FLASH_DUAL_STACK			// Qspi Flash Dual Stack Mode
 //#define MODE_ACQUISITION_TRG_EXTEND		// Acquisition Trigger Extend
 //#define MODE_FLASH_PROTECT_NEW			// Flash Protect New Mode
 #define MODE_FLASH_PROTECT_SIMPLE			// Flash Protect Simple
@@ -81,35 +77,28 @@
 #define MODE_GE_SPEED						// GigE Speed
 #define MODE_SENSOR_XFLIP					// X Flip Function Mode
 //#define MODE_XFLIP_INVERT					// X Flip Invert Mode
-#define MODE_AUTO_EXPOSURE					// Auto Exposure
-#define MODE_AUTO_GAIN						// Auto Gain
-#define MODE_CAMERA_EVENT_VERSION2			// Camera Event Version2
+//#define MODE_AUTO_EXPOSURE				// Auto Exposure
+//#define MODE_AUTO_GAIN					// Auto Gain
+//#define MODE_CAMERA_EVENT_VERSION2		// Camera Event Version2
 #define MODE_PELTIER_MOUNTING_SWITCH		// Peltier Mounting Switch Mode
 #define MODE_SENSOR_GRADATION_COMPRESS		// Sensor Gradation Compress
-#define MODE_BIT8_GCMODE_ENABLE				// Default 8bit Gradation Compress
 #define MODE_CXP							// Cxp Mode
-#define MODE_CXP_MULTI_PORT					// Cxp Multi Port
 #define MODE_CXP_VERSION_20					// Cxp Version 2.0
 #define MODE_CXP_RATE_CHANGE				// Cxp Rate Change
-//#define MODE_BOARD_ACB523GE				// GE  Board ACB-523GE_IF (ABA-013VIR/ABA-003VIR)
-#define MODE_BOARD_ACB532GE					// GE  Board ACB-532GE_IF (ABA-052VIR/ABA-032VIR)
-//#define MODE_BOARD_ACB525CXP				// CXP Board ACB-525CXP_IF(ABA-013VIR/ABA-003VIR)
-#define MODE_BOARD_ACB531CXP				// CXP Board ACB-531CXP_IF(ABA-052VIR/ABA-032VIR)
-#define MODE_UPDATE_INTERFACE				// InterfaceBoard Update
+#define MODE_BOARD_ACB533CXP				// CXP Board ACB-533IFCXP(ABA-052VIR2)
+//#define MODE_UPDATE_INTERFACE				// InterfaceBoard Update
 #define MODE_FPGA_PF						// InterfaceBoard FPGA TYPE PolarFire
 #define MODE_BINNING						// Binning Mode
-#define MODE_ACQUISITION_TRG_SOFT_COUNT		// Acquisition Trg Soft Count
 //#define MODE_FRAMERATE_HIGH_SPEED			// Frame Rate High Speed
 #define MODE_XML_SCHEMA_VERSION				// XML SchemaVersion
 //#define MODE_SENSOR_MASTER				// Sensor Mode
 #define MODE_SENSOR_SHUTTER					// Sensor Shutter Mode
-#define MODE_SENSOR_DRRS					// Sensor DRRS Mode
+//#define MODE_SENSOR_DRRS					// Sensor DRRS Mode
 //#define MODE_SENSOR_IMX990				// Sensor Module IMX990
 //#define MODE_SENSOR_IMX991				// Sensor Module IMX991
 #define MODE_SENSOR_IMX992					// Sensor Module IMX992
 //#define MODE_SENSOR_IMX993				// Sensor Module IMX993
-#define MODE_SYSTEM_MANAGEMENT				// System Management Support
-#define MODE_IPU_MULTI						// IPU Multi Mode
+#define MODE_IPU_MULTI						// IPU Multi Mode			@@@1
 //#define MODE_MULTI_STREAM					// Multi Stream
 #define MODE_GIGE_10G						// GigE 10G
 //#define MODE_IEEE1588_PTP					// IEE1588 PTP

@@ -261,10 +261,6 @@ int ffcRegInit (unsigned int adrs, unsigned int size, int mode, int select)
 	// Address設定
 	OUT32 (FPGA_FFC_DMA_ADRS, adrs);
 
-	#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_FFC2_DMA_ADRS, (adrs + FFC_MEMORY_IPU_MULTI_INTERVAL));
-	#endif
-
 	// Check select Parameter
 	if ((select < FPGA_FFC_CTRL_SELECT_MIN) || (select > FPGA_FFC_CTRL_SELECT_MAX))
 	{
@@ -279,19 +275,8 @@ int ffcRegInit (unsigned int adrs, unsigned int size, int mode, int select)
 
 	// FFC Enable
 	OUT32 (FPGA_FFC_CTRL_ADRS, 0);						// OFF
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_FFC2_CTRL_ADRS, 0);						// OFF
-#endif
-
 	OUT32 (FPGA_FFC_CTRL_ADRS, selectBit);				// Select
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_FFC2_CTRL_ADRS, selectBit);				// Select
-#endif
-
 	OUT32 (FPGA_FFC_CTRL_ADRS, (selectBit | mode));		// Select & ON
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_FFC2_CTRL_ADRS, (selectBit | mode));	// Select & ON
-#endif
 
 _DONE:
 	return (status);
@@ -580,10 +565,6 @@ int ffcSetMode (int offsetMode, int gainMode)
 
 	// FFC Enable
 	OUT32 (FPGA_FFC_CTRL_ADRS, data);
-
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_FFC2_CTRL_ADRS, data);
-#endif
 
 _DONE:
 	if (startMode != 0)
@@ -1392,12 +1373,6 @@ int ffcSetOffsetData (int ffcNum, int x, int y, unsigned int data)
 #if defined (MODE_FFC_BIT_CALC)
 	int calc;
 #endif
-#if defined (MODE_IPU_MULTI)
-	int ipu;
-	int widthHalf;
-	int xLeft = -1;
-	int xRight = -1;
-#endif
 
 	// Width Max
 	if ((status = roiGetAreaWidthMax (&widthMax)) != AVAL_STATUS_SUCCESS)
@@ -1479,34 +1454,6 @@ int ffcSetOffsetData (int ffcNum, int x, int y, unsigned int data)
 	// X座標設定
 	x = flipX;
 
-#if defined (MODE_IPU_MULTI)
-	//--------------------------------------------------------------------------------
-	// 右左アドレスの算出
-	//--------------------------------------------------------------------------------
-	ipu = x / IMG_WIDTH_IPU_SIZE;
-	adrs += (ipu  * FFC_MEMORY_IPU_MULTI_INTERVAL);
-
-	//--------------------------------------------------------------------------------
-	// IPU=0
-	// ABA-052VIR：左側の1280～1295の領域を書き換えたら、右側の0～15(1296～1311)の領域も書き換える
-	// 
-	// IPU=1
-	// ABA-052VIR：右側の0～15(1328～1343)の領域を書き換えたら、左側の1296～1311の領域も書き換える
-	//--------------------------------------------------------------------------------
-
-	// 隠し座標の確認
-	if ((status = hideGridCalc (x, y, &xLeft, &xRight)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	//--------------------------------------------------------------------------------
-	// xアドレスの算出
-	//--------------------------------------------------------------------------------
-	x = x % IMG_WIDTH_IPU_SIZE;
-
-	if (ipu != 0)
-		x += IMG_WIDTH_OFFSET;
-#endif // #if defined (MODE_IPU_MULTI)
-
 	// アドレス算出
 	index = x * OFFSET_GAIN_UNIT_SIZE + y * FFC_WIDTH_DATA_ALIGH;
 
@@ -1522,46 +1469,6 @@ int ffcSetOffsetData (int ffcNum, int x, int y, unsigned int data)
 
 	// データ設定
 	OUT32 ((adrs + index), (readData | ((data & OFFSET_MASK)<<OFFSET_SHIFT)));
-
-
-#if defined (MODE_IPU_MULTI)
-	//--------------------------------------------------------------------------------
-	// IPU=0
-	// ABA-052VIR：左側の1280～1295の領域を書き換えたら、右側の0～15(1296～1311)の領域も書き換える
-	// 
-	// IPU=1
-	// ABA-052VIR：右側の0～15(1328～1343)の領域を書き換えたら、左側の1296～1311の領域も書き換える
-	//--------------------------------------------------------------------------------
-	// FFCアドレス取得
-	if ((status = ffcGetMemAdrs (ffcNum, FFC_MEMORY_EXT, (unsigned int *)&adrs)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	//--------------------------------------------------------------------------------
-	// 左が更新されたので、右も更新(先頭(0)のほう)
-	//--------------------------------------------------------------------------------
-	if (xRight != -1)
-	{
-		// アドレス算出
-		adrs +=  FFC_MEMORY_IPU_MULTI_INTERVAL;
-		index = xRight * 4 + y * FFC_WIDTH_DATA_ALIGH;
-
-		// データ設定
-		OUT32 ((adrs + index), (readData | ((data & OFFSET_MASK)<<OFFSET_SHIFT)));
-	}
-
-	//--------------------------------------------------------------------------------
-	// 右が更新されたので、左も更新(終端(widthHalf)のほう)
-	//--------------------------------------------------------------------------------
-	if (xLeft != -1)
-	{
-		// アドレス算出
-		widthHalf = IMG_WIDTH / IPU_COUNT;
-		index = widthHalf * 4 + xLeft * 4 + y * FFC_WIDTH_DATA_ALIGH;
-
-		// データ設定
-		OUT32 ((adrs + index), (readData | ((data & OFFSET_MASK)<<OFFSET_SHIFT)));
-	}
-#endif // #if defined (MODE_IPU_MULTI)
 
 	// キャッシュFlash
 	cacheFlush ();
@@ -1591,9 +1498,6 @@ int ffcGetOffsetData (int ffcNum, int x, int y, unsigned int *pData)
 	int widthMax, heightMax;
 #if defined (MODE_FFC_BIT_CALC)
 	int calc;
-#endif
-#if defined (MODE_IPU_MULTI)
-	int ipu;
 #endif
 
 	// Width Max
@@ -1658,16 +1562,6 @@ int ffcGetOffsetData (int ffcNum, int x, int y, unsigned int *pData)
 	// X座標設定
 	x = flipX;
 
-#if defined (MODE_IPU_MULTI)
-	ipu = x / IMG_WIDTH_IPU_SIZE;
-	adrs += (ipu  * FFC_MEMORY_IPU_MULTI_INTERVAL);
-
-	x = x % IMG_WIDTH_IPU_SIZE;
-
-	if (ipu != 0)
-		x += IMG_WIDTH_OFFSET;
-#endif
-
 	// アドレス算出
 #if defined (MODE_FFC_DATA_ALIGN_ADJUST)
 	index = x * OFFSET_GAIN_UNIT_SIZE + y * FFC_WIDTH_DATA_ALIGH;
@@ -1708,12 +1602,6 @@ int ffcSetGainData (int ffcNum, int x, int y, unsigned int data)
 	unsigned int index, adrs, readData;
 	int flipX;
 	int widthMax, heightMax;
-#if defined (MODE_IPU_MULTI)
-	int ipu;
-	int widthHalf;
-	int xLeft = -1;
-	int xRight = -1;
-#endif
 
 	// Width Max
 	if ((status = roiGetAreaWidthMax (&widthMax)) != AVAL_STATUS_SUCCESS)
@@ -1780,35 +1668,6 @@ int ffcSetGainData (int ffcNum, int x, int y, unsigned int data)
 	// X座標設定
 	x = flipX;
 
-#if defined (MODE_IPU_MULTI)
-	//--------------------------------------------------------------------------------
-	// 右左アドレスの算出
-	//--------------------------------------------------------------------------------
-	ipu = x / IMG_WIDTH_IPU_SIZE;
-	adrs += (ipu  * FFC_MEMORY_IPU_MULTI_INTERVAL);
-
-	//--------------------------------------------------------------------------------
-	// IPU=0
-	// ABA-052VIR：左側の1280～1295の領域を書き換えたら、右側の0～15(1296～1311)の領域も書き換える
-	// 
-	// IPU=1
-	// ABA-052VIR：右側の0～15(1328～1343)の領域を書き換えたら、左側の1296～1311の領域も書き換える
-	//--------------------------------------------------------------------------------
-
-	// 隠し座標の確認
-	if ((status = hideGridCalc (x, y, &xLeft, &xRight)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	//--------------------------------------------------------------------------------
-	// xアドレスの算出
-	//--------------------------------------------------------------------------------
-	x = x % IMG_WIDTH_IPU_SIZE;
-
-	if (ipu != 0)
-		x += IMG_WIDTH_OFFSET;
-
-#endif // #if defined (MODE_IPU_MULTI)
-
 	// アドレス算出
 	index = x * OFFSET_GAIN_UNIT_SIZE + y * FFC_WIDTH_DATA_ALIGH;
 
@@ -1820,45 +1679,6 @@ int ffcSetGainData (int ffcNum, int x, int y, unsigned int data)
 
 	// データ設定
 	OUT32 ((adrs + index), (readData | (data & GAIN_MASK)));
-
-#if defined (MODE_IPU_MULTI)
-	//--------------------------------------------------------------------------------
-	// IPU=0
-	// ABA-052VIR：左側の1280～1295の領域を書き換えたら、右側の0～15(1296～1311)の領域も書き換える
-	// 
-	// IPU=1
-	// ABA-052VIR：右側の0～15(1328～1343)の領域を書き換えたら、左側の1296～1311の領域も書き換える
-	//--------------------------------------------------------------------------------
-	// FFCアドレス取得
-	if ((status = ffcGetMemAdrs (ffcNum, FFC_MEMORY_EXT, (unsigned int *)&adrs)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	//--------------------------------------------------------------------------------
-	// 左が更新されたので、右も更新(先頭(0)のほう)
-	//--------------------------------------------------------------------------------
-	if (xRight != -1)
-	{
-		// アドレス算出
-		adrs +=  FFC_MEMORY_IPU_MULTI_INTERVAL;
-		index = xRight * 4 + y *FFC_WIDTH_DATA_ALIGH;
-
-		// データ設定
-		OUT32 ((adrs + index), (readData | (data & GAIN_MASK)));
-	}
-
-	//--------------------------------------------------------------------------------
-	// 右が更新されたので、左も更新(終端(widthHalf)のほう)
-	//--------------------------------------------------------------------------------
-	if (xLeft != -1)
-	{
-		// アドレス算出
-		widthHalf = IMG_WIDTH / IPU_COUNT;
-		index = widthHalf * 4 + xLeft * 4 + y * FFC_WIDTH_DATA_ALIGH;
-
-		// データ設定
-		OUT32 ((adrs + index), (readData | (data & GAIN_MASK)));
-	}
-#endif // #if defined (MODE_IPU_MULTI)
 
 	// キャッシュFlash
 	cacheFlush ();
@@ -1886,9 +1706,6 @@ int ffcGetGainData (int ffcNum, int x, int y, unsigned int *pData)
 	unsigned int index, adrs;
 	int flipX;
 	int widthMax, heightMax;
-#if defined (MODE_IPU_MULTI)
-	int ipu;
-#endif
 
 	// Width Max
 	if ((status = roiGetAreaWidthMax (&widthMax)) != AVAL_STATUS_SUCCESS)
@@ -1951,16 +1768,6 @@ int ffcGetGainData (int ffcNum, int x, int y, unsigned int *pData)
 
 	// X座標設定
 	x = flipX;
-
-#if defined (MODE_IPU_MULTI)
-	ipu = x / IMG_WIDTH_IPU_SIZE;
-	adrs += (ipu  * FFC_MEMORY_IPU_MULTI_INTERVAL);
-
-	x = x % IMG_WIDTH_IPU_SIZE;
-
-	if (ipu != 0)
-		x += IMG_WIDTH_OFFSET;
-#endif
 
 	// アドレス算出
 	index = x * OFFSET_GAIN_UNIT_SIZE + y * FFC_WIDTH_DATA_ALIGH;
@@ -2591,7 +2398,7 @@ int ffcDataUpload (int ffcNum)
 	unsigned char *pUnCompBuf = NULL;
 	int uncomprLen;
 #endif // COMPRESS_MODE
-#if defined (MODE_FFC_DATA_ALIGN_ADJUST) && !defined (MODE_IPU_MULTI)
+#if defined (MODE_FFC_DATA_ALIGN_ADJUST)
 	int x, y;
 	unsigned int memAdrs2;
 	unsigned int *ptrL;
@@ -2670,8 +2477,6 @@ int ffcDataUpload (int ffcNum)
 		goto _DONE;
 
 	// FFCテーブルにCopy
-#if !defined (MODE_IPU_MULTI)
-
 	ptrL = (unsigned int *)pBinBuff;
 	memAdrs2 = memAdrs;
 
@@ -2685,16 +2490,6 @@ int ffcDataUpload (int ffcNum)
 
 		memAdrs2 += FFC_WIDTH_DATA_ALIGH;
 	}
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-	ffcCopyBuffToExtMem (memAdrs, (unsigned int *)pBinBuff);
-
-	if ((status = ffcSetMarginGridData ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-
-#endif	// #if !defined (MODE_IPU_MULTI)
 
 	// キャッシュFlash
 	cacheFlush ();
@@ -2945,10 +2740,8 @@ int ffcDataUploadBin (int ffcNum)
 	unsigned int memAdrs;
 	char *pAsciiBuff = NULL;
 	int updateSize;
-#if !defined (MODE_IPU_MULTI)
 	unsigned int srcAdrs, data;
 	int i;
-#endif
 #if !defined (MODE_FFC_DATA_ALIGN_ADJUST)
 	int copySize;
 #endif
@@ -2958,7 +2751,7 @@ int ffcDataUploadBin (int ffcNum)
 	int uncomprLen;
 #endif // COMPRESS_MODE
 
-#if defined (MODE_FFC_DATA_ALIGN_ADJUST) && !defined (MODE_IPU_MULTI)
+#if defined (MODE_FFC_DATA_ALIGN_ADJUST)
 	int x, y;
 	unsigned int memAdrs2;
 #endif
@@ -3025,7 +2818,6 @@ int ffcDataUploadBin (int ffcNum)
 	if ((status = ffcDataSwap ((unsigned int)pAsciiNewBuff, FFC_DATA_SIZE)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-#if !defined (MODE_IPU_MULTI)
 	// FFCテーブルにCopy
 	srcAdrs = (unsigned int) pAsciiNewBuff;
 	memAdrs2 = memAdrs;
@@ -3040,12 +2832,6 @@ int ffcDataUploadBin (int ffcNum)
 
 		memAdrs2 += FFC_WIDTH_DATA_ALIGH;
 	}
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-	ffcCopyBuffToExtMem (memAdrs, (unsigned int *)pAsciiNewBuff);
-
-#endif	// #if !defined (MODE_IPU_MULTI)
 
 	// キャッシュFlash
 	cacheFlush ();
@@ -3336,7 +3122,6 @@ _DONE:
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-#if !defined (MODE_IPU_MULTI)
 int lfFfcDownloadBintoAscii (void *pAscii, void *pBinary, unsigned int *pSize)
 {
 	int status = AVAL_STATUS_SUCCESS;
@@ -3525,222 +3310,6 @@ _DONE:
 	return (status);
 }
 
-#else // #if !defined (MODE_IPU_MULTI)
-
-//**********************************************************************************
-//	FFC Download Data Bin=>ASCII変換
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		pAscii				：ASCIIデータを格納するポインタ
-//		pBinary				：Binaryデータを格納するポインタ
-//		pSize				：変換サイズを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int lfFfcDownloadBintoAscii (void *pAscii, void *pBinary, unsigned int *pSize)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int i, j;
-	unsigned char *ptrA;
-	unsigned int *ptrBin32;
-	unsigned int dataCount;
-	unsigned int data32;
-	unsigned int offsetData, gainData;
-	char tempBuff[FFC_TEMP_SIZE];
-	int len;
-	int flipMode;
-	int width, height;
-	int ffcSize;
-	unsigned int x, y;
-	int ipuWidtUnit, ipu;
-
-	// Check pAscii Parameter
-	if (pAscii == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pAscii NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// Check pBinary Parameter
-	if (pBinary == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pBinary NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// Check pSize Parameter
-	if (pSize == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FFC Download pSize NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// Get Flip
-#if !defined (MODE_SENSOR_XFLIP)
-	if ((status = aoiGetXflip (&flipMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-#else
-	flipMode = XFLIP_DISABLE;
-#endif
-	
-	// Bin=>ASCII変換
-	dataCount = 0;
-	ptrA = (unsigned char *)pAscii;
-	ptrBin32 = (unsigned int *)pBinary;
-
-
-	// Get Width
-	width = IMG_WIDTH;
-
-	// Get Height
-	height = IMG_HEIGHT;
-
-	// FFC Number
-	ffcSize = FFC_DATA_NUM_ALIGN;
-
-	ipuWidtUnit = width / IPU_COUNT;
-	ipu = 0;
-	dataCount = 0;
-	i= 0;
-	for (y=0; y<height; y++)
-	{
-		for (x=0; x<width; x++, dataCount++)
-		{
-			if ((x%ipuWidtUnit) == 0)
-			{
-				ipu = x / ipuWidtUnit;
-
-				ptrBin32 = (unsigned int *)((unsigned long)pBinary + y * FFC_WIDTH_DATA_ALIGH + (ipu * FFC_MEMORY_IPU_MULTI_INTERVAL));
-
-				if (ipu != 0)
-					ptrBin32 += IMG_WIDTH_OFFSET;
-
-				// Flip有効?
-				#if !defined (MODE_SENSOR_X_REVERSE)
-
-				if (flipMode == XFLIP_ENABLE)
-					ptrBin32 = (unsigned int *)((unsigned long)ptrBin32 + (width - 1) * 4);
-
-				#else
-
-				if (flipMode == XFLIP_DISABLE)
-					ptrBin32 = (unsigned int *)((unsigned long)ptrBin32 + (width - 1) * 4);
-
-				#endif
-			}
-
-			// 実際にメモリを使用しているカウントのCheck
-			if (i > FFC_DOWNLOAD_SIZE)
-			{
-				status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-				sprintf (gLogMsgBuff, "FFC Download Save Data Size Over Error. size = 0x%x\n", FFC_DOWNLOAD_SIZE);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-				goto _DONE;
-			}
-
-			//------------------------------------------------------------
-			// データ変換
-			//------------------------------------------------------------
-			data32 = *ptrBin32;
-
-			// Flip有効?
-	#if !defined (MODE_SENSOR_X_REVERSE)
-			if (flipMode == XFLIP_ENABLE)
-				ptrBin32--;
-			else
-				ptrBin32++;
-	#else
-			if (flipMode == XFLIP_DISABLE)
-				ptrBin32--;
-			else
-				ptrBin32++;
-	#endif
-
-			// オフセットデータ
-			offsetData = (data32 >> OFFSET_SHIFT) & OFFSET_MASK;
-
-			// ゲインデータ
-			gainData = data32 & GAIN_MASK;
-
-			//------------------------------------------------------------
-			// オフセットデータをASCIIに変換
-			//------------------------------------------------------------
-			sprintf ((char *)tempBuff, "%d", offsetData);
-			len = strlen ((char *)tempBuff);
-			for (j=0; j<len; j++)
-			{
-				ptrA[i] = (unsigned char)(tempBuff[j]&0xff);
-
-				i++;
-				if (i > FFC_DOWNLOAD_SIZE)
-					continue;
-			}
-
-			//------------------------------------------------------------
-			// カンマ追加
-			//------------------------------------------------------------
-			if (i != 0)
-				ptrA[i++] = ',';
-
-			if (i > FFC_DOWNLOAD_SIZE)
-				continue;
-
-			//------------------------------------------------------------
-			// ゲインデータをASCIIに変換
-			//------------------------------------------------------------
-			sprintf ((char *)tempBuff, "%d", gainData);
-			len = strlen ((char *)tempBuff);
-			for (j=0; j<len; j++)
-			{
-				ptrA[i] = (unsigned char)(tempBuff[j]&0xff);
-				i++;
-				if (i > FFC_DOWNLOAD_SIZE)
-					continue;
-			}
-
-			//------------------------------------------------------------
-			// カンマ追加
-			//------------------------------------------------------------
-			if (i != 0)
-				ptrA[i++] = ',';
-
-			if (i > FFC_DOWNLOAD_SIZE)
-				continue;
-
-			//------------------------------------------------------------
-			// 改行
-			//------------------------------------------------------------
-			ptrA[i++] = 0x0d;	// \r
-			if (i > FFC_DOWNLOAD_SIZE)
-				continue;
-
-			ptrA[i++]   = 0x0a;	// \n
-			if (i > FFC_DOWNLOAD_SIZE)
-				continue;
-		}
-	}
-
-	// データ数Check
-	if (dataCount != ffcSize)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC Upload Data Count Error. Count = %d\n", dataCount);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// 変換サイズ
-	*pSize = i;
-
-_DONE:
-	return (status);
-}
-#endif // #if !defined (MODE_IPU_MULTI)
-
 
 //**********************************************************************************
 //	FFC Data Download(レジスタ版)
@@ -3879,7 +3448,7 @@ _DONE:
 	return (status);
 }
 
-#if !defined (MODE_IPU_MULTI)
+
 //**********************************************************************************
 // FFCデータを配置しなおし
 //----------------------------------------------------------------------------------
@@ -3958,112 +3527,7 @@ int ffcSetMemoryOffsetGain (int ffcNo, unsigned int memAdrs, unsigned short *pIm
 	return (status);
 }
 
-#else // #if !defined (MODE_IPU_MULTI)
 
-//**********************************************************************************
-// FFCデータを配置しなおし
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		ffcNo				： FFC番号
-//		pImageOffset		： オフセットデータが格納されたポインタ
-//		pImageGain			： ゲインデータが格納されたポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int ffcSetMemoryOffsetGain (int ffcNo, unsigned int memAdrs, unsigned short *pImageOffset, int *pImageGain)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned char *ptrWriteB;
-	unsigned char *ptrReadB;
-	unsigned int oData;
-	int gData;
-	unsigned int data;
-	int x, y;
-	int ipu;
-	unsigned short *pPtrOffset;
-	int *pPtrGain;
-	int xOffset;
-	unsigned char data8;
-	unsigned int data32;
-
-	for (ipu=0; ipu < IPU_COUNT; ipu++)
-	{
-		for (y=0; y<IMG_HEIGHT; y++)
-		{
-			if (ipu == 0)
-				xOffset = 0;
-			else
-				xOffset = IMG_WIDTH_OFFSET;
-
-			// 外部メモリアドレス設定
-			ptrWriteB = (unsigned char *)(memAdrs + (FFC_WIDTH_DATA_ALIGH * y) + (FFC_MEMORY_IPU_MULTI_INTERVAL * ipu) + (xOffset * 4));
-			ptrReadB = ptrWriteB;
-
-			// オフセット格納アドレス
-			pPtrOffset = (unsigned short *)(pImageOffset + (y * IMG_WIDTH) + (ipu * (IMG_WIDTH/IPU_COUNT)));
-
-			// ゲイン格納アドレス
-			pPtrGain = (int *)(pImageGain + (y * IMG_WIDTH) + ipu * (IMG_WIDTH/IPU_COUNT));
-
-			for (x=0; x<IMG_WIDTH_IPU_SIZE; x++, pPtrOffset++, pPtrGain++)
-			{
-				// Read
-				data8 = *ptrReadB;
-				data32 = (unsigned int)(data8 << 16);
-				ptrReadB++;
-
-				data8 = *ptrReadB;
-				data32 |= (unsigned int)(data8 << 8);
-				ptrReadB++;
-				
-				data8 = *ptrReadB;
-				data32 |= (unsigned int)data8;
-				ptrReadB++;
-				
-				// Save
-				oData = (data32>>16) & 0xffff;
-				gData = data32 & 0xff;
-
-				// オフセットデータがNULLでなければ新規データを設定
-				if (pImageOffset != NULL)
-					oData = (unsigned int)*pPtrOffset;
-
-				// ゲインデータがNULLでなければ新規データを設定
- 				if (pImageGain != NULL)
-					gData = (int)*pPtrGain;
-
-				// Write
-				data32 = (oData & 0xffff) << 16;
-				data32 |= (gData & 0xffff);
-
-				*ptrWriteB = (unsigned char)(data32 >> 16);
-				ptrWriteB++;
-
-				*ptrWriteB = (unsigned char)(data32 >> 8);
-				ptrWriteB++;
-
-				*ptrWriteB = (unsigned char)data32;
-				ptrWriteB++;
-			}
-		}
-	}
-
-	// ipuの1個目の最後の16画素の追加。
-	// ipuの2個目の最初の16画素の追加。
-	if ((status = ffcSetMarginGridData ()) !=  AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// キャッシュFlash
-	cacheFlush ();
-
-_DONE:
-	return (status);
-}
-#endif // #if !defined (MODE_IPU_MULTI)
-
-
-#if !defined (MODE_IPU_MULTI)
 //**********************************************************************************
 // FFCデータを取得
 //----------------------------------------------------------------------------------
@@ -4117,87 +3581,6 @@ int ffcGetMemoryOffsetGain (int ffcNo, unsigned int memAdrs, unsigned short *pIm
 	return (status);
 }
 
-#else // #if !defined (MODE_IPU_MULTI)
-
-//**********************************************************************************
-// FFCデータを取得
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		ffcNo				： FFC番号
-//		memAdrs				： FFCデータが格納されたアドレス
-//		pImageOffset		： オフセットデータを格納するポインタ
-//		pImageGain			： ゲインデータを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int ffcGetMemoryOffsetGain (int ffcNo, unsigned int memAdrs, unsigned short *pImageOffset, int *pImageGain)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int *ptrL;
-	unsigned int oData;
-	int gData;
-	unsigned int data;
-	int x, y;
-	int ipu;
-	unsigned short *pPtrOffset;
-	int *pPtrGain;
-	int xOffset;
-
-	for (ipu=0; ipu < IPU_COUNT; ipu++)
-	{
-		for (y=0; y<IMG_HEIGHT; y++)
-		{
-			if (ipu == 0)
-				xOffset = 0;
-			else
-				xOffset = IMG_WIDTH_OFFSET;
-
-			// 外部メモリアドレス設定
-			ptrL = (unsigned int *)(memAdrs + (FFC_WIDTH_DATA_ALIGH * y) + (FFC_MEMORY_IPU_MULTI_INTERVAL * ipu) + (xOffset * 4));
-
-			// オフセット格納アドレス
-			pPtrOffset = (unsigned short *)(pImageOffset + (y * IMG_WIDTH) + (ipu * (IMG_WIDTH/IPU_COUNT)));
-
-			// ゲイン格納アドレス
-			pPtrGain = (int *)(pImageGain + (y * IMG_WIDTH) + ipu * (IMG_WIDTH/IPU_COUNT));
-
-			for (x=0; x<IMG_WIDTH_IPU_SIZE; x++, ptrL++, pPtrOffset++, pPtrGain++)
-			{
-				// Read
-				data = *ptrL;
-
-				// Save
-				oData = OFFSET_GET_DATA (data);
-				gData = GAIN_GET_DATA (data);
-
-				// オフセットデータがNULLでなければ新規データを設定
-				if (pImageOffset != NULL)
-					*pPtrOffset = oData;
-
-				// ゲインデータがNULLでなければ新規データを設定
- 				if (pImageGain != NULL)
-					*pPtrGain = gData;
-
-				*ptrL = (unsigned int)(OFFSET_SET_DATA(oData) | GAIN_SET_DATA(gData));
-			}
-		}
-	}
-
-	// ipuの1個目の最後の16画素の追加。
-	// ipuの2個目の最初の16画素の追加。
-	if ((status = ffcSetMarginGridData ()) !=  AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// キャッシュFlash
-	cacheFlush ();
-
-_DONE:
-	return (status);
-}
-
-#endif // #if !defined (MODE_IPU_MULTI)
-
 
 //**********************************************************************************
 // FFCデータをDDR管理外から内部メモリに移動
@@ -4216,9 +3599,6 @@ int ffcGetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 	int p;
 	unsigned char *prtExtMem8;
 	unsigned char *prtIntMem8;
-#if defined (MODE_IPU_MULTI)
-	int ipu;
-#endif
 
 	// Check extMemAdrs Parameter
 	if (extMemAdrs == 0)
@@ -4239,8 +3619,6 @@ int ffcGetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 	// 内部メモリアドレス設定
 	prtIntMem8 = (unsigned char *)intMemAdrs;
 
-#if !defined (MODE_IPU_MULTI)
-
 	for (y=0; y<IMG_HEIGHT; y++)
 	{
 		// 外部メモリアドレス設定
@@ -4253,26 +3631,6 @@ int ffcGetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 				*prtIntMem8 = *prtExtMem8;
 		}
 	}
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-	for (ipu=0; ipu < IPU_COUNT; ipu++)
-	{
-		for (y=0; y<IMG_HEIGHT; y++)
-		{
-			// 外部メモリアドレス設定
-			prtExtMem8 = (unsigned char *)(extMemAdrs + FFC_WIDTH_DATA_ALIGH * y + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu);
-
-			for (x=0; x<IMG_WIDTH_IPU_MULTI_HALF; x++)
-			{
-				// FFCデータが3画素
-				for (p=0; p<3; p++, prtExtMem8++, prtIntMem8++)
-					*prtIntMem8 = *prtExtMem8;
-			}
-		}
-	}
-
-#endif // #if !defined (MODE_IPU_MULTI)
 
 	// キャッシュFlash
 	cacheFlush ();
@@ -4299,9 +3657,6 @@ int ffcSetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 	unsigned char *prtExtMem8;
 	unsigned char *prtIntMem8;
 	int p;
-#if defined (MODE_IPU_MULTI)
-	int ipu;
-#endif
 
 	// Check extMemAdrs Parameter
 	if (extMemAdrs == 0)
@@ -4322,8 +3677,6 @@ int ffcSetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 	// 内部メモリアドレス設定
 	prtIntMem8 = (unsigned char *)intMemAdrs;
 
-#if !defined (MODE_IPU_MULTI)
-
 	for (y=0; y<IMG_HEIGHT; y++)
 	{
 		// 外部メモリアドレス設定
@@ -4337,26 +3690,6 @@ int ffcSetExtMemory (unsigned int extMemAdrs, unsigned int intMemAdrs)
 		}
 	}
 
-#else // #if !defined (MODE_IPU_MULTI)
-
-	for (ipu=0; ipu < IPU_COUNT; ipu++)
-	{
-		for (y=0; y<IMG_HEIGHT; y++)
-		{
-			// 外部メモリアドレス設定
-			prtExtMem8 = (unsigned char *)(extMemAdrs + FFC_WIDTH_DATA_ALIGH * y + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu);
-
-			for (x=0; x<IMG_WIDTH_IPU_MULTI_HALF; x++)
-			{
-				// FFCデータが3画素
-				for (p=0; p<3; p++, prtExtMem8++, prtIntMem8++)
-					*prtExtMem8 = *prtIntMem8;
-			}
-		}
-	}
-
-#endif // #if !defined (MODE_IPU_MULTI)
-
 	// キャッシュFlash
 	cacheFlush ();
 
@@ -4365,7 +3698,6 @@ _DONE:
 }
 
 
-#if !defined (MODE_IPU_MULTI)
 //**********************************************************************************
 // FFCオフセット/ゲインデータをFlashに書き込み(Ver.1.5)
 //----------------------------------------------------------------------------------
@@ -4392,13 +3724,13 @@ int ffcToFlash (unsigned int flashAdrs, unsigned int memAdrs, int size)
 #if defined (MODE_SENSOR_XFLIP)
 	// Flip取得
 	if ((status = aoiGetXflip (&flipMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE
+		goto _DONE;
 
 	// FFCデータ反転
 	if (flipMode == MODE_ENABLE)
 	{
 		if ((status = ffcDataXFlip (flipMode)) != AVAL_STATUS_SUCCESS)
-			goto _DONE
+			goto _DONE;
 	}
 #endif
 
@@ -4406,7 +3738,7 @@ int ffcToFlash (unsigned int flashAdrs, unsigned int memAdrs, int size)
 	for (adrs=flashAdrs; adrs<(flashAdrs + size); adrs+=AXI_QSPI_FLASH_SEC_SIZE)
 	{
 		if ((status = qspiFlashSectorErase (adrs)) != AVAL_STATUS_SUCCESS)
-			goto _DONE
+			goto _DONE;
 	}
 
 	// Write
@@ -4416,7 +3748,7 @@ int ffcToFlash (unsigned int flashAdrs, unsigned int memAdrs, int size)
 	for (y=0; y<IMG_HEIGHT; y++)
 	{
 		if ((status = qspiFlashWrite (flashAdrs2, (unsigned char *)memAdrs2, size2)) != AVAL_STATUS_SUCCESS)
-			goto _DONE
+			goto _DONE;
 
 		flashAdrs2 += FFC_WIDTH_DATA_SIZE_FIRST;
 		memAdrs2 += FFC_WIDTH_DATA_ALIGH;
@@ -4427,97 +3759,6 @@ int ffcToFlash (unsigned int flashAdrs, unsigned int memAdrs, int size)
 #if defined (MODE_SENSOR_XFLIP)
 	// Flip取得
 	if ((status = aoiGetXflip (&flipMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE
-
-	// FFCデータ反転
-	if (flipMode == MODE_ENABLE)
-	{
-		if ((status = ffcDataXFlip (flipMode)) != AVAL_STATUS_SUCCESS)
-			goto _DONE
-	}
-#endif
-
-_DONE:
-	return (status);
-}
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-//**********************************************************************************
-// FFCオフセット/ゲインデータをFlashに書き込み(Ver.1.5)
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		flashAdrs			：Flashアドレス
-//		memAdrs				：オフセットデータが格納されたメモリアドレス
-//		size				：書き込みサイズ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int ffcToFlash (unsigned int flashAdrs, unsigned int memAdrs, int size)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int adrs;
-	int y, ipu;
-	unsigned int flashAdrs2;
-	int size2;
-	unsigned long memAdrs2;
-#if defined (MODE_SENSOR_XFLIP)
-	int flipMode;
-#endif
-	
-	//-----------------------------------------------------------
-	// FFCデータ反転
-	//-----------------------------------------------------------
-#if defined (MODE_SENSOR_XFLIP)
-	// Flip取得
-	if ((status = aoiGetXflip (&flipMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// FFCデータ反転
-	if (flipMode == MODE_ENABLE)
-	{
-		if ((status = ffcDataXFlip (flipMode)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-#endif
-
-	//-----------------------------------------------------------
-	// Erase
-	//-----------------------------------------------------------
-	for (adrs=flashAdrs; adrs<(flashAdrs + size); adrs+=AXI_QSPI_FLASH_SEC_SIZE)
-	{
-		if ((status = qspiFlashSectorErase (adrs)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-
-	//-----------------------------------------------------------
-	// Write
-	//-----------------------------------------------------------
-	flashAdrs2 = flashAdrs;
-	size2 = IMG_WIDTH / IPU_COUNT * 3;
-	for (ipu=0; ipu < IPU_COUNT; ipu++)
-	{
-		memAdrs2 = memAdrs + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu;
-		if (ipu != 0)
-			memAdrs2 += (IMG_WIDTH_OFFSET * 3);
-
-		for (y=0; y<IMG_HEIGHT; y++)
-		{
-			if ((status = qspiFlashWrite (flashAdrs2, (unsigned char *)memAdrs2, size2)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-
-			flashAdrs2 += size2;
-			memAdrs2 += FFC_WIDTH_DATA_ALIGH;
-		}
-	}
-
-	//-----------------------------------------------------------
-	// FFCデータ反転
-	//-----------------------------------------------------------
-#if defined (MODE_SENSOR_XFLIP)
-	// Flip取得
-	if ((status = aoiGetXflip (&flipMode)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// FFCデータ反転
@@ -4531,8 +3772,6 @@ int ffcToFlash (unsigned int flashAdrs, unsigned int memAdrs, int size)
 _DONE:
 	return (status);
 }
-
-#endif // #if !defined (MODE_IPU_MULTI)
 
 
 //**********************************************************************************
@@ -4556,7 +3795,6 @@ int ffcToFlashAdmin (unsigned int flashAdrs, unsigned int memAdrs, int size)
 }
 
 
-#if !defined (MODE_IPU_MULTI)
 //**********************************************************************************
 // FFCオフセット/ゲインデータをメモリに書き込む(Ver.1.5)
 //----------------------------------------------------------------------------------
@@ -4611,78 +3849,6 @@ int ffcToMemory (unsigned int flashAdrs, unsigned int memAdrs, int size)
 _DONE:
 	return (status);
 }
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-//**********************************************************************************
-// FFCオフセット/ゲインデータをメモリに書き込む
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		flashAdrs			：FFC Flashアドレス
-//		memAdrs				：FFC メモリアドレス
-//		size				：FFC サイズ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int ffcToMemory (unsigned int flashAdrs, unsigned int memAdrs, int size)
-{
-	int status;
-#if defined (MODE_SENSOR_XFLIP)
-	int flipMode;
-#endif
-	int y, ipu;
-	unsigned int flashAdrs2;
-	int size2;
-	unsigned long memAdrs2;
-
-	flashAdrs2 = flashAdrs;
-	size2 = IMG_WIDTH / IPU_COUNT * 3;
-
-	for (ipu=0; ipu < IPU_COUNT; ipu++)
-	{
-		memAdrs2 = memAdrs + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu;
-
-		if (ipu != 0)
-			memAdrs2 += (IMG_WIDTH_OFFSET * 3);
-
-		for (y=0; y<IMG_HEIGHT; y++)
-		{
-			if ((status = qspiFlashRead (flashAdrs2, (unsigned char *)memAdrs2, size2)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-
-			flashAdrs2 += size2;
-			memAdrs2 += FFC_WIDTH_DATA_ALIGH;
-		}
-	}
-
-	// ipuの1個目の最後の16画素の追加。
-	// ipuの2個目の最初の16画素の追加。
-	if ((status = ffcSetMarginGridData()) !=  AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// FFCデータ反転
-#if defined (MODE_SENSOR_XFLIP)
-	// Flip取得
-	if ((status = aoiGetXflip (&flipMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// FFCデータ反転
-	if (flipMode == MODE_ENABLE)
-	{
-		if ((status = ffcDataXFlip (flipMode)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-#endif
-
-	// キャッシュFlash
-	cacheFlush ();
-
-_DONE:
-	return (status);
-}
-
-#endif // #if !defined (MODE_IPU_MULTI)
 
 
 //**********************************************************************************
@@ -4904,10 +4070,6 @@ int ffcSetBlackTarget (unsigned int data)
 
 	// 黒レベル目標値設定
 	OUT32 (FPGA_FFC_BLACK_TARGET_ADRS, data);
-
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_FFC2_BLACK_TARGET_ADRS, data);
-#endif
 
 	// DDR管理外黒レベル目標値設定
 	OUT32 (FIRM_DATA_FFC_BLACK_ADRS, data);
@@ -5737,20 +4899,16 @@ int ffcAdjustUpdate (void)
 int ffcSetMemoryNormalFirst (void *srcAdrs, unsigned int offset, unsigned int size)
 {
 	int status = AVAL_STATUS_SUCCESS;
-#if !defined (MODE_IPU_MULTI)
 	int i;
 	unsigned int data;
 	int x, y;
 	unsigned int memAdrs2;
-#endif
 	unsigned int memAdrs;
 	int ffcNo = 0;
 
 	// メモリアドレス取得
 	if ((status = ffcGetMemAdrs (ffcNo, FFC_MEMORY_EXT, &memAdrs)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
-#if !defined (MODE_IPU_MULTI)
 
 	memAdrs2 = memAdrs;
 	i=0;
@@ -5764,12 +4922,6 @@ int ffcSetMemoryNormalFirst (void *srcAdrs, unsigned int offset, unsigned int si
 
 		memAdrs2 += FFC_WIDTH_DATA_ALIGH;
 	}
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-	ffcCopyBuffToExtMem (memAdrs, (unsigned int *)srcAdrs);
-
-#endif // #if !defined (MODE_IPU_MULTI)
 
 	// キャッシュFlash
 	cacheFlush ();
@@ -5793,20 +4945,16 @@ _DONE:
 int ffcGetMemoryNormalFirst (void *desAdrs, unsigned int offset, unsigned int size)
 {
 	int status = AVAL_STATUS_SUCCESS;
-#if !defined (MODE_IPU_MULTI)
 	int i;
 	unsigned int data;
 	int x, y;
 	unsigned int memAdrs2;
-#endif
 	unsigned int memAdrs;
 	int ffcNo = 0;
 
 	// メモリアドレス取得
 	if ((status = ffcGetMemAdrs (ffcNo, FFC_MEMORY_EXT, &memAdrs)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
-#if !defined (MODE_IPU_MULTI)
 
 	memAdrs2 = memAdrs;
 	i=0;
@@ -5820,11 +4968,6 @@ int ffcGetMemoryNormalFirst (void *desAdrs, unsigned int offset, unsigned int si
 
 		memAdrs2 += FFC_WIDTH_DATA_ALIGH;
 	}
-#else // #if !defined (MODE_IPU_MULTI)
-
-	ffcCopyExtMemToBuff (memAdrs, (unsigned int *)desAdrs);
-
-#endif // #if !defined (MODE_IPU_MULTI)
 
 	// キャッシュFlash
 	cacheFlush ();
@@ -6115,8 +5258,6 @@ _DONE:
 
 
 #if defined (MODE_SENSOR_XFLIP)
-
-#if !defined (MODE_IPU_MULTI)
 //**********************************************************************************
 //	FFC Data XFlip
 //----------------------------------------------------------------------------------
@@ -6191,132 +5332,6 @@ _DONE:
 
 	return (status);
 }
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-//**********************************************************************************
-//	FFC Data XFlip
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		mode				：0=正転する/1=反転する
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int ffcDataXFlip (int mode)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int x, y;
-	unsigned int ffcMemAdrs;
-	unsigned int ffcMemAdrsLeftSrc, ffcMemAdrsLeftDes;
-	unsigned int ffcMemAdrsRightSrc, ffcMemAdrsRightDes;
-	int width, widthL;
-	int height;
-	unsigned int *pBuffLeft = NULL;
-	unsigned int *pBuffRight = NULL;
-	unsigned int *pBuffLeft2 = NULL;
-	unsigned int *pBuffRight2= NULL;
-	unsigned int tempAdrs;
-	int ffcNo = 0;
-
-	// データFlipあり／なし
-	if (ffcGetXFlipFlag () == MODE_DISABLE)
-		goto _DONE;
-
-	// Check mode Parameter
-	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "FFC X Flip mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// Width Max取得
-	width = IMG_WIDTH / IPU_COUNT;
-	widthL = width * 4;
-
-	// Height Max取得
-	height = sensorHeight ();
-
-	// メモリリクエスト
-	if ((pBuffLeft = (unsigned int *)malloc (widthL)) == NULL)
-	{ 
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		sprintf (gLogMsgBuff, "FFC X Flip Malloc Error. size = 0x%x\n", width);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	if ((pBuffRight = (unsigned int *)malloc (widthL)) == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		sprintf (gLogMsgBuff, "FFC X Flip Malloc Error. size = 0x%x\n", width);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// メモリアドレス取得
-	if ((status = ffcGetMemAdrs (ffcNo, FFC_MEMORY_EXT, &ffcMemAdrs)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// 右左も入れ替えで左用データ
-	ffcMemAdrsLeftSrc = ffcMemAdrs;
-	ffcMemAdrsLeftDes = ffcMemAdrs + FFC_MEMORY_IPU_MULTI_INTERVAL;
-
-	// 右左も入れ替えで右用データ
-	ffcMemAdrsRightSrc = ffcMemAdrs + FFC_MEMORY_IPU_MULTI_INTERVAL;
-	ffcMemAdrsRightDes = ffcMemAdrs;
-
-	for (y=0; y<height; y++)
-	{
-		// 1ラインバッファに読み込み(終端から)
-		pBuffLeft2 = pBuffLeft;
-		pBuffRight2 = pBuffRight;
-		for (x=0; x<width; x++, pBuffLeft2++, pBuffRight2++)
-		{
-			tempAdrs = ffcMemAdrsLeftSrc  + width * 4 - ((x+1) * 4);
-			*pBuffLeft2  = IN32 (tempAdrs);
-
-			tempAdrs = ffcMemAdrsRightSrc + width * 4 - ((x+1) * 4) + IMG_WIDTH_OFFSET * 4;
-			*pBuffRight2 = IN32 (tempAdrs);
-		}
-
-		// 左右上下反転
-		pBuffLeft2 = pBuffLeft;
-		pBuffRight2 = pBuffRight;
-		for (x=0; x<width; x++, pBuffLeft2++, pBuffRight2++)
-		{
-			tempAdrs = ffcMemAdrsLeftDes + IMG_WIDTH_OFFSET * 4 + x * 4;
-			OUT32 (tempAdrs, *pBuffLeft2);
-
-			tempAdrs = ffcMemAdrsRightDes + x * 4;
-			OUT32 (tempAdrs, *pBuffRight2);
-		}
-
-		// 次のライン
-		ffcMemAdrsLeftSrc += FFC_WIDTH_DATA_ALIGH;
-		ffcMemAdrsRightSrc += FFC_WIDTH_DATA_ALIGH;
-
-		ffcMemAdrsLeftDes += FFC_WIDTH_DATA_ALIGH;
-		ffcMemAdrsRightDes += FFC_WIDTH_DATA_ALIGH;
-	}
-
-	// ipuの1個目の最後の16画素の追加。
-	// ipuの2個目の最初の16画素の追加。
-	if ((status = ffcSetMarginGridData()) !=  AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-_DONE:
-	if (pBuffLeft != NULL)
-		free (pBuffLeft);
-
-	if (pBuffRight != NULL)
-		free (pBuffRight);
-
-	return (status);
-}
-#endif // #if !defined (MODE_IPU_MULTI)
 #endif // #if defined (MODE_SENSOR_XFLIP)
 
 
@@ -6467,10 +5482,6 @@ int ffcDataReplacementFirst (int lineStart, int lineSize)
 	int widthMax;
 	unsigned int tempSrc, tempDst;
 	int x, y;
-#if defined (MODE_IPU_MULTI)
-	unsigned int memAdrs2;
-	int ipu;
-#endif
 
 	// Check lineStart Parameter
 	if ((lineStart < 0) || (lineStart > HeightMax()))
@@ -6493,37 +5504,6 @@ int ffcDataReplacementFirst (int lineStart, int lineSize)
 	// FFCアドレス取得
 	if ((status = ffcGetMemAdrs (ffcNum, FFC_MEMORY_EXT, (unsigned int *)&adrs)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
-#if defined (MODE_IPU_MULTI)
-
-	widthMax = CAMERA_WIDTH_MAX / IPU_COUNT + IMG_WIDTH_IPU_MULTI_ADD_SIZE;
-	
-	for (ipu=0; ipu < IPU_COUNT; ipu++)
-	{
-		// アドレス算出
-		memAdrs2 = adrs + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu;
-
-		srcIndex = lineStart * FFC_WIDTH_DATA_ALIGH;
-		srcIndex += memAdrs2;
-		dstIndex = memAdrs2;
-
-		for (y = 0; y<lineSize; y++)
-		{	
-			for (x = 0; x<widthMax; x++)
-			{
-				tempSrc = IN32 ((srcIndex + x * OFFSET_GAIN_UNIT_SIZE));
-				tempDst = IN32 ((dstIndex + x * OFFSET_GAIN_UNIT_SIZE));
-
-				OUT32 ((srcIndex + x * OFFSET_GAIN_UNIT_SIZE), tempDst);
-				OUT32 ((dstIndex + x * OFFSET_GAIN_UNIT_SIZE), tempSrc);
-			}
-
-			srcIndex += FFC_WIDTH_DATA_ALIGH;
-			dstIndex += FFC_WIDTH_DATA_ALIGH;
-		}
-	}	
-	
-#else // #if defined (MODE_IPU_MULTI)
 
 	// アドレス算出
 	#if defined (MODE_FFC_DATA_ALIGN_ADJUST)
@@ -6557,7 +5537,6 @@ int ffcDataReplacementFirst (int lineStart, int lineSize)
 		dstIndex += WidthMax() * OFFSET_GAIN_UNIT_SIZE;
 		#endif
 	}
-#endif // #if defined (MODE_IPU_MULTI)
 	
 _DONE:
 	return (status);
@@ -6645,187 +5624,4 @@ _DONE:
 }
 
 #endif // #if defined (MODE_FRAMERATE_HIGH_SPEED)
-
-
-#if defined (MODE_IPU_MULTI)
-//**********************************************************************************
-//	FFCデータCopy(バッファからFFCメモリにCopy)
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		memAdrs				：FFCデータ格納アドレス
-//		pBuffer				：Copy元アドレス
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int ffcCopyBuffToExtMem (unsigned long memAdrs, unsigned int *pBuffer)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int *ptrL;
-	unsigned long memAdrs2;
-	int x, y;
-	unsigned int data;
-	int ipu;
-
-	ptrL = (unsigned int *)pBuffer;
-	memAdrs2 = memAdrs;
-
-	for (y=0; y<IMG_HEIGHT; y++)
-	{
-		for (ipu=0; ipu < IPU_COUNT; ipu++)
-		{
-			#if defined (MODE_FFC_DATA_ALIGN_ADJUST)
-			memAdrs2 = memAdrs + (y * FFC_WIDTH_DATA_ALIGH) + (FFC_MEMORY_IPU_MULTI_INTERVAL * ipu);
-			#endif
-
-			if (ipu != 0)
-				memAdrs2 += (IMG_WIDTH_OFFSET * 4);
-
-			for (x=0; x<(IMG_WIDTH / IPU_COUNT); x++, ptrL++)
-			{
-				data = *ptrL;
-				OUT32 ((memAdrs2 + x * 4), data);
-			}
-
-			#if !defined (MODE_FFC_DATA_ALIGN_ADJUST)
-			memAdrs2 += IMG_WIDTH * 4;
-			#endif
-		}
-	}
-
-	return (status);
-}
-
-
-//**********************************************************************************
-//	FFCデータCopy(FFCメモリからバッファにCopy)
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		memAdrs				：FFCデータ格納アドレス
-//		pBuffer				：Copy元アドレス
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int ffcCopyExtMemToBuff (unsigned long memAdrs, unsigned int *pBuffer)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int *ptrL;
-	unsigned long memAdrs2;
-	int x, y;
-	unsigned int data;
-	int ipu;
-
-	ptrL = (unsigned int *)pBuffer;
-	memAdrs2 = memAdrs;
-
-	for (y=0; y<IMG_HEIGHT; y++)
-	{
-		for (ipu=0; ipu < IPU_COUNT; ipu++)
-		{
-			#if defined (MODE_FFC_DATA_ALIGN_ADJUST)
-			memAdrs2 = memAdrs + (y * FFC_WIDTH_DATA_ALIGH) + FFC_MEMORY_IPU_MULTI_INTERVAL * ipu;
-			#endif
-
-			if (ipu != 0)
-				memAdrs2 += (IMG_WIDTH_OFFSET * 4);
-
-			for (x=0; x<(IMG_WIDTH / IPU_COUNT); x++, ptrL++)
-			{
-				data = IN32 ((memAdrs2 + x * 4));
-				*ptrL = data;
-			}
-
-			#if !defined (MODE_FFC_DATA_ALIGN_ADJUST)
-			memAdrs2 += IMG_WIDTH * 4;
-			#endif
-		}
-	}
-
-	return (status);
-}
-
-#endif	// #if defined (MODE_IPU_MULTI)
-
-
-#if defined (MODE_IPU_MULTI)
-//**********************************************************************************
-// DPCマージン座標の追加
-// ipuの1個目の最後の16画素の追加。
-// ipuの2個目の最初の16画素の追加。
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int ffcSetMarginGridData (void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int ipu;
-	int x, y;
-	int ffcNum = 0;
-	unsigned int memAdrs;
-	unsigned int srcAdrs, desAdrs;
-	unsigned int data8[3];
-
-	// メモリアドレス取得
-	if ((status = ffcGetMemAdrs (ffcNum, FFC_MEMORY_EXT, (unsigned int *)&memAdrs)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	for (ipu=0; ipu < IPU_COUNT; ipu++)
-	{
-		for (y = 0; y < IMG_HEIGHT; y++)
-		{
-			if (ipu == 0)
-			{
-				// ipu1の最初の16画素
-				srcAdrs =  memAdrs;
-				srcAdrs += (y * FFC_WIDTH_DATA_ALIGH);
-				srcAdrs += (IMG_WIDTH_OFFSET * 3);
-				srcAdrs += (FFC_MEMORY_IPU_MULTI_INTERVAL * (ipu + 1));
-
-				// ipu0の最後の16画素
-				desAdrs =  memAdrs;
-				desAdrs += ((y * FFC_WIDTH_DATA_ALIGH) + (IMG_WIDTH_IPU_SIZE * 3));
-			}
-			else
-			{
-				// ipu0の最後の16画素
-				srcAdrs =  memAdrs;
-				srcAdrs += ((y * FFC_WIDTH_DATA_ALIGH) + (IMG_WIDTH_IPU_SIZE * 3));
-				srcAdrs -= (IMG_WIDTH_OFFSET * 3);
-
-				// ipu1の最初の画素
-				desAdrs =  memAdrs;
-				desAdrs += (y * FFC_WIDTH_DATA_ALIGH);
-				desAdrs += (FFC_MEMORY_IPU_MULTI_INTERVAL * ipu);
-			}
-
-			for (x = 0; x < IMG_WIDTH_OFFSET; x++)
-			{
-				data8[0] = IN8 (srcAdrs);
-				srcAdrs++;
-				data8[1] = IN8 (srcAdrs);
-				srcAdrs++;
-				data8[2] = IN8 (srcAdrs);
-				srcAdrs++;
-
-				OUT8 (desAdrs, data8[0]);
-				desAdrs++;
-
-				OUT8 (desAdrs, data8[1]);
-				desAdrs++;
-
-				OUT8 (desAdrs, data8[2]);
-				desAdrs++;
-			}
-		}
-	}
-
-_DONE:
-	return (status);
-}
-#endif
 

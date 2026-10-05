@@ -55,15 +55,6 @@ int dogInitialize (void)
 		goto _DONE;
 	}
 
-#if defined (MODE_IPU_MULTI)
-	// Register Data Restore
-	if ((status = cameraParamWriteRegisterOffsetAdrs (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_OG_ADRS, CAMERA_SAVE_OG_SIZE, FPGA_DOG2_OFFSET)) != AVAL_STATUS_SUCCESS)
-	{
-		gDogStatus = status;
-		goto _DONE;
-	}
-#endif
-
 	// 更新設定
 	if ((status = dogSetUpdate (DOG_ENABLE)) != AVAL_STATUS_SUCCESS)
 	{
@@ -109,10 +100,6 @@ int dogSetUpdate (int mode)
 	
 	// Digital Offset Gain設定
 	OUT32 (FPGA_DOG_CTRL_ADRS, data);
-
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_DOG2_CTRL_ADRS, data);
-#endif
 
 _DONE:
 	return (status);
@@ -557,10 +544,6 @@ int digitalSetGain (float gain)
 
 	OUT32 (FPGA_DOG_GAIN_ADRS, (data & FPGA_DOG_GAIN_MASK));
 
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_DOG2_GAIN_ADRS, (data & FPGA_DOG_GAIN_MASK));
-#endif
-
 _DONE:
 	return (status);
 }
@@ -655,10 +638,6 @@ int digitalSetGainX (float gain)
 
 	OUT32 (FPGA_DOG_GAIN_ADRS, (data & FPGA_DOG_GAIN_MASK));
 
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_DOG2_GAIN_ADRS, (data & FPGA_DOG_GAIN_MASK));
-#endif
-
 _DONE:
 	return (status);
 }
@@ -723,10 +702,6 @@ int digitalSetGainReg (unsigned int gain)
 	int status = AVAL_STATUS_SUCCESS;
 
 	OUT32 (FPGA_DOG_GAIN_ADRS, (gain & FPGA_DOG_GAIN_MASK));
-
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_DOG2_GAIN_ADRS, (gain & FPGA_DOG_GAIN_MASK));
-#endif
 
 	return (status);
 }
@@ -814,10 +789,6 @@ int digitalSetOffset (int offset)
 
 	// Digital Offset2設定
 	OUT32 (FPGA_DOG_OFFSET2_ADRS, data);
-
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_DOG2_OFFSET2_ADRS, data);
-#endif
 
 _DONE:
 	return (status);
@@ -927,10 +898,6 @@ int digitalSetOffset1 (int offset)
 	// Digital Offset1設定
 	OUT32 (FPGA_DOG_OFFSET1_ADRS, data);
 
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_DOG2_OFFSET1_ADRS, data);
-#endif
-
 _DONE:
 	return (status);
 }
@@ -1007,6 +974,8 @@ int opticalBlackSetInvert (int mode)
 		goto _DONE;
 	}
 
+//@@@1
+#if 0
 	if (mode == MODE_ENABLE)
 	{
 		hobCtrl = IN32 (FPGA_LINE_BLACK_AUTO_CTRL_ADRS);
@@ -1019,6 +988,8 @@ int opticalBlackSetInvert (int mode)
 		hobCtrl &= ~FPGA_LINE_BLACK_AUTO_INVERT;
 		OUT32 (FPGA_LINE_BLACK_AUTO_CTRL_ADRS, hobCtrl);
 	}
+#endif
+//@@@1
 
 _DONE:
 	return (status);

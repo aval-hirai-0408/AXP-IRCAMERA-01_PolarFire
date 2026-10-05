@@ -637,7 +637,7 @@ int cmdVoltIf90vaHelp (void *str)
 }
 
 
-#if defined (MODE_BOARD_ACB532GE)
+#if 0	//@@@1
 //**********************************************************************************
 //	Interface Board +0.65V Voltageコマンド
 //----------------------------------------------------------------------------------
@@ -1110,7 +1110,7 @@ int cmdVoltIf240vHelp (void *str)
 
 	return (AVAL_STATUS_SUCCESS);
 }
-#endif // #if defined (MODE_BOARD_ACB532GE)
+#endif //@@@1
 
 
 //**********************************************************************************

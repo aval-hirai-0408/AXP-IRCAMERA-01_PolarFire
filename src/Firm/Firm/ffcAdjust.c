@@ -166,10 +166,6 @@ int ffcBlack (FFC_PARAM ffcParam)
 	//----------------------------------------------------------------------
 	OUT32 (FPGA_FFC_CTRL_ADRS, 0);
 
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_FFC2_CTRL_ADRS, 0);
-#endif
-
 	// 移動平均モードの場合DPCは無効にしない
 #if defined (MODE_FFC_SHADING_LINE)
 	if (mvMode == MODE_ENABLE)
@@ -304,10 +300,8 @@ _DPC_SKIP:
 	//----------------------------------------------------------------------
 	// ゲインを保存用に取得
 	//----------------------------------------------------------------------
-#if defined (MODE_FFC_INFO_GAIN)
 	if ((status = digitalGetGainX (&gDigitalGainInfo)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-#endif
 
 	//----------------------------------------------------------------------
 	// 黒レベル最大値取得
@@ -724,10 +718,6 @@ _DPC_SKIP:
 	// FFCレジスタ設定(オフセットのみ有効)
 	OUT32 (FPGA_FFC_CTRL_ADRS, FPGA_FFC_CTRL_OFFSET_ENABLE_BIT);
 
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_FFC2_CTRL_ADRS, FPGA_FFC_CTRL_OFFSET_ENABLE_BIT);
-#endif
-
 	//----------------------------------------------------------------------
 	// Bit幅設定
 	//----------------------------------------------------------------------
@@ -836,10 +826,8 @@ _DPC_SKIP:
 	//----------------------------------------------------------------------
 	// ゲインを保存用に取得
 	//----------------------------------------------------------------------
-#if defined (MODE_FFC_INFO_GAIN)
 	if ((status = digitalGetGainX (&gDigitalGainInfo)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-#endif
 
 	//----------------------------------------------------------------------
 	// 白レベル最大値取得

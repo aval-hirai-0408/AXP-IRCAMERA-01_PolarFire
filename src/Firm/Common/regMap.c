@@ -50,9 +50,6 @@ int fpgaRegMap (void)
 	
 	DEBUG_PRINT_FORCE("  Version                 : 0x%08x\n", FPGA_VER_ADRS);
 
-#if defined (MODE_SYSTEM_MANAGEMENT)
-	DEBUG_PRINT_FORCE("  System Management       : 0x%08x\n", FPGA_SYSTEM_MANAGEMENT_ADRS);
-#endif
 	DEBUG_PRINT_FORCE("  GPIO                    : 0x%08x\n", FPGA_GPIO_ADRS);
 	DEBUG_PRINT_FORCE("  LED                     : 0x%08x\n", FPGA_LED_ADRS);
 

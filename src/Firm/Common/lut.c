@@ -99,16 +99,6 @@ int lutInitialize (void)
 		goto _DONE;
 	}
 
-#if defined (MODE_IPU_MULTI)
-	// Register Data Restore
-	if ((status = cameraParamWriteRegisterOffsetAdrs (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_LUT_ADRS, 0x04, FPGA_LUT2_OFFSET)) != AVAL_STATUS_SUCCESS)
-	{
-		gLutStatus = status;
-		goto _DONE;
-	}
-#endif
-
-
 _DONE:
 	return (status);
 }
@@ -307,10 +297,6 @@ int lutSetEnable (int select, int mode)
 	// LUT設定
 	OUT32 (FPGA_LUT_CTRL_ADRS, data);
 
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_LUT2_CTRL_ADRS, data);
-#endif
-
 _DONE:
 	return (status);
 }
@@ -451,10 +437,6 @@ int lutSetFormat (int select, int format)
 				for (j=0; j<interval; j++, i++, offset+=4)
 				{
 					OUT32 ((adrs + offset), ((data & LUT_DATA_MASK)<<shift));
-					
-					#if defined (MODE_IPU_MULTI)
-					OUT32 ((adrs + offset + FPGA_LUT2_OFFSET), ((data & LUT_DATA_MASK)<<shift));
-					#endif
 				}
 			break;
 
@@ -464,10 +446,6 @@ int lutSetFormat (int select, int format)
 				for (j=0; j<interval; j++, i++, offset+=4)
 				{
 					OUT32 ((adrs + offset), ((data & LUT_DATA_MASK)<<shift));
-
-					#if defined (MODE_IPU_MULTI)
-					OUT32 ((adrs + offset + FPGA_LUT2_OFFSET), ((data & LUT_DATA_MASK)<<shift));
-					#endif
 				}
 			break;
 
@@ -482,10 +460,6 @@ int lutSetFormat (int select, int format)
 				for (j=0; j<interval; j++, i++, offset+=4)
 				{
 					OUT32 ((adrs + offset), ((data & LUT_DATA_MASK)<<shift));
-
-					#if defined (MODE_IPU_MULTI)
-					OUT32 ((adrs + offset + FPGA_LUT2_OFFSET), ((data & LUT_DATA_MASK)<<shift));
-					#endif
 				}
 
 			data = size - 1;
@@ -493,10 +467,6 @@ int lutSetFormat (int select, int format)
 				for (j=0; j<interval; j++, i++, offset+=4)
 				{
 					OUT32 ((adrs + offset), ((data & LUT_DATA_MASK)<<shift));
-
-					#if defined (MODE_IPU_MULTI)
-					OUT32 ((adrs + offset + FPGA_LUT2_OFFSET), ((data & LUT_DATA_MASK)<<shift));
-					#endif
 				}
 			break;
 
@@ -671,10 +641,6 @@ int lutSetBinThreshold (int select, int threshold)
 		for (j=0; j<interval; j++, i++, offset+=4)
 		{
 			OUT32 ((adrs + offset), ((data & LUT_DATA_MASK)<<shift));
-
-			#if defined (MODE_IPU_MULTI)
-			OUT32 ((adrs + offset + FPGA_LUT2_OFFSET), ((data & LUT_DATA_MASK)<<shift));
-			#endif
 		}
 
 	for (; i<PIXEL_SIZE_MAX;)
@@ -682,10 +648,6 @@ int lutSetBinThreshold (int select, int threshold)
 		for (j=0; j<interval; j++, i++, offset+=4)
 		{
 			OUT32 ((adrs + offset), PIXEL_14_MASK);
-
-			#if defined (MODE_IPU_MULTI)
-			OUT32 ((adrs + offset + FPGA_LUT2_OFFSET), PIXEL_14_MASK);
-			#endif
 		}
 	}
 
@@ -895,10 +857,6 @@ int lutSetDataGamma (int select, float gamma)
 		for (j=0; j<interval; j++, i++, offset+=4)
 		{
 			OUT32 ((adrs + offset), ((dataGamma & LUT_DATA_MASK)<<shift));
-
-			#if defined (MODE_IPU_MULTI)
-			OUT32 ((adrs + offset + FPGA_LUT2_OFFSET), ((dataGamma & LUT_DATA_MASK)<<shift));
-			#endif
 		}
 	}
 
@@ -996,10 +954,6 @@ int lutSetTable (int select, unsigned char *pBuff, int count, int bit)
 			for (j=0; j<interval; j++, offset+=4)
 			{
 				OUT32 ((adrs + offset), ((data & LUT_DATA_MASK)<<shift));
-
-				#if defined (MODE_IPU_MULTI)
-				OUT32 ((adrs + offset + FPGA_LUT2_OFFSET), ((data & LUT_DATA_MASK)<<shift));
-				#endif
 			}
 		}
 	}
@@ -1013,10 +967,6 @@ int lutSetTable (int select, unsigned char *pBuff, int count, int bit)
 			for (j=0; j<interval; j++, offset+=4)
 			{
 				OUT32 ((adrs + offset), (unsigned int)((data & LUT_DATA_MASK)<<shift));
-
-				#if defined (MODE_IPU_MULTI)
-				OUT32 ((adrs + offset + FPGA_LUT2_OFFSET), (unsigned int)((data & LUT_DATA_MASK)<<shift));
-				#endif
 			}
 		}
 	}
@@ -1208,10 +1158,6 @@ int lutSetTableData (int select, unsigned int offset, unsigned int data)
 	for (j=0; j<interval; j++)
 	{
 		OUT32 ((tableAdrs + j * LUT_TABLE_INTERVAL), ((data & LUT_DATA_MASK)<<shift));
-
-		#if defined (MODE_IPU_MULTI)
-		OUT32 ((tableAdrs + j * LUT_TABLE_INTERVAL + FPGA_LUT2_OFFSET), ((data & LUT_DATA_MASK)<<shift));
-		#endif
 	}
 
 	// キャッシュFlash
@@ -1378,11 +1324,6 @@ int lutGetFlash (int select, unsigned int *pBuffer, unsigned int size)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int flashAdrs;
-#if defined (MODE_IPU_MULTI)
-	unsigned int srcAdrs, desAdrs;
-	unsigned int i;
-	unsigned int data32;
-#endif
 
 	// Check select Parameter
 	if ((select < LUT_SELECT_MIN_NUM) || (select > LUT_SELECT_MAX_NUM))
@@ -1419,20 +1360,6 @@ int lutGetFlash (int select, unsigned int *pBuffer, unsigned int size)
 	// flash to memory
 	if ((status = qspiFlashRead (flashAdrs, (unsigned char *)pBuffer, size)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
-#if defined (MODE_IPU_MULTI)
-	srcAdrs = (unsigned int)pBuffer;
-	desAdrs = (unsigned int)pBuffer;
-	desAdrs += FPGA_LUT2_OFFSET;
-	for (i=0; i<(size/4); i++)
-	{
-		data32 = IN32 (srcAdrs);
-		OUT32 (desAdrs, data32);
-
-		srcAdrs += 4;
-		desAdrs += 4;
-	}
-#endif
 
 	// キャッシュFlash
 	cacheFlush ();

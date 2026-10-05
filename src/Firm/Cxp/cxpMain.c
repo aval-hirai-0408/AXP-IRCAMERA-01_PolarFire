@@ -589,7 +589,6 @@ int cxpUserInit (void)
 }
 
 
-#if defined (MODE_BOARD_ACB531CXP)
 //**********************************************************************************
 //	LED制御
 //----------------------------------------------------------------------------------
@@ -674,10 +673,9 @@ int cxpLedControl (int linlState)
 _DONE:
 	return (AVAL_STATUS_SUCCESS);
 }
-#endif // #if defined (MODE_BOARD_ACB531CXP)
 
 
-#if defined (MODE_BOARD_ACB531CXP)
+
 //**********************************************************************************
 //	LED: ledLinkState
 //----------------------------------------------------------------------------------
@@ -749,10 +747,9 @@ int cxpLedLinkState (unsigned int *pLinkStatus)
 _DONE:
 	return (status);
 }
-#endif // #if defined (MODE_BOARD_ACB531CXP)
 
 
-#if defined (MODE_BOARD_ACB531CXP)
+
 //**********************************************************************************
 //	LED Connection Detection
 //----------------------------------------------------------------------------------
@@ -772,11 +769,9 @@ int cxpLedConnectionDetection (void)
 
 	return (AVAL_STATUS_SUCCESS);
 }
-#endif // #if defined (MODE_BOARD_ACB531CXP)
 
 
 
-#if defined (MODE_BOARD_ACB531CXP)
 //**********************************************************************************
 //	Get Link Num
 //----------------------------------------------------------------------------------
@@ -817,7 +812,6 @@ int cxpGetLinkCount (unsigned int *pCount)
 _DONE:
 	return (status);
 }
-#endif // #if defined (MODE_BOARD_ACB531CXP)
 
 
 //**********************************************************************************

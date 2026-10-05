@@ -55,10 +55,6 @@ int dmaInitialize (void)
 	// FPGA DMA割り込み有効
 	OUT32 (FPGA_DMA_IRQ_ENABLE_ADRS, FPGA_DMA_IRQ_ENABLE_BIT);
 
-#if defined (MODE_IPU_MULTI)
-	// FPGA DMA2割り込み有効
-	OUT32 (FPGA_DMA2_IRQ_ENABLE_ADRS, FPGA_DMA_IRQ_ENABLE_BIT);
-
 	// FPGA IPU DMAC割り込み有効
 	if ((status = ipuIntEnable (FPGA_IPU_IRQ_MASK_DMAC_BIT)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;;
@@ -66,7 +62,6 @@ int dmaInitialize (void)
 	// FPGA IPU Global割り込み有効
 	if ((status = ipuSetGlobalInt (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;;
-#endif
 
 	//@@@1
 	//@@@1
@@ -96,15 +91,9 @@ static void dma_InterruptHandler (void *CallBackRef)
 	OUT32 (FPGA_DMA_IRQ_CLR_ADRS, FPGA_DMA_IRQ_CLEAR_BIT);
 	OUT32 (FPGA_DMA_IRQ_CLR_ADRS, 0);
 
-#if defined (MODE_IPU_MULTI)
-	// Interrupt Clear
-	OUT32 (FPGA_DMA2_IRQ_CLR_ADRS, FPGA_DMA_IRQ_CLEAR_BIT);
-	OUT32 (FPGA_DMA2_IRQ_CLR_ADRS, 0);
-
 	// Common Interrupt Clear
 	//OUT32 (FPGA_IPU_IRQ_STATUS_ADRS, FPGA_IPU_IRQ_STATUS_DMAC_BIT);
 	ipuIntClear (FPGA_IPU_IRQ_STATUS_DMAC_BIT);
-#endif
 }
 
 
@@ -141,34 +130,14 @@ int dmaStart (unsigned char *pBuffer)
 	ctrl = FPGA_DMA_CTRL_CACHE_BIT;
 	OUT32 (FPGA_DMA_CTRL_ADRS, ctrl);
 
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_DMA2_CTRL_ADRS, ctrl);
-#endif
-
 	// DMA転送先アドレス
 	OUT32 (FPGA_DMA_START_ADRS, (unsigned int)pBuffer);
-
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_DMA2_START_ADRS, (unsigned long)(pBuffer + DMA_MEMORY_IPU_MULTI_INTERVAL));
-#endif
-
-#if defined (MODE_IPU_MULTI)
-	frame /= IPU_COUNT;
-#endif
 
 	// DMA転送サイズ
 	OUT32 (FPGA_DMA_DEPTH_ADRS, (frame/8));
 
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_DMA2_DEPTH_ADRS, (frame/8));
-#endif
-
 	// DMA割り込み発生サイズ
 	OUT32 (FPGA_DMA_IRQ_WORD_ADRS, (frame/8));
-
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_DMA2_IRQ_WORD_ADRS, (frame/8));
-#endif
 
 	// 転送される領域はキャッシュInvalidate
 	cacheInvalidateRange ((unsigned int)pBuffer, frame);
@@ -176,10 +145,6 @@ int dmaStart (unsigned char *pBuffer)
 	// DMAスタート
 	ctrl = FPGA_DMA_CTRL_CACHE_BIT | FPGA_DMA_CTRL_START_BIT;
 	OUT32 (FPGA_DMA_CTRL_ADRS, ctrl);
-
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_DMA2_CTRL_ADRS, ctrl);
-#endif
 
 	// DMA割り込み待ち
 	if ((status = dmaWait ()) != AVAL_STATUS_SUCCESS)
@@ -204,36 +169,18 @@ int dmaWait (void)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int ix;
 	unsigned int data;
-#if defined (MODE_IPU_MULTI)
-	unsigned int data2;
-#endif
 
 	// 割り込み発生待ち
 	for (ix=0; ix<DMA_INT_TIMEOUT; ix++)
 	{
 		if (dmaIntFlag == 1)
 		{
-#if !defined (MODE_IPU_MULTI)
-
 			// DMA Control End Check
 			data = IN32 (FPGA_DMA_CTRL_ADRS);
 
 			// DMA End?
 			if (data & FPGA_DMA_CTRL_END_BIT)
 				break;
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-			// DMA Control End Check
-			data = IN32 (FPGA_DMA_CTRL_ADRS);
-
-			// DMA Control End Check
-			data2 = IN32 (FPGA_DMA2_CTRL_ADRS);
-
-			// DMA End?
-			if ((data & FPGA_DMA_CTRL_END_BIT) && (data2 & FPGA_DMA_CTRL_END_BIT))
-				break;
-#endif
 		}
 
 		msDelay(1);
@@ -247,12 +194,6 @@ int dmaWait (void)
 		data &= ~FPGA_DMA_CTRL_START_BIT;
 		OUT32 (FPGA_DMA_CTRL_ADRS, (data | FPGA_DMA_CTRL_ABORT_BIT));
 
-#if defined (MODE_IPU_MULTI)
-		data = IN32 (FPGA_DMA2_CTRL_ADRS);
-		data &= ~FPGA_DMA_CTRL_START_BIT;
-		OUT32 (FPGA_DMA2_CTRL_ADRS, (data | FPGA_DMA_CTRL_ABORT_BIT));
-#endif
-
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DMA, AVAL_STATUS_TIMEOUT);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DMA Timeout Error.\n");
 		goto _DONE;
@@ -262,12 +203,6 @@ int dmaWait (void)
 	data = IN32 (FPGA_DMA_CTRL_ADRS);
 	data &= ~FPGA_DMA_CTRL_START_BIT;
 	OUT32 (FPGA_DMA_CTRL_ADRS, data);
-
-	#if defined (MODE_IPU_MULTI)
-	data = IN32 (FPGA_DMA2_CTRL_ADRS);
-	data &= ~FPGA_DMA_CTRL_START_BIT;
-	OUT32 (FPGA_DMA2_CTRL_ADRS, data);
-	#endif
 
 _DONE:
 	return (status);

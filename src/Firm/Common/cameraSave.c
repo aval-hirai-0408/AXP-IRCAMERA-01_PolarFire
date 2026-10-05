@@ -185,7 +185,7 @@ int cameraParamSetDefault (int userNum)
 			//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 
 			// Get Register Data
-			if (saveParamDataList[i].mode == CAMERA_SAVE_MODE_NONE)							// 未使用		=> 未使用なので0
+			if (saveParamDataList[i].mode == CAMERA_SAVE_MODE_NONE)							// 未使用			=> 未使用なので0
 				pSaveparam[i].data = 0;
 			else if (saveParamDataList[i].mode == CAMERA_SAVE_MODE_DATA)					// データ有効		=> 構造体から取得
 				pSaveparam[i].data = saveParamDataList[i].data;
@@ -193,7 +193,9 @@ int cameraParamSetDefault (int userNum)
 				pSaveparam[i].data = IN32(saveParamDataList[i].regAdrs);
 			else if (saveParamDataList[i].mode == CAMERA_SAVE_MODE_WRITE_OTHER)				// データ有効		=> 構造体から取得
 				pSaveparam[i].data = saveParamDataList[i].data;
-			else																			// 上記以外		=> 0を設定
+			else if (saveParamDataList[i].mode == CAMERA_SAVE_MODE_SELECTOR)				// セレクタ			=> 構造体から取得
+				pSaveparam[i].data = saveParamDataList[i].data;
+			else																			// 上記以外			=> 0を設定
 				pSaveparam[i].data = 0;
 		}
 	}
@@ -1187,125 +1189,6 @@ _DONE:
 }
 
 
-#if defined (MODE_IPU_MULTI)
-//**********************************************************************************
-// カメラ保存パラメータをレジスタに設定
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		mode				：ユーザーモード(0=User0/1=User1/2=User2)
-//		offset				：設定パラメータが保存されているオフセット
-//		size				：設定パラメータが保存されているサイズ
-//		offsetAdrs			：アドレス
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int cameraParamWriteRegisterOffsetAdrs (int userNum, unsigned int offset, unsigned int size, unsigned int offsetAdrs)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int *pSave;
-	int index;
-	unsigned int i;
-	unsigned int adrs, data;
-	unsigned int black;
-#if defined (MODE_SPECTRUM)
-	int bandMax;
-#endif
-
-	// Check userNum Parameter
-	if ((userNum < CAMERA_USER_MODE_MIN) || (userNum > CAMERA_USER_MODE_MAX))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "UserSet Save IPU Multi UserNum(%d) Parameter Error.(Min:%d / Max:%d)\n", userNum, CAMERA_USER_MODE_MIN, CAMERA_USER_MODE_MAX);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// Check offset/size Parameter
-	if ((offset + size) > CAMERA_SAVE_USER_SIZE)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "UserSet Save IPU Multi Size(0x%x) Parameter Error.(Max:%d)\n", (offset + size), CAMERA_SAVE_USER_SIZE);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// Get Save Parameter Address
-	if (gpCameraUserParameter != NULL)
-	{
-		// Get Address
-		pSave = gpCameraUserParameter;
-
-		// Get Index
-		index = offset / 4;
-
-#if defined (MODE_SPECTRUM)
-		// 最大バンド数取得
-		if ((status = spectrumBandMaxCount (&bandMax)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-#endif
-
-		// Get Parameter Restore
-		for (i=0; i<(size/4);)
-		{
-			adrs = pSave[index + i];
-			if (adrs != 0)
-				adrs += offsetAdrs;			// OffsetAdrs付加
-			i++;
-			data = pSave[index + i];
-			i++;
-
-			//sprintf (gLogMsgBuff, [%d]adrs=0x%08x/data=0x%08x\n", i, adrs, data);
-			//cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-
-			// 0が設定されている場合は未設定と判断し何もしない
-			if (adrs != 0)
-			{
-				// DOG Offset1
-				if (adrs == (offsetAdrs + FPGA_DOG_OFFSET1_ADRS))
-				{
-					// 黒レベル取得値
-					black = IN32 (FPGA_FFC_BLACK_TARGET_ADRS);
-					data -= black;
-				}
-				// DOG Offset2
-				else if (adrs == (offsetAdrs + FPGA_DOG_OFFSET2_ADRS))
-				{
-					// 黒レベル取得値
-					black = IN32 (FPGA_FFC_BLACK_TARGET_ADRS);
-					data += black;
-				}
-#if defined (MODE_SPECTRUM)
-				// DOG Band Offset1 & Offset2
-				else if ((adrs >= FPGA_DOG_BAND_OFFSET1_ADRS) && (adrs < (FPGA_DOG_BAND_OFFSET1_ADRS + (FPGA_DOG_BAND_INTEVAL * bandMax))))
-				{
-					if ((adrs&0x0f) == (offsetAdrs + FPGA_DOG_BAND_OFFSET1_ADRS_OFFSET))
-					{
-						// 黒レベル取得値
-						black = IN32 (FPGA_FFC_BLACK_TARGET_ADRS);
-						data -= black;
-					}
-					else if ((adrs&0x0f) == (offsetAdrs + FPGA_DOG_BAND_OFFSET2_ADRS_OFFSET))
-					{
-						// 黒レベル取得値
-						black = IN32 (FPGA_FFC_BLACK_TARGET_ADRS);
-						data += black;
-					}
-				}
-#endif
-
-				// レジスタ値設定
-				OUT32 (adrs, data);
-			}
-		}
-	}
-
-_DONE:
-	return (status);
-}
-#endif // #if defined (MODE_IPU_MULTI)
-
-
 //**********************************************************************************
 // カメラ保存パラメータをレジスタに設定(スペクトル関連)
 //----------------------------------------------------------------------------------
@@ -1803,6 +1686,10 @@ int cameraParamSaveRegister (int userNum)
 			}
 
 			pSaveparam[i].data = data;
+		}
+		else if (saveParamDataList[i].mode == CAMERA_SAVE_MODE_SELECTOR)
+		{
+			// none
 		}
 	}
 

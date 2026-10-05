@@ -16,7 +16,6 @@
 #include "../Common/common.h"
 
 
-#if defined (MODE_SYSTEM_MANAGEMENT)
 //**********************************************************************************
 //	Get FPGA Temp
 //----------------------------------------------------------------------------------
@@ -43,6 +42,7 @@ int xadcGetFpgaTemp (double *pTemp)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "XADC pTemp NULL Parameter Error.\n");
 		goto _DONE;
 	}
+#if 0   //@@@1
 
 	// Get Data
 	data32 = IN32 (FPGA_SM_TEMP_ADRS);
@@ -54,10 +54,9 @@ int xadcGetFpgaTemp (double *pTemp)
 
 	// 温度変換
 	*pTemp = (dataD * 509.3140064 / 1024) - 280.23087870;
-
+#endif //@@@1
 _DONE:
 	return (status);
 }
-#endif // #if defined (MODE_SYSTEM_MANAGEMENT)
 
 // eof

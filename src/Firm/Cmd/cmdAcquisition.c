@@ -175,8 +175,6 @@ int cmdAcquisitionCamer (void *str)
 		DEBUG_PRINT_FORCE ("Timed\n");
 	else if (mode == ACQUISITION_EXPOSURE_TRG_WIDTH)
 		DEBUG_PRINT_FORCE ("Trg Width\n");
-	else if (mode == ACQUISITION_EXPOSURE_TRG_CTRL)
-		DEBUG_PRINT_FORCE ("Trg Control\n");
 	else
 		DEBUG_PRINT_FORCE ("\n");
 
@@ -280,7 +278,7 @@ int cmdAcquisitionStatusAll (void *str)
 				case ACQUISITION_TRG_SELECT_ACQUISITION_START:
 				case ACQUISITION_TRG_SELECT_ACQUISITION_END:
 				case ACQUISITION_TRG_SELECT_ACQUISITION_ACTIVE:
-				case ACQUISITION_TRG_SELECT_FRAME_ACTIVE:
+				case ACQUISITION_TRG_SELECT_EXPOSURE_ACTIVE:
 					break;
 				default:
 					continue;
@@ -299,16 +297,6 @@ int cmdAcquisitionStatusAll (void *str)
 				DEBUG_PRINT_FORCE (": Acquisition End\n");
 			else if (select == ACQUISITION_TRG_SELECT_ACQUISITION_ACTIVE)
 				DEBUG_PRINT_FORCE (": Acquisition Active\n");
-			else if (select == ACQUISITION_TRG_SELECT_FRAME_START)
-				DEBUG_PRINT_FORCE (": Exposure Start\n");
-			else if (select == ACQUISITION_TRG_SELECT_FRAME_END)
-				DEBUG_PRINT_FORCE (": Exposure End\n");
-			else if (select == ACQUISITION_TRG_SELECT_FRAME_ACTIVE)
-				DEBUG_PRINT_FORCE (": Exposure Active\n");
-			else if (select == ACQUISITION_TRG_SELECT_EXPOSURE_START)
-				DEBUG_PRINT_FORCE (": Exposure Start\n");
-			else if (select == ACQUISITION_TRG_SELECT_EXPOSURE_END)
-				DEBUG_PRINT_FORCE (": Exposure End\n");
 			else if (select == ACQUISITION_TRG_SELECT_EXPOSURE_ACTIVE)
 				DEBUG_PRINT_FORCE (": Exposure Active\n");
 			else
@@ -339,72 +327,14 @@ int cmdAcquisitionStatusAll (void *str)
 				DEBUG_PRINT_FORCE (" : Soft Trg\n");
 			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_LINE0)
 				DEBUG_PRINT_FORCE (" : LINE0\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_USER0_OUTPUT)
-				DEBUG_PRINT_FORCE (" : User0 Output\n");
 			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_LINE1)
 				DEBUG_PRINT_FORCE (" : LINE1\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_USER1_OUTPUT)
-				DEBUG_PRINT_FORCE (" : User1 Output\n");
 			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_LINE2)
 				DEBUG_PRINT_FORCE (" : LINE2\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_USER2_OUTPUT)
-				DEBUG_PRINT_FORCE (" : User2 Output\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_LINE3)
-				DEBUG_PRINT_FORCE (" : LINE3\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_USER3_OUTPUT)
-				DEBUG_PRINT_FORCE (" : User3 Output\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_LINE4)
-				DEBUG_PRINT_FORCE (" : LINE4\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_USER4_OUTPUT)
-				DEBUG_PRINT_FORCE (" : User4 Output\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_LINE5)
-				DEBUG_PRINT_FORCE (" : LINE5\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_USER5_OUTPUT)
-				DEBUG_PRINT_FORCE (" : User5 Output\n");
-			#if 0
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_CC1)
-				DEBUG_PRINT_FORCE (" : CC1\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_CC2)
-				DEBUG_PRINT_FORCE (" : CC2\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_CC3)
-				DEBUG_PRINT_FORCE (" : CC3\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_CC4)
-				DEBUG_PRINT_FORCE (" : CC4\n");
-			#endif
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_COUNTER0_START)
-				DEBUG_PRINT_FORCE (" : Counter0 Start\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_COUNTER0_END)
-				DEBUG_PRINT_FORCE (" : Counter0 End\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_COUNTER1_START)
-				DEBUG_PRINT_FORCE (" : Counter1 Start\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_COUNTER1_END)
-				DEBUG_PRINT_FORCE (" : Counter1 End\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_COUNTER2_START)
-				DEBUG_PRINT_FORCE (" : Counter2 Start\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_COUNTER2_END)
-				DEBUG_PRINT_FORCE (" : Counter2 End\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_COUNTER3_START)
-				DEBUG_PRINT_FORCE (" : Counter3 Start\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_COUNTER3_END)
-				DEBUG_PRINT_FORCE (" : Counter3 End\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_TIMER0_START)
-				DEBUG_PRINT_FORCE (" : Timer0 Start\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_TIMER0_END)
-				DEBUG_PRINT_FORCE (" : Timer0 End\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_TIMER1_START)
-				DEBUG_PRINT_FORCE (" : Timer1 Start\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_TIMER1_END)
-				DEBUG_PRINT_FORCE (" : Timer2 End\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_TIMER2_START)
-				DEBUG_PRINT_FORCE (" : Timer3 Start\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_TIMER2_END)
-				DEBUG_PRINT_FORCE (" : Timer3 End\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_TIMER3_START)
-				DEBUG_PRINT_FORCE (" : Timer3 Start\n");
-			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_TIMER3_END)
-				DEBUG_PRINT_FORCE (" : Timer3 End\n");
 			else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_ENCODER0)
 				DEBUG_PRINT_FORCE (" : Encoder0\n");
+            else if (mode == GENICAM_ACQUISITION_TRG_SOURCE_LINKTRIGGER0)
+                DEBUG_PRINT_FORCE (" : LinkTrigger0\n");
 			else
 				DEBUG_PRINT_FORCE ("\n");
 
@@ -1189,7 +1119,7 @@ int cmdAcquisitionTrgSelectHelp (void *str)
 	DEBUG_PRINT_FORCE ("  %2d : Acquisition Start\n", ACQUISITION_TRG_SELECT_ACQUISITION_START);
 	DEBUG_PRINT_FORCE ("  %2d : Acquisition End\n", ACQUISITION_TRG_SELECT_ACQUISITION_END);
 	DEBUG_PRINT_FORCE ("  %2d : Acquisition Active\n", ACQUISITION_TRG_SELECT_ACQUISITION_ACTIVE);
-	DEBUG_PRINT_FORCE ("  %2d : Exposure Active\n", ACQUISITION_TRG_SELECT_FRAME_ACTIVE);
+	DEBUG_PRINT_FORCE ("  %2d : Exposure Active\n", ACQUISITION_TRG_SELECT_EXPOSURE_ACTIVE);
 	DEBUG_PRINT_FORCE ("\n");
 
 	return (AVAL_STATUS_SUCCESS);
@@ -1447,10 +1377,7 @@ int cmdAcquisitionTrgSourceHelp (void *str)
 	DEBUG_PRINT_FORCE ("  %3d = Line0\n", GENICAM_ACQUISITION_TRG_SOURCE_LINE0);
 	DEBUG_PRINT_FORCE ("  %3d = Line1\n", GENICAM_ACQUISITION_TRG_SOURCE_LINE1);
 	DEBUG_PRINT_FORCE ("  %3d = Line2\n", GENICAM_ACQUISITION_TRG_SOURCE_LINE2);
-	DEBUG_PRINT_FORCE ("  %3d = CC1\n", GENICAM_ACQUISITION_TRG_SOURCE_CC1);
-	DEBUG_PRINT_FORCE ("  %3d = CC2\n", GENICAM_ACQUISITION_TRG_SOURCE_CC2);
-	DEBUG_PRINT_FORCE ("  %3d = CC3\n", GENICAM_ACQUISITION_TRG_SOURCE_CC3);
-	DEBUG_PRINT_FORCE ("  %3d = CC4\n", GENICAM_ACQUISITION_TRG_SOURCE_CC4);
+	DEBUG_PRINT_FORCE ("  %3d = LinkTrigger0 \n", GENICAM_ACQUISITION_TRG_SOURCE_LINKTRIGGER0);
 	DEBUG_PRINT_FORCE ("  %3d = Encoder0\n", GENICAM_ACQUISITION_TRG_SOURCE_ENCODER0);
 	DEBUG_PRINT_FORCE ("\n");
 
@@ -1740,78 +1667,6 @@ int cmdAcquisitionExposureModeHelp (void *str)
 	DEBUG_PRINT_FORCE ("  %d = Trigger Width\n", ACQUISITION_EXPOSURE_TRG_WIDTH);
 	//DEBUG_PRINT_FORCE ("  %d = Trigger Control\n", ACQUISITION_EXPOSURE_TRG_CTRL);
 	
-	DEBUG_PRINT_FORCE ("\n");
-
-	return (AVAL_STATUS_SUCCESS);
-}
-
-
-//**********************************************************************************
-//	無効トリガカウント
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		str						：文字列を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS		：正常終了
-//		上記以外					：異常終了
-//==================================================================================
-int cmdAcquisitionTrgInvalidCount (void *str)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int argc;
-	unsigned int count;
-
-	// Get Argument
-	argc = cmdCheckArg ((char *)str);
-
-	// Help?
-	if (argc == 2)
-	{
-		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
-		{
-			cmdAcquisitionTrgInvalidCountHelp (NULL);
-			goto _DONE;
-		}
-	}
-
-	if (argc == 1)
-	{
-		// 無効トリガカウント取得
-		if ((status = acquisitionGetTrgInvalidCount (&count)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		DEBUG_PRINT_FORCE ("%d ", count);
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
-		goto _DONE;
-	}
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Frames無効ActiveトリガカウントHelp
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		str						：文字列を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS		：正常終了
-//		上記以外					：異常終了
-//==================================================================================
-int cmdAcquisitionTrgInvalidCountHelp (void *str)
-{
-	DEBUG_PRINT_FORCE ("\n");
-	DEBUG_PRINT_FORCE ("[Get]\n");
-	DEBUG_PRINT_FORCE ("  Function          : The Trigger Invalid Count is acquired.\n");
-	DEBUG_PRINT_FORCE ("  Command           : trg-invalidcount\n");
-	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
-	DEBUG_PRINT_FORCE ("  Output Param      : Invalid Trigger Trigger Count\n");
-	DEBUG_PRINT_FORCE ("\n");
 	DEBUG_PRINT_FORCE ("\n");
 
 	return (AVAL_STATUS_SUCCESS);
@@ -2460,7 +2315,7 @@ int cmdAcquisitionTrgCount (void *str)
 	int status = AVAL_STATUS_SUCCESS;
 
 	int argc;
-	unsigned int dataH;
+	unsigned int data;
 	int port;
 
 	// Get Argument
@@ -2483,35 +2338,14 @@ int cmdAcquisitionTrgCount (void *str)
 		goto _DONE;
 	}
 
-#if !defined (MODE_CXP_MULTI_PORT)
 	if (argc == 1)
 	{
-		port = 0;
-
 		// Get Trg Count
-		if ((status = acquisitionGetTrgCountHigh (port, &dataH)) != AVAL_STATUS_SUCCESS)
+		if ((status = acquisitionGetTrgCount (&data)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
-		DEBUG_PRINT_FORCE ("%d ", dataH);
+		DEBUG_PRINT_FORCE ("%d ", data);
 	}
-#else
-	if (argc == 2)
-	{
-		// port取得
-		if (sscanf (gCmdArg[1], "%d", &port) != 1)
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
-			goto _DONE;
-		}
-
-		// Get Trg Count
-		if ((status = acquisitionGetTrgCountHigh (port, &dataH)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		DEBUG_PRINT_FORCE ("%d ", dataH);
-	}
-#endif
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
@@ -2538,7 +2372,7 @@ int cmdAcquisitionTrgCountHelp (void *str)
 	DEBUG_PRINT_FORCE ("\n[Get]\n");
 	DEBUG_PRINT_FORCE ("  Function          : Trg count is acquired.\n");
 	DEBUG_PRINT_FORCE ("  Command           : trg-count [param]\n");
-	DEBUG_PRINT_FORCE ("  Input  Param      : port\n");
+	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
 	DEBUG_PRINT_FORCE ("  Output0 Param     : Trg Count\n");
 	DEBUG_PRINT_FORCE ("\n");
 

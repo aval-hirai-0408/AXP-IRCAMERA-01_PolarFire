@@ -28,11 +28,7 @@
 #define CXP_I2C_SCLK_RATE					(400000)
 
 // Slave Address
-#if defined (MODE_BOARD_ACB525CXP)
-#define CXP_I2C_SLAVE_ADRS					(0x4c)	// 0x98>>1
-#else
 #define CXP_I2C_SLAVE_ADRS					(0x10)	// 0x20>>1
-#endif
 
 // Register Min/Max
 #if defined (MODE_BOARD_ACB525CXP)

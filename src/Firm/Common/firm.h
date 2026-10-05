@@ -1418,7 +1418,6 @@ int acquisitionSetTrgActivation (int active);
 int acquisitionGetTrgActivation (int *pActive);
 int acquisitionSetTrgDelay (unsigned int delay);
 int acquisitionGetTrgDelay (unsigned int *pDelay);
-int acquisitionGetInvalidedTrg (int *pMode);
 int acquisitionSetExposureMode (int mode);
 int acquisitionGetExposureMode (int *pMode);
 int acquisitionSetExposure (unsigned int expTime);
@@ -1430,7 +1429,6 @@ int irSetExposureSimpleShutterNormal (unsigned int expTime);
 int acquisitionGetExposure (unsigned int *pExpTime);
 int irGetExposure (unsigned int *pExpTime);
 int irGetExposureDrrs (unsigned int *pExpTime);
-int acquisitionGetTrgInvalidCount (unsigned int *pCount);
 int acquisitionSetTrgReserve (int mode);
 int acquisitionGetTrgReserve (int *pMode);
 int acquisitionGetTrgReserveMain (int *pMode);
@@ -1451,11 +1449,9 @@ int acquisitionGetTrgSourceEncoder (int *pStatus);
 int irvGetHIntervalClock (unsigned int *pHinterval);
 int acquisitionSetRateMode (int mode);
 int acquisitionGetRateMode (int *pMode);
-int acquisitionGetTrgCountHigh (int port, unsigned int *pCount);
-int acquisitionGetTrgCountLow (int port, unsigned int *pCount);
+int acquisitionGetTrgCount (unsigned int *pCount);
 int acquisitionRestTrgSoftCount (void);
 int acquisitionSetTrgSoftCount (void);
-int acquisitionRestLinkTrgCount (void);
 
 // aoi.c
 int aoiInitialize (void);
@@ -1605,7 +1601,6 @@ int cameraParamUserReadMem (int userNum, unsigned int saveAdrs, unsigned int *pA
 int cameraParamCommonWriteMem (unsigned int saveAdrs, unsigned int data);
 int cameraParamCommonReadMem (unsigned int saveAdrs, unsigned int *pData);
 int cameraParamWriteRegister (int userNum, unsigned int offset, unsigned int size);
-int cameraParamWriteRegisterOffsetAdrs (int userNum, unsigned int offset, unsigned int size, unsigned int offsetAdrs);
 int cameraParamSpectrumWriteRegister (int userNum, unsigned int offset, unsigned int size);
 int cameraParamUserMarkClear (int userNum);
 int cameraParamSpectrumMarkClear (int userNum);
@@ -1980,12 +1975,7 @@ int dpcGridCheckAll (int x, int y, int *pDetect);
 int dpcDataXFlip (int mode, unsigned int dpcMemAdrs);
 void dpcSetXFlipFlag (int mode);
 int dpcGetXFlipFlag (void);
-int dpcToMemoryHalf (void);
-int dpcCopyBuffToExtMem (unsigned long memAdrs, unsigned int *pBuffer);
 int dpcCopyExtMemToBuff (unsigned long memAdrs, unsigned int *pBuffer);
-int dpcGetDivAdrs (int x, int y, int *pX, unsigned int *pAdrs);
-int dpcSetMarginGridData (void);
-int hideGridCalc (int x, int y, int *pLeft, int *pRight);
 
 // dpcAdjust.c
 int dpcClearBatchCount (void);
@@ -2132,9 +2122,6 @@ int ffcDataReplacement  (int lineStart, int lineSize, int ffcCorMode);
 int ffcDataReplacementFirst (int lineStart, int lineSize);
 int ffcGetReplacementLine (int *pLineStart, int lineSize, int ffcCorMode);
 int ffcGetReplacementLineFirst (int *pLineStart, int lineSize);
-int ffcCopyBuffToExtMem (unsigned long memAdrs, unsigned int *pBuffer);
-int ffcCopyExtMemToBuff (unsigned long memAdrs, unsigned int *pBuffer);
-int ffcSetMarginGridData (void);
 
 // ffcAdjust.c
 int ffcBlack (FFC_PARAM ffcParam);
@@ -2555,7 +2542,6 @@ int roiGetSelector (int *pSelector);
 int roiInitialize (void);
 int roiSetEnd (void);
 int roiGetErrStatus (unsigned int *pStat);
-int roiGetErrStatusMulti (int selector, unsigned int *pStat);
 int roiSetEntryCount (int count);
 int roiGetEntryCount (int *pCount);
 int roiSetValid (int valid);
@@ -2729,7 +2715,6 @@ int sensorGetHIntervalReg (unsigned int *pData);
 int sensorSetHInterval (int bit);
 int sensorSetHIntervalTrgNormal (double frameRate);
 int sensorSetHIntervalData (unsigned int data);
-int sensorGetHInterval (unsigned int *pHinterval);
 int sensorSetOutputMode (int mode);
 int sensorGetOutputMode (int *pMode);
 int sensorGetRegDefault (void);
@@ -2887,8 +2872,6 @@ int fpgaGetBuildDate (unsigned int *pData);
 int fpgaGetBuildNumber (unsigned int *pData);
 
 // voltageIfBoard.c
-#if defined (MODE_BOARD_ACB531CXP)
-
 int voltIfInitialize (void);
 int voltIfCheckValid (void);
 int voltIfGet105vd (double *pData);
@@ -2901,10 +2884,6 @@ int voltIfGet90va (double *pData);
 int ifGetInternalTemp (double *pData);
 int voltIfBoardShow (void);
 
-#endif
-
-#if defined (MODE_BOARD_ACB532GE)
-
 int voltIfInitialize (void);
 int voltIfGet065v (double *pData);
 int voltIfGet085va (double *pData);
@@ -2914,8 +2893,6 @@ int voltIfGet120vp (double *pData);
 int voltIfGet240v (double *pData);
 int ifGetInternalTemp (double *pData);
 int voltIfBoardShow (void);
-
-#endif
 
 // voltageFpgaboard.c
 int voltFpgaGetVccint (double *pData);
@@ -2929,7 +2906,6 @@ int voltFpgaGet25v (double *pData);
 int voltFpgaGetVtt (double *pData);
 int voltFpgaBoardShow (void);
 
-#if defined (MODE_SYSTEM_MANAGEMENT)
 int voltFpgaGet09v (double *pData);
 int voltFpgaGet12vSys (double *pData);
 int voltFpgaGet115v (double *pData);
@@ -2941,7 +2917,6 @@ int voltFpgaGetVref (double *pData);
 int voltFpgaGetVccPsintlp (double *pData);
 int voltFpgaGetVccPsinfp (double *pData);
 int voltFpgaGetVccPSAux (double *pData);
-#endif
 
 // xad.c
 int xadcGetFpgaTemp (double *pTemp);

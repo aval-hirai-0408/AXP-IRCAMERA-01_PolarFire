@@ -128,9 +128,7 @@ int cmdRoiMultiY (void *str)
 	int mode;
 	int heightSize, heightOffset;
 	int count;
-#if defined (MODE_CXP_MULTI_PORT)
 	int cxpPort;
-#endif
 
 	// Get Argument
 	argc = cmdCheckArg ((char *)str);
@@ -241,20 +239,11 @@ int cmdRoiMultiY (void *str)
 		if (gInterFaceID == INTERFACE_CXP)
 		{
 			// CXP Height Param設定
-			#if !defined (MODE_CXP_MULTI_PORT)
-
-			if ((status = cxpSetHeightParam (0)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-
-			#else // #if !defined (MODE_CXP_MULTI_PORT)
-
 			if ((status = cxpGetPort (&cxpPort)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
 
 			if ((status = cxpSetHeightParam (cxpPort)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
-
-			#endif // #if !defined (MODE_CXP_MULTI_PORT)
 		}
 #endif
 	}
@@ -344,21 +333,11 @@ int cmdRoiMultiY (void *str)
 		if (gInterFaceID == INTERFACE_CXP)
 		{
 			// CXP Height Param設定
-
-			#if !defined (MODE_CXP_MULTI_PORT)
-
-			if ((status = cxpSetHeightParam (0)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-
-			#else // #if !defined (MODE_CXP_MULTI_PORT)
-
 			if ((status = cxpGetPort (&cxpPort)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
 
 			if ((status = cxpSetHeightParam (cxpPort)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
-
-			#endif // #if !defined (MODE_CXP_MULTI_PORT)
 		}
 #endif
 	}

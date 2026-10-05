@@ -20,223 +20,87 @@
 
 // FPGA
 #define FPGA_BASE_ADRS												(0x80000000)
-
+#define FPGA_BASE_ADRS_COMMON										(0x63000000)
+#define FPGA_BASE_ADRS_SENSOR										(0x6B000000)
+#define FPGA_BASE_ADRS_IPU											(0x6C000000)
+#define GENICAM_ADRS												(0x6D000000)
 
 //----------------------------------------------------------------------
-// Version
+// Generic
 //----------------------------------------------------------------------
-#define FPGA_VER_ADRS												(FPGA_BASE_ADRS+0x00000000)
-#define FPGA_VER_BOARD_ADRS											(FPGA_BASE_ADRS+0x00)
-#define FPGA_BUILD_DATE_ADRS										(FPGA_BASE_ADRS+0x00)
-#define FPGA_VER_FPGA_ADRS											(FPGA_BASE_ADRS+0x04)
-#define FPGA_BUILD_NUMBER_ADRS										(FPGA_BASE_ADRS+0x04)
-#define FPGA_VER_FIRM_ADRS											(FPGA_BASE_ADRS+0x08)
- #define BOARD_VERSION_SIZE											(3)
- #define FPGA_VERSION_SIZE											(3)
- #define FIRM_VERSION_SIZE											(3)
- #define MAIN_VERSION_SIZE											(3)
- #define BOOT_VERSION_SIZE											(3)
- #define FPGA_DEVICE_SCAN_TYPE_ADRS									(FPGA_BASE_ADRS+0x40)
-#define FPGA_SENSOR_WIDTH_ADRS										(FPGA_BASE_ADRS+0x44)
-#define FPGA_SENSOR_HEIGHT_ADRS										(FPGA_BASE_ADRS+0x48)
-#define FPGA_SENSOR_SHUTTER_ADRS									(FPGA_BASE_ADRS+0x4C)
-#define FPGA_MAX_WIDTH_ADRS											(FPGA_BASE_ADRS+0x50)
-#define FPGA_MAX_HEIGHT_ADRS										(FPGA_BASE_ADRS+0x54)
+#define FPGA_GENERIC_ADRS											(FPGA_BASE_ADRS_COMMON+0x0000)
 
-#define FPGA_SHARED_MEMORY_BASE_ADRS								(FPGA_BASE_ADRS+0x200)
-#define FPGA_SHARED_MEMORY_BOOT0_ADRS								(FPGA_SHARED_MEMORY_BASE_ADRS+0x00)
-#define FPGA_SHARED_MEMORY_BOOT1_ADRS								(FPGA_SHARED_MEMORY_BASE_ADRS+0x04)
-	#define FPGA_SHARED_MEMORY_BOOT_START_MARK						(0x12345678)
-	#define FPGA_SHARED_MEMORY_BOOT_INIT_MARK						(0x00)
-	#define FPGA_SHARED_MEMORY_BOOT_END_MARK						(0x01)
-	#define FPGA_SHARED_MEMORY_BOOT_ERROR_MARK						(0xffffffff)
+#define FPGA_VER_ADRS												(FPGA_GENERIC_ADRS+0x00)
+#define FPGA_VER_BOARD_ADRS										(FPGA_GENERIC_ADRS+0x00)
+#define FPGA_BUILD_DATE_ADRS										(FPGA_GENERIC_ADRS+0x00)
+#define FPGA_VER_FPGA_ADRS											(FPGA_GENERIC_ADRS+0x04)
+#define FPGA_BUILD_NUMBER_ADRS										(FPGA_GENERIC_ADRS+0x04)
+#define FPGA_VER_FIRM_ADRS											(FPGA_GENERIC_ADRS+0x08)
+	#define BOARD_VERSION_SIZE										(3)
+	#define FPGA_VERSION_SIZE										(3)
+	#define FIRM_VERSION_SIZE										(3)
+	#define MAIN_VERSION_SIZE										(3)
+	#define BOOT_VERSION_SIZE										(3)
+#define FPGA_DEVICE_SCAN_TYPE_ADRS									(FPGA_GENERIC_ADRS+0x40)
+#define FPGA_SENSOR_WIDTH_ADRS										(FPGA_GENERIC_ADRS+0x44)
+#define FPGA_SENSOR_HEIGHT_ADRS									(FPGA_GENERIC_ADRS+0x48)
+#define FPGA_SENSOR_SHUTTER_ADRS									(FPGA_GENERIC_ADRS+0x4C)
+#define FPGA_MAX_WIDTH_ADRS										(FPGA_GENERIC_ADRS+0x50)
+#define FPGA_MAX_HEIGHT_ADRS										(FPGA_GENERIC_ADRS+0x54)
 
 // Voltage
 #define FPGA_VOLT_IF_V_UNIT											(1000000)		// uV→V
 
-#define FPGA_VOLT_IF_VT_VALID_ADRS									(FPGA_BASE_ADRS+0x300)
+#define FPGA_VOLT_IF_VT_VALID_ADRS									(FPGA_GENERIC_ADRS+0x300)
   #define FPGA_VOLT_IF_VT_VALID_BIT									(1<<0)
-#define FPGA_INTERNAL_TEMP_ADRS										(FPGA_BASE_ADRS+0x304)
+#define FPGA_INTERNAL_TEMP_ADRS										(FPGA_GENERIC_ADRS+0x304)
 
-// ACB-531-CXP
-#define FPGA_VOLT_IF_105VD_ADRS										(FPGA_BASE_ADRS+0x308)
-#define FPGA_VOLT_IF_105VA_ADRS										(FPGA_BASE_ADRS+0x30C)
-#define FPGA_VOLT_IF_125VD_ADRS										(FPGA_BASE_ADRS+0x310)
-#define FPGA_VOLT_IF_18VD_ADRS										(FPGA_BASE_ADRS+0x314)
-#define FPGA_VOLT_IF_25VF_ADRS										(FPGA_BASE_ADRS+0x318)
-#define FPGA_VOLT_IF_33VD_ADRS										(FPGA_BASE_ADRS+0x31C)
-#define FPGA_VOLT_IF_90VA_ADRS										(FPGA_BASE_ADRS+0x320)
+#define FPGA_VOLT_IF_105VD_ADRS										(FPGA_GENERIC_ADRS+0x308)
+#define FPGA_VOLT_IF_105VA_ADRS										(FPGA_GENERIC_ADRS+0x30C)
+#define FPGA_VOLT_IF_125VD_ADRS										(FPGA_GENERIC_ADRS+0x310)
+#define FPGA_VOLT_IF_18VD_ADRS										(FPGA_GENERIC_ADRS+0x314)
+#define FPGA_VOLT_IF_25VF_ADRS										(FPGA_GENERIC_ADRS+0x318)
+#define FPGA_VOLT_IF_33VD_ADRS										(FPGA_GENERIC_ADRS+0x31C)
+#define FPGA_VOLT_IF_90VA_ADRS										(FPGA_GENERIC_ADRS+0x320)
 
-// ACB-532-GE
-#define FPGA_VOLT_IF_065VD_ADRS										(FPGA_BASE_ADRS+0x308)
-#define FPGA_VOLT_IF_085VA_ADRS										(FPGA_BASE_ADRS+0x30C)
-#define FPGA_VOLT_IF_230VA_ADRS										(FPGA_BASE_ADRS+0x310)
-#define FPGA_VOLT_IF_330V_ADRS										(FPGA_BASE_ADRS+0x314)
-#define FPGA_VOLT_IF_120VP_ADRS										(FPGA_BASE_ADRS+0x318)
-#define FPGA_VOLT_IF_240V_ADRS										(FPGA_BASE_ADRS+0x31C)
+#define FPGA_POWER_STATUS_ADRS										(FPGA_GENERIC_ADRS+0x380)
+	#define FPGA_POWER_STATUS_POWER_CONNECTOR						(1<<0)
+	#define FPGA_POWER_STATUS_POWER_OVER							(1<<1)
+	#define FPGA_POWER_STATUS_IF_OK									(1<<2)
 
-#define FPGA_BOARD_VERSION_ADRS										(FPGA_BASE_ADRS+0x344)
- #define FPGA_BOARD_ACB530											(0)
- #define FPGA_BOARD_ACB530A											(1)
-
-#define FPGA_POWER_STATUS_ADRS										(FPGA_BASE_ADRS+0x380)
- #define FPGA_POWER_STATUS_POWER_CONNECTOR							(1<<0)
- #define FPGA_POWER_STATUS_POWER_OVER								(1<<1)
- #define FPGA_POWER_STATUS_IF_OK									(1<<2)
-
-#define FPGA_INTERFACE_ID_ADRS										(FPGA_BASE_ADRS+0x3c0)
- #define INTERFACE_NONE												(0)
- #define INTERFACE_CAMERALINK										(1)
- #define INTERFACE_GIGE												(2)
- #define INTERFACE_GIGE20											(3)
- #define INTERFACE_CAMELALINL_SPECTRUM								(4)
- #define INTERFACE_GIGE_SPECTRUM									(5)
- #define INTERFACE_CXP												(6)
-#define FPGA_GPIO_TYPE_ID_ADRS										(FPGA_BASE_ADRS+0x3c4)
- #define GPIO_TYPE_NORMAL											(0)
- #define GPIO_TYPE_EXTEND											(1)
- #define GPIO_TYPE_EXTEND_VERSION2									(2)
-#define FPGA_AUTO_BRIGHT_TYPE_ADRS									(FPGA_BASE_ADRS+0x3c8)
-#define FPGA_NTSC_TYPE_ADRS											(FPGA_BASE_ADRS+0x3cc)
-#define FPGA_CAMERA_IRQ_CTRL_ADRS									(FPGA_BASE_ADRS+0x3D0)
- #define FPGA_CAMERA_IRQ_GROBAL_BIT									(1<<31)
-#define FPGA_CAMERA_IRQ_MASK_ADRS									(FPGA_BASE_ADRS+0x3D4)
-#define FPGA_CAMERA_IRQ_STATUS_ADRS									(FPGA_BASE_ADRS+0x3D8)
-#define FPGA_CAMERA_STATUS_ADRS										(FPGA_BASE_ADRS+0x3DC)
- #define FPGA_CAMERA_IRQ_MASK										(0x01)
- #define FPGA_CAMERA_IRQ_EXPOSURE_END_BIT							(1<<0)
- #define FPGA_CAMERA_IRQ_SENSOR_BIT									(1<<1)
-
-
-//----------------------------------------------------------------------
-// System Management
-//----------------------------------------------------------------------
-#if defined (MODE_SYSTEM_MANAGEMENT)
-
-#define FPGA_SYSTEM_MANAGEMENT_ADRS									(FPGA_BASE_ADRS+0x01000000)
-#define FPGA_SM_SRR_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x00)
-#define FPGA_SM_SR_ADRS												(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x04)
-#define FPGA_SM_AOSR_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x08)
-#define FPGA_SM_CONVST_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x0c)
-#define FPGA_SM_SYSMONRR_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x10)
-#define FPGA_SM_GLOBAL_INT_ENABLE_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x5c)
-#define FPGA_SM_IP_INT_STATUS_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x60)
-#define FPGA_SM_IP_INT_ENABLE_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x68)
-
-// 16bit中上位10bitが有効データ
-#define FPGA_SM_DATA_SHIFT											(6)
-#define FPGA_SM_DATA_MASK											(0x3ff)
-
-#define FPGA_SM_TEMP_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x400)
-#define FPGA_SM_VCCINT_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x404)
-#define FPGA_SM_VCCAUX_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x408)
-#define FPGA_SM_VPVN_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x40c)
-#define FPGA_SM_VREFP_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x410)
-#define FPGA_SM_VREFN_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x414)
-#define FPGA_SM_VBRAM_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x418)
-
-#define FPGA_SM_SUPPLY_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x420)
-#define FPGA_SM_ADC_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x424)
-#define FPGA_SM_GAIN_ERR_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x428)
-#define FPGA_SM_VCC_PSINTLP_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x434)
-#define FPGA_SM_VCC_PSINFP_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x438)
-#define FPGA_SM_VCC_PSAUX_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x43C)
-#define FPGA_SM_VAUX0_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x440)
-#define FPGA_SM_VAUX1_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x444)
-#define FPGA_SM_VAUX2_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x448)
-#define FPGA_SM_VAUX3_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x44c)
-#define FPGA_SM_VAUX4_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x450)
-#define FPGA_SM_VAUX5_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x454)
-#define FPGA_SM_VAUX6_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x458)
-#define FPGA_SM_VAUX7_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x45c)
-#define FPGA_SM_VAUX8_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x460)
-#define FPGA_SM_VAUX9_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x464)
-#define FPGA_SM_VAUX10_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x468)
-#define FPGA_SM_VAUX11_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x46c)
-#define FPGA_SM_VAUX12_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x470)
-#define FPGA_SM_VAUX13_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x474)
-#define FPGA_SM_VAUX14_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x478)
-#define FPGA_SM_VAUX15_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x47c)
-#define FPGA_SM_MAX_TEMP_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x480)
-#define FPGA_SM_MAX_VCCINT_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x484)
-#define FPGA_SM_MAX_AUX_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x488)
-#define FPGA_SM_MAX_VBRAM_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x48C)
-#define FPGA_SM_MIN_TEMP_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x490)
-#define FPGA_SM_MIN_VCCINT_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x484)
-#define FPGA_SM_MIN_AUX_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x498)
-#define FPGA_SM_MIN_VBRAM_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x49c)
-#define FPGA_SM_MAX_VCC_PSINTLP_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x4a0)
-#define FPGA_SM_MAX_VCC_PSINFP_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x4a4)
-#define FPGA_SM_MAX_VCC_PSAUX_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x4a8)
-#define FPGA_SM_MIN_VCC_PSINTLP_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x4b0)
-#define FPGA_SM_MIN_VCC_PSINFP_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x4b4)
-#define FPGA_SM_MIN_VCC_PSAUX_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x4b8)
-#define FPGA_SM_I2C_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x4e0)
-#define FPGA_SM_FLAG_REG_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x4fc)
-#define FPGA_SM_CONFIG_REG0_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x500)
-#define FPGA_SM_CONFIG_REG1_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x504)
-#define FPGA_SM_CONFIG_REG2_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x508)
-#define FPGA_SM_CONFIG_REG3_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x50c)
-#define FPGA_SM_CONFIG_REG4_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x510)
-#define FPGA_SM_ANALOG_BUS_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x514)
-#define FPGA_SM_SEQUENCE_REG8_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x518)
-#define FPGA_SM_SEQUENCE_REG9_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x51c)
-#define FPGA_SM_SEQUENCE_REG0_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x520)
-#define FPGA_SM_SEQUENCE_REG1_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x524)
-#define FPGA_SM_SEQUENCE_REG2_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x528)
-#define FPGA_SM_SEQUENCE_REG3_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x52c)
-#define FPGA_SM_SEQUENCE_REG4_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x530)
-#define FPGA_SM_SEQUENCE_REG5_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x534)
-#define FPGA_SM_SEQUENCE_REG6_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x538)
-#define FPGA_SM_SEQUENCE_REG7_ADRS									(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x53c)
-#define FPGA_SM_ALARM_THRED_REG0_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x540)
-#define FPGA_SM_ALARM_THRED_REG1_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x544)
-#define FPGA_SM_ALARM_THRED_REG2_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x548)
-#define FPGA_SM_ALARM_THRED_REG3_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x54c)
-#define FPGA_SM_ALARM_THRED_REG4_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x550)
-#define FPGA_SM_ALARM_THRED_REG5_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x554)
-#define FPGA_SM_ALARM_THRED_REG6_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x558)
-#define FPGA_SM_ALARM_THRED_REG7_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x55c)
-#define FPGA_SM_ALARM_THRED_REG8_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x560)
-#define FPGA_SM_ALARM_THRED_REG12_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x570)
-#define FPGA_SM_ALARM_THRED_REG16_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x580)
-#define FPGA_SM_ALARM_THRED_REG17_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x584)
-#define FPGA_SM_ALARM_THRED_REG18_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x588)
-#define FPGA_SM_ALARM_THRED_REG19_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x58c)
-#define FPGA_SM_ALARM_THRED_REG22_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x5a0)
-#define FPGA_SM_ALARM_THRED_REG23_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x5a4)
-#define FPGA_SM_ALARM_THRED_REG24_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x5a8)
-#define FPGA_SM_ALARM_THRED_REG25_ADRS								(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x5ac)
-#define FPGA_SM_VUSER0_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x600)
-#define FPGA_SM_VUSER1_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x604)
-#define FPGA_SM_VUSER2_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x608)
-#define FPGA_SM_VUSER3_ADRS											(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x60c)
-#define FPGA_SM_MAX_VUSER0_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x680)
-#define FPGA_SM_MAX_VUSER1_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x684)
-#define FPGA_SM_MAX_VUSER2_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x688)
-#define FPGA_SM_MAX_VUSER3_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x68c)
-#define FPGA_SM_MIN_VUSER0_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x6a0)
-#define FPGA_SM_MIN_VUSER1_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x6a4)
-#define FPGA_SM_MIN_VUSER2_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x6a8)
-#define FPGA_SM_MIN_VUSER3_ADRS										(FPGA_SYSTEM_MANAGEMENT_ADRS + 0x6ac)
-
-#endif // #if defined (MODE_SYSTEM_MANAGEMENT)
+#define FPGA_INTERFACE_ID_ADRS										(FPGA_GENERIC_ADRS+0x3c0)
+	#define INTERFACE_NONE											(0)
+	#define INTERFACE_CAMERALINK									(1)
+	#define INTERFACE_GIGE											(2)
+	#define INTERFACE_GIGE20										(3)
+	#define INTERFACE_CAMELALINL_SPECTRUM							(4)
+	#define INTERFACE_GIGE_SPECTRUM									(5)
+	#define INTERFACE_CXP											(6)
+#define FPGA_GPIO_TYPE_ID_ADRS										(FPGA_GENERIC_ADRS+0x3c4)
+	#define GPIO_TYPE_NORMAL										(0)
+	#define GPIO_TYPE_EXTEND										(1)
+	#define GPIO_TYPE_EXTEND_VERSION2								(2)
+#define FPGA_AUTO_BRIGHT_TYPE_ADRS									(FPGA_GENERIC_ADRS+0x3c8)
+#define FPGA_CAMERA_IRQ_CTRL_ADRS									(FPGA_GENERIC_ADRS+0x3D0)
+	#define FPGA_CAMERA_IRQ_GROBAL_BIT								(1<<31)
+#define FPGA_CAMERA_IRQ_MASK_ADRS									(FPGA_GENERIC_ADRS+0x3D4)
+#define FPGA_CAMERA_IRQ_STATUS_ADRS									(FPGA_GENERIC_ADRS+0x3D8)
+#define FPGA_CAMERA_STATUS_ADRS										(FPGA_GENERIC_ADRS+0x3DC)
+	#define FPGA_CAMERA_IRQ_MASK									(0x01)
+	#define FPGA_CAMERA_IRQ_EXPOSURE_END_BIT						(1<<0)
+	#define FPGA_CAMERA_IRQ_SENSOR_BIT								(1<<1)
 
 
 //----------------------------------------------------------------------
 // GPIO
 //----------------------------------------------------------------------
-#define FPGA_GPIO_ADRS												(FPGA_BASE_ADRS+0x02000000)
+#define FPGA_GPIO_ADRS												(FPGA_BASE_ADRS_COMMON+0x02000)
 
  #define FPGA_GPIO_GPI_CTRL_ADRS									(FPGA_GPIO_ADRS+0x00)
-#if (IF_HW_TYPE == CAMERA_TYPE_AREA)
 	#define GPI_GET_DATA(x)											(x&FPGA_GPI_CTRL_GPI0_BIT)
-#elif (IF_HW_TYPE == CAMERA_TYPE_LINE)
-	#define GPI_GET_DATA(x)											(x&(FPGA_GPI_CTRL_GPI1_BIT|FPGA_GPI_CTRL_GPI0_BIT))
-#endif
 	#define FPGA_GPI_CTRL_GPI0_BIT									(1<<0)
 	#define FPGA_GPI_CTRL_GPI1_BIT									(1<<1)
-#define FPGA_GPIO_GPO_CTRL_ADRS										(FPGA_GPIO_ADRS+0x04)
+ #define FPGA_GPIO_GPO_CTRL_ADRS									(FPGA_GPIO_ADRS+0x04)
 	#define GPO_GP0													(1<<0)
 	#define GPO_GP1													(1<<1)
 	#define GPO_GP2													(1<<2)
@@ -288,7 +152,7 @@
  #define GPO_PULSE_MODE4											(4)
  #define GPO_PULSE_MODE5											(5)
  
-	#define FPGA_GPIO_GPO_0_SEL_ADR								(FPGA_GPIO_ADRS+0x24)
+	#define FPGA_GPIO_GPO_0_SEL_ADR									(FPGA_GPIO_ADRS+0x24)
 	#define FPGA_GPIO_GPO_0_SEL_FVAL								(0)
 	#define FPGA_GPIO_GPO_0_SEL_LVAL								(1)
 	#define FPGA_GPIO_GPO_0_SEL_MSP									(2)
@@ -324,7 +188,7 @@
 //----------------------------------------------------------------------
 // LED
 //----------------------------------------------------------------------
-#define FPGA_LED_ADRS												(FPGA_BASE_ADRS+0x03000000)
+#define FPGA_LED_ADRS												(FPGA_BASE_ADRS_COMMON+0x03000)
 
 #define FPGA_LED_CTRL_ADRS											(FPGA_LED_ADRS+0x00)
  #define FPGA_LED_CTRL_LED0_ADRS									(FPGA_LED_ADRS+0x00)
@@ -371,11 +235,104 @@
 	#define LED_DIAG												(LED_PATTERN10)
 	#define LED_SYSTEM_ERROR										(LED_PATTERN11)
 
+//----------------------------------------------------------------------
+// Sensor
+//----------------------------------------------------------------------
+#define FPGA_SENSOR_ADRS											(FPGA_BASE_ADRS_SENSOR+0x1000)
+
+#define FPGA_SENSOR_PROPERTY_SENSOR_IMP_ADRS						(FPGA_SENSOR_ADRS+0x00)
+#define FPGA_SENSOR_POWER_STATUS_ADRS								(FPGA_SENSOR_ADRS+0x04)
+  #define FPGA_SENSOR_POWER_OK_BIT									(1<<0)
+#define FPGA_SENSOR_I2C_CTRL_ADRS									(FPGA_SENSOR_ADRS+0x08)
+  #define FPGA_SENSOR_I2C_CTRL_ENABLE_BIT							(1<<0)
+  #define FPGA_SENSOR_I2C_CTRL_INIT_DONE_BIT						(1<<1)
+  #define FPGA_SENSOR_I2C_CTRL_SCAN_RUNNING_BIT						(1<<2)
+#define FPGA_SENSOR_MSP_IO_ADRS										(FPGA_SENSOR_ADRS+0x20)
+  #define FPGA_SENSOR_MSP_IO_TEST_PIN								(1<<1)
+  #define FPGA_SENSOR_MSP_IO_RST_PIN								(1<<0)
+#define FPGA_SENSOR_HV_GEN_ADRS										(FPGA_SENSOR_ADRS+0x40)
+  #define FPGA_SENSOR_HV_GEN_ENABLE_BIT								(1<<0)
+  #define FPGA_SENSOR_HV_GEN_DONE_BIT								(1<<1)
+#define FPGA_SENSOR_HINTERVAL_ADRS									(FPGA_SENSOR_ADRS+0x44)
+  #define FPGA_SENSOR_HINTERVAL_MASK								(0xffff)
+#define FPGA_SENSOR_CTRL_ADRS										(FPGA_SENSOR_ADRS+0x80)
+  #define FPGA_SENSOR_CTR_MODE_ENABLE_BIT							(1<<0)
+  #define FPGA_SENSOR_CTRL_MODE_SLAVE_BIT							(1<<1)
+  #define FPGA_SENSOR_CTRL_RESET_BIT								(1<<2)
+  #define FPGA_SENSOR_CTRL_SYNCTRG_BIT								(1<<3)
+
+#define FPGA_SENSOR_REG_SERDES_INTERVAL								(0x1000)
+
+#define FPGA_SENSOR_PRORERTY_SENSOR_LANE_ADRS						(FPGA_SENSOR_ADRS+0x10000)
+#define FPGA_SENSOR_OUTPUT_CTRL_ADRS								(FPGA_SENSOR_ADRS+0x10004)
+  #define FPGA_SENSOR_OUTPUT_CTRL_ENABLE_BIT						(1<<0)
+#define FPGA_SENSOR_INPUT_CTRL_ADRS									(FPGA_SENSOR_ADRS+0x10008)
+  #define FPGA_SENSOR_INPUT_CTRL_ENABLE_BIT							(1<<0)
+#define FPGA_SENSOR_MODE_ADRS										(FPGA_SENSOR_ADRS+0x10010)
+  #define FPGA_SENSOR_MODE_MASTER									(1<<0)
+  #define FPGA_SENSOR_MODE_TRIGGER									(1<<1)
+#define FPGA_SENSOR_INPUT_STATUS_ADRS								(FPGA_SENSOR_ADRS+0x10014)
+  #define FPGA_SENSOR_INPUT_STATUS_RESET_END_BIT					(1<<0)
+  #define FPGA_SENSOR_TRG_CTRL_ADRS									(FPGA_SENSOR_ADRS+0x10040)
+  #define FPGA_SENSOR_TRG_CTRL_ENABLE_BIT							(1<<0)
+  #define FPGA_SENSOR_TRG_CTRL_ENABLE_DONE_BIT						(1<<31)
+  #define FPGA_TG_CTRL_ENABLE_RB_TIMEOUT							(5000)
+#define FPGA_SENSOR_TRG_DELAY_ADRS									(FPGA_SENSOR_ADRS+0x10044)
+#define FPGA_TG_TGSE_ADRS											(FPGA_SENSOR_ADRS+0x10048)
+  #define FPGA_TG_TGSE_MASK											(0xffff)
+  #define FPGA_TG_TGSE_MIN											(0)
+  #define FPGA_TG_TGSE_MAX											(0xffff)
+#define FPGA_TG_TGES_ADRS											(FPGA_SENSOR_ADRS+0x1004c)
+  #define FPGA_TG_TGES_MASK											(0xffff)
+  #define FPGA_TG_TGES_MIN											(0)
+  #define FPGA_TG_TGES_MAX											(0xffff)
+#define FPGA_TG_TGPD_ADRS											(FPGA_SENSOR_ADRS+0x10050)
+  #define FPGA_TG_TGPD_MASK											(0xffff)
+  #define FPGA_TG_TGPD_MIN											(0)
+  #define FPGA_TG_TGPD_MAX											(0xffff)
+#define FPGA_SENSOR_TRG_RSCP_ADRS									(FPGA_SENSOR_ADRS+0x10054)
+ #define FPGA_TG_LOCK_ADRS											(FPGA_SENSOR_ADRS+0x10058)
+	#define FPGA_TL_LOCK											(0x01)
+	#define FPGA_TL_UNLOCK											(0x00)
+#define FPGA_SENSOR_TEMP_ADRS										(FPGA_SENSOR_ADRS+0x10080)
+  #define FPGA_SENSOR_TEMP_MASK										(0xfff)
+  #define FPGA_SENSOR_TEMP_CODE_BIT									(1<<11)
+  #define FPGA_SENSOR_TEMP_LSB										(0.125)
+  #define FPGA_SENSOR_TEMP_READ_BIT									(1<<31)
+#define FPGA_SENSOR_TEMP_REFRESH_ADRS								(FPGA_SENSOR_ADRS+0x10084)
+  #define FPGA_SENSOR_TEMP_REFRESH_ENABLE_BIT						(1<<0)
+#define FPGA_SENSOR_REG_CTRL_ADRS									(FPGA_SENSOR_ADRS+0x10088)
+  #define FPGA_SENSOR_REG_CTRL_START_BIT							(1<<0)
+  #define FPGA_SENSOR_REG_CTRL_BUSY_BIT								(1<<1)
+  #define FPGA_SENSOR_REG_CTRL_END_BIT								(1<<2)
+  #define FPGA_SENSOR_REG_CTRL_ACES_TMG_ENABLE_BIT					(1<<3)
+  #define FPGA_SENSOR_REG_CTRL_ACES_COUNT_SET(x)					(((x-1)&0xff)<<8)
+  #define FPGA_SENSOR_REG_CTRL_ACES_COUNT_GET(x)					((x>>8)&0xff)
+#define FPGA_SENSOR_REG_TBL_ADRS									(FPGA_SENSOR_ADRS+0x1008C)
+  #define FPGA_SENSOR_REG_TBL_CHIPID_MAKE(x)						(x&0x7f)
+  #define FPGA_SENSOR_REG_TBL_WRITE_BIT								(0<<7)		// 0:Write / 1:Read
+  #define FPGA_SENSOR_REG_TBL_READ_BIT								(1<<7)		// 0:Write / 1:Read
+  #define FPGA_SENSOR_REG_TBL_ADRS_MAKE(x)							((x&0xff)<<8)
+  #define FPGA_SENSOR_REG_TBL_WRITE_DATA_MAKE(x)					((x&0xff)<<16)
+  #define FPGA_SENSOR_REG_TBL_READ_DATA_MAKE(x)						((x>>24)&0xff)
+  #define FPGA_SENSOR_REG_SIZE_MAX									(0x400)
+  #define FPGA_SENSOR_REG_ID_MAX									(0x1c)
+  #define FPGA_SENSOR_ADRS_MAX_										(0xff)
+#define FPGA_SENSOR_REG_SERDES_CTRL0_ADRS							(FPGA_SENSOR_ADRS+0x10100)
+#define FPGA_SENSOR_REG_SERDES_CTRL0_BYTE0_ADRS						(FPGA_SENSOR_ADRS+0x10100)
+  #define FPGA_SENSOR_REG_SERDES_CTRL_DLY_TAP_MASK					(0xff)
+#define FPGA_SENSOR_REG_SERDES_CTRL0_BYTE1_ADRS						(FPGA_SENSOR_ADRS+0x10101)
+  #define FPGA_SENSOR_REG_SERDES_CTRL_MATCH_BIT						(1<<6)
+#define FPGA_SENSOR_REG_SERDES_CTRL0_BYTE2_ADRS						(FPGA_SENSOR_ADRS+0x10102)
+  #define FPGA_SENSOR_REG_SERDES_CTRL_DATA_MASK						(0xff)
+#define FPGA_SENSOR_REG_SERDES_CTRL0_BYTE3_ADRS						(FPGA_SENSOR_ADRS+0x10103)
+  #define FPGA_SENSOR_REG_SERDES_CTRL_MATCH_CLR						(1<<7)
+
 
 //----------------------------------------------------------------------
 // Peltier
 //----------------------------------------------------------------------
-#define FPGA_PELTIER_ADRS											(FPGA_BASE_ADRS + 0x05011000)
+#define FPGA_PELTIER_ADRS											(FPGA_BASE_ADRS_SENSOR + 0x2000)
 
 #define FPGA_PELTIER_CTRL_ADRS										(FPGA_PELTIER_ADRS + 0x00)
 	#define FPGA_PELTIER_CTRL_ENABLE_BIT							(1<<0)
@@ -524,27 +481,26 @@
 	#define FPGA_PELTIER_I2C_CTRL_ENABLE_BIT						(1<<0)
 	#define FPGA_PELTIER_I2C_CTRL_ENABLE_STATUS_BIT					(1<<1)
 
-#define FPGA_PELTIER_LUT_ADRS										(FPGA_PELTIER_ADRS + 0x1000)
-	#define FPGA_PELTIER_LUT_SIZE									(0x4000)		// Ver.1.3
-
 
 //----------------------------------------------------------------------
 // IPU Common
 //----------------------------------------------------------------------
-#define FPGA_IPU_COMMON_ADRS										(FPGA_BASE_ADRS+0x06000000)
-#define FPGA_IPU_IRQ_CTRL_ADRS										(FPGA_IPU_COMMON_ADRS+0x00)
+#define FPGA_IPU_COMMON_ADRS										(FPGA_BASE_ADRS_IPU+0x0000)
+
+#define FPGA_IPU_IRQ_CTRL_ADRS										(FPGA_BASE_ADRS_IPU+0x00)
 	#define FPGA_IPU_IRQ_CTRL_ENABLE_BIT							(1<<31)
-#define FPGA_IPU_IRQ_MASK_ADRS										(FPGA_IPU_COMMON_ADRS+0x04)
+#define FPGA_IPU_IRQ_MASK_ADRS										(FPGA_BASE_ADRS_IPU+0x04)
 	#define FPGA_IPU_IRQ_MASK_DMAC_BIT								(1<<0)
-#define FPGA_IPU_IRQ_STATUS_ADRS									(FPGA_IPU_COMMON_ADRS+0x08)
+#define FPGA_IPU_IRQ_STATUS_ADRS									(FPGA_BASE_ADRS_IPU+0x08)
 	#define FPGA_IPU_IRQ_STATUS_DMAC_BIT							(1<<0)
 
 
 //----------------------------------------------------------------------
 // FFC
 //----------------------------------------------------------------------
-#define FPGA_FFC_ADRS												(FPGA_BASE_ADRS+0x06200000)
- #define FPGA_FFC_CTRL_ADRS											(FPGA_FFC_ADRS+0x00)
+#define FPGA_FFC_ADRS												(FPGA_BASE_ADRS_IPU+0x1000)
+
+#define FPGA_FFC_CTRL_ADRS											(FPGA_FFC_ADRS+0x00)
 	#define FPGA_FFC_CTRL_COEF_BIT_SEL								(1<<16)
 	#define FPGA_FFC_CTRL_GET_SELECT(x)								((x>>12)&0x0f)
 	#define FPGA_FFC_CTRL_SET_SELECT(x)								((x&0x0f)<<12)
@@ -563,37 +519,21 @@
 	#define FPGA_FFC_CTRL_OFFSET_ENABLE_BIT							(1<<0)
 	#define FFC_ENABLE												(1)
 	#define FFC_DISABLE												(0)
- #define FPGA_FFC_BLACK_TARGET_ADRS									(FPGA_FFC_ADRS+0x04)
+#define FPGA_FFC_BLACK_TARGET_ADRS									(FPGA_FFC_ADRS+0x04)
 	#define FFC_BLACK_TARGET_MIN									(0)
 	#define FFC_BLACK_TARGET_MAX									(0x3fff)
- #define FPGA_FFC_DMA_ADRS											(FPGA_FFC_ADRS+0x08)
- #define FPGA_FFC_DMA_SIZE_ADRS										(FPGA_FFC_ADRS+0x0c)
- #define FPGA_FFC_DMA_WAIT_ADRS										(FPGA_FFC_ADRS+0x10)
- #define FPGA_FFC_DMA_ABORT_ADRS									(FPGA_FFC_ADRS+0x100)
- #define FPGA_FFC_DMA_ERROR_ADRS									(FPGA_FFC_ADRS+0x104)
- #define FPGA_FFC_DMA_FIFO_CTRL_ADRS								(FPGA_FFC_ADRS+0x108)
- #define FPGA_FFC_MEM_ADRS											(FPGA_FFC_ADRS+0x800)
-
-
-//----------------------------------------------------------------------
-// FFC2
-//----------------------------------------------------------------------
-#define FPGA_FFC2_ADRS												(FPGA_BASE_ADRS+0x06400000)
- #define FPGA_FFC2_CTRL_ADRS										(FPGA_FFC2_ADRS+0x00)
- #define FPGA_FFC2_BLACK_TARGET_ADRS								(FPGA_FFC2_ADRS+0x04)
- #define FPGA_FFC2_DMA_ADRS											(FPGA_FFC2_ADRS+0x08)
- #define FPGA_FFC2_DMA_SIZE_ADRS									(FPGA_FFC2_ADRS+0x0c)
- #define FPGA_FFC2_DMA_WAIT_ADRS									(FPGA_FFC2_ADRS+0x10)
- #define FPGA_FFC2_DMA_ABORT_ADRS									(FPGA_FFC2_ADRS+0x100)
- #define FPGA_FFC2_DMA_ERROR_ADRS									(FPGA_FFC2_ADRS+0x104)
- #define FPGA_FFC2_DMA_FIFO_CTRL_ADRS								(FPGA_FFC2_ADRS+0x108)
- #define FPGA_FFC2_MEM_ADRS											(FPGA_FFC2_ADRS+0x800)
+#define FPGA_FFC_DMA_ADRS											(FPGA_FFC_ADRS+0x08)
+#define FPGA_FFC_DMA_SIZE_ADRS										(FPGA_FFC_ADRS+0x0c)
+#define FPGA_FFC_DMA_WAIT_ADRS										(FPGA_FFC_ADRS+0x10)
+#define FPGA_FFC_DMA_ABORT_ADRS										(FPGA_FFC_ADRS+0x100)
+#define FPGA_FFC_DMA_ERROR_ADRS										(FPGA_FFC_ADRS+0x104)
+#define FPGA_FFC_DMA_FIFO_CTRL_ADRS									(FPGA_FFC_ADRS+0x108)
 
 
 //----------------------------------------------------------------------
 // DPC
 //----------------------------------------------------------------------
-#define FPGA_DPC_ADRS												(FPGA_BASE_ADRS+0x06210000)
+#define FPGA_DPC_ADRS												(FPGA_BASE_ADRS_IPU+0x2000)
 #define FPGA_DPC_CTRL_ADRS											(FPGA_ROI_ADRS+0xA4)
 	#define FPGA_DPC_CTRL_ENABLE_BIT								(0x01)
 	#define DPC_ENABLE												(1)
@@ -615,156 +555,9 @@
 
 
 //----------------------------------------------------------------------
-// DPC2
-//----------------------------------------------------------------------
-#define FPGA_DPC2_ADRS												(FPGA_BASE_ADRS+0x06410000)
-#define FPGA_DPC2_DMA_ADRS											(FPGA_DPC2_ADRS+0x04)
-#define FPGA_DPC2_DMA_SIZE_ADRS										(FPGA_DPC2_ADRS+0x08)
-#define FPGA_DPC2_DMA_WAIT_ADRS										(FPGA_DPC2_ADRS+0x0c)
-#define FPGA_DPC2_DMA_ABORT_ADRS									(FPGA_DPC2_ADRS+0x100)
-#define FPGA_DPC2_DMA_STATUS_ADRS									(FPGA_DPC2_ADRS+0x104)
-#define FPGA_DPC2_FIRST_DEFECT_XY_ADRS								(FPGA_DPC2_ADRS+0x108)
-#define FPGA_DPC2_XY_FIFO_ADRS										(FPGA_DPC2_ADRS+0x10c)
-#define FPGA_DPC2_COL0_FIFO_CTRL_ADRS								(FPGA_DPC2_ADRS+0x110)
-#define FPGA_DPC2_COL1_FIFO_CTRL_ADRS								(FPGA_DPC2_ADRS+0x114)
-#define FPGA_DPC2_COL2_FIFO_CTRL_ADRS								(FPGA_DPC2_ADRS+0x118)
-#define FPGA_DPC2_COL3_FIFO_CTRL_ADRS								(FPGA_DPC2_ADRS+0x11c)
-#define FPGA_DPC2_COL4_FIFO_CTRL_ADRS								(FPGA_DPC2_ADRS+0x120)
-#define FPGA_DPC2_DIV_FIFO_CTRL_ADRS								(FPGA_DPC2_ADRS+0x124)
-#define FPGA_DPC2_MEM_ADRS											(FPGA_DPC2_ADRS+0x800)
-
-
-//----------------------------------------------------------------------
-// Digital Offset Gain
-//----------------------------------------------------------------------
-#define FPGA_DOG_ADRS												(FPGA_BASE_ADRS+0x06220000)
- #define FPGA_DOG_CTRL_ADRS											(FPGA_DOG_ADRS+0x00)
-	#define FPGA_DOG_CTRL_UPDATE_BIT								(0x01)
-	#define DOG_ENABLE												(1)
-	#define DOG_DISABLE												(0)
-#define FPGA_DOG_OFFSET1_ADRS										(FPGA_DOG_ADRS+0x04)
-	#define DOG_OFFSET1_14BIT_MAX									(16383)
-	#define DOG_OFFSET1_14BIT_MIN									(-16383)
-	#define DOG_OFFSET1_12BIT_MAX									(4095)
-	#define DOG_OFFSET1_12BIT_MIN									(-4095)
-	#define DOG_OFFSET1_10BIT_MAX									(1023)
-	#define DOG_OFFSET1_10BIT_MIN									(-1023)
-	#define DOG_OFFSET1_8BIT_MAX									(255)
-	#define DOG_OFFSET1_8BIT_MIN									(-255)
- #define FPGA_DOG_GAIN_ADRS											(FPGA_DOG_ADRS+0x08)
-	#define FPGA_DOG_GAIN_MASK										(0x3ffff)
-	#define DOG_GAIN_MIN											(1.0)
-	#define DOG_GAIN_MAX											(31.62)
-	#define DOG_DECIBEL_MIN											(0.0)
-	#define DOG_DECIBEL_MAX											(30.0)
-	#define DOG_GAIN_SHIFTDATA										(4096)
-	#define FPGA_DOG_GAIN_CODE										(1<<17)
-	#define DOG_GAIN_VALUE_TO_REG(gain)								(gain*DOG_GAIN_SHIFTDATA)
-	#define DOG_GAIN_REG_TO_VALUE(reg)								((double)reg/(double)DOG_GAIN_SHIFTDATA)
-#define FPGA_DOG_OFFSET2_ADRS										(FPGA_DOG_ADRS+0x0c)
-	#define DOG_OFFSET2_14BIT_MAX									(16383)
-	#define DOG_OFFSET2_14BIT_MIN									(-16383)
-	#define DOG_OFFSET2_12BIT_MAX									(4095)
-	#define DOG_OFFSET2_12BIT_MIN									(-4095)
-	#define DOG_OFFSET2_10BIT_MAX									(1023)
-	#define DOG_OFFSET2_10BIT_MIN									(-1023)
-	#define DOG_OFFSET2_8BIT_MAX									(255)
-	#define DOG_OFFSET2_8BIT_MIN									(-255)
- #define FPGA_DOG_CLIP_HI_ADRS										(FPGA_DOG_ADRS+0x10)
-	#define FPGA_DOG_CLIP_HI_MASK									(0x3fff)
-	#define DOG_CLIP_HIGH_14BIT_MAX									(16383)
-	#define DOG_CLIP_HIGH_14BIT_MIN									(1)
-	#define DOG_CLIP_HIGH_12BIT_MAX									(4095)
-	#define DOG_CLIP_HIGH_12BIT_MIN									(1)
-	#define DOG_CLIP_HIGH_10BIT_MAX									(1023)
-	#define DOG_CLIP_HIGH_10BIT_MIN									(1)
-	#define DOG_CLIP_HIGH_8BIT_MAX									(255)
-	#define DOG_CLIP_HIGH_8BIT_MIN									(1)
- #define FPGA_DOG_CLIP_LOW_ADRS										(FPGA_DOG_ADRS+0x14)
-	#define FPGA_DOG_CLIP_LO_MASK									(0x3fff)
-	#define DOG_CLIP_LO_14BIT_MAX									(16383-1)
-	#define DOG_CLIP_LO_14BIT_MIN									(0)
-	#define DOG_CLIP_LO_12BIT_MAX									(4095-1)
-	#define DOG_CLIP_LO_12BIT_MIN									(0)
-	#define DOG_CLIP_LO_10BIT_MAX									(1023-1)
-	#define DOG_CLIP_LO_10BIT_MIN									(0)
-	#define DOG_CLIP_LO_8BIT_MAX									(255-1)
-	#define DOG_CLIP_LO_8BIT_MIN									(0)
-#define FPGA_DOG_BAND_OFFSET1_ADRS									(FPGA_DOG_ADRS+0x400)
-#define FPGA_DOG_BAND_GAIN_ADRS										(FPGA_DOG_ADRS+0x404)
-#define FPGA_DOG_BAND_OFFSET2_ADRS									(FPGA_DOG_ADRS+0x408)
-	#define FPGA_DOG_BAND_INTEVAL									(0x10)
-	#define FPGA_DOG_BAND_OFFSET1_ADRS_OFFSET						(0x00)
-	#define FPGA_DOG_BAND_OFFSET2_ADRS_OFFSET						(0x08)
-	#define DOG_BAND_DECIBEL_MIN									(-20.0)
-	#define DOG_BAND_DECIBEL_MAX									(30.0)
-	#define DOG_BAND_GAIN_MIN										(0.1)
-	#define DOG_BAND_GAIN_MAX										(31.62)
-
-
-//----------------------------------------------------------------------
-// Digital Offset Gain2
-//----------------------------------------------------------------------
-#define FPGA_DOG2_ADRS												(FPGA_BASE_ADRS+0x06420000)
-#define FPGA_DOG2_OFFSET											(0x00200000)
-
-#define FPGA_DOG2_CTRL_ADRS											(FPGA_DOG2_ADRS+0x00)
-#define FPGA_DOG2_OFFSET1_ADRS										(FPGA_DOG2_ADRS+0x04)
-#define FPGA_DOG2_GAIN_ADRS											(FPGA_DOG2_ADRS+0x08)
-#define FPGA_DOG2_OFFSET2_ADRS										(FPGA_DOG2_ADRS+0x0c)
-#define FPGA_DOG2_CLIP_HI_ADRS										(FPGA_DOG2_ADRS+0x10)
-#define FPGA_DOG2_CLIP_LOW_ADRS										(FPGA_DOG2_ADRS+0x14)
-#define FPGA_DOG2_BAND_OFFSET1_ADRS									(FPGA_DOG2_ADRS+0x400)
-#define FPGA_DOG2_BAND_GAIN_ADRS									(FPGA_DOG2_ADRS+0x404)
-#define FPGA_DOG2_BAND_OFFSET2_ADRS									(FPGA_DOG2_ADRS+0x408)
-
-
-//----------------------------------------------------------------------
-// Digital Band Gain Filter
-//----------------------------------------------------------------------
-#define FPGA_BGF_ADRS												(FPGA_BASE_ADRS+0x062E0000)
-#define FPGA_BGF_CTRL_ADRS											(FPGA_BGF_ADRS+0x00)
-	#define FPGA_BGF_YFILTER_ENABLE_BIT								(0x02)
-	#define FPGA_BGF_BAND_GAIN_ENABLE_BIT							(0x01)
-#define FPGA_BGF_YFILTER_TOP_ADRS									(FPGA_BGF_ADRS+0x0004)
-	#define BGF_YFILTER_TOP_MIN										(0)
-	#define BGF_YFILTER_TOP_MAX										(1023)
-#define FPGA_BGF_YFILTER_CENTER_ADRS								(FPGA_BGF_ADRS+0x0008)
-	#define BGF_YFILTER_CENTER_MIN									(0)
-	#define BGF_YFILTER_CENTER_MAX									(1023)
-#define FPGA_BGF_YFILTER_BOTTOM_ADRS								(FPGA_BGF_ADRS+0x000C)
-	#define BGF_YFILTER_BOTTOM_MIN									(0)
-	#define BGF_YFILTER_BOTTOM_MAX									(1023)
-#define FPGA_BGF_BAND_OFFSET1_ADRS									(FPGA_BGF_ADRS+0x0100)
-#define FPGA_BGF_BAND_GAIN_ADRS										(FPGA_BGF_ADRS+0x0104)
-#define FPGA_BGF_BAND_OFFSET2_ADRS									(FPGA_BGF_ADRS+0x0108)
-	#define FPGA_BGF_GAIN_MASK										(0x3ffff)
-	#define FPGA_BGF_BAND_INTEVAL									(0x10)
-	#define FPGA_BGF_BAND_OFFSET									(4)
-#define BGF_BAND_DECIBEL_MIN										(0.0)
-#define BGF_BAND_DECIBEL_MAX										(30.0)
-#define BGF_BAND_GAIN_MIN											(1.0)
-#define BGF_BAND_GAIN_MAX											(31.62)
-#define FPGA_BGF_BAND_INTERBVAL										(0x04)
-
-
-//----------------------------------------------------------------------
-// Digital Band Gain Filter2
-//----------------------------------------------------------------------
-#define FPGA_BGF2_ADRS												(FPGA_BASE_ADRS+0x064E0000)
-#define FPGA_BGF2_CTRL_ADRS											(FPGA_BGF2_ADRS+0x00)
-#define FPGA_BGF2_YFILTER_TOP_ADRS									(FPGA_BGF2_ADRS+0x04)
-#define FPGA_BGF2_YFILTER_CENTER_ADRS								(FPGA_BGF2_ADRS+0x08)
-#define FPGA_BGF2_YFILTER_BOTTOM_ADRS								(FPGA_BGF2_ADRS+0x0C)
-#define FPGA_BGF2_BAND_OFFSET1_ADRS									(FPGA_BGF2_ADRS+0x0100)
-#define FPGA_BGF2_BAND_GAIN_ADRS									(FPGA_BGF2_ADRS+0x0104)
-#define FPGA_BGF2_BAND_OFFSET2_ADRS									(FPGA_BGF2_ADRS+0x0108)
-
-
-//----------------------------------------------------------------------
 // AOI/XFLIP
 //----------------------------------------------------------------------
-#define FPGA_AOI_ADRS												(FPGA_BASE_ADRS+0x06230000)
+#define FPGA_AOI_ADRS												(FPGA_BASE_ADRS_IPU+0x3000)
 
  #define FPGA_AOI_UPDATE_ADRS										(FPGA_AOI_ADRS+0x00)
 	#define FPGA_AOI_UPDATE_ENABLE_BIT 								(1<<0)
@@ -869,26 +662,9 @@
 
 
 //----------------------------------------------------------------------
-// AOI/XFLIP2
-//----------------------------------------------------------------------
-#define FPGA_AOI2_ADRS												(FPGA_BASE_ADRS+0x06430000)
-#define FPGA_AOI2_OFFSET											(0x00200000)
-
-#define FPGA_AOI2_BITWIDTH_ADRS										(FPGA_AOI2_ADRS+0x04)
-#define FPGA_AOI2_XPAD_ADRS											(FPGA_AOI2_ADRS+0x18)
-#define FPGA_AOI2_YPAD_ADRS											(FPGA_AOI2_ADRS+0x1C)
-#define FPGA_AOI2_TP_INDEX_ADRS										(FPGA_AOI2_ADRS+0x20)
-#define FPGA_AOI2_TP_XINC_ADRS										(FPGA_AOI2_ADRS+0x24)
-#define FPGA_AOI2_TP_YINC_ADRS										(FPGA_AOI2_ADRS+0x28)
-#define FPGA_AOI2_TP_POSITION_ADRS									(FPGA_AOI2_ADRS+0x2c)
-#define FPGA_AOI2_TP_OFFSET_ADRS									(FPGA_AOI2_ADRS+0x30)
-#define FPGA_XFLIP2_CTRL_ADRS_FPGA									(FPGA_AOI2_ADRS+0x40)
-
-
-//----------------------------------------------------------------------
 // ROI
 //----------------------------------------------------------------------
-#define FPGA_ROI_ADRS												(FPGA_BASE_ADRS+0x06230000)
+#define FPGA_ROI_ADRS												(FPGA_BASE_ADRS_IPU+0x3000)
 
 #define FPGA_ROI_SET_END_ADRS										(FPGA_ROI_ADRS+0xA0)
 	#define FPGA_ROI_SET_END_BIT									(1<<0)
@@ -941,24 +717,6 @@
 
 
 //----------------------------------------------------------------------
-// ROI2
-//----------------------------------------------------------------------
-#define FPGA_ROI2_ADRS												(FPGA_BASE_ADRS+0x06430000)
-#define FPGA_ROI2_OFFSET											(0x00200000)
-
-#define FPGA_ROI2_VBLANK_ADRS										(FPGA_ROI2_ADRS+0x68)
-#define FPGA_ROI2_HBLANK_ADRS										(FPGA_ROI2_ADRS+0x6C)
-#define FPGA_ROI2_SET_END_ADRS										(FPGA_ROI2_ADRS+0xA0)
-#define FPGA_ROI2_DPC_ADRS											(FPGA_ROI2_ADRS+0xA4)
-#define FPGA_ROI2_CAL_MODE_ADRS										(FPGA_ROI2_ADRS+0xA8)
-#define FPGA_ROI2_CUL_END_ADRS										(FPGA_ROI2_ADRS+0xAC)
-#define FPGA_ROI2_CAMERA_ERROR_ADRS									(FPGA_ROI2_ADRS+0xC0)
-#define FPGA_ROI2_CAMERA_Y_ADRS										(FPGA_ROI2_ADRS+0x100)
-#define FPGA_ROI2_CAMERA_X_ADRS										(FPGA_ROI2_ADRS+0x130)
-#define FPGA_ROI2_SENSOR_Y_ADRS										(FPGA_ROI2_ADRS+0x180)
-
-
-//----------------------------------------------------------------------
 // DMA
 //----------------------------------------------------------------------
 #define FPGA_DMA_ADRS												(FPGA_BASE_ADRS+0x06240000)
@@ -984,25 +742,9 @@
 
 
 //----------------------------------------------------------------------
-// DMA2
-//----------------------------------------------------------------------
-#define FPGA_DMA2_ADRS												(FPGA_BASE_ADRS+0x06440000)
-#define FPGA_DMA2_CTRL_ADRS											(FPGA_DMA2_ADRS+0x00)
-#define FPGA_DMA2_START_ADRS										(FPGA_DMA2_ADRS+0x04)
-#define FPGA_DMA2_DEPTH_ADRS										(FPGA_DMA2_ADRS+0x08)
-#define FPGA_DMA2_IRQ_WORD_ADRS										(FPGA_DMA2_ADRS+0x0c)
-#define FPGA_DMA2_FIFO_COUNT_ADRS									(FPGA_DMA2_ADRS+0x10)
-#define FPGA_DMA2_IRQ_COUNT_ADRS									(FPGA_DMA2_ADRS+0x14)
-#define FPGA_DMA2_TX_SIZE_ADRS										(FPGA_DMA2_ADRS+0x18)
-#define FPGA_DMA2_IRQ_ENABLE_ADRS									(FPGA_DMA2_ADRS+0x1c)
-#define FPGA_DMA2_IRQ_CLR_ADRS										(FPGA_DMA2_ADRS+0x20)
-#define FPGA_DMA2_IRQ_STATUS_ADRS									(FPGA_DMA2_ADRS+0x24)
-
-
-//----------------------------------------------------------------------
 // LUT
 //----------------------------------------------------------------------
-#define FPGA_LUT_ADRS												(FPGA_BASE_ADRS+0x06280000)
+#define FPGA_LUT_ADRS												(FPGA_BASE_ADRS_IPU+0x4000)
  #define FPGA_LUT_CTRL_ADRS											(FPGA_LUT_ADRS+0x00)
 	#define FPGA_LUT_CTRL_ENABLE_BIT 								(1<<0)
 	#define FPGA_LUT_CTRL_DISABLE_BIT 								(0<<0)
@@ -1045,135 +787,77 @@
 
 
 //----------------------------------------------------------------------
-// LUT2
+// Digital Offset Gain
 //----------------------------------------------------------------------
-#define FPGA_LUT2_ADRS												(FPGA_BASE_ADRS+0x06480000)
-#define FPGA_LUT2_OFFSET											(0x00200000)
-
-#define FPGA_LUT2_CTRL_ADRS											(FPGA_LUT2_ADRS+0x00)
-#define FPGA_LUT2_MEM1_ADRS											(FPGA_LUT2_ADRS+0x01000)
-#define FPGA_LUT2_MEM2_ADRS											(FPGA_LUT2_ADRS+0x11000)
-
-
-//----------------------------------------------------------------------
-// Spectrum
-//----------------------------------------------------------------------
-#define FPGA_SPECTRUM_ADRS											(FPGA_BASE_ADRS+0x002c0000)
- #define FPGA_SPECTRUM_CTRL_ADRS									(FPGA_SPECTRUM_ADRS+0x00)
-	#define FPGA_SP_CTRL_RESET										(1<<0)
-	#define FPGA_SP_CTRL_RESET_RB									(1<<1)
-	#define SPECTRUM_BUFFER_RESET_TIMEOUT							(5000)
-	#define FPGA_SP_CTRL_WRITE_DISABLE								(1<<2)
-	#define FPGA_SP_CTRL_FORMAT_BSQ_FRAME_SEPARATION				(0)
-	#define FPGA_SP_CTRL_FORMAT_BSQ_FRAME_COMBINE					(1)
-	#define FPGA_SP_CTRL_FORMAT_BIL									(2)
-	#define FPGA_SP_CTRL_FORMAT_RAW									(3)
-	#define FPGA_SP_CTRL_FORMAT_MIN									(FPGA_SP_CTRL_FORMAT_BSQ_FRAME_SEPARATION)
-	#define FPGA_SP_CTRL_FORMAT_MAX									(FPGA_SP_CTRL_FORMAT_RAW)
-	#define FPGA_SP_CTRL_FORMAT_FRAME_MASK							(7<<4)
-	#define FPGA_SP_CTRL_SET_FORMAT(x)								((x<<4)&FPGA_SP_CTRL_FORMAT_FRAME_MASK)
-	#define FPGA_SP_CTRL_GET_FORMAT(x)								((x&FPGA_SP_CTRL_FORMAT_FRAME_MASK)>>4)
-	#define FPGA_SP_CTRL_HEADER										(1<<8)
-	#define SPECTRUM_HEADER_DISABLE									(0)
-	#define SPECTRUM_HEADER_ENABLE									(1)
-	#define SPECTRUM_HEADER_SIZE									(16)
- #define FPGA_SPECTRUM_LINE_PER_FRAME_ADRS							(FPGA_SPECTRUM_ADRS+0x04)
-	#define FPGA_SP_LINE_PER_FRAME_MASK								(0x7ff)
-	#define FPGA_SP_LINE_PER_FRAME_MIN								(1)
-	#define FPGA_SP_LINE_PER_FRAME_MAX								(1024)
- #define FPGA_SPECTRUM_BAND_ADRS									(FPGA_SPECTRUM_ADRS+0x08)
-	#define FPGA_SP_BAND_MASK										(0x1ff)
-	#define FPGA_SP_BAND_MIN										(1)
-	#define FPGA_SP_BAND_INDEX_MIN									(0)
-	#define FPGA_SP_BAND_MAX										(FPGA_SP_BAND_MASK)
-
-
-//----------------------------------------------------------------------
-// Auto Bright Control
-//----------------------------------------------------------------------
-#define FPGA_AUTO_BRIGHT_ADRS										(FPGA_BASE_ADRS+0x06000600)
- #define FPGA_AUTO_BRIGHT_CTRL_ADRS									(FPGA_AUTO_BRIGHT_ADRS+0x00)
-	 #define FPGA_AUTO_EXP_CTRL_ENABLE_BIT							(1<<0)
-	 #define FPGA_AUTO_GAIN_CTRL_ENABLE_BIT							(1<<4)
-	#define FPGA_AUTO_BRIGHT_CTRL_MODE_MASK							(0xf<<4)
-	 #define FPGA_AUTO_BRIGHT_CTRL_MODE_GET(x)						((x&FPGA_AUTO_BRIGHT_CTRL_MODE_MASK)>>4)
-	 #define FPGA_AUTO_BRIGHT_CTRL_MODE_SET(x)						((x<<4)&FPGA_AUTO_BRIGHT_CTRL_MODE_MASK)
-
- 	 #define FPGA_AUTO_BRIGHT_CTRL_OVERLAY_DESABLE					(0x00)
-	 #define FPGA_AUTO_BRIGHT_CTRL_OVERLAY_BLACK					(0x01)
-	 #define FPGA_AUTO_BRIGHT_CTRL_OVERLAY_WHITE					(0x03)
-	 #define FPGA_AUTO_BRIGHT_CTRL_OVERLAY_MIN						(FPGA_AUTO_BRIGHT_CTRL_OVERLAY_DESABLE)
-	 #define FPGA_AUTO_BRIGHT_CTRL_OVERLAY_MAX						(FPGA_AUTO_BRIGHT_CTRL_OVERLAY_WHITE)
-#define FPGA_AUTO_BRIHT_CTRL_OVERLAY_MASK							(0xff<<8)
-	#define FPGA_AUTO_BRIGHT_CTRL_OVERLAY_GET(x)					((x&FPGA_AUTO_BRIHT_CTRL_OVERLAY_MASK)>>8)
-	#define FPGA_AUTO_BRIGHT_CTRL_OVERLAY_SET(x)					((x<<8)&FPGA_AUTO_BRIHT_CTRL_OVERLAY_MASK)
-
-	 #define FPGA_AUTO_BRIGHT_CTRL_TARGET_MASK						(0x3fff<<16)
-	 #define FPGA_AUTO_BRIGHT_CTRL_TARGET_GET(x)					((x&FPGA_AUTO_BRIGHT_CTRL_TARGET_MASK)>>16)
-	 #define FPGA_AUTO_BRIGHT_CTRL_TARGET_SET(x)					((x<<16)&FPGA_AUTO_BRIGHT_CTRL_TARGET_MASK)
-
- #define FPGA_AUTO_BRIGHT_OFFSET_ADRS								(FPGA_AUTO_BRIGHT_ADRS+0x04)
-	 #define FPGA_AUTO_BRIGHT_OFFSETY_MASK							(0xfff<<16)
-	 #define FPGA_AUTO_BRIGHT_OFFSETY_GET(x)						((x&FPGA_AUTO_BRIGHT_OFFSETY_MASK)>>16)
-	 #define FPGA_AUTO_BRIGHT_OFFSETY_SET(x)						((x<<16)&FPGA_AUTO_BRIGHT_OFFSETY_MASK)
-
-	 #define FPGA_AUTO_BRIGHT_OFFSETX_MASK							(0xfff<<0)
-	 #define FPGA_AUTO_BRIGHT_OFFSETX_GET(x)						((x&FPGA_AUTO_BRIGHT_OFFSETX_MASK)>>0)
-	 #define FPGA_AUTO_BRIGHT_OFFSETX_SET(x)						((x<<0)&FPGA_AUTO_BRIGHT_OFFSETX_MASK)
-
- #define FPGA_AUTO_BRIGHT_SIZE_ADRS									(FPGA_AUTO_BRIGHT_ADRS+0x08)
-	 #define FPGA_AUTO_BRIGHT_SIZEY_MASK							(0xfff<<16)
-	 #define FPGA_AUTO_BRIGHT_SIZEY_GET(x)							((x&FPGA_AUTO_BRIGHT_SIZEY_MASK)>>16)
-	 #define FPGA_AUTO_BRIGHT_SIZEY_SET(x)							((x<<16)&FPGA_AUTO_BRIGHT_SIZEY_MASK)
-
-	 #define FPGA_AUTO_BRIGHT_SIZEX_MASK							(0xfff<<0)
-	 #define FPGA_AUTO_BRIGHT_SIZEX_GET(x)							((x&FPGA_AUTO_BRIGHT_SIZEX_MASK)<<0)
-	 #define FPGA_AUTO_BRIGHT_SIZEX_SET(x)							((x<<0)&FPGA_AUTO_BRIGHT_SIZEX_MASK)
-
- #define FPGA_AUTO_BRIGHT_AVERAGE_ADRS								(FPGA_AUTO_BRIGHT_ADRS+0x0C)
-	#define FPGA_AUTO_BRIGHT_AVERAGE_MASK							(0xfff)
-
-
-//----------------------------------------------------------------------
-// FrameRate High Speed
-//----------------------------------------------------------------------
-#define FPGA_FRAMERATE_HIGH_SPEED_ADRS								(FPGA_BASE_ADRS+0x06000000)
- #define FPGA_FRAMERATE_HIGH_SPEED_START_LINE_ADRS					(FPGA_FRAMERATE_HIGH_SPEED_ADRS+0x410)
- #define FPGA_FRAMERATE_HIGH_SPEED_START_LINE_ENABLE				(1<<0)
- #define FPGA_FRAMERATE_HIGH_SPEED_START_LINE_SHIFT					(16)
- #define FPGA_FRAMERATE_HIGH_SPEED_START_LINE_MASK					(0xfff)
- #define FPGA_FRAMERATE_HIGH_SPEED_START_LINE_MIN					(0x00)
- #define FPGA_FRAMERATE_HIGH_SPEED_START_LINE_MAX					(0xfff)
- #define FPGA_FRAMERATE_HIGH_SPEED_START_LINE_FROM_TOP_NORMAL		(0)
- #define FPGA_FRAMERATE_HIGH_SPEED_START_LINE_FROM_TOP_HS			(2)
-
- #define FPGA_FRAMERATE_HIGH_SPEED_CTRL_ADRS						(FPGA_FRAMERATE_HIGH_SPEED_ADRS+0x418)
-	 #define FPGA_FRAMERATE_HIGH_SPEED_MASK							(0x03)
-	 #define FPGA_FRAMERATE_HIGH_SPEED_2LINE						(0x01)
-	 #define FPGA_FRAMERATE_HIGH_SPEED_4LINE						(0x02)
-	 #define FPGA_FRAMERATE_HIGH_SPEED_6LINE						(0x03)
-
- #define FPGA_FRAMERATE_HIGH_SPEED_VIRTUAL_HEIGHT_ADRS				(FPGA_FRAMERATE_HIGH_SPEED_ADRS+0x670)
-	 #define FPGA_FRAMERATE_HIGH_SPEED_VIRTUAL_HEIGHT_MODE_BIT		(1<<0)
-	 #define FPGA_FRAMERATE_HIGH_SPEED_VIRTUAL_HEIGHT_LINESCAN_BIT	(1<<1)
-	 #define FPGA_FRAMERATE_HIGH_SPEED_VIRTUAL_HEIGHT_MASK			(0xffff)
-	 #define FPGA_FRAMERATE_HIGH_SPEED_VIRTUAL_HEIGHT_SHIFT			(16)
-	 #define FPGA_VIRTUAL_HEIGHT_MIN								(0x01)
-	 #define FPGA_VIRTUAL_HEIGHT_MAX								(0xffff)
-
-
-//----------------------------------------------------------------------
-// Line Black Auto
-//----------------------------------------------------------------------
-#define FPGA_LINE_BLACK_AUTO_ADRS									(FPGA_BASE_ADRS+0x06000404)
- #define FPGA_LINE_BLACK_AUTO_CTRL_ADRS								(FPGA_LINE_BLACK_AUTO_ADRS+0x00)
- 	#define FPGA_LINE_BLACK_AUTO_INVERT								(1<<0)
+#define FPGA_DOG_ADRS												(FPGA_BASE_ADRS_IPU+0x5000)
+ #define FPGA_DOG_CTRL_ADRS											(FPGA_DOG_ADRS+0x00)
+	#define FPGA_DOG_CTRL_UPDATE_BIT								(0x01)
+	#define DOG_ENABLE												(1)
+	#define DOG_DISABLE												(0)
+#define FPGA_DOG_OFFSET1_ADRS										(FPGA_DOG_ADRS+0x04)
+	#define DOG_OFFSET1_14BIT_MAX									(16383)
+	#define DOG_OFFSET1_14BIT_MIN									(-16383)
+	#define DOG_OFFSET1_12BIT_MAX									(4095)
+	#define DOG_OFFSET1_12BIT_MIN									(-4095)
+	#define DOG_OFFSET1_10BIT_MAX									(1023)
+	#define DOG_OFFSET1_10BIT_MIN									(-1023)
+	#define DOG_OFFSET1_8BIT_MAX									(255)
+	#define DOG_OFFSET1_8BIT_MIN									(-255)
+ #define FPGA_DOG_GAIN_ADRS											(FPGA_DOG_ADRS+0x08)
+	#define FPGA_DOG_GAIN_MASK										(0x3ffff)
+	#define DOG_GAIN_MIN											(1.0)
+	#define DOG_GAIN_MAX											(31.62)
+	#define DOG_DECIBEL_MIN											(0.0)
+	#define DOG_DECIBEL_MAX											(30.0)
+	#define DOG_GAIN_SHIFTDATA										(4096)
+	#define FPGA_DOG_GAIN_CODE										(1<<17)
+	#define DOG_GAIN_VALUE_TO_REG(gain)								(gain*DOG_GAIN_SHIFTDATA)
+	#define DOG_GAIN_REG_TO_VALUE(reg)								((double)reg/(double)DOG_GAIN_SHIFTDATA)
+#define FPGA_DOG_OFFSET2_ADRS										(FPGA_DOG_ADRS+0x0c)
+	#define DOG_OFFSET2_14BIT_MAX									(16383)
+	#define DOG_OFFSET2_14BIT_MIN									(-16383)
+	#define DOG_OFFSET2_12BIT_MAX									(4095)
+	#define DOG_OFFSET2_12BIT_MIN									(-4095)
+	#define DOG_OFFSET2_10BIT_MAX									(1023)
+	#define DOG_OFFSET2_10BIT_MIN									(-1023)
+	#define DOG_OFFSET2_8BIT_MAX									(255)
+	#define DOG_OFFSET2_8BIT_MIN									(-255)
+ #define FPGA_DOG_CLIP_HI_ADRS										(FPGA_DOG_ADRS+0x10)
+	#define FPGA_DOG_CLIP_HI_MASK									(0x3fff)
+	#define DOG_CLIP_HIGH_14BIT_MAX									(16383)
+	#define DOG_CLIP_HIGH_14BIT_MIN									(1)
+	#define DOG_CLIP_HIGH_12BIT_MAX									(4095)
+	#define DOG_CLIP_HIGH_12BIT_MIN									(1)
+	#define DOG_CLIP_HIGH_10BIT_MAX									(1023)
+	#define DOG_CLIP_HIGH_10BIT_MIN									(1)
+	#define DOG_CLIP_HIGH_8BIT_MAX									(255)
+	#define DOG_CLIP_HIGH_8BIT_MIN									(1)
+ #define FPGA_DOG_CLIP_LOW_ADRS										(FPGA_DOG_ADRS+0x14)
+	#define FPGA_DOG_CLIP_LO_MASK									(0x3fff)
+	#define DOG_CLIP_LO_14BIT_MAX									(16383-1)
+	#define DOG_CLIP_LO_14BIT_MIN									(0)
+	#define DOG_CLIP_LO_12BIT_MAX									(4095-1)
+	#define DOG_CLIP_LO_12BIT_MIN									(0)
+	#define DOG_CLIP_LO_10BIT_MAX									(1023-1)
+	#define DOG_CLIP_LO_10BIT_MIN									(0)
+	#define DOG_CLIP_LO_8BIT_MAX									(255-1)
+	#define DOG_CLIP_LO_8BIT_MIN									(0)
+#define FPGA_DOG_BAND_OFFSET1_ADRS									(FPGA_DOG_ADRS+0x400)
+#define FPGA_DOG_BAND_GAIN_ADRS										(FPGA_DOG_ADRS+0x404)
+#define FPGA_DOG_BAND_OFFSET2_ADRS									(FPGA_DOG_ADRS+0x408)
+	#define FPGA_DOG_BAND_INTEVAL									(0x10)
+	#define FPGA_DOG_BAND_OFFSET1_ADRS_OFFSET						(0x00)
+	#define FPGA_DOG_BAND_OFFSET2_ADRS_OFFSET						(0x08)
+	#define DOG_BAND_DECIBEL_MIN									(-20.0)
+	#define DOG_BAND_DECIBEL_MAX									(30.0)
+	#define DOG_BAND_GAIN_MIN										(0.1)
+	#define DOG_BAND_GAIN_MAX										(31.62)
 
 
 //----------------------------------------------------------------------
 // Binning
 //----------------------------------------------------------------------
-#define FPGA_BINNING_ADRS											(FPGA_BASE_ADRS+0x06000640)
+#define FPGA_BINNING_ADRS											(FPGA_BASE_ADRS_IPU+0x6000)
 	#define FPGA_BINNING_CTRL_ADRS									(FPGA_BINNING_ADRS+0x00)
 	#define FPGA_Y_BINNING_MASK										(0x07)
 	#define FPGA_Y_BINNING_SHIFT									(4)
@@ -1210,126 +894,12 @@
 //----------------------------------------------------------------------
 // Horozontal ROI
 //----------------------------------------------------------------------
-#define FPGA_HORIZONTAL_ROI_ADRS									(FPGA_BASE_ADRS+0x06000660)
+#define FPGA_HORIZONTAL_ROI_ADRS									(FPGA_BASE_ADRS_IPU+0x6660)
 	#define FPGA_HORIZONTAL_ROI1_ADRS								(FPGA_BINNING_ADRS+0x00)
 	#define FPGA_HORIZONTAL_ROI_SIZE_MASK							(0xfff)
 	#define FPGA_HORIZONTAL_ROI_SIZE_SHIFT							(0)
 	#define FPGA_HORIZONTAL_ROI_OFFSET_MASK							(0xfff)
 	#define FPGA_HORIZONTAL_ROI_OFFSET_SHIFT						(16)
-
-
-//----------------------------------------------------------------------
-// DRRS
-//----------------------------------------------------------------------
-#define FPGA_DRRS_ADRS												(FPGA_BASE_ADRS+0x062F0000)
-	#define FPGA_DRRS_VERSION_ADRS									(FPGA_DRRS_ADRS+0x00)
-	#define FPGA_DRRS_CTRL_ADRS										(FPGA_DRRS_ADRS+0x04)
-		#define FPGA_DRRS_CTRL_ENABLE_BIT							(1<<0)
-	#define FPGA_DRRS_FRAME_BUFFER_ADRS								(FPGA_DRRS_ADRS+0x08)
-	#define FPGA_DRRS_FRAME_WRITE_FIFO_ADRS							(FPGA_DRRS_ADRS+0x0C)
-	#define FPGA_DRRS_FRAME_READ_FIFO_ADRS							(FPGA_DRRS_ADRS+0x10)
-	#define FPGA_DRRS_SENSOR_BLACK_LEVEL_ADRS						(FPGA_DRRS_ADRS+0x14)
-
-#define FPGA_DRRS2_ADRS												(FPGA_BASE_ADRS+0x064F0000)
-	#define FPGA_DRRS2_VERSION_ADRS									(FPGA_DRRS2_ADRS+0x00)
-	#define FPGA_DRRS2_CTRL_ADRS									(FPGA_DRRS2_ADRS+0x04)
-	#define FPGA_DRRS2_FRAME_BUFFER_ADRS							(FPGA_DRRS2_ADRS+0x08)
-	#define FPGA_DRRS2_FRAME_WRITE_FIFO_ADRS						(FPGA_DRRS2_ADRS+0x0C)
-	#define FPGA_DRRS2_FRAME_READ_FIFO_ADRS							(FPGA_DRRS2_ADRS+0x10)
-	#define FPGA_DRRS2_SENSOR_BLACK_LEVEL_ADRS						(FPGA_DRRS2_ADRS+0x14)
-
-
-//----------------------------------------------------------------------
-// Sensor
-//----------------------------------------------------------------------
-#define FPGA_SENSOR_MAX_ADRS										(FPGA_BASE_ADRS+0x05000000)
-
-#define FPGA_SENSOR_PROPERTY_SENSOR_IMP_ADRS						(FPGA_SENSOR_MAX_ADRS+0x00)
-#define FPGA_SENSOR_POWER_STATUS_ADRS								(FPGA_SENSOR_MAX_ADRS+0x04)
-  #define FPGA_SENSOR_POWER_OK_BIT									(1<<0)
-#define FPGA_SENSOR_I2C_CTRL_ADRS									(FPGA_SENSOR_MAX_ADRS+0x08)
-  #define FPGA_SENSOR_I2C_CTRL_ENABLE_BIT							(1<<0)
-  #define FPGA_SENSOR_I2C_CTRL_INIT_DONE_BIT						(1<<1)
-  #define FPGA_SENSOR_I2C_CTRL_SCAN_RUNNING_BIT						(1<<2)
-#define FPGA_SENSOR_MSP_IO_ADRS										(FPGA_SENSOR_MAX_ADRS+0x20)
-  #define FPGA_SENSOR_MSP_IO_TEST_PIN								(1<<1)
-  #define FPGA_SENSOR_MSP_IO_RST_PIN								(1<<0)
-#define FPGA_SENSOR_HV_GEN_ADRS										(FPGA_SENSOR_MAX_ADRS+0x40)
-  #define FPGA_SENSOR_HV_GEN_ENABLE_BIT								(1<<0)
-  #define FPGA_SENSOR_HV_GEN_DONE_BIT								(1<<1)
-#define FPGA_SENSOR_HINTERVAL_ADRS									(FPGA_SENSOR_MAX_ADRS+0x44)
-  #define FPGA_SENSOR_HINTERVAL_MASK								(0xffff)
-#define FPGA_SENSOR_CTRL_ADRS										(FPGA_SENSOR_MAX_ADRS+0x80)
-  #define FPGA_SENSOR_CTR_MODE_ENABLE_BIT							(1<<0)
-  #define FPGA_SENSOR_CTRL_MODE_SLAVE_BIT							(1<<1)
-  #define FPGA_SENSOR_CTRL_RESET_BIT								(1<<2)
-  #define FPGA_SENSOR_CTRL_SYNCTRG_BIT								(1<<3)
-
-#define FPGA_SENSOR_REG_SERDES_INTERVAL								(0x1000)
-
-#define FPGA_SENSOR_PRORERTY_SENSOR_LANE_ADRS						(FPGA_SENSOR_MAX_ADRS+0x10000)
-#define FPGA_SENSOR_OUTPUT_CTRL_ADRS								(FPGA_SENSOR_MAX_ADRS+0x10004)
-  #define FPGA_SENSOR_OUTPUT_CTRL_ENABLE_BIT						(1<<0)
-#define FPGA_SENSOR_INPUT_CTRL_ADRS									(FPGA_SENSOR_MAX_ADRS+0x10008)
-  #define FPGA_SENSOR_INPUT_CTRL_ENABLE_BIT							(1<<0)
-#define FPGA_SENSOR_MODE_ADRS										(FPGA_SENSOR_MAX_ADRS+0x10010)
-  #define FPGA_SENSOR_MODE_MASTER									(1<<0)
-  #define FPGA_SENSOR_MODE_TRIGGER									(1<<1)
-#define FPGA_SENSOR_INPUT_STATUS_ADRS								(FPGA_SENSOR_MAX_ADRS+0x10014)
-  #define FPGA_SENSOR_INPUT_STATUS_RESET_END_BIT					(1<<0)
-  #define FPGA_SENSOR_TRG_CTRL_ADRS									(FPGA_SENSOR_MAX_ADRS+0x10040)
-  #define FPGA_SENSOR_TRG_CTRL_ENABLE_BIT							(1<<0)
-  #define FPGA_SENSOR_TRG_CTRL_ENABLE_DONE_BIT						(1<<31)
-  #define FPGA_TG_CTRL_ENABLE_RB_TIMEOUT							(5000)
-#define FPGA_SENSOR_TRG_DELAY_ADRS									(FPGA_SENSOR_MAX_ADRS+0x10044)
-#define FPGA_TG_TGSE_ADRS											(FPGA_SENSOR_MAX_ADRS+0x10048)
-  #define FPGA_TG_TGSE_MASK											(0xffff)
-  #define FPGA_TG_TGSE_MIN											(0)
-  #define FPGA_TG_TGSE_MAX											(0xffff)
-#define FPGA_TG_TGES_ADRS											(FPGA_SENSOR_MAX_ADRS+0x1004c)
-  #define FPGA_TG_TGES_MASK											(0xffff)
-  #define FPGA_TG_TGES_MIN											(0)
-  #define FPGA_TG_TGES_MAX											(0xffff)
-#define FPGA_TG_TGPD_ADRS											(FPGA_SENSOR_MAX_ADRS+0x10050)
-  #define FPGA_TG_TGPD_MASK											(0xffff)
-  #define FPGA_TG_TGPD_MIN											(0)
-  #define FPGA_TG_TGPD_MAX											(0xffff)
-#define FPGA_SENSOR_TRG_RSCP_ADRS									(FPGA_SENSOR_MAX_ADRS+0x10054)
- #define FPGA_TG_LOCK_ADRS											(FPGA_SENSOR_MAX_ADRS+0x10058)
-	#define FPGA_TL_LOCK											(0x01)
-	#define FPGA_TL_UNLOCK											(0x00)
-#define FPGA_SENSOR_TEMP_ADRS										(FPGA_SENSOR_MAX_ADRS+0x10080)
-  #define FPGA_SENSOR_TEMP_MASK										(0xfff)
-  #define FPGA_SENSOR_TEMP_CODE_BIT									(1<<11)
-  #define FPGA_SENSOR_TEMP_LSB										(0.125)
-  #define FPGA_SENSOR_TEMP_READ_BIT									(1<<31)
-#define FPGA_SENSOR_TEMP_REFRESH_ADRS								(FPGA_SENSOR_MAX_ADRS+0x10084)
-  #define FPGA_SENSOR_TEMP_REFRESH_ENABLE_BIT						(1<<0)
-#define FPGA_SENSOR_REG_CTRL_ADRS									(FPGA_SENSOR_MAX_ADRS+0x10088)
-  #define FPGA_SENSOR_REG_CTRL_START_BIT							(1<<0)
-  #define FPGA_SENSOR_REG_CTRL_BUSY_BIT								(1<<1)
-  #define FPGA_SENSOR_REG_CTRL_END_BIT								(1<<2)
-  #define FPGA_SENSOR_REG_CTRL_ACES_TMG_ENABLE_BIT					(1<<3)
-  #define FPGA_SENSOR_REG_CTRL_ACES_COUNT_SET(x)					(((x-1)&0xff)<<8)
-  #define FPGA_SENSOR_REG_CTRL_ACES_COUNT_GET(x)					((x>>8)&0xff)
-#define FPGA_SENSOR_REG_TBL_ADRS									(FPGA_SENSOR_MAX_ADRS+0x1008C)
-  #define FPGA_SENSOR_REG_TBL_CHIPID_MAKE(x)						(x&0x7f)
-  #define FPGA_SENSOR_REG_TBL_WRITE_BIT								(0<<7)		// 0:Write / 1:Read
-  #define FPGA_SENSOR_REG_TBL_READ_BIT								(1<<7)		// 0:Write / 1:Read
-  #define FPGA_SENSOR_REG_TBL_ADRS_MAKE(x)							((x&0xff)<<8)
-  #define FPGA_SENSOR_REG_TBL_WRITE_DATA_MAKE(x)					((x&0xff)<<16)
-  #define FPGA_SENSOR_REG_TBL_READ_DATA_MAKE(x)						((x>>24)&0xff)
-  #define FPGA_SENSOR_REG_SIZE_MAX									(0x400)
-  #define FPGA_SENSOR_REG_ID_MAX									(0x1c)
-#define FPGA_SENSOR_REG_SERDES_CTRL0_ADRS							(FPGA_SENSOR_MAX_ADRS+0x10100)
-#define FPGA_SENSOR_REG_SERDES_CTRL0_BYTE0_ADRS						(FPGA_SENSOR_MAX_ADRS+0x10100)
-  #define FPGA_SENSOR_REG_SERDES_CTRL_DLY_TAP_MASK					(0xff)
-#define FPGA_SENSOR_REG_SERDES_CTRL0_BYTE1_ADRS						(FPGA_SENSOR_MAX_ADRS+0x10101)
-  #define FPGA_SENSOR_REG_SERDES_CTRL_MATCH_BIT						(1<<6)
-#define FPGA_SENSOR_REG_SERDES_CTRL0_BYTE2_ADRS						(FPGA_SENSOR_MAX_ADRS+0x10102)
-  #define FPGA_SENSOR_REG_SERDES_CTRL_DATA_MASK						(0xff)
-#define FPGA_SENSOR_REG_SERDES_CTRL0_BYTE3_ADRS						(FPGA_SENSOR_MAX_ADRS+0x10103)
-  #define FPGA_SENSOR_REG_SERDES_CTRL_MATCH_CLR						(1<<7)
 
 
 //----------------------------------------------------------------------
@@ -1399,13 +969,11 @@
 //------------------------------------------------------------------------------------------
 // Genicam
 //------------------------------------------------------------------------------------------
-#define GENICAM_ADRS												(0x87000000)
-
 
 //------------------------------------------------------------------------------------------
 // Device Control
 //------------------------------------------------------------------------------------------
-#define GENICAM_DEVICE_CONTROL_ADRS									(GENICAM_ADRS)
+#define GENICAM_DEVICE_CONTROL_ADRS									(GENICAM_ADRS+0x0000)
  #define GENICAM_VER_BOARD_ADRS										(GENICAM_DEVICE_CONTROL_ADRS+0x70)
  #define GENICAM_VER_FPGA_ADRS										(GENICAM_DEVICE_CONTROL_ADRS+0x74)
  #define GENICAM_VER_FRIM_ADRS										(GENICAM_DEVICE_CONTROL_ADRS+0x90)
@@ -1416,7 +984,7 @@
 //------------------------------------------------------------------------------------------
 // Acquisition Control
 //------------------------------------------------------------------------------------------
-#define GENICAM_ACQUISITION_CONTROL_ADRS							(GENICAM_ADRS+0x100000)
+#define GENICAM_ACQUISITION_CONTROL_ADRS							(GENICAM_ADRS+0x0000)
  #define GENICAM_ACQUISITION_MODE_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x00)
  	#define GENICAM_ACQUISITION_MODE_SINGLE_BIT 					(0)
  	#define GENICAM_ACQUISITION_MODE_MULTI_BIT 						(1)
@@ -1429,18 +997,16 @@
 	#define ACQUISITION_MODE_MAX									(ACQUISITION_MODE_CONTIN)
  #define GENICAM_ACQUISITION_START_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x04)
 	#define GENICAM_ACQUISITION_START_BIT							(1<<0)
- #define GENICAM_ACQUISITION_STOP_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x08)
- 	#define GENICAM_ACQUISITION_STOP_BIT							(1<<0)
- #define GENICAM_ACQUISITION_ABORT_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x0c)
- 	#define GENICAM_ACQUISITION_ABORT_BIT							(1<<0)
+ 	#define GENICAM_ACQUISITION_STOP_BIT							(1<<1)
+ 	#define GENICAM_ACQUISITION_ABORT_BIT							(1<<2)
 	#define ACQUISITION_ABORT_TIMEOUT								(5000)
- #define GENICAM_ACQUISITION_FRAME_COUNT_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x14)
+ #define GENICAM_ACQUISITION_FRAME_COUNT_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x08)
  	 #define GENICAM_ACQUISITION_FRAME_COUNT_MIN					(1)
  	 #define GENICAM_ACQUISITION_FRAME_COUNT_MAX					(0xffffffff)
- #define GENICAM_ACQUISITION_FRAMERATE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x1c)
+ #define GENICAM_ACQUISITION_FRAMERATE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x0c)
 	#define GENICAM_ACQUISITION_FRAMERATE_MASK						(0x00FFFFFF)
 	#define ACQUISITION_FRAMERATE_UINIT								(1000000)	// 1us単位
- #define GENICAM_ACQUISITION_STATUS_SELECT_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x24)
+ #define GENICAM_ACQUISITION_STATUS_SELECT_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x10)
 	#define GENICAM_ACQUISITION_STATUS_SELECT_MASK					(0x0f)
 	#define ACQUISITION_STATUS_ACQUISITION_TRGWAIT					(0)
 	#define ACQUISITION_STATUS_ACQUISITION_ACTIVE					(1)
@@ -1450,85 +1016,44 @@
 	#define ACQUISITION_STATUS_EXPOSURE_ACTIVE						(5)
 	#define ACQUISITION_STATUS_MIN									(ACQUISITION_STATUS_ACQUISITION_TRGWAIT)
 	#define ACQUISITION_STATUS_MAX									(ACQUISITION_STATUS_EXPOSURE_ACTIVE)
- #define GENICAM_ACQUISITION_STATUS_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x28)
- #define GENICAM_ACQUISITION_TRGWAIT_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x2c)
- #define GENICAM_ACQUISITION_ACTIVE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x30)
- #define GENICAM_ACQUISITION_TRANSFER_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x34)
- #define GENICAM_ACQUISITION_FRAME_TRGWAIT_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x38)
- #define GENICAM_ACQUISITION_FRAME_ACTIVE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x3c)
- #define GENICAM_ACQUISITION_EXPOSURE_ACTIVE_ADRS					(GENICAM_ACQUISITION_CONTROL_ADRS+0x40)
- #define GENICAM_ACQUISITION_TRG_SELECT_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x80)
+ #define GENICAM_ACQUISITION_STATUS_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x14)
+	#define GENICAM_ACQUISITION_STATUS_MASK							(0x01)
+ 
+ #define GENICAM_ACQUISITION_TRGWAIT_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x2c)//@@@1
+ #define GENICAM_ACQUISITION_ACTIVE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x30)//@@@1
+ #define GENICAM_ACQUISITION_TRANSFER_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x34)//@@@1
+ #define GENICAM_ACQUISITION_FRAME_TRGWAIT_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x38)//@@@1
+ #define GENICAM_ACQUISITION_FRAME_ACTIVE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x3c)//@@@1
+ #define GENICAM_ACQUISITION_EXPOSURE_ACTIVE_ADRS					(GENICAM_ACQUISITION_CONTROL_ADRS+0x40)//@@@1
+ 
+ #define GENICAM_ACQUISITION_TRG_SELECT_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x40)
 	#define GENICAM_ACQUISITION_TRG_SELECT_MASK						(0xff)
 	#define ACQUISITION_TRG_SELECT_ACQUISITION_START				(0)
 	#define ACQUISITION_TRG_SELECT_ACQUISITION_END					(1)
 	#define ACQUISITION_TRG_SELECT_ACQUISITION_ACTIVE				(2)
-	#define ACQUISITION_TRG_SELECT_FRAME_START						(3)
-	#define ACQUISITION_TRG_SELECT_FRAME_END						(4)
-	#define ACQUISITION_TRG_SELECT_FRAME_ACTIVE						(5)
-	#define ACQUISITION_TRG_SELECT_LINE_START						(9)
-	#define ACQUISITION_TRG_SELECT_EXPOSURE_START					(10)
-	#define ACQUISITION_TRG_SELECT_EXPOSURE_END						(11)
-	#define ACQUISITION_TRG_SELECT_EXPOSURE_ACTIVE					(12)
+	#define ACQUISITION_TRG_SELECT_EXPOSURE_ACTIVE					(3)
 	#define ACQUISITION_TRG_SELECT_MIN								(ACQUISITION_TRG_SELECT_ACQUISITION_START)
 	#define ACQUISITION_TRG_SELECT_MAX								(ACQUISITION_TRG_SELECT_EXPOSURE_ACTIVE)
-	#define ACQUISITION_TRG_SELECT_INVALID_MIN						(ACQUISITION_TRG_SELECT_FRAME_ACTIVE)
-	#define ACQUISITION_TRG_SELECT_INVALID_MAX						(ACQUISITION_TRG_SELECT_EXPOSURE_START)
- #define GENICAM_ACQUISITION_TRG_MODE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x84)
+
+ #define GENICAM_ACQUISITION_TRG_MODE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x44)
  	 #define GENICAM_ACQUISITION_TRG_MODE_MASK						(0x01)
  	 #define ACQUISITION_TRG_MODE_DISABLE							(0)
  	 #define ACQUISITION_TRG_MODE_ENABLE							(1)
- #define GENICAM_ACQUISITION_SOFT_TRG_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x88)
+
+ #define GENICAM_ACQUISITION_SOFT_TRG_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x48)
 	#define ACQUISITION_SOFT_TRG_NEGATE								(0)
 	#define ACQUISITION_SOFT_TRG_ASSERT								(1)
- #define GENICAM_ACQUISITION_TRG_SOURCE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x8c)
+
+ #define GENICAM_ACQUISITION_TRG_SOURCE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x4c)
  	#define GENICAM_ACQUISITION_TRG_SOURCE_MASK						(0xff)
 	#define GENICAM_ACQUISITION_TRG_SOURCE_SOFT						(0x00)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE0					(0x20)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_USER0_OUTPUT				(0x21)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE1					(0x22)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_USER1_OUTPUT				(0x23)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE2					(0x24)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_USER2_OUTPUT				(0x25)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE3					(0x26)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_USER3_OUTPUT				(0x27)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE4					(0x28)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_USER4_OUTPUT				(0x29)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE5					(0x2a)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_USER5_OUTPUT				(0x2b)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE6					(0x2c)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_USER6_OUTPUT				(0x2d)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE7					(0x2e)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_USER7_OUTPUT				(0x2f)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE8					(0x30)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_USER8_OUTPUT				(0x31)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE9					(0x32)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_USER9_OUTPUT				(0x33)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE10					(0x34)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_USER10_OUTPUT			(0x35)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE11					(0x36)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_USER11_OUTPUT			(0x37)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_CC1						(0x40)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_CC2						(0x41)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_CC3						(0x42)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_CC4						(0x43)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_COUNTER0_START			(0x50)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_COUNTER0_END				(0x52)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_COUNTER1_START			(0x54)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_COUNTER1_END				(0x56)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_COUNTER2_START			(0x58)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_COUNTER2_END				(0x5a)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_COUNTER3_START			(0x5c)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_COUNTER3_END				(0x5e)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_TIMER0_START				(0x70)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_TIMER0_END				(0x72)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_TIMER1_START				(0x74)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_TIMER1_END				(0x76)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_TIMER2_START				(0x78)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_TIMER2_END				(0x7a)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_TIMER3_START				(0x7c)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_TIMER3_END				(0x7e)
-	#define GENICAM_ACQUISITION_TRG_SOURCE_ENCODER0					(0x90)
- #define GENICAM_ACQUISITION_TRG_ACTIVATION_ADRS					(GENICAM_ACQUISITION_CONTROL_ADRS+0x90)
+	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE0					(0x01)
+	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE1					(0x02)
+	#define GENICAM_ACQUISITION_TRG_SOURCE_LINE2					(0x03)
+	#define GENICAM_ACQUISITION_TRG_SOURCE_ENCODER0					(0x04)
+	#define GENICAM_ACQUISITION_TRG_SOURCE_LINKTRIGGER0				(0x05)
+
+ #define GENICAM_ACQUISITION_TRG_ACTIVATION_ADRS					(GENICAM_ACQUISITION_CONTROL_ADRS+0x50)
 	#define GENICAM_ACQUISITION_TRG_ACTIVATION_MASK					(0x07)
 	#define ACQUISITION_TRG_ACTIVATION_RISE_EDGE					(0)
 	#define ACQUISITION_TRG_ACTIVATION_FALL_EDGE					(1)
@@ -1537,111 +1062,33 @@
 	#define ACQUISITION_TRG_ACTIVATION_LO_LEVEL						(4)
 	#define ACQUISITION_TRG_ACTIVATION_MIN							(ACQUISITION_TRG_ACTIVATION_RISE_EDGE)
 	#define ACQUISITION_TRG_ACTIVATION_MAX							(ACQUISITION_TRG_ACTIVATION_LO_LEVEL)
- #define GENICAM_ACQUISITION_TRG_DELAY_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x98)
- 	 #define GENICAM_ACQUISITION_TRG_DELAY_MASK						(0x00ffffff)
+
+ #define GENICAM_ACQUISITION_TRG_DELAY_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x64)
+ 	 #define GENICAM_ACQUISITION_TRG_DELAY_MASK						(0xffffffff)
  	 #define GENICAM_ACQUISITION_TRG_DELAY_MIN						(0)
  	 #define GENICAM_ACQUISITION_TRG_DELAY_MAX						(GENICAM_ACQUISITION_TRG_DELAY_MASK)
- #define GENICAM_ACQUISITION_TRG_INVALIDED_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0xa4)
- 	 #define GENICAM_ACQUISITION_TRG_INVALIDED_BIT					(1<<0)
- #define GENICAM_ACQUISITION_TRG_RESERVE_MODE_ADRS					(GENICAM_ACQUISITION_CONTROL_ADRS+0xa8)
+
+ #define GENICAM_ACQUISITION_TRG_RESERVE_MODE_ADRS					(GENICAM_ACQUISITION_CONTROL_ADRS+0xa8)	//@@@1
  	 #define GENICAM_ACQUISITION_TRG_FRAME_BIT						(1<<0)
- #define GENICAM_ACQUISITION_EXPOSURE_MODE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0xc0)
+
+ #define GENICAM_ACQUISITION_EXPOSURE_MODE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x80)
  	 #define ACQUISITION_EXPOSURE_TIMED								(0)
  	 #define ACQUISITION_EXPOSURE_TRG_WIDTH							(1)
- 	 #define ACQUISITION_EXPOSURE_TRG_CTRL							(2)
- 	 #define ACQUISITION_EXPOSURE_MODE_MASK							(0x03)
+ 	 #define ACQUISITION_EXPOSURE_MODE_MASK							(0x01)
  	 #define ACQUISITION_EXPOSURE_MODE_MIN							(ACQUISITION_EXPOSURE_TIMED)
- 	 #define ACQUISITION_EXPOSURE_MODE_MAX							(ACQUISITION_EXPOSURE_TRG_CTRL)
- #define GENICAM_ACQUISITION_EXPOSURE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0xcc)
-	#define GENICAM_ACQUISITION_EXPOSURE_MASK						(0x00ffffff)
- #define GENICAM_ACQUISITION_FRAME_INVALID_CNT_ADRS					(GENICAM_ACQUISITION_CONTROL_ADRS+0x3c0)
- #define GENICAM_ACQUISITION_EXP_INVALID_CNT_ADRS					(GENICAM_ACQUISITION_CONTROL_ADRS+0x3c4)
- #define GENICAM_ACQUISITION_FRAME_INVALID_ACTIVE_TRG_CNT_ADRS		(GENICAM_ACQUISITION_CONTROL_ADRS+0x3c8)
- #define GENICAM_ACQUISITION_RESET_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x3e0)
+ 	 #define ACQUISITION_EXPOSURE_MODE_MAX							(ACQUISITION_EXPOSURE_TRG_WIDTH)
+ 	 
+ #define GENICAM_ACQUISITION_EXPOSURE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x84)
+	#define GENICAM_ACQUISITION_EXPOSURE_MASK						(0xffffffff)
+
+  #define GENICAM_ACQUISITION_RESET_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x3e0)
 	#define GENICAM_ACQUISITION_RESET								(0x01)
- #define GENICAM_ACQUISITION_LINE_COUNT_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x3e4)
-	#define GENICAM_ACQUISITION_LINE_COUNT_MASK						(0xffff)
-	#define GENICAM_ACQUISITION_LINE_COUNT_MIN						(1)
-	#define GENICAM_ACQUISITION_LINE_COUNT_MAX						(GENICAM_ACQUISITION_LINE_COUNT_MASK)
- #define GENICAM_ACQUISITION_YDELAY_MODE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x3e8)
-	#define GENICAM_ACQUISITION_YDELAY_MODE_MASK					(0x03)
-	#define GENICAM_ACQUISITION_YDELAY_MODE_DISABLE					(0)
-	#define GENICAM_ACQUISITION_YDELAY_MODE_ACQUISITION_START		(1)
-	#define GENICAM_ACQUISITION_YDELAY_MODE_FRAME					(2)
-	#define GENICAM_ACQUISITION_YDELAY_MODE_MIN						(GENICAM_ACQUISITION_YDELAY_MODE_DISABLE)
-	#define GENICAM_ACQUISITION_YDELAY_MODE_MAX						(GENICAM_ACQUISITION_YDELAY_MODE_FRAME)
- #define GENICAM_ACQUISITION_YDELAY_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x3ec)
-	#define GENICAM_ACQUISITION_YDELAY_MASK							(0xffffffff)
-	#define GENICAM_ACQUISITION_YDELAY_MAX							(0xffffffff)
- #define GENICAM_ACQUISITION_RATE_LIMIT_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x3f4)
-	#define GENICAM_ACQUISITION_RATE_LIMIT_ENABLE_BIT				(1<<31)
-	#define GENICAM_ACQUISITION_RATE_LIMIT_TIME_MASK				(0xffff)
-
- #define GENICAM_ACQUISITION_START_MODE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x100)
- #define GENICAM_ACQUISITION_START_SOFT_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x104)
- #define GENICAM_ACQUISITION_START_SOURCE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x108)
- #define GENICAM_ACQUISITION_START_ACTIVE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x10c)
- #define GENICAM_ACQUISITION_START_DELAY_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x114)
-
- #define GENICAM_ACQUISITION_END_MODE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x124)
- #define GENICAM_ACQUISITION_END_SOFT_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x128)
- #define GENICAM_ACQUISITION_END_SOURCE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x12c)
- #define GENICAM_ACQUISITION_END_ACTIVE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x130)
- #define GENICAM_ACQUISITION_END_DELAY_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x138)
-
- #define GENICAM_ACQUISITION_ACTIVE_MODE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x148)
- #define GENICAM_ACQUISITION_ACTIVE_SOFT_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x14c)
- #define GENICAM_ACQUISITION_ACTIVE_SOURCE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x150)
- #define GENICAM_ACQUISITION_ACTIVE_ACTIVE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x154)
- #define GENICAM_ACQUISITION_ACTIVE_DELAY_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x15c)
-
- #define GENICAM_FRAME_START_MODE_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x16c)
- #define GENICAM_FRAME_START_SOFT_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x170)
- #define GENICAM_FRAME_START_SOURCE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x174)
- #define GENICAM_FRAME_START_ACTIVE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x178)
- #define GENICAM_FRAME_START_DELAY_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x180)
-	
- #define GENICAM_FRAME_END_MODE_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x190)
- #define GENICAM_FRAME_END_SOFT_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x194)
- #define GENICAM_FRAME_END_SOURCE_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x198)
- #define GENICAM_FRAME_END_ACTIVE_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x19c)
- #define GENICAM_FRAME_END_DELAY_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x1a4)
-
- #define GENICAM_FRAME_ACTIVE_MODE_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x1b4)
- #define GENICAM_FRAME_ACTIVE_SOFT_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x1b8)
- #define GENICAM_FRAME_ACTIVE_SOURCE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x1bc)
- #define GENICAM_FRAME_ACTIVE_ACTIVE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x1c0)
- #define GENICAM_FRAME_ACTIVE_DELAY_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x1c8)
-
- #define GENICAM_LINE_START_MODE_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x244)
- #define GENICAM_LINE_START_SOFT_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x248)
- #define GENICAM_LINE_START_SOURCE_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x24C)
- #define GENICAM_LINE_START_ACTIVE_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x250)
- #define GENICAM_LINE_START_DELAY_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x258)
-
- #define GENICAM_EXPOSURE_START_MODE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x268)
- #define GENICAM_EXPOSURE_START_SOFT_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x26c)
- #define GENICAM_EXPOSURE_START_SOURCE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x270)
- #define GENICAM_EXPOSURE_START_ACTIVE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x274)
- #define GENICAM_EXPOSURE_START_DELAY_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x27c)
-
- #define GENICAM_EXPOSURE_END_MODE_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x28c)
- #define GENICAM_EXPOSURE_END_SOFT_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x290)
- #define GENICAM_EXPOSURE_END_SOURCE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x294)
- #define GENICAM_EXPOSURE_END_ACTIVE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x298)
- #define GENICAM_EXPOSURE_END_DELAY_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x2a0)
-
- #define GENICAM_EXPOSURE_ACTIVE_MODE_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x2b0)
- #define GENICAM_EXPOSURE_ACTIVE_SOFT_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x2b4)
- #define GENICAM_EXPOSURE_ACTIVE_SOURCE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x2b8)
- #define GENICAM_EXPOSURE_ACTIVE_ACTIVE_ADRS						(GENICAM_ACQUISITION_CONTROL_ADRS+0x2bc)
- #define GENICAM_EXPOSURE_ACTIVE_DELAY_ADRS							(GENICAM_ACQUISITION_CONTROL_ADRS+0x2c4)
 
 
 //------------------------------------------------------------------------------------------
 // Digital I/O Control
 //------------------------------------------------------------------------------------------
-#define GENICAM_DIGITAL_CONTROL_ADRS								(GENICAM_ADRS+0x200000)
+#define GENICAM_DIGITAL_CONTROL_ADRS								(GENICAM_ADRS+0x1000)
  #define GENICAM_DIGITAL_LINE_SELECT_ADRS							(GENICAM_DIGITAL_CONTROL_ADRS+0x00)
 	#define GENICAM_DIGITAL_LINE_SELECT_MASK						(0xf)
 	#define GENICAM_DIGITAL_LINE_SELECT_LINE0						(0)
@@ -1929,7 +1376,7 @@
 //------------------------------------------------------------------------------------------
 // Counter Control
 //------------------------------------------------------------------------------------------
-#define GENICAM_COUNTER_CONTROL_ADRS								(GENICAM_ADRS+0x300000)
+#define GENICAM_COUNTER_CONTROL_ADRS								(GENICAM_ADRS+0x2000)
  #define GENICAM_COUNTER_SELECT_ADRS								(GENICAM_COUNTER_CONTROL_ADRS+0x00)
 	#define GENICAM_COUNTER_SELECT_MASK								(0x03)
 	#define COUNTER0_SELECT											(0)
@@ -2216,7 +1663,7 @@
 //------------------------------------------------------------------------------------------
 // Timer Control
 //------------------------------------------------------------------------------------------
-#define GENICAM_TIMER_CONTROL_ADRS									(GENICAM_ADRS+0x400000)
+#define GENICAM_TIMER_CONTROL_ADRS									(GENICAM_ADRS+0x3000)
  #define GENICAM_TIMER_SELECT_ADRS									(GENICAM_TIMER_CONTROL_ADRS+0x00)
  	#define GENICAM_TIMER_SELECT_MASK								(0x03)
 	#define TIMER0_SELECT											(0)
@@ -2344,7 +1791,7 @@
 //------------------------------------------------------------------------------------------
 // Encoder Control
 //------------------------------------------------------------------------------------------
-#define GENICAM_ENCODER_CONTROL_ADRS								(GENICAM_ADRS+0x500000)
+#define GENICAM_ENCODER_CONTROL_ADRS								(GENICAM_ADRS+0x4000)
  #define GENICAM_ENCODER_SELECT_ADRS								(GENICAM_ENCODER_CONTROL_ADRS+0x00)
  #define GENICAM_ENCODER_PASEA_TRG_SOURCE_ADRS						(GENICAM_ENCODER_CONTROL_ADRS+0x04)
 	#define GENICAM_ENCODER_PASEA_TRG_SOURCE_MASK					(0xff)
@@ -2463,8 +1910,6 @@
 	#define GENICAM_ENCODER_RESET_TS_INVALIDATE_MASK				(0x01)
  #define GENICAM_ENCODER_RESET_TA_INVALIDATE_ADRS					(GENICAM_ENCODER_CONTROL_ADRS+0x4c)
 	#define GENICAM_ENCODER_RESET_TA_INVALIDATE_MASK				(0x01)
- #define GENICAM_ENCODER_LINE_SELECT_MODE_ADRS						(GENICAM_ENCODER_CONTROL_ADRS+0x50)		// ABL-010IRのみ
-	#define GENICAM_ENCODER_LINE_SELECT_MODE_MASK					(1<<0)
 
  #define GENICAM_ENCODER_0_PASEA_TRG_SOURCE_ADRS					(GENICAM_ENCODER_CONTROL_ADRS+0x80)
  #define GENICAM_ENCODER_0_PASEB_TRG_SOURCE_ADRS					(GENICAM_ENCODER_CONTROL_ADRS+0x84)
@@ -2485,66 +1930,6 @@
  #define GENICAM_ENCODER_0_PASEB_INVALIDATE_ADRS					(GENICAM_ENCODER_CONTROL_ADRS+0xc0)
  #define GENICAM_ENCODER_0_RESET_TS_INVALIDATE_ADRS					(GENICAM_ENCODER_CONTROL_ADRS+0xc4)
  #define GENICAM_ENCODER_0_RESET_TA_INVALIDATE_ADRS					(GENICAM_ENCODER_CONTROL_ADRS+0xc8)
- #define GENICAM_ENCODER_0_LINE_SELECT_MODE_ADRS					(GENICAM_ENCODER_CONTROL_ADRS+0xcc)		// ABL-010IRのみ
-
-
-//------------------------------------------------------------------------------------------
-// GigE IP
-//------------------------------------------------------------------------------------------
-#define GIGE_IP_BASEADDR											(0x90020000)			// GigE IP
- #define GIGE_IP_CTRL												(GIGE_IP_BASEADDR+0x60)	// CTRL
- #define GIGE_IP_CTRL_RX_CHECK_BIT									(1<<4)
- #define GIGE_IP_CTRL_RX_STATUS_BIT									(1<<0)
- #define GIGE_IP_CTRL_RX_STATUS_COUNT								(5000)
-
-
-//====================================================================================
-//
-// For GEV specific addresses
-// Group: DeviceInformation
-//
-//====================================================================================
-#define GENICAM_NET_ADRS											(GENICAM_TIMER_CONTROL_ADRS+0x1c)
-#define BASE_BOOTROM                         ( 0x62000000 ) // 0x0FFFFF to virtual Offset address for the first XML on the QSPI Flash
-#define BASE_BOOTROM_MAX                     ( 0x627FFFFF ) // 0x0FFFFF to virtual Offset address for the first XML on the QSPI Flash
-#define BASE_BOOTROM_MASK                    ( 0x007FFFFF ) // 8M byte to virtual Offset address for the ABA-003IR.bin(fpga,arm0,arm1)
-
-// For GigE Vision persistent information
-#define BASE_NET_BOOTROM                     ( 0x62800000 ) // 0x0FFFFF to virtual Offset address for the first XML on the QSPI Flash
-#define BASE_NET_BOOTROM_MASK                ( 0x0000FFFF ) // 8M byte to virtual Offset address for the ABA-003IR.bin(fpga,arm0,arm1)
-#define BASE_NET_BOOTROM_MAX                 ( 0x62801FFF ) // 0x0FFFFF to virtual Offset address for the first XML on the QSPI Flash
-#define BASE_NET_BOOTROM_MAC                 ( BASE_NET_BOOTROM + 0x0000 ) // MAC address on the QSPI Flash
-#define BASE_NET_BOOTROM_PERSISTENT_IP       ( BASE_NET_BOOTROM + 0x0014 ) // Persistent IP addresS Offset on the QSPI Flash
-#define BASE_NET_BOOTROM_PERSISTENT_SUBNET   ( BASE_NET_BOOTROM + 0x0024 ) // Persistent Subnet Mask Offset on the QSPI Flash
-#define BASE_NET_BOOTROM_PERSISTENT_GATEWAY  ( BASE_NET_BOOTROM + 0x0034 ) // Persistent Gateway Offset on the QSPI Flash
-#define BASE_NET_BOOTROM_PERSISTENT_GVCP_PORT (BASE_NET_BOOTROM + 0x003A ) // Persistent GVCP port Offset on the QSPI Flash (AS default is 3956)
-#define BASE_NET_BOOTROM_PERSISTENT_USER_NAME (BASE_NET_BOOTROM + 0x0040 ) // Persistent User define name Offset on the QSPI Flash
-
-#define BASE_NET_BOOTROM_CUST_SERIAL         ( BASE_NET_BOOTROM + 0x1000 ) // Product serial number in 12 bytes Offset address on the QSPI Flash
-#define BASE_NET_BOOTROM_CUST_REV_HW         ( BASE_NET_BOOTROM + 0x1010 ) // Version number of HW Offset address on the QSPI Flash
-#define BASE_NET_BOOTROM_CUST_REV_FPGA       ( BASE_NET_BOOTROM + 0x1014 ) // Version number of FPGA Offset address on the QSPI Flash
-#define BASE_NET_BOOTROM_CUST_REV_FIRMWARE1  ( BASE_NET_BOOTROM + 0x1018 ) // Version number of Firmware  Offset address on the QSPI Flash
-#define BASE_NET_BOOTROM_CUST_REV_FIRMWARE2  ( BASE_NET_BOOTROM + 0x1020 ) // Version number of Firmware  Offset address on the QSPI Flash
-
-#define BASE_NET_BOOTROM_XMLURL_FIRST        ( BASE_NET_BOOTROM + 0x1C00 ) // XML URL Offset address on the QSPI Flash
-#define BASE_NET_BOOTROM_XMLURL_SECOND       ( BASE_NET_BOOTROM + 0x1E00 ) // XML URL Offset address on the QSPI Flash
-#define BASE_NET_BOOTROM_XMLURL_MASK         ( 0x0000FFFF ) // Mask the virtual Offset address for XML on the QSPI Flash
-
-#define BASE_NET_BOOTROM_XMLFILE_MASK        ( 0x001FFFFF ) // Mask the virtual Offset address for XML on the QSPI Flash
-#define BASE_NET_BOOTROM_XMLFILE_OFFSET      ( 0x01000000 )
-
-#define XMLFILE_SIZE                         ( 2 * 1024 * 1024 )
-
-
-//====================================================================================
-//
-// For GEV specific addresses
-// Group: File Access Buffer Control
-//
-//====================================================================================
-#define BASE_FILE_BUFFER                     ( 0x64000000 ) // to 0x4024FFFF Offset address the register of the camera
-	#define BASE_FILE_BUFFER_MAX             ( BASE_FILE_BUFFER + 0x02000000 )
-	#define BASE_FILE_BUFFER_MASK            ( 0x01FFFFFF ) // to 0x2 0FFF Offset address for LUT2
 
 #endif  // __FPGA_H__
 

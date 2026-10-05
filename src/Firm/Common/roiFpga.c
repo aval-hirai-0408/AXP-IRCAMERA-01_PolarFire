@@ -637,10 +637,6 @@ int fpgaRoiSetCameraHeightMain (unsigned int adrs, int selector, int offset, int
 	// レジスタ設定
 	OUT32 ((adrs + selector * FPGA_ROI_ADRS_INTERVAL), data32);
 
-#if defined (MODE_IPU_MULTI)
-	OUT32 ((adrs + selector * FPGA_ROI_ADRS_INTERVAL + FPGA_ROI2_OFFSET), data32);
-#endif
-
 _DONE:
 	return (status);
 }

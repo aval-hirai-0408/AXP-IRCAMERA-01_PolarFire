@@ -2773,7 +2773,7 @@ int sensorStandByCancel (void)
 	// ExposureActiveトリガ無効
 	//------------------------------------------------------------
 	// セレクタ設定
-	if ((status = acquisitionSetSelect (ACQUISITION_TRG_SELECT_FRAME_ACTIVE)) != AVAL_STATUS_SUCCESS)
+	if ((status = acquisitionSetSelect (ACQUISITION_TRG_SELECT_EXPOSURE_ACTIVE)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// トリガ有効/無効状態取得
@@ -2891,7 +2891,7 @@ _DONE:
 	// FrameActiveトリガ設定
 	if (trgModeFrameActive != 0)
 	{
-		acquisitionSetSelect (ACQUISITION_TRG_SELECT_FRAME_ACTIVE);
+		acquisitionSetSelect (ACQUISITION_TRG_SELECT_EXPOSURE_ACTIVE);
 		acquisitionSetTrgMode (trgModeFrameActive);
 	}
 
@@ -3466,34 +3466,6 @@ _DONE:
 
 
 //**********************************************************************************
-//	H Interval取得
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		pHinterval			：H Intervalを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int sensorGetHInterval (unsigned int *pHinterval)
-{
-	int status = AVAL_STATUS_SUCCESS;
-
-	// Check pHInterval Parameter
-	if (pHinterval == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Get H Interval NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	*pHinterval = IN32 (FPGA_SENSOR_HINTERVAL_ADRS) & FPGA_SENSOR_HINTERVAL_MASK;
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
 // HV Gen設定
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
@@ -3950,7 +3922,7 @@ int sensorSetShutterMode (int mode)
 			//goto _DONE;
 
 		// Get H Interval
-		//if ((status = sensorGetHInterval (&hInterval)) != AVAL_STATUS_SUCCESS)
+		//if ((status = sensorGetHIntervalClock (&hInterval)) != AVAL_STATUS_SUCCESS)
 			//goto _DONE;
 
 		// HeightのTotal Sizeを求める
@@ -9125,10 +9097,10 @@ int sensorRegWriteBase (unsigned char *pId, unsigned char *pAdrs, unsigned char 
 		}
 
 		// Check adrs Parameter
-		if ((adrs < 0) || (adrs > FPGA_SENSOR_MAX_ADRS))
+		if ((adrs < 0) || (adrs > FPGA_SENSOR_ADRS_MAX_))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Sensor Register Write adrs(0x%x) Parameter Error.(Min:0 / Max:%d). Index=%d\n", adrs, FPGA_SENSOR_MAX_ADRS, i);
+			sprintf (gLogMsgBuff, "Sensor Register Write adrs(0x%x) Parameter Error.(Min:0 / Max:%d). Index=%d\n", adrs, FPGA_SENSOR_ADRS_MAX_, i);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -9247,10 +9219,10 @@ int sensorRegReadBase (unsigned char *pId, unsigned char *pAdrs, unsigned char *
 		}
 
 		// Check adrs Parameter
-		if ((adrs < 0) || (adrs > FPGA_SENSOR_MAX_ADRS))
+		if ((adrs < 0) || (adrs > FPGA_SENSOR_ADRS_MAX_))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Sensor Register Read adrs(0x%x) Parameter Error.(Min:0 / Max:%d). Index=%d\n", adrs, FPGA_SENSOR_MAX_ADRS, i);
+			sprintf (gLogMsgBuff, "Sensor Register Read adrs(0x%x) Parameter Error.(Min:0 / Max:%d). Index=%d\n", adrs, FPGA_SENSOR_ADRS_MAX_, i);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -10559,10 +10531,8 @@ int sensorGradationCompSetMode (int mode)
 	// Pre Set領域
 	OUT32 (FIRM_DATA_GRADATION_COMPRESS_MODE_PRE, mode);
 
-#if defined (MODE_BIT8_GCMODE_ENABLE)
 	// 8bit時に階調圧縮モードをデフォルト有効にするかのフラグ
 	OUT32 (FIRM_DATA_BIT8_CONVERT_MODE, mode);
-#endif
 
 	if (mode == MODE_ENABLE)
 	{
@@ -11591,7 +11561,6 @@ _NEXT:
 		goto _DONE;
 
 
-	#if defined (MODE_BIT8_GCMODE_ENABLE)
 	if (bit != 8)
 	{
 		// 8bit時に階調圧縮モードをデフォルト有効にするかのフラグ
@@ -11600,7 +11569,6 @@ _NEXT:
 		// この問題に対応する為の設定。
 		OUT32 (FIRM_DATA_BIT8_CONVERT_MODE, MODE_ENABLE);
 	}
-	#endif
 
 	// Enable & Disableへの変更時のみFFCデータ入れ替え
 	if ( ((currentMode == MODE_DISABLE) && (mode == MODE_ENABLE)) ||

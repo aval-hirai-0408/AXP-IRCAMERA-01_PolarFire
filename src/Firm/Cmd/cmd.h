@@ -58,8 +58,6 @@ int cmdAcquisitionTrgDelay (void *str);
 int cmdAcquisitionTrgDelayHelp (void *str);
 int cmdAcquisitionExposureMode (void *str);
 int cmdAcquisitionExposureModeHelp (void *str);
-int cmdAcquisitionTrgInvalidCount (void *str);
-int cmdAcquisitionTrgInvalidCountHelp (void *str);
 int cmdAcquisitionTrgReserved (void *str);
 int cmdAcquisitionTrgReservedHelp (void *str);
 int cmdAcquisitionReset (void *str);
@@ -876,14 +874,11 @@ int cmdBootVersion (void *str);
 int cmdBootVersionHelp (void *str);
 
 // cmdVoltIfBoard.c
-#if defined (MODE_BOARD_ACB531CXP) || defined (MODE_BOARD_ACB532GE)
-
 int cmdVoltIfShow (void *str);
 int cmdVoltIfShowHelp (void *str);
 int cmdVoltIfTemp (void *str);
 int cmdVoltIfTempHelp (void *str);
 
-// ACB-531-CXP
 int cmdVoltIf105vd (void *str);
 int cmdVoltIf105vdHelp (void *str);
 int cmdVoltIf105va (void *str);
@@ -899,7 +894,6 @@ int cmdVoltIf33vdHelp (void *str);
 int cmdVoltIf90va (void *str);
 int cmdVoltIf90vaHelp (void *str);
 
-// ACB-532-GE
 int cmdVoltIf065v (void *str);
 int cmdVoltIf065vHelp (void *str);
 int cmdVoltIf085va (void *str);
@@ -912,8 +906,6 @@ int cmdVoltIf120vp (void *str);
 int cmdVoltIf120vpHelp (void *str);
 int cmdVoltIf240v (void *str);
 int cmdVoltIf240vHelp (void *str);
-
-#endif
 
 // cmdVoltFpgaBoard.c
 int cmdVoltFpgaShow(void *str);
@@ -937,7 +929,6 @@ int cmdVoltFpga25vHelp (void *str);
 int cmdVoltFpgaVtt (void *str);
 int cmdVoltFpgaVttHelp (void *str);
 
-#if defined (MODE_SYSTEM_MANAGEMENT)
 int cmdVoltFpga09v (void *str);
 int cmdVoltFpga09vHelp (void *str);
 int cmdVoltFpga12vSys (void *str);
@@ -960,7 +951,6 @@ int cmdVoltFpgaVccPsinfp (void *str);
 int cmdVoltFpgaVccPsinfpHelp (void *str);
 int cmdVoltFpgaVccPsaux (void *str);
 int cmdVoltFpgaVccPsauxHelp (void *str);
-#endif
 
 #endif  // __CMD_H__
 

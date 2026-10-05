@@ -113,13 +113,13 @@ int cmdGcp (void *str)
 		//--------------------------------------------------
 #if defined (MODE_VOLTAGE_FPGA_BOARD)
 		// FPGA Board Voltage Show
-		voltFpgaBoardShow();
+		//@@@1voltFpgaBoardShow();
 #endif
 
 
 #if defined (MODE_VOLTAGE_IF_BOARD)
 		// Interface Board Voltage Show
-		voltIfBoardShow();
+		//@@@1voltIfBoardShow();
 #endif
 	}
 	else if (argc == 2)
@@ -208,7 +208,7 @@ int cmdGcp (void *str)
 		{
 #if defined (MODE_VOLTAGE_FPGA_BOARD)
 		// FPGA Board Voltage Show
-		voltFpgaBoardShow();
+		//@@@1voltFpgaBoardShow();
 #endif
 
 #if defined (MODE_VOLTAGE_IF_BOARD)

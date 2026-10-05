@@ -279,6 +279,31 @@ typedef struct
 
 //====================================================================================
 //
+// For GEV specific addresses
+// Group: DeviceInformation
+//
+//====================================================================================
+#define BASE_BOOTROM											( 0x62000000 ) // 0x0FFFFF to virtual Offset address for the first XML on the QSPI Flash
+#define BASE_BOOTROM_MAX 										( 0x627FFFFF ) // 0x0FFFFF to virtual Offset address for the first XML on the QSPI Flash
+#define BASE_BOOTROM_MASK										( 0x007FFFFF ) // 8M byte to virtual Offset address for the ABA-003IR.bin(fpga,arm0,arm1)
+
+#define BASE_NET_BOOTROM										( 0x62800000 ) // 0x0FFFFF to virtual Offset address for the first XML on the QSPI Flash
+#define BASE_NET_BOOTROM_XMLURL_FIRST							( BASE_NET_BOOTROM + 0x1C00 ) // XML URL Offset address on the QSPI Flash
+#define BASE_NET_BOOTROM_XMLURL_SECOND							( BASE_NET_BOOTROM + 0x1E00 ) // XML URL Offset address on the QSPI Flash
+#define BASE_NET_BOOTROM_XMLURL_MASK							( 0x0000FFFF ) // Mask the virtual Offset address for XML on the QSPI Flash
+
+#define BASE_NET_BOOTROM_XMLFILE_MASK							( 0x001FFFFF ) // Mask the virtual Offset address for XML on the QSPI Flash
+#define BASE_NET_BOOTROM_XMLFILE_OFFSET							( 0x01000000 )
+
+#define XMLFILE_SIZE											( 2 * 1024 * 1024 )
+
+#define BASE_FILE_BUFFER										( 0x64000000 ) // to 0x4024FFFF Offset address the register of the camera
+	#define BASE_FILE_BUFFER_MAX								( BASE_FILE_BUFFER + 0x02000000 )
+	#define BASE_FILE_BUFFER_MASK								( 0x01FFFFFF ) // to 0x2 0FFF Offset address for LUT2
+
+
+//====================================================================================
+//
 // For vendor specific addresses
 // Group: ImageFormatControl
 //
@@ -400,6 +425,12 @@ typedef struct
 // Group: AcquisitionControl
 //
 //====================================================================================
+#define AcquisitionFrameRate									( 0xA034 ) // RW; 4 bytes; frame rate = (float)VIDEO_CLK/((video_width+video_gap_x)*(video_height+video_gap_y));
+
+#define AcquisitionStart										( 0xA050 ) // RW; 4 bytes; frame rate = (float)VIDEO_CLK/((video_width+video_gap_x)*(video_height+video_gap_y));
+#define AcquisitionStop											( 0xA054 ) // RW; 4 bytes; frame rate = (float)VIDEO_CLK/((video_width+video_gap_x)*(video_height+video_gap_y));
+#define AcquisitionAbort										( 0xA058 ) // RW; 4 bytes; frame rate = (float)VIDEO_CLK/((video_width+video_gap_x)*(video_height+video_gap_y));
+
 #define AcquisitionPreset										( 0xB004 ) // RW; 4 bytes; frame rate = (float)VIDEO_CLK/((video_width+video_gap_x)*(video_height+video_gap_y));
 #define     AcquisitionPreset_Off								(  0 ) // RW; 4 bytes; frame rate = (float)VIDEO_CLK/((video_width+video_gap_x)*(video_height+video_gap_y));
 #define     AcquisitionPreset_Default							(  1 ) // RW; 4 bytes; frame rate = (float)VIDEO_CLK/((video_width+video_gap_x)*(video_height+video_gap_y));
@@ -413,7 +444,7 @@ typedef struct
 #define     AcquisitionPreset_Mode8								(  9 ) // RW; 4 bytes; frame rate = (float)VIDEO_CLK/((video_width+video_gap_x)*(video_height+video_gap_y));
 #define     AcquisitionPreset_Mode9								( 10 ) // RW; 4 bytes; frame rate = (float)VIDEO_CLK/((video_width+video_gap_x)*(video_height+video_gap_y));
 #define     AcquisitionPreset_Mode10							( 11 ) // RW; 4 bytes; frame rate = (float)VIDEO_CLK/((video_width+video_gap_x)*(video_height+video_gap_y));
-#define AcquisitionFrameRate									( 0xA034 ) // RW; 4 bytes; frame rate = (float)VIDEO_CLK/((video_width+video_gap_x)*(video_height+video_gap_y));
+
 #define AcquisitionFrameRateMax									( 0xB010 ) // RO; 4 bytes; frame rate max
 #define AcquisitionFrameRateMin									( 0xB014 ) // RO; 4 bytes; frame rate min
 #define AcquisitionFrameRateRawMax								( 0xB018 ) // RO; 4 bytes; frame rate max
@@ -421,11 +452,7 @@ typedef struct
 #define AcquisitionFrameCountMin								( 0xB020 ) // RW; 4 bytes; 0xFFFFFFFF is infinity.
 #define AcquisitionFrameCountMax								( 0xB024 ) // RW; 4 bytes; 0xFFFFFFFF is infinity.
 
-#define AcquisitionTrgHighCount									( 0xB030 ) // RW; 4 bytes;
-#define AcquisitionTrgLowCount									( 0xB034 ) // RW; 4 bytes;
-#define AcquisitionTrgCountMode									( 0xB038 ) // RW; 4 bytes;
-#define AcquisitionTrgSignalCount								( 0xB03C ) // RW; 4 bytes;
-#define AcquisitionTrgImageCount								( 0xB040 ) // RW; 4 bytes;
+#define AcquisitionTrgCount										( 0xB030 ) // RW; 4 bytes;
 
 
 //====================================================================================

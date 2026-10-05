@@ -114,11 +114,9 @@ int cxpInitialize2 (void)
 	unsigned int data32;
 	int dataI32;
 	unsigned int cxpSpeed;
-#if defined (MODE_BOARD_ACB531CXP)
 	unsigned int linkCount;
 	int streamMode = CXP_MODE_SINGLE_STREAM;
 	unsigned int regData;
-#endif
 #if defined (MODE_SENSOR_IMX992) || defined (MODE_SENSOR_IMX993)
 	int bit;
 	int shutterMode;
@@ -179,7 +177,6 @@ goto _DONE;
 	//--------------------------------------------------------------------------------
 	// Set CXP Rate
 	//--------------------------------------------------------------------------------
-#if defined (MODE_BOARD_ACB531CXP)
 
 	// 受信FIFO Disable
 	//@@@@data32 = IN32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL));
@@ -205,13 +202,12 @@ goto _DONE;
 
 	// Connection Config設定
 	cxpSetRateData (((1<<16) | CXP_RATE_3_125G));
-#endif
 
 
 	//------------------------------------------------------------
 	// CXP Rate & Connection
 	//------------------------------------------------------------
-#if defined (MODE_BOARD_ACB531CXP)
+
 	// Usersetの値を取得
 	ConnectionConfig_st = IN32 (FIRM_DATA_CXP_CONNECTION_CONFIG);
 	
@@ -261,8 +257,6 @@ goto _DONE;
 
 	if ((status = cxpSetStreamMode (0/*共通レジスタの為、Port=0に設定*/, streamMode)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
-#endif // #if defined (MODE_BOARD_ACB531CXP)
 
 
 	//------------------------------------------------------------
@@ -2224,14 +2218,14 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 		// AcquistionStartAddress取得
 		//------------------------------------------------------------
 		case AcquistionStartAddress:
-			*pData = GENICAM_ACQUISITION_START_ADRS;
+			*pData = AcquisitionStart;
 			break;
 
 		//------------------------------------------------------------
 		// AcquistionStopAddress取得
 		//------------------------------------------------------------
 		case AcquistionStopAddress:
-			*pData = GENICAM_ACQUISITION_ABORT_ADRS;
+			*pData = AcquisitionAbort;
 			break;
 
 		//------------------------------------------------------------
@@ -2515,30 +2509,6 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			*pData = data1;
 			break;
 
-		//----------------------------------------------------------------------------------
-		// AcquisitionTrgHighCount取得
-		//----------------------------------------------------------------------------------
-        case AcquisitionTrgHighCount:
-			if ((status = acquisitionGetTrgCountHigh (port, &data1)) != AVAL_STATUS_SUCCESS)
-				break;
-			
-			*pData = data1;
-			pData++;
-
-	      	break;
-
-		//----------------------------------------------------------------------------------
-		// AcquisitionTrgLowCount取得
-		//----------------------------------------------------------------------------------
-        case AcquisitionTrgLowCount:
-			if ((status = acquisitionGetTrgCountLow (port, &data1)) != AVAL_STATUS_SUCCESS)
-				break;
-			
-			*pData = data1;
-			pData++;
-
-	      	break;
-
 		//------------------------------------------------------------
 		// default取得
 		//------------------------------------------------------------
@@ -2565,8 +2535,8 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 				{
 					// XML Fileデータ取得
 					*pData2 = IN32 ((FIRM_XML_FILE_ADRS+adrs2+(ix*4)));
-					//@@@1swapData32 = SWAP_L (*pData2);
-					//@@@1*pData2 = swapData32;
+					swapData32 = SWAP_L (*pData2);
+					*pData2 = swapData32;
 				}
 				// Ver.2.7 End
 			}

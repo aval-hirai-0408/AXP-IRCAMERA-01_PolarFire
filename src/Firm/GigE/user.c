@@ -666,16 +666,16 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		// Acquisition Start取得
 		//----------------------------------------------------------------------------------
-		case GENICAM_ACQUISITION_START_ADRS:
+		case AcquisitionStart:
 			value = (IN32(GENICAM_ACQUISITION_START_ADRS) & GENICAM_ACQUISITION_START_BIT) ? 1 : 0;
 			break;
 
 		//----------------------------------------------------------------------------------
 		// Acquisition Abort取得
 		//----------------------------------------------------------------------------------
-		case GENICAM_ACQUISITION_STOP_ADRS:
-		case GENICAM_ACQUISITION_ABORT_ADRS:
-			value = (IN32(GENICAM_ACQUISITION_ABORT_ADRS) & GENICAM_ACQUISITION_ABORT_BIT) ? 1 : 0;
+		case AcquisitionStop:
+		case AcquisitionAbort:
+			value = (IN32(GENICAM_ACQUISITION_START_ADRS) & GENICAM_ACQUISITION_ABORT_BIT) ? 1 : 0;
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -883,13 +883,6 @@ u32 get_user_reg (u32 address, u16 *status)
 			break;
 
 		//----------------------------------------------------------------------------------
-		// Acquisition Frame Invalided Active Trg Count取得
-		//----------------------------------------------------------------------------------
-        case GENICAM_ACQUISITION_FRAME_INVALID_ACTIVE_TRG_CNT_ADRS:
-         	value = IN32(address);
-           	break;
-
-		//----------------------------------------------------------------------------------
    		// Acquisition Trg Reserved取得
 		//----------------------------------------------------------------------------------
         case GENICAM_ACQUISITION_TRG_RESERVE_MODE_ADRS:
@@ -897,39 +890,11 @@ u32 get_user_reg (u32 address, u16 *status)
            	break;
 
 		//----------------------------------------------------------------------------------
-		// AcquisitionTrgHighCount取得
+		// AcquisitionTrgCount取得
 		//----------------------------------------------------------------------------------
-        case AcquisitionTrgHighCount:
-			*status = acquisitionGetTrgCountHigh (0, (unsigned int *)&value);
+        case AcquisitionTrgCount:
+			*status = acquisitionGetTrgCount((unsigned int *)&value);
 	      	break;
-
-		//----------------------------------------------------------------------------------
-		// AcquisitionTrgLowCount取得
-		//----------------------------------------------------------------------------------
-        case AcquisitionTrgLowCount:
-			*status = acquisitionGetTrgCountLow (0, (unsigned int *)&value);
-	      	break;
-
-		//----------------------------------------------------------------------------------
-		// AcquisitionTrgCountMode取得
-		//----------------------------------------------------------------------------------
-        case AcquisitionTrgCountMode:
-			*status = counterGetTrgMode ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// AcquisitionTrgSignalCount取得
-		//----------------------------------------------------------------------------------
-        case AcquisitionTrgSignalCount:
-			*status = counterGetTrgInputCount ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// AcquisitionTrgImageCount取得
-		//----------------------------------------------------------------------------------
-        case AcquisitionTrgImageCount:
-			*status = counterGetImageOutputCount ((int *)&value);
-			break;
 
 		//----------------------------------------------------------------------------------
 		// Debug Time取得
@@ -3036,8 +3001,8 @@ u32 get_user_reg (u32 address, u16 *status)
 		case DeviceMainVolt:
 			if (gInterFaceID == INTERFACE_CXP)
 				*status = voltIfGet90va (&dblValue);
-			else
-				*status = voltIfGet240v (&dblValue);
+			//@@@1else
+				//@@@1*status = voltIfGet240v (&dblValue);
 			fltValue = (float) dblValue;
 			value = (int)(fltValue * DEVICE_VOLT_UNIT);
 			break;
@@ -3808,10 +3773,6 @@ u32 get_user_reg (u32 address, u16 *status)
 			value = cmdExecuteStatus ();
 			if (value == command_done)
 			{
-//@@@1
-DEBUG_PRINT_FORCE("@@@@@Done@@@@@\n");
-//@@@1
-				fileExec[fileSelector] = 0;
 				value = 0;
 
 				// Success or Failure
@@ -3820,10 +3781,6 @@ DEBUG_PRINT_FORCE("@@@@@Done@@@@@\n");
 			else
 			{
 				value = fileExec[fileSelector];
-//@@@1
-DEBUG_PRINT_FORCE("@@@@@Not Done@@@@@ Value = %d. Selector = %d\n", value, fileSelector);
-//@@@1
-
 			}
 
 			break;
@@ -3861,6 +3818,9 @@ DEBUG_PRINT_FORCE("@@@@@Not Done@@@@@ Value = %d. Selector = %d\n", value, fileS
 		//--------------------------------------------------------------------------------
 		case FileOperationResult:
 			value = fileResult[fileSelector][fileSel[fileSelector]];
+			//@@@1
+		//DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@value = %d\n", value);
+			//@@@1
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -3958,6 +3918,7 @@ DEBUG_PRINT_FORCE("@@@@@Not Done@@@@@ Value = %d. Selector = %d\n", value, fileS
 			}
 			#endif //@@@1
 
+#if 0   //@@@1
 			//====================================================================================
 			//
 			// Group: EEPROM Flash Control registers of GigE standard
@@ -3971,6 +3932,7 @@ DEBUG_PRINT_FORCE("@@@@@Not Done@@@@@ Value = %d. Selector = %d\n", value, fileS
 				value = eeprom_read_dword((u16) address2nd);
 				break;
 			}
+#endif //@@@1
 
 			//====================================================================================
 			//
@@ -4507,7 +4469,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			{
 				// CXP Height Param設定
 				#if !defined (MODE_CXP_MULTI_PORT)
-				
+
 				if ((*status = cxpSetHeightParam (0)) != AVAL_STATUS_SUCCESS)
 					break;
 
@@ -5005,21 +4967,21 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		// Acquisition Start設定
 		//--------------------------------------------------------------------------------
-		case GENICAM_ACQUISITION_START_ADRS:
+		case AcquisitionStart:
 			*status = acquisitionStart();
 			break;
 
 		//--------------------------------------------------------------------------------
 		// Acquisition Abort設定
 		//--------------------------------------------------------------------------------
-		case GENICAM_ACQUISITION_ABORT_ADRS:
+		case AcquisitionAbort:
 			*status = acquisitionAbort();
 			break;
 
 		//--------------------------------------------------------------------------------
 		// Acquisition Stop設定
 		//--------------------------------------------------------------------------------
-		case GENICAM_ACQUISITION_STOP_ADRS:
+		case AcquisitionStop:
 			*status = acquisitionStop();
 			break;
 
@@ -5218,13 +5180,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			break;
 
 		//--------------------------------------------------------------------------------
-		// Acquisition Frame Invalided Active Trg Count設定
-		//--------------------------------------------------------------------------------
-        case GENICAM_ACQUISITION_FRAME_INVALID_ACTIVE_TRG_CNT_ADRS:
-	        *status = GEV_STATUS_WRITE_PROTECT;
-           	break;
-
-		//--------------------------------------------------------------------------------
 		// Acquisition Trigger Reserved Mode設定
 		//--------------------------------------------------------------------------------
         case GENICAM_ACQUISITION_TRG_RESERVE_MODE_ADRS:
@@ -5232,39 +5187,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
            	break;
 
 		//----------------------------------------------------------------------------------
-		// AcquisitionTrgHighCount設定
+		// AcquisitionTrgCount設定
 		//----------------------------------------------------------------------------------
-        case AcquisitionTrgHighCount:
+        case AcquisitionTrgCount:
 			*status = GEV_STATUS_WRITE_PROTECT;
 	      	break;
-
-		//----------------------------------------------------------------------------------
-		// AcquisitionTrgLowCount設定
-		//----------------------------------------------------------------------------------
-        case AcquisitionTrgLowCount:
-			*status = GEV_STATUS_WRITE_PROTECT;
-	      	break;
-
-		//----------------------------------------------------------------------------------
-		// AcquisitionTrgCountMode設定
-		//----------------------------------------------------------------------------------
-        //case AcquisitionTrgCountMode:
-			//*status = counterSetTrgMode (value);
-			//break;
-
-		//----------------------------------------------------------------------------------
-		// AcquisitionTrgSignalCount設定
-		//----------------------------------------------------------------------------------
-        //case AcquisitionTrgSignalCount:
-			//*status = GEV_STATUS_WRITE_PROTECT;
-			//break;
-
-		//----------------------------------------------------------------------------------
-		// AcquisitionTrgImageCount設定
-		//----------------------------------------------------------------------------------
-        //case AcquisitionTrgImageCount:
-			//*status = GEV_STATUS_WRITE_PROTECT;
-			//break;
 
 		//--------------------------------------------------------------------------------
 		// Time(Debug)設定
@@ -6777,11 +6704,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case FPGA_FFC_CTRL_ADRS:
 			OUT32(address, value);
-
-#if defined (MODE_IPU_MULTI)
-			OUT32(FPGA_FFC2_CTRL_ADRS, value);
-#endif
-
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -9031,11 +8953,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 						break;
 					case 0x4: // SpectrumGain as FPGA_DOG_BAND_GAIN_ADRS
 						OUT32 (address,value);
-
-						#if defined (MODE_IPU_MULTI)
-						OUT32 ((address + FPGA_DOG2_OFFSET),value);
-						#endif
-
 						*status = GEV_STATUS_SUCCESS;
 						break;
 					case 0x8: // SpectrumBlackLevelPreceding as FPGA_DOG_BAND_OFFSET2_ADRS_OFFSET
@@ -9162,20 +9079,12 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					// 14 bits
 					OUT32(address, ((value & LUT_DATA_MASK)<<value3rd)); // 指定アドレスの上位に有効データを書き込む
 
-					#if defined (MODE_IPU_MULTI)
-					OUT32((address + FPGA_LUT2_OFFSET), ((value & LUT_DATA_MASK)<<value3rd)); // 指定アドレスの上位に有効データを書き込む
-					#endif
-
 				}
 				else
 				{
 					for (i = 0; i < interval; i++, offset += LUT_TABLE_INTERVAL)
 					{
 						OUT32((address + offset), ((value & LUT_DATA_MASK) << value3rd)); // 指定アドレスの上位に有効データを書き込む
-
-						#if defined (MODE_IPU_MULTI)
-						OUT32((address + offset + FPGA_LUT2_OFFSET), ((value & LUT_DATA_MASK) << value3rd)); // 指定アドレスの上位に有効データを書き込む
-						#endif
 					}
 				}
 				break;

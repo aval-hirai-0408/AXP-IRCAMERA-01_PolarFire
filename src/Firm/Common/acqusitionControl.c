@@ -212,13 +212,12 @@ int acquisitionGetMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Mode pMode NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Mode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
 	// Acquisitionモード取得
 	*pMode = IN32 (GENICAM_ACQUISITION_MODE_ADRS) & GENICAM_ACQUISITION_MODE_MASK;
-
 
 _DONE:
 	return (status);
@@ -261,20 +260,12 @@ int acquisitionStart (void)
 	// Set Flag
 	OUT32 (FIRM_DATA_ACQUISITION_START_ADRS, 1);
 
-#if defined (MODE_ACQUISITION_TRG_SOFT_COUNT)
 	// Acquisition Reset Trg Soft Count
 	acquisitionRestTrgSoftCount();
-#endif
-
-#if defined (MODE_CXP)
-	// Trg Count Reset
-	if (gInterFaceID == INTERFACE_CXP)
-		acquisitionRestLinkTrgCount ();
-#endif
 
 //@@@@@@@@@@@@@@@@@@@@@@
 	// Stream Enable
-	OUT32(FPGA_CXP_S0_STREAM_EN_ADRS, 1);
+	OUT32 (FPGA_CXP_S0_STREAM_EN_ADRS, 1);
 
 	usDelay(100);
 
@@ -327,7 +318,7 @@ int acquisitionStop (void)
 	int status = AVAL_STATUS_SUCCESS;
 
 	// 取り込み停止
-	OUT32 (GENICAM_ACQUISITION_STOP_ADRS, GENICAM_ACQUISITION_STOP_BIT);
+	OUT32 (GENICAM_ACQUISITION_START_ADRS, GENICAM_ACQUISITION_STOP_BIT);
 
 	// Set Flag
 	OUT32 (FIRM_DATA_ACQUISITION_START_ADRS, 0);
@@ -355,7 +346,7 @@ int acquisitionAbort (void)
 //@@@1
 
 	// 取り込み中断
-	OUT32 (GENICAM_ACQUISITION_ABORT_ADRS, GENICAM_ACQUISITION_ABORT_BIT);
+	OUT32 (GENICAM_ACQUISITION_START_ADRS, GENICAM_ACQUISITION_ABORT_BIT);
 
 	// ステータスCheck
 	for (i=0; i<ACQUISITION_ABORT_TIMEOUT; i++)
@@ -383,7 +374,7 @@ int acquisitionAbort (void)
 	}
 
 	// 取り込み中断解除
-	OUT32 (GENICAM_ACQUISITION_ABORT_ADRS, 0);
+	//@@@1OUT32 (GENICAM_ACQUISITION_ABORT_ADRS, 0);
 
 	// Set Flag
 	OUT32 (FIRM_DATA_ACQUISITION_START_ADRS, 0);
@@ -487,7 +478,6 @@ int acquisitionGetFrameCount (unsigned int *pCount)
 _DONE:
 	return (status);
 }
-
 
 
 //**********************************************************************************
@@ -1165,7 +1155,7 @@ int acquisitionGetStatus (int mode, int *pStatus)
 	OUT32 (GENICAM_ACQUISITION_STATUS_SELECT_ADRS, mode);
 
 	// ステータス取得
-	*pStatus = IN32 (GENICAM_ACQUISITION_STATUS_ADRS) & GENICAM_ACQUISITION_STATUS_SELECT_MASK;
+	*pStatus = IN32 (GENICAM_ACQUISITION_STATUS_ADRS) & GENICAM_ACQUISITION_STATUS_MASK;
 
 _DONE:
 	return (status);
@@ -1214,7 +1204,7 @@ int acquisitionGetSelect (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg pMode NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1230,7 +1220,7 @@ _DONE:
 //	Acquisition Trg Select Check
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
-//		number					：カウンタ番号
+//		number					：トリガセレクタ番号
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS		：正常終了
 //		上記以外					：異常終了
@@ -1244,11 +1234,6 @@ int lfAcquisitionTrgSelectCheck (int number)
 		case ACQUISITION_TRG_SELECT_ACQUISITION_START:
 		case ACQUISITION_TRG_SELECT_ACQUISITION_END:
 		case ACQUISITION_TRG_SELECT_ACQUISITION_ACTIVE:
-		case ACQUISITION_TRG_SELECT_FRAME_START:
-		case ACQUISITION_TRG_SELECT_FRAME_END:
-		case ACQUISITION_TRG_SELECT_FRAME_ACTIVE:
-		case ACQUISITION_TRG_SELECT_EXPOSURE_START:
-		case ACQUISITION_TRG_SELECT_EXPOSURE_END:
 		case ACQUISITION_TRG_SELECT_EXPOSURE_ACTIVE:
 			break;
 		default:
@@ -1315,7 +1300,7 @@ int acquisitionGetTrgMode (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Mode pMode NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Mode NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1343,10 +1328,8 @@ int acquisitionSetSoftTrg (void)
 	// ソフトトリガ設定
 	OUT32 (GENICAM_ACQUISITION_SOFT_TRG_ADRS, ACQUISITION_SOFT_TRG_ASSERT);
 
-#if defined (MODE_ACQUISITION_TRG_SOFT_COUNT)
 	// Acquisition Set Trg Soft Count
 	acquisitionSetTrgSoftCount();
-#endif
 
 	return (status);
 }
@@ -1373,15 +1356,6 @@ int acquisitionSetTrgSource (int mode)
 	// トリガソース設定
 	OUT32 (GENICAM_ACQUISITION_TRG_SOURCE_ADRS, (mode & GENICAM_ACQUISITION_TRG_SOURCE_MASK));
 
-	// トリガ設定は有効?
-	data = IN32 (GENICAM_ACQUISITION_TRG_INVALIDED_ADRS);
-	if (data & GENICAM_ACQUISITION_TRG_INVALIDED_BIT)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Source Invalid Mode Error.\n");
-		goto _DONE;
-	}
-
 _DONE:
 	return (status);
 }
@@ -1405,16 +1379,7 @@ int acquisitionGetTrgSource (int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Source pMode NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// トリガ設定は正常?
-	data = IN32 (GENICAM_ACQUISITION_TRG_INVALIDED_ADRS);
-	if (data & GENICAM_ACQUISITION_TRG_INVALIDED_BIT)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Source Activation Invalid Mode Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Source NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1450,42 +1415,10 @@ int lfTrgSourceCheck (int number)
 	{
 		case GENICAM_ACQUISITION_TRG_SOURCE_SOFT:
 		case GENICAM_ACQUISITION_TRG_SOURCE_LINE0:
-		case GENICAM_ACQUISITION_TRG_SOURCE_USER0_OUTPUT:
 		case GENICAM_ACQUISITION_TRG_SOURCE_LINE1:
-		case GENICAM_ACQUISITION_TRG_SOURCE_USER1_OUTPUT:
 		case GENICAM_ACQUISITION_TRG_SOURCE_LINE2:
-		case GENICAM_ACQUISITION_TRG_SOURCE_USER2_OUTPUT:
-		case GENICAM_ACQUISITION_TRG_SOURCE_LINE3:
-		case GENICAM_ACQUISITION_TRG_SOURCE_USER3_OUTPUT:
-		case GENICAM_ACQUISITION_TRG_SOURCE_LINE4:
-		case GENICAM_ACQUISITION_TRG_SOURCE_USER4_OUTPUT:
-		case GENICAM_ACQUISITION_TRG_SOURCE_LINE5:
-		case GENICAM_ACQUISITION_TRG_SOURCE_USER5_OUTPUT:
-
-		case GENICAM_ACQUISITION_TRG_SOURCE_CC1:
-		case GENICAM_ACQUISITION_TRG_SOURCE_CC2:
-		case GENICAM_ACQUISITION_TRG_SOURCE_CC3:
-		case GENICAM_ACQUISITION_TRG_SOURCE_CC4:
-
-		case GENICAM_ACQUISITION_TRG_SOURCE_COUNTER0_START:
-		case GENICAM_ACQUISITION_TRG_SOURCE_COUNTER0_END:
-		case GENICAM_ACQUISITION_TRG_SOURCE_COUNTER1_START:
-		case GENICAM_ACQUISITION_TRG_SOURCE_COUNTER1_END:
-		case GENICAM_ACQUISITION_TRG_SOURCE_COUNTER2_START:
-		case GENICAM_ACQUISITION_TRG_SOURCE_COUNTER2_END:
-		case GENICAM_ACQUISITION_TRG_SOURCE_COUNTER3_START:
-		case GENICAM_ACQUISITION_TRG_SOURCE_COUNTER3_END:
-		case GENICAM_ACQUISITION_TRG_SOURCE_TIMER0_START:
-		case GENICAM_ACQUISITION_TRG_SOURCE_TIMER0_END:
-		case GENICAM_ACQUISITION_TRG_SOURCE_TIMER1_START:
-		case GENICAM_ACQUISITION_TRG_SOURCE_TIMER1_END:
-		case GENICAM_ACQUISITION_TRG_SOURCE_TIMER2_START:
-		case GENICAM_ACQUISITION_TRG_SOURCE_TIMER2_END:
-		case GENICAM_ACQUISITION_TRG_SOURCE_TIMER3_START:
-		case GENICAM_ACQUISITION_TRG_SOURCE_TIMER3_END:
-#if defined (MODE_ENCODER)
 		case GENICAM_ACQUISITION_TRG_SOURCE_ENCODER0:
-#endif
+		case GENICAM_ACQUISITION_TRG_SOURCE_LINKTRIGGER0:
 			break;
 		default:
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
@@ -1510,7 +1443,6 @@ int lfTrgSourceCheck (int number)
 int acquisitionSetTrgActivation (int active)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned int data;
 
 	// Check active Parameter
 	if ((active < ACQUISITION_TRG_ACTIVATION_MIN) || (active > ACQUISITION_TRG_ACTIVATION_MAX))
@@ -1523,15 +1455,6 @@ int acquisitionSetTrgActivation (int active)
 
 	// トリガActivation設定
 	OUT32 (GENICAM_ACQUISITION_TRG_ACTIVATION_ADRS, (active & GENICAM_ACQUISITION_TRG_ACTIVATION_MASK));
-
-	// トリガ設定は有効?
-	data = IN32 (GENICAM_ACQUISITION_TRG_INVALIDED_ADRS);
-	if (data & GENICAM_ACQUISITION_TRG_INVALIDED_BIT)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Activation Invalid Mode Error.\n");
-		goto _DONE;
-	}
 
 _DONE:
 	return (status);
@@ -1550,22 +1473,12 @@ _DONE:
 int acquisitionGetTrgActivation (int *pActive)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned int data;
 
 	// Check pActive Parameter
 	if (pActive == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Activation pActive NULL Parameter Error\n");
-		goto _DONE;
-	}
-
-	// トリガ設定は正常?
-	data = IN32 (GENICAM_ACQUISITION_TRG_INVALIDED_ADRS);
-	if (data & GENICAM_ACQUISITION_TRG_INVALIDED_BIT)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trg Activation Invalid Mode Error.\n");
 		goto _DONE;
 	}
 
@@ -1635,34 +1548,6 @@ _DONE:
 	return (status);
 }
 
-
-//**********************************************************************************
-//	無効トリガ設定取得
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		mode				：トリガソース
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int acquisitionGetInvalidedTrg (int *pMode)
-{
-	int status = AVAL_STATUS_SUCCESS;
-
-	// Check pMode Parameter
-	if (pMode == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Invalid Trg pMode NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// 無効トリガ設定取得
-	*pMode = IN32 (GENICAM_ACQUISITION_TRG_INVALIDED_ADRS) & GENICAM_ACQUISITION_TRG_INVALIDED_BIT;
-
-_DONE:
-	return (status);
-}
 
 
 //**********************************************************************************
@@ -1856,7 +1741,6 @@ int irSetExposure (unsigned int expTime)
 	int autoExpMode = MODE_DISABLE;
 #endif
 	unsigned int hIntervalClock;
-	int height;
 	double intervalD;
 	double hTimeD;
 	double tempD;
@@ -1909,10 +1793,6 @@ int irSetExposure (unsigned int expTime)
 		goto _DONE;
 
 	msDelay (100);
-
-	// Height
-	if ((status = aoiGetHeight (&height)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
 
 	// H Interval
 	if ((status = irvGetHIntervalClock (&hIntervalClock)) != AVAL_STATUS_SUCCESS)
@@ -2439,48 +2319,6 @@ _DONE:
 
 
 //**********************************************************************************
-//	Frame無効Active Trg制御信号取得
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		pCount				：Frame無効Active Trgを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int acquisitionGetTrgInvalidCount (unsigned int *pCount)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int selector;
-
-	// Check pCount Parameter
-	if (pCount == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Trigger Invalid Frame Count NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// Trigger Selector取得
-	if ((status = acquisitionGetSelect (&selector)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// Check Selector
-	if (selector != ACQUISITION_TRG_SELECT_FRAME_ACTIVE)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_NOT_IMPLEMENTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_NOT_SUPPORT);
-		goto _DONE;
-	}
-
-	// Frame無効Activeトリガカウント取得
-	*pCount = IN32 (GENICAM_ACQUISITION_FRAME_INVALID_ACTIVE_TRG_CNT_ADRS);
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
 //	Frameトリガ予約機能設定
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
@@ -2509,7 +2347,7 @@ int acquisitionSetTrgReserve (int mode)
 		goto _DONE;
 
 	// Check Selector
-	if (selector != ACQUISITION_TRG_SELECT_FRAME_ACTIVE)
+	if (selector != ACQUISITION_TRG_SELECT_EXPOSURE_ACTIVE)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_NOT_IMPLEMENTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_NOT_SUPPORT);
@@ -2566,7 +2404,7 @@ int acquisitionGetTrgReserve (int *pMode)
 		goto _DONE;
 
 	// Check Selector
-	if (selector != ACQUISITION_TRG_SELECT_FRAME_ACTIVE)
+	if (selector != ACQUISITION_TRG_SELECT_EXPOSURE_ACTIVE)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_NOT_IMPLEMENTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_NOT_SUPPORT);
@@ -2633,8 +2471,9 @@ _DONE:
 int acquisitionGetFrameTrgMode (int *pMode)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned int data;
-
+	unsigned int mode;
+	int selectorSave = -1;
+	
 	// Check pMode Parameter
 	if (pMode == NULL)
 	{
@@ -2643,15 +2482,25 @@ int acquisitionGetFrameTrgMode (int *pMode)
 		goto _DONE;
 	}
 
-	// 取得
-	data = IN32 (GENICAM_FRAME_ACTIVE_MODE_ADRS);
+	// Trigger Selector取得
+	if ((status = acquisitionGetSelect (&selectorSave)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
-	if (data & GENICAM_ACQUISITION_TRG_MODE_MASK)
-		*pMode = MODE_ENABLE;
-	else
-		*pMode = MODE_DISABLE;
+	// Trigger Selector設定
+	if ((status = acquisitionSetSelect (ACQUISITION_TRG_SELECT_EXPOSURE_ACTIVE)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// Trigger Selector設定
+	if ((status = acquisitionGetMode (&mode)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+	
+	// 取得
+	*pMode = mode;
 
 _DONE:
+	if (selectorSave != -1)
+		acquisitionSetSelect (selectorSave);
+	
 	return (status);
 }
 
@@ -2670,11 +2519,20 @@ int acquisitionReset (void)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int expTime;
 	double frameRate;
+	int startMode = 0;
 #if defined (MODE_SENSOR_DRRS)
 	unsigned int saveFrame, saveExp;
 	int drrsMode = MODE_DISABLE;
 #endif // #if defined (MODE_SENSOR_DRRS)
 
+	// Start Status
+	if ((status = acquisitionGetStartFlag (&startMode)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// 取り込み停止
+	if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+	
 #if defined (MODE_SENSOR_DRRS)
 	//---------------------------------------------------------------
 	// GEt DRRS Mode
@@ -2739,13 +2597,10 @@ int acquisitionReset (void)
 	if ((status = acquisitionSetFrameRate (frameRate)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	//---------------------------------------------------------------
-	// Acquisition Start
-	//---------------------------------------------------------------
-	if (gInterFaceID == INTERFACE_CAMERALINK)
+_DONE:
+	if (startMode != 0)
 		acquisitionStart ();
 
-_DONE:
 	return (status);
 }
 
@@ -2942,8 +2797,8 @@ _DONE:
 //==================================================================================
 int rateMin (double *pRate)
 {
+    int status;
 #if defined (MODE_SENSOR_DRRS)
-	int status;
 	int height;
 	int drrsMode = MODE_DISABLE;
 #endif
@@ -2994,7 +2849,6 @@ _DONE:
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-#if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
 int rateMax (double *pRate)
 {
 	int status = AVAL_STATUS_SUCCESS;
@@ -3160,9 +3014,7 @@ int rateGetGigEMax (double *pRate)
 	double rateSensorD, rateGigED;
 	int widthDefault, heightDefault;
 	double rateGigEDefaultD;
-#if defined (MODE_SENSOR_GRADATION_COMPRESS)
-	int gcMode;
-#endif
+	int gcMode = MODE_DISABLE;
 	float frameTimeFloat;
 	double frameTimeDouble;
 	double lanBandMaxD;
@@ -3202,7 +3054,6 @@ int rateGetGigEMax (double *pRate)
 	if ((status = fpgaRoiGetCameraHeightTotalSize (&height)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-#if defined (MODE_SENSOR_GRADATION_COMPRESS)
 	// カメラ側は8bit
 	if (gcMode == MODE_ENABLE)
 	{
@@ -3215,12 +3066,6 @@ int rateGetGigEMax (double *pRate)
 		else
 			bitByte = 2;
 	}
-#else
-	if (bit == 8)
-		bitByte = 1;
-	else
-		bitByte = 2;
-#endif
 
 #if !defined (MODE_GIGE_10G)
 	lanBandMaxD = GE_NETWORK_BAND_MAX;
@@ -3425,7 +3270,7 @@ int rateGetCxpMax (double *pRate)
 _DONE:
 	return (status);
 }
-#endif // #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
+
 
 
 //**********************************************************************************
@@ -3519,8 +3364,17 @@ int irvGetHIntervalClock (unsigned int *pHinterval)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	status = sensorGetHInterval (pHinterval);
+	// Check pHInterval Parameter
+	if (pHinterval == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Get H Interval NULL Parameter Error.\n");
+		goto _DONE;
+	}
 
+	*pHinterval = IN32 (FPGA_SENSOR_HINTERVAL_ADRS) & FPGA_SENSOR_HINTERVAL_MASK;
+
+_DONE:
 	return (status);
 }
 #endif // #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
@@ -3600,7 +3454,7 @@ _DONE:
 
 
 //**********************************************************************************
-//	Trg High Count
+//	Trg Count
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		port				：ポート番号
@@ -3609,21 +3463,10 @@ _DONE:
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int acquisitionGetTrgCountHigh (int port, unsigned int *pCount)
+int acquisitionGetTrgCount (unsigned int *pCount)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int selector, source;
-
-#if defined (MODE_CXP_MULTI_PORT)
-	// Check port Parameter
-	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Trg Count  port(%d) Parameter Error.(Min:%d / Max:%d)\n", port, CXP_PORT_MIN, CXP_PORT_MAX);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-#endif
 
 	// Check pCount Parameter
 	if (pCount == NULL)
@@ -3633,130 +3476,8 @@ int acquisitionGetTrgCountHigh (int port, unsigned int *pCount)
 		goto _DONE;
 	}
 
-	// トリガセレクト取得
-	if ((status = acquisitionGetSelect (&selector)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// トリガソース取得
-	if ((status = acquisitionGetTrgSource (&source)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
 	// Trg Count初期化
-	*pCount = 0;
-
-	if (selector == ACQUISITION_TRG_SELECT_ACQUISITION_START)
-	{
-	}
-	else if (selector == ACQUISITION_TRG_SELECT_ACQUISITION_END)
-	{
-	}
-	else if (selector == ACQUISITION_TRG_SELECT_ACQUISITION_ACTIVE)
-	{
-	}
-	else if (selector == ACQUISITION_TRG_SELECT_LINE_START)
-	{
-	}
-	else if (selector == ACQUISITION_TRG_SELECT_FRAME_ACTIVE)
-	{
-		if (source == GENICAM_ACQUISITION_TRG_SOURCE_SOFT)
-		{
-			*pCount = IN32 (FIRM_DATA_TRG_SOFT_COUNT_ADRS);
-		}
-		else if (source == GENICAM_ACQUISITION_TRG_SOURCE_CC1)
-		{
-			// Trg High Count取得
-			//@@@1*pCount = IN32 ((FPGA_CXP_TRG_H_COUNT_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
-		}
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Trg Count Selector(%d) Parameter Error.\n", selector);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Trg Low Count
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		port				：ポート番号
-//		pCount				：Lowトリガカウントを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int acquisitionGetTrgCountLow (int port, unsigned int *pCount)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int selector, source;
-
-#if defined (MODE_CXP_MULTI_PORT)
-	// Check port Parameter
-	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Trg Count  port(%d) Parameter Error.(Min:%d / Max:%d)\n", port, CXP_PORT_MIN, CXP_PORT_MAX);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-#endif
-
-	// Check pCount Parameter
-	if (pCount == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Trg Count NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// トリガセレクト取得
-	if ((status = acquisitionGetSelect (&selector)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// トリガソース取得
-	if ((status = acquisitionGetTrgSource (&source)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// Trg Count初期化
-	*pCount = 0;
-
-	if (selector == ACQUISITION_TRG_SELECT_ACQUISITION_START)
-	{
-	}
-	else if (selector == ACQUISITION_TRG_SELECT_ACQUISITION_END)
-	{
-	}
-	else if (selector == ACQUISITION_TRG_SELECT_ACQUISITION_ACTIVE)
-	{
-	}
-	else if (selector == ACQUISITION_TRG_SELECT_LINE_START)
-	{
-	}
-	else if (selector == ACQUISITION_TRG_SELECT_FRAME_ACTIVE)
-	{
-		if (source == GENICAM_ACQUISITION_TRG_SOURCE_SOFT)
-		{
-			*pCount = IN32 (FIRM_DATA_TRG_SOFT_COUNT_ADRS);
-		}
-		else if (source == GENICAM_ACQUISITION_TRG_SOURCE_CC1)
-		{
-			// Trg Low Count取得
-			//@@@1*pCount = IN32 ((FPGA_CXP_TRG_L_COUNT_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port));
-		}
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Trg Count Selector(%d) Parameter Error.\n", selector);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
+	*pCount = 0;	//@@@1
 
 _DONE:
 	return (status);
@@ -3803,39 +3524,5 @@ int acquisitionSetTrgSoftCount (void)
 
 	return (AVAL_STATUS_SUCCESS);
 }
-
-
-#if defined (MODE_CXP)
-//**********************************************************************************
-//	Trg Link Reset Count Reset
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int acquisitionRestLinkTrgCount (void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-
-	// Trg Count Reset
-#if !defined (MODE_CXP_MULTI_PORT)
-	OUT32 (FPGA_CXP_TRG_CTRL_ADRS, FPGA_CXP_TRG_CTRL_RESET);
-#else
-	int cxpPort;
-
-	// CXP Port取得
-	if ((status = cxpGetPort (&cxpPort)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	//@@@1OUT32 ((FPGA_CXP_TRG_CTRL_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * cxpPort), FPGA_CXP_TRG_CTRL_RESET);
-
-_DONE:
-#endif
-
-	return (status);
-}
-#endif
 
 // eof

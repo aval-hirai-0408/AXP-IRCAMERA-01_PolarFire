@@ -157,17 +157,6 @@ int roiInitialize (void)
 		goto _DONE;
 	}
 
-	#if defined (MODE_IPU_MULTI)
-	//--------------------------------------------------------------------------------
-	// Register Data Restore(Height)
-	//--------------------------------------------------------------------------------
-	if ((status = cameraParamWriteRegisterOffsetAdrs (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_ROI_HEIGHT_ADRS, CAMERA_SAVE_ROI_HEIGHT_FPGA_SIZE, FPGA_ROI2_OFFSET)) != AVAL_STATUS_SUCCESS)
-	{
-		gRoiStatus = status;
-		goto _DONE;
-	}
-	#endif
-
 	//--------------------------------------------------------------------------------
 	// Register Data Restore(Width)
 	//--------------------------------------------------------------------------------
@@ -178,18 +167,9 @@ int roiInitialize (void)
 	}
 
 	#if defined (MODE_IPU_MULTI)
-	//--------------------------------------------------------------------------------
-	// Register Data Restore(Width)
-	//--------------------------------------------------------------------------------
-	if ((status = cameraParamWriteRegisterOffsetAdrs (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_ROI_WIDTH_ADRS, CAMERA_SAVE_ROI_WIDTH_FPGA_SIZE, FPGA_ROI2_OFFSET)) != AVAL_STATUS_SUCCESS)
-	{
-		gRoiStatus = status;
-		goto _DONE;
-	}
 
 	// 従来のROIは固定値を設定
 	OUT32 (FPGA_ROI_CAMERA_X_ADRS, DEFAULT_ROI_WIDTH0_LEFT);
-	OUT32 (FPGA_ROI2_CAMERA_X_ADRS, DEFAULT_ROI_WIDTH0_RIGHT);
 	#endif
 
 	// 設定通知
@@ -273,66 +253,6 @@ _DONE:
 }
 
 
-#if defined (MODE_IPU_MULTI)
-//**********************************************************************************
-// ROI 設定完了通知
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int roiSetEnd (void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int data1, data2, errStatus;
-	int i;
-
-	// 設定完了通知
-	OUT32 (FPGA_ROI_SET_END_ADRS, FPGA_ROI_SET_END_BIT);
-	OUT32 (FPGA_ROI2_SET_END_ADRS, FPGA_ROI_SET_END_BIT);
-
-	for (i=0; i<ROI_SET_END_TIMEOUT; i++)
-	{
-		data1 = IN32 (FPGA_ROI_CUL_END_ADRS);
-		data2 = IN32 (FPGA_ROI2_CUL_END_ADRS);
-		if ((data1 & FPGA_ROI_CUL_END_BIT) && (data2 & FPGA_ROI_CUL_END_BIT))
-			break;
-
-		msDelay (1);
-	}
-
-	// Check Timeout
-	if (i >= ROI_SET_END_TIMEOUT)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Set End Timeout Error.\n");
-		goto _DONE;
-	}
-
-	// エラーCheck
-	for (i=0; i<IPU_COUNT; i++)
-	{
-		if ((status = roiGetErrStatusMulti (i, &errStatus)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		// エラーあり?
-		if (errStatus != 0)
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "ROI Error = 0x%x\n", errStatus);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-	}
-
-_DONE:
-	return (status);
-}
-
-#else // #if defined (MODE_IPU_MULTI)
-
 //**********************************************************************************
 // ROI 設定完了通知
 //----------------------------------------------------------------------------------
@@ -384,7 +304,6 @@ int roiSetEnd (void)
 _DONE:
 	return (status);
 }
-#endif // #if defined (MODE_IPU_MULTI)
 
 
 //**********************************************************************************
@@ -481,10 +400,7 @@ int roiGetErrStatusMulti (int selector, unsigned int *pStat)
 	}
 
 	// Get Adrs
-	if (selector == 0)
-		adrs = FPGA_ROI_CAMERA_ERROR_ADRS;
-	else
-		adrs = FPGA_ROI2_CAMERA_ERROR_ADRS;
+	adrs = FPGA_ROI_CAMERA_ERROR_ADRS;
 
 	// エラー取得
 	data32 = IN32 (adrs);
@@ -912,19 +828,6 @@ int aoiSetWidth (int size)
 		}
 		#endif // #if defined(MODE_BINNING)
 
-
-		#if !defined (MODE_CXP_MULTI_PORT)
-
-		// Width設定
-		if ((status = cxpSetWidth (cxpPort, size)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		// Offsetx設定
-		if ((status = cxpSetOffsetX (cxpPort, offset)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		#else // #if !defined (MODE_CXP_MULTI_PORT)
-
 		// CXP Port取得
 		if ((status = cxpGetPort (&cxpPort)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
@@ -936,8 +839,6 @@ int aoiSetWidth (int size)
 		// Offsetx設定
 		if ((status = cxpSetOffsetX (cxpPort, offset)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-
-		#endif // #if !defined (MODE_CXP_MULTI_PORT)
 	}
 #endif
 
@@ -1176,18 +1077,6 @@ int aoiSetWidthOffset (int offset)
 		}
 		#endif // #if defined(MODE_BINNING)
 
-		#if !defined (MODE_CXP_MULTI_PORT)
-
-		// Width設定
-		if ((status = cxpSetWidth (cxpPort, size)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		// Offsetx設定
-		if ((status = cxpSetOffsetX (cxpPort, offset)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		#else // #if !defined (MODE_CXP_MULTI_PORT)
-
 		// CXp Port取得
 		if ((status = cxpGetPort (&cxpPort)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
@@ -1199,8 +1088,6 @@ int aoiSetWidthOffset (int offset)
 		// Offsetx設定
 		if ((status = cxpSetOffsetX (cxpPort, offset)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-
-		#endif // #if !defined (MODE_CXP_MULTI_PORT)
 	}
 #endif
 
@@ -1624,20 +1511,11 @@ int aoiSetHeight (int size)
 	if (gInterFaceID == INTERFACE_CXP)
 	{
 		// CXP Height Param設定
-		#if !defined (MODE_CXP_MULTI_PORT)
-
-		if ((status = cxpSetHeightParam (cxpPort)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		#else // #if !defined (MODE_CXP_MULTI_PORT)
-
 		if ((status = cxpGetPort (&cxpPort)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		if ((status = cxpSetHeightParam (cxpPort)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-
-		#endif // #if !defined (MODE_CXP_MULTI_PORT)
 	}
 #endif
 
@@ -1921,20 +1799,11 @@ int aoiSetHeightOffset (int offset)
 	if (gInterFaceID == INTERFACE_CXP)
 	{
 		// CXP Height Param設定
-		#if !defined (MODE_CXP_MULTI_PORT)
-
-		if ((status = cxpSetHeightParam (cxpPort)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		#else // #if !defined (MODE_CXP_MULTI_PORT)
-
 		if ((status = cxpGetPort (&cxpPort)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		if ((status = cxpSetHeightParam (cxpPort)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-
-		#endif // #if !defined (MODE_CXP_MULTI_PORT)
 	}
 #endif
 
@@ -3320,18 +3189,6 @@ int roiSetAreaSize (int mode)
 #if defined (MODE_CXP)
 	if (gInterFaceID == INTERFACE_CXP)
 	{
-		#if !defined (MODE_CXP_MULTI_PORT)
-
-		// Width設定
-		if ((status = cxpSetWidth (cxpPort, sizeFpga)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		// Offsetx設定
-		if ((status = cxpSetOffsetX (cxpPort, offsetFpga)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		#else // #if !defined (MODE_CXP_MULTI_PORT)
-
 		// CXP Port取得
 		if ((status = cxpGetPort (&cxpPort)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
@@ -3343,9 +3200,6 @@ int roiSetAreaSize (int mode)
 		// Offsetx設定
 		if ((status = cxpSetOffsetX (cxpPort, offsetFpga)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-
-		#endif // #if !defined (MODE_CXP_MULTI_PORT)
-
 	}
 #endif
 
@@ -3386,7 +3240,6 @@ int roiSetAreaSize (int mode)
 
 	// 従来のROIを設定
 	OUT32 (FPGA_ROI_CAMERA_X_ADRS, data32Left);
-	OUT32 (FPGA_ROI2_CAMERA_X_ADRS, data32Right);
 
 #endif // #if defined (MODE_IPU_MULTI)
 
@@ -3421,19 +3274,6 @@ int roiSetAreaSize (int mode)
 #if defined (MODE_CXP)
 	if (gInterFaceID == INTERFACE_CXP)
 	{
-
-		#if !defined (MODE_CXP_MULTI_PORT)
-
-		// Height設定
-		if ((status = cxpSetHeight (cxpPort, sizeFpga)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		// Offsety設定
-		if ((status = cxpSetOffsetY (cxpPort, offsetFpga)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		#else // #if !defined (MODE_CXP_MULTI_PORT)
-
 		// CXP Port取得
 		if ((status = cxpGetPort (&cxpPort)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
@@ -3445,9 +3285,6 @@ int roiSetAreaSize (int mode)
 		// Offsety設定
 		if ((status = cxpSetOffsetY (cxpPort, offsetFpga)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-
-		#endif // #if !defined (MODE_CXP_MULTI_PORT)
-
 	}
 #endif
 
@@ -4081,10 +3918,6 @@ int roiSetAdjustMode (int mode)
 
 	// Adjust Mode設定
 	OUT32 (FPGA_ROI_CAL_MODE_ADRS, mode);
-
-#if defined (MODE_IPU_MULTI)
-	OUT32 (FPGA_ROI2_CAL_MODE_ADRS, mode);
-#endif
 
 	// Set End
 	if ((status = roiSetEnd ()) != AVAL_STATUS_SUCCESS)

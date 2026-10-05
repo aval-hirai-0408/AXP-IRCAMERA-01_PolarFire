@@ -111,7 +111,7 @@ int hwInitialize (int cpuType)
 	sensorSetFrameRateHighSpeedReg (MODE_DISABLE);
 #endif
 
-#if defined (MODE_CXP_MULTI_PORT) && defined (IF_CXP)
+#if defined (IF_CXP)
 	// CXPのPort番号を指定する
 	cxpSetPort (0);
 #endif
