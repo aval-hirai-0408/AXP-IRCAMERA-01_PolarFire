@@ -11591,11 +11591,6 @@ int FileSelectorIfFpgaWrite (void)
 			fileResult[fileSelector][fileSel[fileSelector]] = 0; // if Success, N bytes is written
 			fileSize[fileSelector] = 0; // 0 bytes
 			gIfFpgaReConfig = 0;
-
-			// SPI Init
-			if ((status = PolarFireSpiMode (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
-				break;
-
 			break;
 
 		case FileOperationeSelector_Close:
@@ -11606,15 +11601,13 @@ int FileSelectorIfFpgaWrite (void)
 			if (fileStatus[fileSelector][fileSel[fileSelector]] == 0)
 			{
 				// Reconfig
-				if (gIfFpgaFlashAdrs == FLASH_UPDATE_POLAFIRE_ADRS)
+				if (gIfFpgaFlashAdrs == FLASH_FPGA_DATA_ADRS)
 				{
 					// ReConfig Flag設定
 					gIfFpgaReConfig = 1;
 				}
 			}
 
-			//SPIファイナライズ
-			//PolarFireSpiMode (MODE_DISABLE);
 			break;
 
 		case FileOperationeSelector_Read:
@@ -11627,9 +11620,9 @@ int FileSelectorIfFpgaWrite (void)
 
 			// Flashアドレス設定
 			if (gDeviceIfUpdateSelector == 1)
-				gIfFpgaFlashAdrs = FLASH_UPDATE_POLAFIRE_GDN_ADRS;		// 管理者領域
+				gIfFpgaFlashAdrs = FLASH_FPGA_DATA_ADMIN_ADRS;		// 管理者領域
 			else
-				gIfFpgaFlashAdrs = FLASH_UPDATE_POLAFIRE_ADRS;			// ユーザー領域
+				gIfFpgaFlashAdrs = FLASH_FPGA_DATA_ADRS;			// ユーザー領域
 
 			// Cmd Initialze
 			if ((status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)

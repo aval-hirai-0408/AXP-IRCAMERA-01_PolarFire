@@ -20,7 +20,7 @@
 
 // FPGA
 #define FPGA_BASE_ADRS												(0x80000000)
-#define FPGA_BASE_ADRS_COMMON										(0x63000000)
+#define FPGA_BASE_ADRS_COMMON										(0x6C000000)	//0x63000000
 #define FPGA_BASE_ADRS_SENSOR										(0x6B000000)
 #define FPGA_BASE_ADRS_IPU											(0x6C000000)
 #define GENICAM_ADRS												(0x6D000000)
@@ -30,23 +30,19 @@
 //----------------------------------------------------------------------
 #define FPGA_GENERIC_ADRS											(FPGA_BASE_ADRS_COMMON+0x0000)
 
-#define FPGA_VER_ADRS												(FPGA_GENERIC_ADRS+0x00)
-#define FPGA_VER_BOARD_ADRS										(FPGA_GENERIC_ADRS+0x00)
-#define FPGA_BUILD_DATE_ADRS										(FPGA_GENERIC_ADRS+0x00)
-#define FPGA_VER_FPGA_ADRS											(FPGA_GENERIC_ADRS+0x04)
-#define FPGA_BUILD_NUMBER_ADRS										(FPGA_GENERIC_ADRS+0x04)
-#define FPGA_VER_FIRM_ADRS											(FPGA_GENERIC_ADRS+0x08)
+#define FPGA_VER_FPGA_ADRS											(FPGA_GENERIC_ADRS+0x00)
 	#define BOARD_VERSION_SIZE										(3)
 	#define FPGA_VERSION_SIZE										(3)
 	#define FIRM_VERSION_SIZE										(3)
 	#define MAIN_VERSION_SIZE										(3)
 	#define BOOT_VERSION_SIZE										(3)
-#define FPGA_DEVICE_SCAN_TYPE_ADRS									(FPGA_GENERIC_ADRS+0x40)
-#define FPGA_SENSOR_WIDTH_ADRS										(FPGA_GENERIC_ADRS+0x44)
-#define FPGA_SENSOR_HEIGHT_ADRS									(FPGA_GENERIC_ADRS+0x48)
-#define FPGA_SENSOR_SHUTTER_ADRS									(FPGA_GENERIC_ADRS+0x4C)
-#define FPGA_MAX_WIDTH_ADRS										(FPGA_GENERIC_ADRS+0x50)
-#define FPGA_MAX_HEIGHT_ADRS										(FPGA_GENERIC_ADRS+0x54)
+#define FPGA_BUILD_DATE_ADRS										(FPGA_GENERIC_ADRS+0x04)
+#define FPGA_BUILD_TIME_ADRS										(FPGA_GENERIC_ADRS+0x08)
+#define FPGA_USERINFO_ADRS											(FPGA_GENERIC_ADRS+0x0C)
+#define FPGA_RECONFIG_ADRS											(FPGA_GENERIC_ADRS+0x10)
+	#define FPGA_RECONFIG_START_BIT									(1<<4)
+	#define FPGA_RECONFIG_DONE_BIT									(1<<5)
+	#define FPGA_RECONFIG_INDEX_DEFAULT								(1)
 
 // Voltage
 #define FPGA_VOLT_IF_V_UNIT											(1000000)		// uV→V
@@ -950,7 +946,7 @@
 	#define CXP_REG_DRI_CTRL_10_0G									(0x05)
 	#define CXP_REG_DRI_CTRL_12_5G									(0x06)
 	#define CXP_REG_DRI_CTRL_BUSY									(1<<31)
-	#define CXP_REG_DRI_CTRL_BUSY_TIMEOUT							(1000)
+	#define CXP_REG_DRI_CTRL_BUSY_TIMEOUT							(1000000)
 #define FPGA_CXP_INT_ENABLE_ADRS									(FPGA_CXP_BASE_ADDR+0x10)
 	#define FPGA_CXP_INT_ENABLE_RX_PACKET							(1<<0)
 #define FPGA_CXP_INT_STATUS_ADRS									(FPGA_CXP_BASE_ADDR+0x14)

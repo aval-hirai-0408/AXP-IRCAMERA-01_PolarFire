@@ -393,15 +393,18 @@
 //----------------------------------------------------------------------------------
 // Flash MAP
 //----------------------------------------------------------------------------------
+#define FLASH_HEADER_ADRS					(0x00000000)	// Header
 #define FLASH_XML_ADRS						(0x00100000)	// XML Address
 	#define FLASH_XML_SIZE					(0x000f0000)	// XML Size
 #define FLASH_XML_FILE_NAME_ADRS			(0x001f0000)	// XML File Name Address
 	#define FLASH_XML_FILE_NAME_SIZE		(0x00001000)	// XML File Name Size
 #define FLASH_UPDATE_ALL_ADRS				(0x00200000)	// All Address
+#define FLASH_FPGA_DATA_ADRS				(0x00500000)	// FPGA Data Address
 #define FLASH_PHY_DATA_ADRS					(0x01500000)	// PHY Data Adrs
 	#define FLASH_PHY_DATA_SIZE				(0x00100000)	// PHY Data Size
 #define FLASH_UPDATE_ALL_ADMIN_ADRS			(0x01600000)	// All Address(Backup)
-#define FLASH_PHY_DATA_BACKUP_ADRS			(0x01900000)	// PHY Data Adrs(Backup)
+#define FLASH_FPGA_DATA_ADMIN_ADRS			(0x01900000)	// FPGA Data Address(Backup)
+#define FLASH_PHY_DATA_BACKUP_ADRS			(0x02900000)	// PHY Data Adrs(Backup)
 #define FLASH_LUT1_ADRS						(0x02A00000)	// LUT1データ格納Flashアドレス
 #define FLASH_LUT2_ADRS						(0x02A10000)	// LUT2データ格納Flashアドレス
 #define FLASH_BOARD_PARAM_ADRS				(0x02A20000)	// 基板情報格納
@@ -418,6 +421,8 @@
 #define FLASH_FFC_INFO_ADRS					(0x02CD0000)	// FFC調整情報格納
 #define FLASH_FFC0_ADRS						(0x02CE0000)	// FFCゲインデータ格納Flashアドレス
 #define FLASH_DIAG_ADRS						(0x07FF0000)	// Read/Writeテスト用
+
+#define FLASH_UPDATE_COPY_SIZE				(19*1024*1024)
 
 
 //----------------------------------------------------------------------------------

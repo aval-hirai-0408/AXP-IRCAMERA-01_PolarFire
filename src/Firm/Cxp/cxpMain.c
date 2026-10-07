@@ -436,80 +436,6 @@ int cxpUserInit (void)
 		memset((void*) gXmlFileName2, 0, CXP_XML_URL_SIZE);
 	}
 	
-#if 0
-	{
-	unsigned int data, wsize;
-
-		
-//@@@@1
-	DEBUG_PRINT_FORCE("Param Start111\n");
-//@@@@1
-	data = IN32 (FPGA_CXP_TOP_CTRL_ADRS);
-//@@@@1
-	DEBUG_PRINT_FORCE("DATA = 0x%x\n", data);
-//@@@@1
-
-	// CoaXPress IP Reset Cancel
-	data &= ~FPGA_CXP_TOP_CTRL_RSTN;
-	OUT32 (FPGA_CXP_TOP_CTRL_ADRS, data);
-
-	for (i=0; i<FPGA_CXP_TOP_CTRL_RSTN_TIMEOUT; i++)
-	{
-		data = IN32 (FPGA_CXP_TOP_CTRL_ADRS);
-		data &= (FPGA_CXP_TOP_CTRL_RSTN_STATUS | FPGA_CXP_TOP_CTRL_PIX_RSTN_STATUS | FPGA_CXP_TOP_CTRL_TX0_RSTN_STATUS);
-
-		// Check Status
-		if (data == (FPGA_CXP_TOP_CTRL_RSTN_STATUS | FPGA_CXP_TOP_CTRL_PIX_RSTN_STATUS | FPGA_CXP_TOP_CTRL_TX0_RSTN_STATUS))
-			break;
-		
-		usDelay (1000);
-	}
-	
-	if (i >= FPGA_CXP_TOP_CTRL_RSTN_TIMEOUT)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_TIMEOUT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Reset Cancel Timeout Error.\n");
-	}
-
-	//@@@@1
-	DEBUG_PRINT_FORCE("Param0\n");
-		while(1)
-		{
-            if (_kbhit(&c))
-            {
-                if (c == 'q')
-                    break;
-            }
-		}
-//@@@@1
-
-	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, 2560);
-
-//@@@@1
-	DEBUG_PRINT_FORCE("Param1\n");
-//@@@@1
-
-	OUT32(FPGA_CXP_S0_YSIZE_OFFSET_ADRS, 2048);
-
-//@@@@1
-	DEBUG_PRINT_FORCE("Param2\n");
-//@@@@1
-
-	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (2560*8/32));
-
-//@@@@1
-	DEBUG_PRINT_FORCE("Param3\n");
-//@@@@1
-
-	OUT32(FPGA_CXP_S0_TAPG_PIXEL_ADRS, CXP_REG_PIXEL_MONO8);
-
-//@@@@1
-	DEBUG_PRINT_FORCE("Param4\n");
-//@@@@1
-
-	OUT32(0x6b200008, 0x08000A00);
-	}
-#endif
 	DEBUG_PRINT_FORCE("@@@1\n")	;
 	
 	// ---- Initiates Global variables for File Access Control --------------------------------
@@ -941,9 +867,10 @@ int cxpIpInitialize (void)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Reset Cancel Timeout Error.\n");
 	}
 
-	//@@@@1
+//@@@@1
 	DEBUG_PRINT_FORCE("Param0\n");
-		while(1)
+#if 0
+	while(1)
 		{
             if (_kbhit(&c))
             {
@@ -951,6 +878,7 @@ int cxpIpInitialize (void)
                     break;
             }
 		}
+#endif
 //@@@@1
 
 	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, 2560);

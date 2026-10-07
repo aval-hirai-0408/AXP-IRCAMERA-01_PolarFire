@@ -91,6 +91,80 @@ int cmdFirmUpdateAllHelp (void *str)
 
 
 //**********************************************************************************
+//	Firmware All Update(全領域)
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdFirmUpdateAllAdmin (void *str)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	int argc;
+	int saveLed0 = -1;
+
+	// Get Argument
+	argc = cmdCheckArg ((char *)str);
+
+	// Help?
+	if (argc == 2)
+	{
+		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
+		{
+			cmdFirmUpdateAllAdminHelp (NULL);
+			goto _DONE;
+		}
+	}
+
+	if (argc == 1)
+	{
+		// プログラム設定ステート
+		saveLed0 = ledSettingState ();
+
+		// Firmware All Update
+		if ((status = firmUpdateAllAdmin ()) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+	}
+	else
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
+		goto _DONE;
+	}
+
+_DONE:
+	// LEDの設定を元に戻す
+	ledReturnState (saveLed0, -1);
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Firmware All Update(全領域)Help
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdFirmUpdateAllAdminHelp (void *str)
+{
+	DEBUG_PRINT_FORCE ("\n");
+	DEBUG_PRINT_FORCE ("[Set]\n");
+	DEBUG_PRINT_FORCE ("  Function          : All data is updated.\n");
+	DEBUG_PRINT_FORCE ("  Command           : update-all-admin\n");
+	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
+	DEBUG_PRINT_FORCE ("  Output Param      : none\n");
+	DEBUG_PRINT_FORCE ("\n");
+
+	return (AVAL_STATUS_SUCCESS);
+}
+
+
+//**********************************************************************************
 //	XML Update
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
@@ -165,7 +239,7 @@ int cmdFirmXmlUpdateHelp (void *str)
 
 
 //**********************************************************************************
-//	XML Download
+//	FPGA Update
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		str						：文字列を格納するポインタ
@@ -173,12 +247,11 @@ int cmdFirmXmlUpdateHelp (void *str)
 //		AVAL_STATUS_SUCCESS		：正常終了
 //		上記以外					：異常終了
 //==================================================================================
-int cmdFirmXmlDownload (void *str)
+int cmdFpgaUpdate (void *str)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int argc;
 	int saveLed0 = -1;
-	int waitTimeS, size;
 
 	// Get Argument
 	argc = cmdCheckArg ((char *)str);
@@ -188,46 +261,18 @@ int cmdFirmXmlDownload (void *str)
 	{
 		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
 		{
-			cmdFirmXmlDownloadHelp (NULL);
+			cmdFpgaUpdateHelp (NULL);
 			goto _DONE;
 		}
 	}
 
-	if (argc == 3)
+	if (argc == 1)
 	{
 		// プログラム設定ステート
 		saveLed0 = ledSettingState ();
 
-		// Download Size
-		if (sscanf (gCmdArg[1], "%d", &size) != 1)
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
-			goto _DONE;
-		}
-
-		// Wait Time（秒単位）
-		if (sscanf (gCmdArg[2], "%d", &waitTimeS) != 1)
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
-			goto _DONE;
-		}
-
-		// Check Wait Time Parameter
-		if (waitTimeS > DOWNLOAD_WAIT_TIME_MAX)
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "XML Download Wait Time(%d) Parameter Error.\n", waitTimeS);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-
-		// Wait
-		sDelay (waitTimeS);
-
-		// Firmware XML Download
-		if ((status = firmDownloadXml (size)) != AVAL_STATUS_SUCCESS)
+		// Update
+		if ((status = fpgaUpdate ()) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
 	else
@@ -245,7 +290,7 @@ _DONE:
 
 
 //**********************************************************************************
-//	XML Update Help
+//	FPGA Update Help
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		str						：文字列を格納するポインタ
@@ -253,14 +298,13 @@ _DONE:
 //		AVAL_STATUS_SUCCESS		：正常終了
 //		上記以外					：異常終了
 //==================================================================================
-int cmdFirmXmlDownloadHelp (void *str)
+int cmdFpgaUpdateHelp (void *str)
 {
 	DEBUG_PRINT_FORCE ("\n");
-	DEBUG_PRINT_FORCE ("[Get]\n");
-	DEBUG_PRINT_FORCE ("  Function          : The XML is download.\n");
-	DEBUG_PRINT_FORCE ("  Command           : download-xmp [Param0] [Param1]\n");
-	DEBUG_PRINT_FORCE ("  Input0 Param      : XML File Size(Dec)\n");
-	DEBUG_PRINT_FORCE ("  Input1 Param      : Start Wait Time Secound(Min:0 - Max:%d)\n", DOWNLOAD_WAIT_TIME_MAX);
+	DEBUG_PRINT_FORCE ("[Set]\n");
+	DEBUG_PRINT_FORCE ("  Function          : FPGA data is updated.\n");
+	DEBUG_PRINT_FORCE ("  Command           : update-fpga\n");
+	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
 	DEBUG_PRINT_FORCE ("  Output Param      : none\n");
 	DEBUG_PRINT_FORCE ("\n");
 
@@ -350,7 +394,7 @@ _DONE:
 
 
 //**********************************************************************************
-//	Firmware All Update(全領域)Help
+//	Firmware Download All(全領域)Help
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		str						：文字列を格納するポインタ
@@ -373,10 +417,8 @@ int cmdFirmDownloadAllHelp (void *str)
 }
 
 
-#if defined (MODE_UPDATE_INTERFACE)
-#if 0 //@@@1
 //**********************************************************************************
-//	Interface FPGA Update
+//	XML Download
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		str						：文字列を格納するポインタ
@@ -384,11 +426,12 @@ int cmdFirmDownloadAllHelp (void *str)
 //		AVAL_STATUS_SUCCESS		：正常終了
 //		上記以外					：異常終了
 //==================================================================================
-int cmdFpgaUpdateInterface (void *str)
+int cmdFirmXmlDownload (void *str)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int argc;
 	int saveLed0 = -1;
+	int waitTimeS, size;
 
 	// Get Argument
 	argc = cmdCheckArg ((char *)str);
@@ -398,179 +441,26 @@ int cmdFpgaUpdateInterface (void *str)
 	{
 		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
 		{
-			cmdFpgaUpdateInterfaceHelp (NULL);
+			cmdFirmXmlDownloadHelp (NULL);
 			goto _DONE;
 		}
 	}
 
-	if (argc == 1)
+	if (argc == 3)
 	{
 		// プログラム設定ステート
 		saveLed0 = ledSettingState ();
 
-		// Update
-#if defined (MODE_FPGA_PF)
-		if ((status = fpgaUpdatePolarFire ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-#endif 
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
-		goto _DONE;
-	}
-
-_DONE:
-	// LEDの設定を元に戻す
-	ledReturnState (saveLed0, -1);
-	return (status);
-}
-#endif //@@@1
-
-
-#if 0 //@@@1
-//**********************************************************************************
-//	Interface FPGA Update Help
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		str						：文字列を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS		：正常終了
-//		上記以外					：異常終了
-//==================================================================================
-int cmdFpgaUpdateInterfaceHelp (void *str)
-{
-	DEBUG_PRINT_FORCE ("\n");
-	DEBUG_PRINT_FORCE ("[Set]\n");
-	DEBUG_PRINT_FORCE ("  Function          : Interface FPGA data is updated.\n");
-	DEBUG_PRINT_FORCE ("  Command           : update-if\n");
-	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
-	DEBUG_PRINT_FORCE ("  Output Param      : none\n");
-	DEBUG_PRINT_FORCE ("\n");
-
-	return (AVAL_STATUS_SUCCESS);
-}
-#endif //@@@1
-
-
-#if 0 //@@@1
-//**********************************************************************************
-//	Interface FPGA Update (Administrator)
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		str						：文字列を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS		：正常終了
-//		上記以外					：異常終了
-//==================================================================================
-int cmdFpgaUpdateInterfaceAdmin (void *str)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int argc;
-	int saveLed0 = -1;
-
-	// Get Argument
-	argc = cmdCheckArg ((char *)str);
-
-	// Help?
-	if (argc == 2)
-	{
-		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
+		// Download Size
+		if (sscanf (gCmdArg[1], "%d", &size) != 1)
 		{
-			cmdFpgaUpdateInterfaceAdmin (NULL);
+			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
 			goto _DONE;
 		}
-	}
-
-	if (argc == 1)
-	{
-		// プログラム設定ステート
-		saveLed0 = ledSettingState ();
-
-		// Update
-#if defined (MODE_FPGA_PF)
-		if ((status = fpgaUpdatePolarFireAdmin ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-#endif
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
-		goto _DONE;
-	}
-
-_DONE:
-	// LEDの設定を元に戻す
-	ledReturnState (saveLed0, -1);
-	return (status);
-}
-#endif //@@@1
-
-
-#if 0 //@@@1
-//**********************************************************************************
-//	Interface FPGA Update Help (Administrator)
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		str						：文字列を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS		：正常終了
-//		上記以外					：異常終了
-//==================================================================================
-int cmdFpgaUpdateInterfaceHelpAdmin (void *str)
-{
-	DEBUG_PRINT_FORCE ("\n");
-	DEBUG_PRINT_FORCE ("[Set]\n");
-	DEBUG_PRINT_FORCE ("  Function          : Interface FPGA data is updated.\n");
-	DEBUG_PRINT_FORCE ("  Command           : update-if-admin\n");
-	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
-	DEBUG_PRINT_FORCE ("  Output Param      : none\n");
-	DEBUG_PRINT_FORCE ("\n");
-
-	return (AVAL_STATUS_SUCCESS);
-}
-#endif //@@@1
-
-
-#if 0 //@@@1
-//**********************************************************************************
-//	Interface FPGA Download
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		str						：文字列を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS		：正常終了
-//		上記以外					：異常終了
-//==================================================================================
-int cmdFpgaDownloadInterface (void *str)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int argc;
-	int saveLed0 = -1;
-	int waitTimeS;
-
-	// Get Argument
-	argc = cmdCheckArg ((char *)str);
-
-	// Help?
-	if (argc == 2)
-	{
-		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
-		{
-			cmdFpgaDownloadInterfaceHelp (NULL);
-			goto _DONE;
-		}
-	}
-
-	if (argc == 2)
-	{
-		// プログラム設定ステート
-		saveLed0 = ledSettingState ();
 
 		// Wait Time（秒単位）
-		if (sscanf (gCmdArg[1], "%d", &waitTimeS) != 1)
+		if (sscanf (gCmdArg[2], "%d", &waitTimeS) != 1)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
@@ -581,7 +471,7 @@ int cmdFpgaDownloadInterface (void *str)
 		if (waitTimeS > DOWNLOAD_WAIT_TIME_MAX)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Interface FPGA Data Download Wait Time(%d) Parameter Error.\n", waitTimeS);
+			sprintf (gLogMsgBuff, "XML Download Wait Time(%d) Parameter Error.\n", waitTimeS);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -589,159 +479,8 @@ int cmdFpgaDownloadInterface (void *str)
 		// Wait
 		sDelay (waitTimeS);
 
-		// Download
-#if defined (MODE_FPGA_PF)
-		if ((status = fpgaDownloadPolarFire ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-#endif 
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
-		goto _DONE;
-	}
-
-_DONE:
-	// LEDの設定を元に戻す
-	ledReturnState (saveLed0, -1);
-	return (status);
-}
-#endif //@@@1
-
-
-#if 0 //@@@1
-//**********************************************************************************
-//	Interface FPGA Download Help
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		str						：文字列を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS		：正常終了
-//		上記以外					：異常終了
-//==================================================================================
-int cmdFpgaDownloadInterfaceHelp (void *str)
-{
-	DEBUG_PRINT_FORCE ("\n");
-	DEBUG_PRINT_FORCE ("[Set]\n");
-	DEBUG_PRINT_FORCE ("  Function          : Interface FPGA data is download.\n");
-	DEBUG_PRINT_FORCE ("  Command           : download-if\n");
-	DEBUG_PRINT_FORCE ("  Input  Param      : Start Wait Time Secound(Min:0 - Max:%d) \n", DOWNLOAD_WAIT_TIME_MAX);
-	DEBUG_PRINT_FORCE ("  Output Param      : none\n");
-	DEBUG_PRINT_FORCE ("\n");
-
-	return (AVAL_STATUS_SUCCESS);
-}
-#endif //@@1
-
-#if 0 //@@@1
-//**********************************************************************************
-//	Interface FPGA Copy
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		str						：文字列を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS		：正常終了
-//		上記以外					：異常終了
-//==================================================================================
-int cmdFpgaCopyInterface (void *str)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int argc;
-
-	// Get Argument
-	argc = cmdCheckArg ((char *)str);
-
-	// Help?
-	if (argc == 2)
-	{
-		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
-		{
-			cmdFpgaCopyInterfaceHelp (NULL);
-			goto _DONE;
-		}
-	}
-
-	if (argc == 1)
-	{
-#if defined (MODE_FPGA_PF)
-		if ((status = ifFpgaCopyUserToGolden ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-#endif 
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
-		goto _DONE;
-	}
-
-_DONE:
-	return (status);
-}
-#endif //@@@1
-
-#if 0 //@@@1
-//**********************************************************************************
-//	Interface FPGA Copy Help
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		str						：文字列を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS		：正常終了
-//		上記以外					：異常終了
-//==================================================================================
-int cmdFpgaCopyInterfaceHelp (void *str)
-{
-	DEBUG_PRINT_FORCE ("\n");
-	DEBUG_PRINT_FORCE ("[Set]\n");
-	DEBUG_PRINT_FORCE ("  Function          : Interface FPGA data is copy.\n");
-	DEBUG_PRINT_FORCE ("  Command           : iffpgacopy\n");
-	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
-	DEBUG_PRINT_FORCE ("  Output Param      : none\n");
-	DEBUG_PRINT_FORCE ("\n");
-
-	return (AVAL_STATUS_SUCCESS);
-}
-#endif //@@@1
-#endif // #if defined (MODE_UPDATE_INTERFACE)
-
-
-//**********************************************************************************
-//	Firmware All Update(全領域)
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		str						：文字列を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS		：正常終了
-//		上記以外					：異常終了
-//==================================================================================
-int cmdFirmUpdateAllAdmin (void *str)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int argc;
-	int saveLed0 = -1;
-
-	// Get Argument
-	argc = cmdCheckArg ((char *)str);
-
-	// Help?
-	if (argc == 2)
-	{
-		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
-		{
-			cmdFirmUpdateAllAdminHelp (NULL);
-			goto _DONE;
-		}
-	}
-
-	if (argc == 1)
-	{
-		// プログラム設定ステート
-		saveLed0 = ledSettingState ();
-
-		// Firmware All Update
-		if ((status = firmUpdateAllAdmin ()) != AVAL_STATUS_SUCCESS)
+		// Firmware XML Download
+		if ((status = firmDownloadXml (size)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
 	else
@@ -759,7 +498,7 @@ _DONE:
 
 
 //**********************************************************************************
-//	Firmware All Update(全領域)Help
+//	XML Download Help
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		str						：文字列を格納するポインタ
@@ -767,16 +506,155 @@ _DONE:
 //		AVAL_STATUS_SUCCESS		：正常終了
 //		上記以外					：異常終了
 //==================================================================================
-int cmdFirmUpdateAllAdminHelp (void *str)
+int cmdFirmXmlDownloadHelp (void *str)
+{
+	DEBUG_PRINT_FORCE ("\n");
+	DEBUG_PRINT_FORCE ("[Get]\n");
+	DEBUG_PRINT_FORCE ("  Function          : The XML is download.\n");
+	DEBUG_PRINT_FORCE ("  Command           : download-xmp [Param0] [Param1]\n");
+	DEBUG_PRINT_FORCE ("  Input0 Param      : XML File Size(Dec)\n");
+	DEBUG_PRINT_FORCE ("  Input1 Param      : Start Wait Time Secound(Min:0 - Max:%d)\n", DOWNLOAD_WAIT_TIME_MAX);
+	DEBUG_PRINT_FORCE ("  Output Param      : none\n");
+	DEBUG_PRINT_FORCE ("\n");
+
+	return (AVAL_STATUS_SUCCESS);
+}
+
+
+
+
+
+//**********************************************************************************
+//	Firm Data Copy
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdFirmDataCopy (void *str)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	int argc;
+
+	// Get Argument
+	argc = cmdCheckArg ((char *)str);
+
+	// Help?
+	if (argc == 2)
+	{
+		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
+		{
+			cmdFirmDataCopyHelp (NULL);
+			goto _DONE;
+		}
+	}
+
+	if (argc == 1)
+	{
+		if ((status = firmDataCopy ()) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+	}
+	else
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
+		goto _DONE;
+	}
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Firm Data Copy Help
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdFirmDataCopyHelp (void *str)
 {
 	DEBUG_PRINT_FORCE ("\n");
 	DEBUG_PRINT_FORCE ("[Set]\n");
-	DEBUG_PRINT_FORCE ("  Function          : All data is updated.\n");
-	DEBUG_PRINT_FORCE ("  Command           : update-all-admin\n");
+	DEBUG_PRINT_FORCE ("  Function          : Firm data is copy.\n");
+	DEBUG_PRINT_FORCE ("  Command           : firmdatacopy\n");
 	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
 	DEBUG_PRINT_FORCE ("  Output Param      : none\n");
 	DEBUG_PRINT_FORCE ("\n");
 
+	return (AVAL_STATUS_SUCCESS);
+}
+
+
+//**********************************************************************************
+//	FPGA ReConfig
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdFpgaReConfig (void *str)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	int argc;
+
+	// Get Argument
+	argc = cmdCheckArg ((char *)str);
+
+	// Help?
+	if (argc == 2)
+	{
+		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
+		{
+			cmdFpgaReConfigHelp (NULL);
+			goto _DONE;
+		}
+	}
+
+	if (argc == 1)
+	{
+		// FPGA ReConfig
+		if ((status = fpgaReconfig ()) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+	}
+	else
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
+		goto _DONE;
+	}
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	FPGA ReConfig Help
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdFpgaReConfigHelp (void *str)
+{
+	DEBUG_PRINT_FORCE ("\n");
+	DEBUG_PRINT_FORCE ("[Set]\n");
+	DEBUG_PRINT_FORCE ("  Function          : IF FPGA Reconfig is set.\n");
+	DEBUG_PRINT_FORCE ("  Command           : iffpga-reconfig\n");
+	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
+	DEBUG_PRINT_FORCE ("  Output Param      : none\n");
+	DEBUG_PRINT_FORCE ("\n");
+	
 	return (AVAL_STATUS_SUCCESS);
 }
 
@@ -929,75 +807,6 @@ int cmdPhyDataCopyHelp (void *str)
 
 	return (AVAL_STATUS_SUCCESS);
 }
-
 #endif // #if defined (MODE_GIGE_10G) && defined(IF_GIGE)
-
-
-//**********************************************************************************
-//	Boot Header
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		str						：文字列を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS		：正常終了
-//		上記以外					：異常終了
-//==================================================================================
-int cmdBootHeader (void *str)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int argc;
-
-	// Get Argument
-	argc = cmdCheckArg ((char *)str);
-
-	// Help?
-	if (argc == 2)
-	{
-		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
-		{
-			cmdBootHeaderHelp (NULL);
-			goto _DONE;
-		}
-	}
-
-	if (argc == 1)
-	{
-		// Boot Header Create
-		if ((status = fpgaUpdatePolarFireHeader ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
-		goto _DONE;
-	}
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Boot Header Help
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		str						：文字列を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS		：正常終了
-//		上記以外					：異常終了
-//==================================================================================
-int cmdBootHeaderHelp (void *str)
-{
-	DEBUG_PRINT_FORCE ("\n");
-	DEBUG_PRINT_FORCE ("[Get]\n");
-	DEBUG_PRINT_FORCE ("  Function          : The Boot Header is created.\n");
-	DEBUG_PRINT_FORCE ("  Command           : bootheader\n");
-	DEBUG_PRINT_FORCE ("  Input Param       : none\n");
-	DEBUG_PRINT_FORCE ("  Output Param      : none\n");
-	DEBUG_PRINT_FORCE ("\n");
-
-	return (AVAL_STATUS_SUCCESS);
-}
 
 // eof

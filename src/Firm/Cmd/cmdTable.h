@@ -301,7 +301,7 @@ CMD_TBL mainCmdTbl [] =
 
 
 //============================================================================================================================================
-// 貂ｩ蠎ｦ
+// 雋ゑｽｩ陟趣ｽｦ
 //============================================================================================================================================
 	{ (char *)"temp",					   	(CMDFUNC)cmdTemp,						(CMDFUNC)cmdTempHelp, 							OPT_NONE},
 	{ (char *)"temperature",			   	(CMDFUNC)cmdTemp,						(CMDFUNC)cmdTempHelp, 							OPT_NONE},
@@ -549,23 +549,12 @@ CMD_TBL mainCmdTbl [] =
 	{ (char *)"update-all-admin",			(CMDFUNC)cmdFirmUpdateAllAdmin,			(CMDFUNC)cmdFirmUpdateAllAdminHelp, 			OPT_NONE},
 	{ (char *)"download-all",				(CMDFUNC)cmdFirmDownloadAll,			(CMDFUNC)cmdFirmDownloadAllHelp, 				OPT_NONE},
 
-#if defined (MODE_CXP)
 	{ (char *)"update-xml",					(CMDFUNC)cmdFirmXmlUpdate,				(CMDFUNC)cmdFirmXmlUpdateHelp, 					OPT_NONE},
 	{ (char *)"download-xml",				(CMDFUNC)cmdFirmXmlDownload,			(CMDFUNC)cmdFirmXmlDownloadHelp, 				OPT_NONE},
-#endif
 
-	{ (char *)"bootheader",					(CMDFUNC)cmdBootHeader,					(CMDFUNC)cmdBootHeaderHelp, 					OPT_NONE},
-
-
-//============================================================================================================================================
-// FPGA Update
-//============================================================================================================================================
-#if defined (MODE_UPDATE_INTERFACE)
-	//@@@1{ (char *)"update-if",					(CMDFUNC)cmdFpgaUpdateInterface,		(CMDFUNC)cmdFpgaUpdateInterfaceHelp, 			OPT_NONE},
-	//@@@1{ (char *)"update-if-admin",			(CMDFUNC)cmdFpgaUpdateInterfaceAdmin,	(CMDFUNC)cmdFpgaUpdateInterfaceHelpAdmin, 		OPT_NONE},
-	//@@@1{ (char *)"download-if",				(CMDFUNC)cmdFpgaDownloadInterface,		(CMDFUNC)cmdFpgaDownloadInterfaceHelp, 			OPT_NONE},
-	//@@@1{ (char *)"iffpgacopy",					(CMDFUNC)cmdFpgaCopyInterface,			(CMDFUNC)cmdFpgaCopyInterfaceHelp, 				OPT_NONE},
-#endif // #if defined (MODE_UPDATE_INTERFACE)
+	{ (char *)"update-fpga",				(CMDFUNC)cmdFpgaUpdate,					(CMDFUNC)cmdFpgaUpdateHelp, 					OPT_NONE},
+	{ (char *)"firmcopy",					(CMDFUNC)cmdFirmDataCopy,				(CMDFUNC)cmdFirmDataCopyHelp, 						OPT_NONE},
+	{ (char *)"fpgareconfig",			  	(CMDFUNC)cmdFpgaReConfig,				(CMDFUNC)cmdFpgaReConfigHelp, 					OPT_NONE},
 
 	
 //============================================================================================================================================
@@ -628,17 +617,8 @@ CMD_TBL mainCmdTbl [] =
 // CXP Command
 //============================================================================================================================================
 #if defined (MODE_CXP)
-	{ (char *)"cxpfiforead", 		 		(CMDFUNC)cmdCxpFifoRead,				(CMDFUNC)cmdCxpFifoReadHelp, 					OPT_NONE},
-	//{ (char *)"cxpfifowrite", 		 		(CMDFUNC)cmdCxpFifoWrite,				(CMDFUNC)cmdCxpFifoWriteHelp, 					OPT_NONE},
-
 	{ (char *)"cxpsendadrs", 		 		(CMDFUNC)cmdCxpSendAdrs,				(CMDFUNC)cmdCxpSendAdrsHelp, 					OPT_NONE},
 	{ (char *)"cxprecvadrs", 		 		(CMDFUNC)cmdCxpRecvAdrs,				(CMDFUNC)cmdCxpRecvAdrsHelp, 					OPT_NONE},
-
-	{ (char *)"iffpga-reconfig",		  	(CMDFUNC)cmdIfFpgaReConfig,				(CMDFUNC)cmdIfFpgaReConfigHelp, 				OPT_NONE},
-
-	{ (char *)"cxpi2c",	  		 			(CMDFUNC)cmdCxpI2c,						(CMDFUNC)cmdCxpI2cHelp, 						OPT_NONE},
-	{ (char *)"dumpcxp", 					(CMDFUNC)cmdDumpCxpI2cMain,				(CMDFUNC)cmdDumpCxpI2cMainHelp, 				OPT_NONE},
-	{ (char *)"iocxp", 						(CMDFUNC)cmdAcesCxpI2cMain,				(CMDFUNC)cmdAcesCxpI2cMainHelp, 				OPT_NONE},
 
 	{ (char *)"packetrx",				  	(CMDFUNC)cmdCxpTestPacketRx,			(CMDFUNC)cmdCxpTestPacketRxHelp, 				OPT_NONE},
 	{ (char *)"packeterr",				  	(CMDFUNC)cmdCxpTestPacketErr,			(CMDFUNC)cmdCxpTestPacketErrHelp, 				OPT_NONE},

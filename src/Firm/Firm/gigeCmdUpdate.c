@@ -185,15 +185,15 @@ int gigeCmdIfFpgaUpload  (unsigned int flashAdrs, unsigned char *pBuffer, unsign
 
 #if defined (MODE_FPGA_PF)
 	// Flash Write
-	if ((status = fpgaUpdatePolarFireFlashWrite (flashAdrs, pBuffer, size)) != AVAL_STATUS_SUCCESS)
+	if ((status = firmUpdateFlashWrite (flashAdrs, pBuffer, size)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// ヘッダー更新
-	if ((status = fpgaUpdatePolarFireHeader ())!= AVAL_STATUS_SUCCESS)
+	if ((status = fpgaUpdateFireHeader ())!= AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// Reconfig
-	//if (adrs == FLASH_UPDATE_POLAFIRE_ADRS)
+	//if (adrs == FLASH_UPDATE_FPGA_ADRS)
 	//{
 		// ReConfig
 		//if ((status = fpgaUpdatePolarFireReconfig ()) != AVAL_STATUS_SUCCESS)

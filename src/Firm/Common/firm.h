@@ -57,9 +57,13 @@
 // Manufacture Name
 #define MANUFACTURE_NAME					"https://www.avaldata.co.jp"
 
-// Update File Name
+// Update File Name(All)
 #define UPDATE_FILE_NAME_CL_EXSAMPLE		""FIRM_NAME"_CL_Vxx.xxx"
 #define UPDATE_FILE_NAME_CL_COMPARE			""FIRM_NAME"_CL"
+
+// Update File Name(FPGA)
+#define UPDATE_FILE_NAME_FPGA_EXSAMPLE		""FIRM_NAME"_Fpga_Vxx.xxx"
+#define UPDATE_FILE_NAME_FPGA_COMPARE		""FIRM_NAME"_Fpga"
 
 
 //----------------------------------------------------------------------------------
@@ -415,14 +419,6 @@ typedef unsigned char   u8;
 // Qspi Flash Device Select
 #define QSPI_FLASH_DEVICE_SELECT_BOOT		(0)
 #define QSPI_FLASH_DEVICE_SELECT_DATA		(1)
-
-
-//----------------------------------------------------------------------------------
-// PF Flash
-//---------------------------------------------------------------------------------
-#define PF_SPI_FLASH_SIZE					(16*1024*1024)
-#define PF_SPI_FLASH_SEC_SIZE				(4*1024)
-#define PF_SPI_FLASH_BLOCK_SIZE				(64*1024)
 
 
 //----------------------------------------------------------------------------------
@@ -1112,28 +1108,6 @@ typedef unsigned char   u8;
 
 // 追加メモリ
 #define COMPRESS_DOWNLOAD_ADD_MEMORY		(32)
-
-
-//----------------------------------------------------------------------------------
-// Polafire Flash Write
-//----------------------------------------------------------------------------------
-#define FLASH_UPDATE_POLAFIRE_HEADER_GDN_ADRS	(0x00000000)
-#define FLASH_UPDATE_POLAFIRE_HEADER_ADRS		(0x00000008)
-
-#define FLASH_UPDATE_POLAFIRE_GDN_ADRS			(0x00000400)
-#define FLASH_UPDATE_POLAFIRE_ADRS				(0x00400000)
-
-#define FLASH_UPDATE_POLAFIRE_SIZE				(4*1024*1024)
-
-#define FLASH_UPDATE_POLAFIRE_DOWNLOAD_SIZE		(3531552)
-#define FLASH_UPDATE_POLAFIRE_COPY_SIZE			(0x3ff000)
-
-// Update File Name
-#define UPDATE_FILE_NAME_POLAFIRE_EXSAMPLE		""FIRM_NAME"_Interface_Fpga_Vxx.xxx"
-#define UPDATE_FILE_NAME_POLAFIRE_COMPARE		""FIRM_NAME"_Interface_Fpga"
-
-#define UPDATE_FILE_NAME_POLAFIRE_BOARD_EXSAMPLE	""IF_CXP_BOARD_NAME"_Fpga_Vxx.xxx"
-#define UPDATE_FILE_NAME_POLAFIRE_BOARD_COMPARE		""IF_CXP_BOARD_NAME"_Fpga"
 
 
 //----------------------------------------------------------------------------------
@@ -2151,27 +2125,24 @@ int firmGetCmdStatus (int *pMode);
 
 // firmUpdate.c
 int firmUpdateAll (void);
-int firmUpdateXml (void);
-int firmDownloadXml (int size);
 int firmUpdateAllAdmin (void);
+int firmUpdateXml (void);
 int firmUpdateMain (unsigned int flashAdrs, unsigned int size, int offsetMode);
 int firmUpdateFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned int size);
 int firmDownloadAll (unsigned int size);
 int firmDownloadAllAdmin (unsigned int size);
+int firmDownloadXml (int size);
 int firmDownloadMain (unsigned int flashAdrs, unsigned int size, char *pName);
-int fpgaUpdatePolafire (void);
-int fpgaUpdatePolafireMain (unsigned int flashAdrs, unsigned int size, int offsetMode);
-int fpgaUpdatePolafirelashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned int size);
-int fpgaDownloadPolafire (int mode);
-int fpgaUpdatePolarFire (void);
-int fpgaUpdatePolarFireAdmin (void);
-int fpgaUpdatePolarFireMain (unsigned int flashAdrs, unsigned int size, int offsetMode);
-int fpgaUpdatePolarFireReconfig (void);
-int fpgaUpdatePolarFireFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned int size);
-int fpgaUpdatePolarFireHeader(void);
-int fpgaDownloadPolarFire (void);
-int fpgaDownloadPolarFireMain (unsigned int flashAdrs, unsigned int size, char *pName);
-int ifFpgaCopyUserToGolden (void);
+int fpgaUpdate (void);
+int fpgaUpdateMain (unsigned int flashAdrs, unsigned int size, int offsetMode);
+int fpgaUpdate (void);
+int fpgaUpdateAdmin (void);
+int fpgaUpdateeMain (unsigned int flashAdrs, unsigned int size, int offsetMode);
+int fpgaReconfig (void);
+int fpgaUpdateHeader(void);
+int fpgaDownload (unsigned int size);
+int fpgaDownloadMain (unsigned int flashAdrs, unsigned int size, char *pName);
+int firmDataCopy (void);
 int firmUpdatePhy (void);
 int phyDataCopy (void);
 
@@ -2473,7 +2444,6 @@ int peltierSetPowerStartFlag (unsigned int data);
 // pfFlash.c
 int PolarFireFlashInitialize (void);
 int PolarFireFlashFinalize (void);
-int PolarFireSpiMode (int mode);
 int PolarFireFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned int size);
 int PolarFireFlashRead (unsigned int adrs, unsigned char *pBuffer, unsigned int size);
 int PolarFireFlashSectorErase (unsigned int adrs);

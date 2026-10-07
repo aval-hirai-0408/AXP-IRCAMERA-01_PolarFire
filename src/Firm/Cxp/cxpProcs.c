@@ -843,7 +843,6 @@ _NEXT_NOTAG:
 			}
 
 			gIfFpgaReConfig = 0;
-			PolarFireSpiMode (MODE_DISABLE);
 
 			cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "IF FPGA ReConfig End\n");
 
@@ -2529,7 +2528,6 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 					*pData2 = swapData32;
 				}
 
-				// Ver.2.7 Start
 				amari = pCxpSt->ackSize%4;
 				if (amari != 0)
 				{
@@ -2538,7 +2536,6 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 					swapData32 = SWAP_L (*pData2);
 					*pData2 = swapData32;
 				}
-				// Ver.2.7 End
 			}
 			//------------------------------------------------------------
 			// XML File Name取得
@@ -4841,9 +4838,6 @@ int cxpSetRateReg (unsigned int data)
 	unsigned int data32;
 	int ix;
 	int port = 0;
-//@@@@@
-//goto _DONE;
-//@@@@@
 	
 	//--------------------------------------------------------------------------------
 	// Check Busy
@@ -4857,7 +4851,7 @@ int cxpSetRateReg (unsigned int data)
 
 		usDelay (2);
 	}
-
+	
 	if (ix >= CXP_REG_DRI_CTRL_BUSY_TIMEOUT)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_TIMEOUT);

@@ -568,7 +568,7 @@ int fpgaGetBuildNumber (unsigned int *pData)
 		goto _DONE;
 	}
 
-	*pData = IN32 (FPGA_BUILD_NUMBER_ADRS);
+	*pData = IN32 (FPGA_BUILD_TIME_ADRS);
 
 _DONE:
 	return (status);

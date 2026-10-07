@@ -45,42 +45,6 @@ _DONE:
 
 
 //**********************************************************************************
-//	ファームウェアUpdate(XML用)
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int firmUpdateXml (void)
-{
-	int status;
-
-	status = firmUpdateMain (FLASH_XML_ADRS, FLASH_XML_SIZE, 0);
-	return (status);
-}
-
-
-//**********************************************************************************
-//	ファームウェアDownload(XML用)
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int firmDownloadXml (int size)
-{
-	int status;
-
-	status = firmDownloadMain (FLASH_XML_ADRS, size, "xmlDownload.xml");
-	return (status);
-}
-
-
-//**********************************************************************************
 //	ファームウェアUpdate(全プログラム)
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
@@ -94,6 +58,24 @@ int firmUpdateAllAdmin (void)
 	int status;
 
 	status = firmUpdateMain (FLASH_UPDATE_ALL_ADMIN_ADRS, FLASH_UPDATE_ALL_SIZE, 0);
+	return (status);
+}
+
+
+//**********************************************************************************
+//	ファームウェアUpdate(XML用)
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		-
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int firmUpdateXml (void)
+{
+	int status;
+
+	status = firmUpdateMain (FLASH_XML_ADRS, FLASH_XML_SIZE, 0);
 	return (status);
 }
 
@@ -298,7 +280,7 @@ int firmUpdateFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned in
 	if ((pTempBuff = malloc (secSize)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Firmware Update Temp Buffer Request Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Update Temp Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -332,7 +314,7 @@ int firmUpdateFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned in
 			if (*pBuffVerify != 0xffffffff)
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_COMPARE);
-				sprintf (gLogMsgBuff, "Firmware Update Blank Check Error.\nAdrs = 0x%x\nData = 0x%x\n", sec + ix*4, *pBuffVerify);
+				sprintf (gLogMsgBuff, "Update Blank Check Error.\nAdrs = 0x%x\nData = 0x%x\n", sec + ix*4, *pBuffVerify);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				goto _DONE;
 			}
@@ -372,7 +354,7 @@ int firmUpdateFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned in
 			if (*pBuffVerify != *pReadBuff)
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_COMPARE);
-				sprintf (gLogMsgBuff, "Firmware Update Verify Error.\nAdrs = 0x%x\nWrite = 0x%x\nRead = 0x%x\n", sec + ix*4, *pBuffVerify, *pReadBuff);
+				sprintf (gLogMsgBuff, "Update Verify Error.\nAdrs = 0x%x\nWrite = 0x%x\nRead = 0x%x\n", sec + ix*4, *pBuffVerify, *pReadBuff);
 				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 				goto _DONE;
 			}
@@ -428,6 +410,24 @@ int firmDownloadAllAdmin (unsigned int size)
 
 
 //**********************************************************************************
+//	ファームウェアDownload(XML用)
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		-
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int firmDownloadXml (int size)
+{
+	int status;
+
+	status = firmDownloadMain (FLASH_XML_ADRS, size, "xmlDownload.xml");
+	return (status);
+}
+
+
+//**********************************************************************************
 //	ファームウェアDownload(Main用)
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
@@ -448,7 +448,7 @@ int firmDownloadMain (unsigned int flashAdrs, unsigned int size, char *pName)
 	if ((size < 1) || (size > FIRM_DOWNLOAD_ALL_SIZE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff,  "Firmware Download Size Error. Size = 0x%x\n", size);
+		sprintf (gLogMsgBuff,  "Download Size Error. Size = 0x%x\n", size);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -457,7 +457,7 @@ int firmDownloadMain (unsigned int flashAdrs, unsigned int size, char *pName)
 	if ((pBuffer = malloc (size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Firmware Download Buffer Request Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Download Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -465,7 +465,7 @@ int firmDownloadMain (unsigned int flashAdrs, unsigned int size, char *pName)
 	if (pName == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Firmware Download pName NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Download NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -477,7 +477,7 @@ int firmDownloadMain (unsigned int flashAdrs, unsigned int size, char *pName)
 	if ((kermitSendSize = kermitSend (pName, pBuffer, size)) < 0)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_IO);
-		sprintf (gLogMsgBuff, "Firmware Download kermit Error. Size = %d\n", kermitSendSize);
+		sprintf (gLogMsgBuff, "Download kermit Error. Size = %d\n", kermitSendSize);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -490,9 +490,8 @@ _DONE:
 }
 
 
-#if defined (MODE_FPGA_PF)
 //**********************************************************************************
-//	PolarFire Interface FPGA Update
+//	FPGA Update
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		-
@@ -500,11 +499,11 @@ _DONE:
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int fpgaUpdatePolarFire (void)
+int fpgaUpdate (void)
 {
 	int status;
 
-	if ((status = fpgaUpdatePolarFireMain (FLASH_UPDATE_POLAFIRE_ADRS, FLASH_UPDATE_POLAFIRE_SIZE, 0)) != AVAL_STATUS_SUCCESS)
+	if ((status = fpgaUpdateMain (FLASH_FPGA_DATA_ADRS, FLASH_UPDATE_ALL_SIZE, 0)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 _DONE:
@@ -513,7 +512,7 @@ _DONE:
 
 
 //**********************************************************************************
-//	PolarFire Interface FPGA Update (Administrator)
+//	FPGA Update (Administrator)
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		-
@@ -521,20 +520,20 @@ _DONE:
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int fpgaUpdatePolarFireAdmin (void)
+int fpgaUpdateAdmin (void)
 {
 	int status;
 
-	if ((status = fpgaUpdatePolarFireMain (FLASH_UPDATE_POLAFIRE_GDN_ADRS, FLASH_UPDATE_POLAFIRE_SIZE, 0)) != AVAL_STATUS_SUCCESS)
+	if ((status = fpgaUpdateMain (FLASH_FPGA_DATA_ADMIN_ADRS, FLASH_UPDATE_ALL_SIZE, 0)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 _DONE:
 	return (status);
 }
 
-#if 0	//@@@1
+
 //**********************************************************************************
-//	PolarFire CXP FPGA Update Main
+//	FPGA Update Main
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		adrs				：updateするFlashアドレス
@@ -544,12 +543,12 @@ _DONE:
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int fpgaUpdatePolarFireMain (unsigned int flashAdrs, unsigned int size, int offsetMode)
+int fpgaUpdateMain (unsigned int flashAdrs, unsigned int size, int offsetMode)
 {
 	int status;
 	char *pUpdateBuff = NULL;
 	int downLoadSize;
-	int len1, len2;
+	int len1;
 	unsigned char *pUpdatePtr;
 	unsigned int updateSize;
 #ifdef COMPRESS_MODE
@@ -558,34 +557,37 @@ int fpgaUpdatePolarFireMain (unsigned int flashAdrs, unsigned int size, int offs
 #endif // COMPRESS_MODE
 
 	// メモリリクエスト
+#if 1
+	pUpdateBuff = (char *)FIRM_UPDATE_ADRS;
+#else
 	if ((pUpdateBuff = malloc (size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface FPGA Update Buffer Request Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Update Buffer Request Error.\n");
 		goto _DONE;
 	}
+#endif
 
 	// Kermit Recive
 	if ((downLoadSize = kermitRecv (pUpdateBuff, size)) < 0)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_IO);
-		sprintf (gLogMsgBuff, "Interface FPGA Update kermit Error. Size = %d\n", downLoadSize);
+		sprintf (gLogMsgBuff, "FPGA Update kermit Error. Size = %d\n", downLoadSize);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
-	//CXPのみ
+	// CXPのみ
 	if (gInterFaceID == INTERFACE_CXP)
 	{
 		// Get Size
-		len1 = strlen (UPDATE_FILE_NAME_POLAFIRE_COMPARE);
-		len2 = strlen (UPDATE_FILE_NAME_POLAFIRE_BOARD_COMPARE);
+		len1 = strlen (UPDATE_FILE_NAME_FPGA_COMPARE);
 
 		// Check File Name
-		if ((strncmp (gKermitFileName, UPDATE_FILE_NAME_POLAFIRE_COMPARE, len1) != 0) && (strncmp (gKermitFileName, UPDATE_FILE_NAME_POLAFIRE_BOARD_COMPARE, len2) != 0))
+		if ((strncmp (gKermitFileName, UPDATE_FILE_NAME_FPGA_COMPARE, len1) != 0))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_FILE);
-			sprintf (gLogMsgBuff, "Interface FPGA Update File Name Error.\nInvalid File Name = %s\nValid File Name = %s\nValid File Name = %s\n", gKermitFileName, UPDATE_FILE_NAME_POLAFIRE_EXSAMPLE, UPDATE_FILE_NAME_POLAFIRE_BOARD_EXSAMPLE);
+			sprintf (gLogMsgBuff, "FPGA Update File Name Error.\nInvalid File Name = %s\nValid File Name = %s\n", gKermitFileName, UPDATE_FILE_NAME_FPGA_EXSAMPLE);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -602,7 +604,7 @@ int fpgaUpdatePolarFireMain (unsigned int flashAdrs, unsigned int size, int offs
 			goto _NEXT;
 
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_FILE);
-		sprintf (gLogMsgBuff, "Interface FPGA Update File Extension Error.\nInvalid File Name = %s\n", gKermitFileName);
+		sprintf (gLogMsgBuff, "FPGA Update File Extension Error.\nInvalid File Name = %s\n", gKermitFileName);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -631,32 +633,24 @@ _NEXT:
 		updateSize -= FIRM_UPDATE_OFFSET;
 	}
 
-	//SPIイニシャライズ
-	if ((status = PolarFireSpiMode (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
 	// Flash Write
-	if ((status = fpgaUpdatePolarFireFlashWrite (flashAdrs, (unsigned char *)pUpdatePtr, updateSize)) != AVAL_STATUS_SUCCESS)
+	if ((status = firmUpdateFlashWrite (flashAdrs, (unsigned char *)pUpdatePtr, updateSize)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	//ヘッダー更新
-	if ((status = fpgaUpdatePolarFireHeader())!= AVAL_STATUS_SUCCESS)
+	// ヘッダー更新
+	if ((status = fpgaUpdateHeader ())!= AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	//アップデート実行
-	if (flashAdrs == FLASH_UPDATE_POLAFIRE_ADRS)
+	if (flashAdrs == FLASH_FPGA_DATA_ADRS)
 	{
 		// ReConfig
-		if ((status = fpgaUpdatePolarFireReconfig ()) !=  AVAL_STATUS_SUCCESS)
+		if ((status = fpgaReconfig ()) !=  AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
 
 _DONE:
-	//SPIファイナライズ
-	PolarFireSpiMode (MODE_DISABLE);
-
-	if (pUpdateBuff != NULL)
-		free (pUpdateBuff);
+	//if (pUpdateBuff != NULL)
+		//free (pUpdateBuff);
 
 #ifdef COMPRESS_MODE
 #if !defined (MODE_FFC_MEM_EXTERNAL_MALLOC)
@@ -667,10 +661,10 @@ _DONE:
 
 	return (status);
 }
-#endif //@@@1
+
 
 //**********************************************************************************
-//	PolarFire ReConfig
+//	FPGA ReConfig
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		-
@@ -678,178 +672,41 @@ _DONE:
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int fpgaUpdatePolarFireReconfig (void)
+int fpgaReconfig (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	int i;
 	unsigned char data;
-#if 0	//@@@1
-	// PolarFire リコンフィグIndex設定
-	if ((status = cxpRegWrite (0, CXP_REG_RC_INDEX_ADRS, CXP_REG_RC_INDEX, 1))!= AVAL_STATUS_SUCCESS)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface FPGA Update cxpRegWrite Error.\n");
-		goto _DONE;
-	}
+	int i;
 
-	// PolarFire リコンフィグ実行
-	if ((status = cxpRegWrite (0, CXP_REG_RC_TRG_ADRS, CXP_REG_RC_TRG, 1))!= AVAL_STATUS_SUCCESS)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface FPGA Update cxpRegWrite Error.\n");
-		goto _DONE;
-	}
+	// PolarFire Reconfig Index設定
+	data = FPGA_RECONFIG_INDEX_DEFAULT;
+	OUT32 (FPGA_RECONFIG_ADRS, data);
 
-	//リコンフィグ完了待ち
-	for (i = 0 ; i < 20 ; i++)
+	// PolarFire Reconfig 実行
+	data = FPGA_RECONFIG_INDEX_DEFAULT | FPGA_RECONFIG_START_BIT;
+	OUT32 (FPGA_RECONFIG_ADRS, data);
+
+	// Reconfig完了待ち
+	for (i = 0; i < 20; i++)
 		msDelay(1000);
 
-	data = 0xFF;
-	if((cxpI2cRegRead (CXP_REG_I2C_RC_TRG_ADRS, (unsigned char *)&data) != AVAL_STATUS_SUCCESS) || (data != 0x00))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_TIMEOUT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface FPGA Update Timeout Erro.r\n");
-		goto _DONE;
-	}
-#endif //@@1
-
 _DONE:
 	return (status);
 }
 
-#if 0 //@@@1
-//**********************************************************************************
-//	ファームウェアFlash書き込み
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		adrs				：updateするFlashアドレス
-//		pBuffer				：updateデータが格納されたポインタ
-//		size				：updateデータサイズ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int fpgaUpdatePolarFireFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned int size)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int ix;
-	unsigned char *pTempBuff = NULL;
-	unsigned int *pBuffVerify, *pReadBuff;
-	int sec;
-	int secSize = PF_SPI_FLASH_BLOCK_SIZE;
-	unsigned int readSize;
-	unsigned int offset;
-	unsigned int adrs2, size2, lastSize;
-
-	//SPIイニシャライズ
-	//if ((status = PolarFireSpiMode (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
-		//return (status);
-
-	// メモリリクエスト
-	if ((pTempBuff = malloc (secSize)) == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Interface Update Temp Buffer Request Error.\n");
-		goto _DONE;
-	}
-
-	// Erase
-	for (sec=adrs; sec<(adrs + size); sec+=secSize)
-	{
-		// Erase
-		if ((status = PolarFireFlashBlockErase (sec)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-	}
-
-	// Blank Check
-	adrs2 = adrs & ~PF_SPI_FLASH_BLOCK_SIZE;
-	size2 = adrs2 + size;
-	lastSize = size;
-	for (sec=adrs2; sec<size2; sec+=secSize)
-	{
-		// Read Size
-		if (lastSize > secSize)
-			readSize = secSize;
-		else
-			readSize = lastSize;
-
-		// Read
-		if ((status = PolarFireFlashRead (sec, (unsigned char *)pTempBuff, readSize)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		// コンペア
-		pBuffVerify = (unsigned int *)pTempBuff;
-		for (ix=0; ix<(readSize/4); ix++, pBuffVerify++)
-		{
-			if (*pBuffVerify != 0xffffffff)
-			{
-				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_COMPARE);
-				sprintf (gLogMsgBuff, "Interface Update Blank Check Error.\nAdrs = 0x%x\nData = 0x%x\n", sec + ix*4, *pBuffVerify);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-				goto _DONE;
-			}
-		}
-
-		// サイズ更新
-		lastSize -= readSize;
-	}
-
-	//SPIライト
-	if ((status = PolarFireFlashWrite (adrs,pBuffer,size))!= AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// Read & ベリファイ
-	for (sec=adrs, offset=0; sec<(adrs + size); sec+=secSize, offset+=secSize)
-	{
-		// Size Check
-		if ((int)(size - offset) > secSize)
-			readSize = secSize;
-		else
-			readSize = size - offset;
-
-		// Read
-		if ((status = PolarFireFlashRead (sec, (unsigned char *)pTempBuff, readSize)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		// ベリファイ
-		pBuffVerify = (unsigned int *)(pBuffer + offset);
-		pReadBuff = (unsigned int *)pTempBuff;
-		for (ix=0; ix<(readSize/4); ix++, pBuffVerify++, pReadBuff++)
-		{
-			if (*pBuffVerify != *pReadBuff)
-			{
-				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_COMPARE);
-				sprintf (gLogMsgBuff,  "Interface Update Verify Error.\nAdrs = 0x%x\nWrite Data = 0x%x\nRead  Data = 0x%x\n", sec + ix*4, *pBuffVerify, *pReadBuff);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-				goto _DONE;
-			}
-		}
-	}
-
-_DONE:
-	//SPIファイナライズ
-	//PolarFireSpiMode (MODE_DISABLE);
-
-	if (pTempBuff != NULL)
-		free (pTempBuff);
-
-	return (status);
-}
-#endif //@@@1
 
 //**********************************************************************************
-//	ヘッダーFlash書き込み
+//	FPGA Header Write
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int fpgaUpdatePolarFireHeader (void)
+int fpgaUpdateHeader (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	const int data_size = PF_SPI_FLASH_BLOCK_SIZE;
+	const int data_size = QSPI_FLASH_SEC_SIZE;
 	unsigned char *pTempBuff = NULL;
 	unsigned char *pReadBuff = NULL;
 	unsigned int ix;
@@ -858,7 +715,7 @@ int fpgaUpdatePolarFireHeader (void)
 	if ((pTempBuff = malloc (data_size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Header Temp Buffer Request Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Header Temp Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -866,44 +723,41 @@ int fpgaUpdatePolarFireHeader (void)
 	if ((pReadBuff = malloc (data_size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Header Read Buffer Request Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Header Read Buffer Request Error.\n");
 		goto _DONE;
 	}
 
 	// セクタ0リード
-	if ((status = qspiFlashRead (0x00000000, pTempBuff, data_size))!= AVAL_STATUS_SUCCESS)
+	if ((status = qspiFlashRead (FLASH_HEADER_ADRS, pTempBuff, data_size))!= AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// ヘッダ情報更新
-	pTempBuff[FLASH_UPDATE_POLAFIRE_HEADER_GDN_ADRS]		= FLASH_UPDATE_POLAFIRE_GDN_ADRS & 0xFF;
-	pTempBuff[FLASH_UPDATE_POLAFIRE_HEADER_GDN_ADRS + 1]	= (FLASH_UPDATE_POLAFIRE_GDN_ADRS >> 8) & 0xFF;
-	pTempBuff[FLASH_UPDATE_POLAFIRE_HEADER_GDN_ADRS + 2]	= (FLASH_UPDATE_POLAFIRE_GDN_ADRS >> 16) & 0xFF;
-	pTempBuff[FLASH_UPDATE_POLAFIRE_HEADER_GDN_ADRS + 3]	= (FLASH_UPDATE_POLAFIRE_GDN_ADRS >> 24) & 0xFF;
+	pTempBuff[FLASH_HEADER_ADRS]     = FLASH_FPGA_DATA_ADMIN_ADRS & 0xFF;
+	pTempBuff[FLASH_HEADER_ADRS + 1] = (FLASH_FPGA_DATA_ADMIN_ADRS >> 8) & 0xFF;
+	pTempBuff[FLASH_HEADER_ADRS + 2] = (FLASH_FPGA_DATA_ADMIN_ADRS >> 16) & 0xFF;
+	pTempBuff[FLASH_HEADER_ADRS + 3] = (FLASH_FPGA_DATA_ADMIN_ADRS >> 24) & 0xFF;
 
-	pTempBuff[FLASH_UPDATE_POLAFIRE_HEADER_GDN_ADRS + 4]	= 0x00;
-	pTempBuff[FLASH_UPDATE_POLAFIRE_HEADER_GDN_ADRS + 5]	= 0x00;
-	pTempBuff[FLASH_UPDATE_POLAFIRE_HEADER_GDN_ADRS + 6]	= 0x00;
-	pTempBuff[FLASH_UPDATE_POLAFIRE_HEADER_GDN_ADRS + 7]	= 0x00;
+	pTempBuff[FLASH_HEADER_ADRS + 4] = 0x00;
+	pTempBuff[FLASH_HEADER_ADRS + 5] = 0x00;
+	pTempBuff[FLASH_HEADER_ADRS + 6] = 0x00;
+	pTempBuff[FLASH_HEADER_ADRS + 7] = 0x00;
 
-	pTempBuff[FLASH_UPDATE_POLAFIRE_HEADER_ADRS]			= FLASH_UPDATE_POLAFIRE_ADRS & 0xFF;
-	pTempBuff[FLASH_UPDATE_POLAFIRE_HEADER_ADRS + 1]		= (FLASH_UPDATE_POLAFIRE_ADRS >> 8) & 0xFF;
-	pTempBuff[FLASH_UPDATE_POLAFIRE_HEADER_ADRS + 2]		= (FLASH_UPDATE_POLAFIRE_ADRS >> 16) & 0xFF;
-	pTempBuff[FLASH_UPDATE_POLAFIRE_HEADER_ADRS + 3]		= (FLASH_UPDATE_POLAFIRE_ADRS >> 24) & 0xFF;
+	pTempBuff[FLASH_HEADER_ADRS + 8] = FLASH_FPGA_DATA_ADRS & 0xFF;
+	pTempBuff[FLASH_HEADER_ADRS + 9] = (FLASH_FPGA_DATA_ADRS >> 8) & 0xFF;
+	pTempBuff[FLASH_HEADER_ADRS + 10] = (FLASH_FPGA_DATA_ADRS >> 16) & 0xFF;
+	pTempBuff[FLASH_HEADER_ADRS + 11] = (FLASH_FPGA_DATA_ADRS >> 24) & 0xFF;
 
-	// 0フィル
-	//for (ix = FLASH_UPDATE_POLAFIRE_HEADER_ADRS + 4 ; ix < FLASH_UPDATE_POLAFIRE_GDN_ADRS ; ix++)
-		//pTempBuff[ix] = 0x00;
 
 	// Erase
-	if ((status = qspiFlashSectorErase (0x00000000)) != AVAL_STATUS_SUCCESS)
+	if ((status = qspiFlashSectorErase (FLASH_HEADER_ADRS)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// Flash Write
-	if ((status = qspiFlashWrite (0x00000000, pTempBuff, data_size))!= AVAL_STATUS_SUCCESS)
+	if ((status = qspiFlashWrite (FLASH_HEADER_ADRS, pTempBuff, data_size))!= AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	//SPIリード
-	if ((status = qspiFlashRead (0x00000000, pReadBuff, data_size))!= AVAL_STATUS_SUCCESS)
+	// Flash Read
+	if ((status = qspiFlashRead (FLASH_HEADER_ADRS, pReadBuff, data_size))!= AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	//ベリファイ
@@ -912,7 +766,7 @@ int fpgaUpdatePolarFireHeader (void)
 		if (pTempBuff[ix] != pReadBuff[ix])
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_COMPARE);
-			sprintf (gLogMsgBuff, "Flash Header Verify Error.\nAdrs = 0x%x\nWrite Data = 0x%x\nRead  Data = 0x%x\n", ix, pTempBuff[ix], pReadBuff[ix]);
+			sprintf (gLogMsgBuff, "FPGA Header Verify Error.\nAdrs = 0x%x\nWrite Data = 0x%x\nRead  Data = 0x%x\n", ix, pTempBuff[ix], pReadBuff[ix]);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
@@ -928,30 +782,28 @@ _DONE:
 	return (status);
 }
 
-#if 0	//@@@1
+
 //**********************************************************************************
-//	PolarFire Interface FPGA Download
+//	FPGA Download
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
-//		-
+//		size				：Download Size
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int fpgaDownloadPolarFire (void)
+int fpgaDownload  (unsigned int size)
 {
 	int status;
 
-	if ((status = fpgaDownloadPolarFireMain (FLASH_UPDATE_POLAFIRE_ADRS, FLASH_UPDATE_POLAFIRE_DOWNLOAD_SIZE, "ifFpagDownload.spi")) != AVAL_STATUS_SUCCESS)
+	if ((status = fpgaDownloadMain (FLASH_FPGA_DATA_ADRS, size, "FpagDownload.bin")) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 _DONE:
 	return (status);
 }
-#endif //@@@1
 
 
-#if 0 //@@@1
 //**********************************************************************************
 //	PolarFire Interface FPGA Download(Main用)
 //----------------------------------------------------------------------------------
@@ -963,17 +815,17 @@ _DONE:
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int fpgaDownloadPolarFireMain (unsigned int flashAdrs, unsigned int size, char *pName)
+int fpgaDownloadMain (unsigned int flashAdrs, unsigned int size, char *pName)
 {
 	int status;
 	char *pBuffer = NULL;
 	int kermitSendSize;
 
 	// Check Size Parameter
-	if ((size < 1) || (size > FLASH_UPDATE_POLAFIRE_SIZE))
+	if ((size < 1) || (size > QSPI_FLASH_SIZE))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "IF FPGA Download Size Error. Size = 0x%x\n", size);
+		sprintf (gLogMsgBuff, "FPGA Download Size Error. Size = 0x%x\n", size);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -982,7 +834,7 @@ int fpgaDownloadPolarFireMain (unsigned int flashAdrs, unsigned int size, char *
 	if ((pBuffer = malloc (size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "IF FPGA  Download Buffer Request Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Download Buffer Request Error.\n");
 		goto _DONE;
 	}
 
@@ -990,39 +842,31 @@ int fpgaDownloadPolarFireMain (unsigned int flashAdrs, unsigned int size, char *
 	if (pName == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "IF FPGA  Download pName NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Download pName NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
-	//SPIイニシャライズ
-	if ((status = PolarFireSpiMode (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
 	// Flash Read
-	if ((status = PolarFireFlashRead (flashAdrs, (unsigned char *)pBuffer, size)) != AVAL_STATUS_SUCCESS)
+	if ((status = qspiFlashRead (flashAdrs, (unsigned char *)pBuffer, size)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// Kermit Send
 	if ((kermitSendSize = kermitSend (pName, pBuffer, size)) < 0)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_IO);
-		sprintf (gLogMsgBuff, "IF FPGA  Download kermit Error. Size = %d\n", kermitSendSize);
+		sprintf (gLogMsgBuff, "FPGA Download kermit Error. Size = %d\n", kermitSendSize);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
 _DONE:
-	//SPIファイナライズ
-	PolarFireSpiMode (MODE_DISABLE);
-
 	if (pBuffer != NULL)
 		free (pBuffer);
 
 	return (status);
 }
-#endif //@@@1
 
-#if 0 //@@@1
+
 //**********************************************************************************
 //	Copy(ユーザー領域データをゴールデン領域にコピー)
 //----------------------------------------------------------------------------------
@@ -1032,35 +876,22 @@ _DONE:
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int ifFpgaCopyUserToGolden (void)
+int firmDataCopy (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned int size = FLASH_UPDATE_POLAFIRE_COPY_SIZE;
-
-	//SPIイニシャライズ
-	if ((status = PolarFireSpiMode (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	unsigned int size = FLASH_UPDATE_COPY_SIZE;
 
 	// Flash Read
-	if ((status = PolarFireFlashRead (FLASH_UPDATE_POLAFIRE_ADRS, (unsigned char *)FIRM_UPDATE_ADRS, size)) != AVAL_STATUS_SUCCESS)
+	if ((status = qspiFlashRead (FLASH_FPGA_DATA_ADRS, (unsigned char *)FIRM_UPDATE_ADRS, size)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// Flash Write
-	if ((status = fpgaUpdatePolarFireFlashWrite (FLASH_UPDATE_POLAFIRE_GDN_ADRS, (unsigned char *)FIRM_UPDATE_ADRS, size)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	//ヘッダー更新
-	if ((status = fpgaUpdatePolarFireHeader())!= AVAL_STATUS_SUCCESS)
+	if ((status = firmUpdateFlashWrite (FLASH_FPGA_DATA_ADMIN_ADRS, (unsigned char *)FIRM_UPDATE_ADRS, size)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 _DONE:
-	//SPIファイナライズ
-	PolarFireSpiMode (MODE_DISABLE);
-
 	return (status);
 }
-#endif //@@@1
-#endif // #if define (MODE_FPGA_PF)
 
 
 #if defined (MODE_GIGE_10G)
