@@ -1905,7 +1905,7 @@ int dpcToFlashMain (unsigned int flashAdrs, unsigned int memAdrs)
 #endif
 
 	// Erase
-	for (adrs=flashAdrs, size = 0; size<dpcUnitSize; adrs+=AXI_QSPI_FLASH_SEC_SIZE, size+=AXI_QSPI_FLASH_SEC_SIZE)
+	for (adrs=flashAdrs, size = 0; size<dpcUnitSize; adrs+=QSPI_FLASH_SEC_SIZE, size+=QSPI_FLASH_SEC_SIZE)
 	{
 		if ((status = qspiFlashSectorErase (adrs)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
@@ -2068,6 +2068,10 @@ int dpcSetMarkFlash (int dpcNum, unsigned int mark)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int offset;
 	unsigned int flashAdrs;
+#if !defined (MODE_FLASH_WRITE_COPY)
+	unsigned int dataA[2];
+	unsigned int *ptr32;
+#endif
 
 	// Check dpcNum Parameter
 	if ((dpcNum < DPC_NUMBER_MIN) || (dpcNum > DPC_NUMBER_MAX))
@@ -2078,6 +2082,11 @@ int dpcSetMarkFlash (int dpcNum, unsigned int mark)
 		goto _DONE;
 	}
 
+#if !defined (MODE_FLASH_WRITE_COPY)
+	ptr32 = &dataA[1];
+	*ptr32 = mark;
+#endif
+
 	// アドレス
 	offset = (dpcNum * DPC_MEMORY_NEW_FLASH_UNIT_SIZE) + DPC_MEMORY_NEW_FLASH_UNIT_SIZE - 4;
 
@@ -2086,8 +2095,13 @@ int dpcSetMarkFlash (int dpcNum, unsigned int mark)
 		goto _DONE;
 
 	// Write
+#if defined (MODE_FLASH_WRITE_COPY)
 	if ((status = qspiFlashWrite ((flashAdrs + offset), (unsigned char *)&mark, 4)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+#else
+	if ((status = qspiFlashWrite ((flashAdrs + offset), (unsigned char *)ptr32, 4)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+#endif
 
 _DONE:
 	return (status);
@@ -2109,6 +2123,10 @@ int dpcSetMarkFlashAdmin (int dpcNum, unsigned int mark)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int offset;
 	unsigned int flashAdrs;
+#if !defined (MODE_FLASH_WRITE_COPY)
+	unsigned int dataA[2];
+	unsigned int *ptr32;
+#endif
 
 	// Check dpcNum Parameter
 	if ((dpcNum < DPC_NUMBER_MIN) || (dpcNum > DPC_NUMBER_MAX))
@@ -2119,6 +2137,11 @@ int dpcSetMarkFlashAdmin (int dpcNum, unsigned int mark)
 		goto _DONE;
 	}
 
+#if !defined (MODE_FLASH_WRITE_COPY)
+	ptr32 = &dataA[1];
+	*ptr32 = mark;
+#endif
+
 	// アドレス
 	offset = (dpcNum * DPC_MEMORY_NEW_FLASH_UNIT_SIZE) + DPC_MEMORY_NEW_FLASH_UNIT_SIZE - 4;
 
@@ -2127,8 +2150,13 @@ int dpcSetMarkFlashAdmin (int dpcNum, unsigned int mark)
 		goto _DONE;
 
 	// Write
+#if defined (MODE_FLASH_WRITE_COPY)
 	if ((status = qspiFlashWrite ((flashAdrs + offset), (unsigned char *)&mark, 4)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+#else
+	if ((status = qspiFlashWrite ((flashAdrs + offset), (unsigned char *)ptr32, 4)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+#endif
 
 _DONE:
 	return (status);
@@ -2252,12 +2280,14 @@ int dpcCopyAdminToUser (int srcDpcNum, int desDpcNum)
 	unsigned int srcFlashAdrs, desFlashAdrs;
 	unsigned char *pBuffer = NULL;
 	GRID_XY *pGridBuffer = NULL;
+	unsigned char *pGridBufferTemp = NULL;
 	unsigned int mark;
 	DPCINFO dpcInfo;
 	int size;
 
 	size = DPC_MEMORY_NEW_ALL_SIZE;
 
+#if defined (MODE_FLASH_WRITE_COPY)
 	// Memory Request
 	if ((pBuffer = (unsigned char *)malloc(size)) == NULL)
 	{
@@ -2275,6 +2305,30 @@ int dpcCopyAdminToUser (int srcDpcNum, int desDpcNum)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
+#else
+	// Memory Request
+	if ((pBuffer = (unsigned char *)malloc((size + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		sprintf (gLogMsgBuff, "DPC Admin Copy Buffer Request. size = 0x%x.\n", size);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+	
+	pBuffer += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+
+	// DPC Grid Buffer Memory Request
+	if ((pGridBufferTemp = (unsigned char *)malloc ((DPC_IMPOSSIBLE_GRID_SIZE + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		sprintf (gLogMsgBuff, "DPC Admin Copy Buffer Request. size = 0x%x.\n", DPC_IMPOSSIBLE_GRID_SIZE);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+
+	pGridBufferTemp += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+	pGridBuffer = (GRID_XY *)pGridBufferTemp;
+#endif
 
 	// Check srcDpcNum Parameter
 	if ((srcDpcNum < DPC_NUMBER_MIN) || (srcDpcNum > DPC_NUMBER_MAX))
@@ -2335,6 +2389,14 @@ int dpcCopyAdminToUser (int srcDpcNum, int desDpcNum)
 		goto _DONE;
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuffer != NULL)
+		pBuffer -= QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+
+	if (pGridBuffer != NULL)
+		pGridBufferTemp -= QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
+
 	if (pBuffer != NULL)
 		free (pBuffer);
 

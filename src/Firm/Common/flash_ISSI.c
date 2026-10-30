@@ -25,10 +25,7 @@
 //@@@1#define QSPI_FLASH_WRITE_PROTECT_SUPPORT_ISSI
 
 // Status Check Timeout
-#define QSPI_FLASH_STATUS_COUNT_ISSI	(10000)		//10s
-
-// Bulk Erase Status Check Timeout
-#define QSPI_FLASH_BULK_STATUS_COUNT_ISSI (250000)	//250s
+#define QSPI_FLASH_STATUS_COUNT_ISSI	(1000000)		//10s
 
 // Bank Size
 #define QSPI_FLASH_BANK_SIZE_ISSI		(16*1024*1024)
@@ -181,6 +178,9 @@ int qspiFlashWrite_ISSI (unsigned int adrs, unsigned char *pBuffer, unsigned int
 	unsigned char cmdBuff[4];
 	unsigned int qspiFlashCurrentBank_ISSI;
 	unsigned char *ptr8;
+#if !defined (MODE_FLASH_WRITE_COPY)
+	unsigned int saveData[4];
+#endif
 
 	// Check adrs Parameter
 	if (adrs >= QSPI_FLASH_SIZE)
@@ -296,14 +296,17 @@ int qspiFlashWrite_ISSI (unsigned int adrs, unsigned char *pBuffer, unsigned int
 		//if ((status = qspiFlashWaitReadyEraseCheck_ISSI (QSPI_FLASH_STATUS_COUNT_ISSI)) != AVAL_STATUS_SUCCESS)
 			//goto _DONE;
 
+
+#if defined (MODE_FLASH_WRITE_COPY)
+
 		//------------------------------------------------------------
 		// Writeコマンド発行
 		//------------------------------------------------------------
 		ptr8 = (unsigned char *)QspiFlashWriteBuffer;
 
 		*ptr8 = QSPI_WRITE_CMD_ISSI;			// Write Command
-		ptr8++;
 		//*ptr8 = QUAD_QSPI_WRITE_CMD_ISSI;		// Quad Write Command
+		ptr8++;
 		*ptr8 = (u8)((adrs >> 16) & 0xff);
 		ptr8++;
 		*ptr8 = (u8)((adrs >> 8) & 0xff);
@@ -328,7 +331,6 @@ int qspiFlashWrite_ISSI (unsigned int adrs, unsigned char *pBuffer, unsigned int
 		//------------------------------------------------------------
 		// Writeデータ 4Byte Copy
 		//------------------------------------------------------------
-
 		// アドレスは4Byte単位?
 		if ((((unsigned int)srcPtrL & 0x03) == 0) && (((unsigned int)desPtrL & 0x03) == 0))
 		{
@@ -342,18 +344,11 @@ int qspiFlashWrite_ISSI (unsigned int adrs, unsigned char *pBuffer, unsigned int
 			// 転送元/転送先アドレス(1Byte)
 			srcPtrB = (unsigned char *)&pBuffer[(transed+transSizeL*4)];
 			desPtrB = (unsigned char *)&QspiFlashWriteBuffer[(1+transSizeL)];
-
-			//@@@1
-			//DEBUG_PRINT_FORCE("@@@4Byte Size = %d, %d\n", transSizeL, transSizeB);
-			//DEBUG_PRINT_FORCE("@@@4Byte Adrs = 0x%x, 0x%x\n", srcPtrB, desPtrB);
-			//DEBUG_PRINT_FORCE("@@@4Byte Base = 0x%x, 0x%x\n", &pBuffer[transed], &QspiFlashWriteBuffer[1]);
-			//@@@1
 		}
 		
 		//------------------------------------------------------------
 		// Writeデータ 1Byte Copy
 		//------------------------------------------------------------
-
 		// データコピー
 		for (Index=0; Index<transSizeB; Index++, srcPtrB++, desPtrB++)
 			*desPtrB = *srcPtrB;
@@ -363,19 +358,74 @@ int qspiFlashWrite_ISSI (unsigned int adrs, unsigned char *pBuffer, unsigned int
 		//------------------------------------------------------------
 		SPI_transfer_block (&g_flash_core_spi, (unsigned char *)QspiFlashWriteBuffer, (transSize+4), 0, 0);    
 
+#else	// #if defined (MODE_FLASH_WRITE_COPY)
+
+		//------------------------------------------------------------
+		// Data Save
+		//------------------------------------------------------------
+		ptr8 = &pBuffer[transed];
+		ptr8--;
+		saveData[3] = *ptr8;
+		ptr8--;
+		saveData[2] = *ptr8;
+		ptr8--;
+		saveData[1] = *ptr8;
+		ptr8--;
+		saveData[0] = *ptr8;
+
+		// Start Adrs
+		srcPtrB = ptr8;
+
+		//------------------------------------------------------------
+		// Writeコマンド発行
+		//------------------------------------------------------------
+		*ptr8 = QSPI_WRITE_CMD_ISSI;			// Write Command
+		//*ptr8 = QUAD_QSPI_WRITE_CMD_ISSI;		// Quad Write Command
+		ptr8++;
+		*ptr8 = (u8)((adrs >> 16) & 0xff);
+		ptr8++;
+		*ptr8 = (u8)((adrs >> 8) & 0xff);
+		ptr8++;
+		*ptr8 = (u8)(adrs & 0xFF);
+		ptr8++;
+
+		//------------------------------------------------------------
+		// Write
+		//------------------------------------------------------------
+		SPI_transfer_block (&g_flash_core_spi, (unsigned char *)srcPtrB, (transSize+4), 0, 0);    
+
+		//------------------------------------------------------------
+		// Data Restore
+		//------------------------------------------------------------
+		ptr8 = &pBuffer[transed];
+		ptr8--;
+		*ptr8 = saveData[3];
+		ptr8--;
+		*ptr8 = saveData[2];
+		ptr8--;
+		*ptr8 = saveData[1];
+		ptr8--;
+		*ptr8 = saveData[0];
+#endif
 
 		//------------------------------------------------------------
 		// ステータスCheck
 		//------------------------------------------------------------
-		if ((status = qspiFlashStatusCheck_ISSI (QSPI_FLASH_STATUS_COUNT_ISSI)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
+		//@@@1if ((status = qspiFlashStatusCheck_ISSI (QSPI_FLASH_STATUS_COUNT_ISSI)) != AVAL_STATUS_SUCCESS)
+			//@@@1goto _DONE;
 
 		//------------------------------------------------------------
 		// Write Disableコマンド発行
 		//------------------------------------------------------------
-		if ((status = qspiFlashWriteDisableCmd_ISSI ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
+		//@@@1if ((status = qspiFlashWriteDisableCmd_ISSI ()) != AVAL_STATUS_SUCCESS)
+			//@@@1goto _DONE;
 	}
+
+	//------------------------------------------------------------
+	// ステータスCheck
+	//------------------------------------------------------------
+	if ((status = qspiFlashStatusCheck_ISSI (QSPI_FLASH_STATUS_COUNT_ISSI)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
 _DONE:
 	//------------------------------------------------------------
@@ -715,14 +765,14 @@ int qspiFlashStatusCheck_ISSI (unsigned int timeout)
 		if ((ready_bit & 0x01) == 0)
 			break;
 
-		msDelay (1);
+		usDelay (10);
 	}
 
 	// Check Timeout
 	if (retry >= timeout)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_TIMEOUT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Status Timeout Error\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Status Timeout Error.\n");
 		goto _DONE;
 	}
 
@@ -756,7 +806,7 @@ int qspiFlashWaitReadyEraseCheck_ISSI (unsigned int timeout)
 		if ((ready_bit & 0x80))
 			break;
 
-		msDelay (1);
+		usDelay (10);
 	}
 
 	// Check Timeout

@@ -39,7 +39,7 @@ int cmdDiagQspiErase (void *str)
 	loop = atoi ((char *)str);
 
 	// メモリリクエスト
-	if ((pBuff = (unsigned int *)malloc(size)) == NULL)
+	if ((pBuff = (unsigned int *)malloc(secSize)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Flash Memory Request Error.\n");
@@ -79,7 +79,7 @@ MORE:
 			fflush (stdout);
 
 			// Read
-			if ((status = qspiFlashRead (sec, (unsigned char *)pBuff, QSPI_FLASH_SEC_SIZE)) != AVAL_STATUS_SUCCESS)
+			if ((status = qspiFlashRead (sec, (unsigned char *)pBuff, secSize)) != AVAL_STATUS_SUCCESS)
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
 				sprintf (gLogMsgBuff, "Flash Read Error. Adrs = 0x%x\n", sec);
@@ -135,7 +135,7 @@ int cmdDiagQspiEraseAll (void *str)
 	loop = atoi ((char *)str);
 
 	// メモリリクエスト
-	if ((pBuff = (unsigned int *)malloc(size)) == NULL)
+	if ((pBuff = (unsigned int *)malloc(secSize)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Flash Memory Request Error.\n");
@@ -169,7 +169,7 @@ MORE:
 			fflush (stdout);
 
 			// Read
-			if ((status = qspiFlashRead (sec, (unsigned char *)pBuff, QSPI_FLASH_SEC_SIZE)) != AVAL_STATUS_SUCCESS)
+			if ((status = qspiFlashRead (sec, (unsigned char *)pBuff, secSize)) != AVAL_STATUS_SUCCESS)
 			{
 				status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
 				sprintf (gLogMsgBuff, "Flash Read Error. Adrs = 0x%x\n", sec);
@@ -229,12 +229,23 @@ int cmdDiagQspiFlashRW (void *str)
 	loop = atoi ((char *)str);
 
 	// メモリリクエスト
+#if defined (MODE_FLASH_WRITE_COPY)
 	if ((pBuff = (unsigned int *)malloc(secSize)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Flash Memory Request Error.\n");
 		goto _DONE;
 	}
+#else
+	if ((pBuff = (unsigned int *)malloc((secSize + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Flash Memory Request Error.\n");
+		goto _DONE;
+	}
+
+	pBuff += (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
 
 MORE:
 	for (tloop=0; tloop<loop; tloop++)
@@ -362,6 +373,11 @@ MORE:
 		goto MORE;
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuff != NULL)
+		pBuff -= (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
+
 	if (pBuff != NULL)
 		free (pBuff);
 
@@ -387,18 +403,30 @@ int cmdDiagQspiFlashRWAll (void *str)
 	unsigned int cmpData;
 	unsigned int count;
 	unsigned int size = QSPI_FLASH_SIZE;
-	unsigned int loop;
+	unsigned int secSize = QSPI_FLASH_SEC_SIZE;
+	unsigned int sec, loop;
 
 	// ループ回数取得
 	loop = atoi ((char *)str);
 
 	// メモリリクエスト
-	if ((pBuff = (unsigned int *)malloc(size)) == NULL)
+#if defined (MODE_FLASH_WRITE_COPY)
+	if ((pBuff = (unsigned int *)malloc(secSize)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Flash Memory Request Error.\n");
 		goto _DONE;
 	}
+#else
+	if ((pBuff = (unsigned int *)malloc((secSize + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Flash Memory Request Error.\n");
+		goto _DONE;
+	}
+
+	pBuff += (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
 
 MORE:
 	for (tloop=0; tloop<loop; tloop++)
@@ -419,25 +447,30 @@ MORE:
 		//--------------------------------------------------
 		// Blank Check
 		//--------------------------------------------------
-		DEBUG_PRINT("verify..\n");
-
-		// Read
-		if ((status = qspiFlashRead (0, (unsigned char *)pBuff, size)) != AVAL_STATUS_SUCCESS)
+		for (sec = 0; sec < size; sec += secSize)
 		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Read Error.\n");
-			goto _DONE;
-		}
+			DEBUG_PRINT("verify..sec = 0x%x size = 0x%x \n", sec, secSize);
+			fflush (stdout);
 
-		// コンペア
-		for (ix=0; ix<(size/4); ix++)
-		{
-			if (pBuff[ix] != 0xffffffff)
+			// Read
+			if ((status = qspiFlashRead (sec, (unsigned char *)pBuff, secSize)) != AVAL_STATUS_SUCCESS)
 			{
-				status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_COMPARE);
-				sprintf (gLogMsgBuff, "Flash Blank Check Error.\nAdrs = 0x%x\nData = 0x%x\n", ix, pBuff[ix]);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+				status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+				sprintf (gLogMsgBuff, "Flash Read Error. Adrs = 0x%x\n", sec);
+				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, gLogMsgBuff);
 				goto _DONE;
+			}
+
+			// コンペア
+			for (ix=0; ix<(secSize/4); ix++)
+			{
+				if (pBuff[ix] != 0xffffffff)
+				{
+					status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_COMPARE);
+					sprintf (gLogMsgBuff, "Flash Blank Check Error.\nAdrs = 0x%x\nOffset = 0x%x\nData = 0x%x\n", sec, ix, pBuff[ix]);
+					cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, gLogMsgBuff);
+					goto _DONE;
+				}
 			}
 		}
 
@@ -445,46 +478,51 @@ MORE:
 		// Write
 		//--------------------------------------------------
 		count = tloop;
-		DEBUG_PRINT ("Write..\n");
-		fflush (stdout);
-
-		// Data make
-		pBuffWrite = (unsigned int *)pBuff;
-		for (ix=0; ix<(size/4); ix++, count++)
-			pBuffWrite[ix] = count;
-
-		// Write
-		if ((status = qspiFlashWrite (0, (unsigned char *)pBuff, size)) != AVAL_STATUS_SUCCESS)
+		for (sec = 0; sec < size; sec += secSize)
 		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Error.\n");
-			goto _DONE;
+			DEBUG_PRINT ("Write..0x%08x\n", sec);
+
+			// Data make
+			pBuffWrite = (unsigned int *)pBuff;
+			for (ix=0; ix<(secSize/4); ix++, count++)
+				pBuffWrite[ix] = count;
+
+			// Write
+			if ((status = qspiFlashWrite (sec, (unsigned char *)pBuff, secSize)) != AVAL_STATUS_SUCCESS)
+			{
+				status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Error.\n");
+				goto _DONE;
+			}
 		}
 
 		//--------------------------------------------------
 		// Read
 		//--------------------------------------------------
 		cmpData = tloop;
-		DEBUG_PRINT ("Read..\n");
-
-		// read
-		if ((status = qspiFlashRead (0, (unsigned char *)pBuff, size)) != AVAL_STATUS_SUCCESS)
+		for (sec = 0; sec < size; sec += secSize)
 		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Read Error.\n");
-			goto _DONE;
-		}
+			DEBUG_PRINT ("Read/Compare..0x%08x\n", sec);
 
-		// コンペア
-		pBuffWrite = (unsigned int *)pBuff;
-		for (ix=0; ix<(size/4); ix++, cmpData++)
-		{
-			if (pBuff[ix] != cmpData)
+			// read
+			if ((status = qspiFlashRead (0, (unsigned char *)pBuff, secSize)) != AVAL_STATUS_SUCCESS)
 			{
-				status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_COMPARE);
-				sprintf (gLogMsgBuff, "Flash Compare Error.\nAdrs = 0x%x\nWrite  = 0x%x\nRead = 0x%x\n", ix, cmpData, pBuff[ix]);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+				status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
+				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Read Error.\n");
 				goto _DONE;
+			}
+
+			// コンペア
+			cmpData = count;
+			for (ix=0; ix<(secSize/4); ix++, cmpData++)
+			{
+				if (pBuff[ix] != cmpData)
+				{
+					status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_COMPARE);
+					sprintf (gLogMsgBuff, "Flash Compare Error.\nAdrs = 0x%x\nWrite  = 0x%x\nRead = 0x%x\n", ix, cmpData, pBuff[ix]);
+					cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+					goto _DONE;
+				}
 			}
 		}
 	}
@@ -493,6 +531,11 @@ MORE:
 		goto MORE;
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuff != NULL)
+		pBuff -= (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
+
 	if (pBuff != NULL)
 		free (pBuff);
 
@@ -528,12 +571,23 @@ int cmdDiagQspiFlashRWRandom (void *str)
 	loop = atoi ((char *)str);
 
 	// メモリリクエスト
+#if defined (MODE_FLASH_WRITE_COPY)
 	if ((pBuff = (unsigned int *)malloc(size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Flash Memory Request Error.\n");
 		goto _DONE;
 	}
+#else
+	if ((pBuff = (unsigned int *)malloc(size + QSPI_FLASH_WRITE_COPY_ADD_SIZE)) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Flash Memory Request Error.\n");
+		goto _DONE;
+	}
+	
+	pBuff += (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
 
 MORE:
 	for (tloop=0; tloop<loop; tloop++)
@@ -656,6 +710,11 @@ MORE:
 		goto MORE;
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuff != NULL)
+		pBuff -= (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
+
 	if (pBuff != NULL)
 		free (pBuff);
 
@@ -769,6 +828,7 @@ int cmdDiagQspiFlashRWSector (void *str)
 		goto _DONE;
 	}
 
+#if defined (MODE_FLASH_WRITE_COPY)
 	// メモリリクエスト
 	if ((pBuff = (unsigned char *)malloc(size)) == NULL)
 	{
@@ -776,6 +836,17 @@ int cmdDiagQspiFlashRWSector (void *str)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Flash Memory Request Error.\n");
 		goto _DONE;
 	}
+#else
+	// メモリリクエスト
+	if ((pBuff = (unsigned char *)malloc((size + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,__func__, __LINE__, status, "Flash Memory Request Error.\n");
+		goto _DONE;
+	}
+
+	pBuff += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
 
 MORE:
 	for (tloop=0; tloop<loop; tloop++)
@@ -901,6 +972,11 @@ _DONE:
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Read Error.\n");
 	}
+
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuff != NULL)
+		pBuff -= QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
 
 	if (pBuff != NULL)
 		free (pBuff);

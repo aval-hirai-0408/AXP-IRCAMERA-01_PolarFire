@@ -18,13 +18,13 @@
 //----------------------------------------------------------------------------------
 
 // Firmware Version
-#define FIRM_VERSION						"0.1"
+#define FIRM_VERSION						"0.2"
 
 // Main Version
-#define MAIN_VERSION						"0.1"
+#define MAIN_VERSION						"0.2"
 
 // HW Version
-#define HW_VERSION							"0.1"
+#define HW_VERSION							"0.2"
 
 
 //----------------------------------------------------------------------------------
@@ -41,8 +41,6 @@
 //#define MODE_SPECTRUM_MULTI_HEIGHT		// Spectrum Multi Height
 //#define MODE_SPECTRUM_BAND_SELECT			// Spectrum Band Select
 //#define MODE_SPECTRUM_BANDGAIN_FILTER		// Spectrum BandGain Filter
-#define MODE_ENCODER						// Encoder
-#define MODE_I2C							// I2C Mode
 #define MODE_FFC							// Flat Field Correction Mode
 #define MODE_FFC_FIRST						// Flat Field Correction First Mode
 //#define MODE_FFC_SHADING_LINE				// Flat Field Correction Shading Mode
@@ -53,22 +51,25 @@
 #define MODE_DPC_GRID_UPDATE				// Defective Pixel Correction Grid Update
 //#define MODE_DPC_NONUNIFORM_SPECTRUM_MODE	// Defective Pixel Correction NonUniform Spectrum Mode
 #define MODE_DPC_MEM_EXTERNAL_MALLOC		// Defective Pixel Correction External Memory Malloc
+#define MODE_ROI_VERSION2					// ROI Version2 Mode
+#define MODE_BINNING						// Binning Mode
 #define MODE_LUT							// Lookup Table
 #define MODE_DIGITAL_OFFSET_GAIN			// Digital Offset Gain
 #define MODE_GENICAM_DIGITALIO				// Genicam Digital IO
 #define MODE_GENICAM_COUNTER				// Genicam Counter
 #define MODE_GENICAM_TIMER					// Genicam Timer
+#define MODE_ENCODER						// Encoder
+#define MODE_I2C							// I2C Mode
 //#define MODE_CAMERA_INTERRUPT				// Camera Interrupt Mode
 //#define MODE_USERSET_SPECTRUM_PARAM		// Userset Spectrum Parameter Mode
 //#define MODE_ACQUISITION_TRG_EXTEND		// Acquisition Trigger Extend
 //#define MODE_FLASH_PROTECT_NEW			// Flash Protect New Mode
 #define MODE_FLASH_PROTECT_SIMPLE			// Flash Protect Simple
-#define MODE_ROI_VERSION2					// ROI Version2 Mode
+//#define MODE_FLASH_WRITE_COPY               // Flash Write Copy Mode
 #define MODE_VOLTAGE_FPGA_BOARD				// FPGA Board Voltage Mode
 #define MODE_VOLTAGE_IF_BOARD				// IF Board Voltage Mode
 //#define MODE_VOLTAGE_SUB_BOARD			// Sub Board Voltage Mode
 //#define MODE_VOLTAGE_SENSOR_BOARD			// Sensor Board Voltage Mode
-#define MODE_AOI							// AOI Mode
 #define MODE_TRG_RESERVED_ADJUST			// Trigger Reserved Adjust
 #define MODE_GE_PACKET_SIZE_CUSTOM			// GigE Packet Size Custom
 //#define MODE_GE_PACKET_INFO_SAVE			// GigE Packet Information Save
@@ -85,10 +86,8 @@
 #define MODE_CXP							// Cxp Mode
 #define MODE_CXP_VERSION_20					// Cxp Version 2.0
 #define MODE_CXP_RATE_CHANGE				// Cxp Rate Change
-#define MODE_BOARD_ACB533CXP				// CXP Board ACB-533IFCXP(ABA-052VIR2)
+#define MODE_BOARD_ACB534CXP				// CXP Board ACB-534IFCXP(ABA-052VIR2)
 //#define MODE_UPDATE_INTERFACE				// InterfaceBoard Update
-#define MODE_FPGA_PF						// InterfaceBoard FPGA TYPE PolarFire
-#define MODE_BINNING						// Binning Mode
 //#define MODE_FRAMERATE_HIGH_SPEED			// Frame Rate High Speed
 #define MODE_XML_SCHEMA_VERSION				// XML SchemaVersion
 //#define MODE_SENSOR_MASTER				// Sensor Mode
@@ -98,11 +97,11 @@
 //#define MODE_SENSOR_IMX991				// Sensor Module IMX991
 #define MODE_SENSOR_IMX992					// Sensor Module IMX992
 //#define MODE_SENSOR_IMX993				// Sensor Module IMX993
-#define MODE_IPU_MULTI						// IPU Multi Mode			@@@1
 //#define MODE_MULTI_STREAM					// Multi Stream
 #define MODE_GIGE_10G						// GigE 10G
 //#define MODE_IEEE1588_PTP					// IEE1588 PTP
 #define MODE_LUT_NUMBER_FIX					// Lut Number Fix Mode
+//#define MODE_UPDATE_ALL_MULTI				// Update All Multi
 
 
 //----------------------------------------------------------------------------------
@@ -286,6 +285,7 @@
 #define SENSOR_TGSE							(2)
 #define SENSOR_TGES							(48)							// 10+38(GTWAIT)
 #define SENSOR_TGPD							(SENSOR_VINTERVAL_LINE)			// VMAX
+#define SENSOR_TGES_MARGIN					(2)	//露光時間が2H長いためマージン
 
 // DRRS TGES
 #define SENSOR_TGES_DRRS					(12)
@@ -382,28 +382,26 @@
 #define QSPI_FLASH_SIZE						(128*1024*1024)
 #define QSPI_FLASH_SEC_SIZE					(64*1024)
 
-
-//----------------------------------------------------------------------------------
-// AXI QSPI Flash
-//----------------------------------------------------------------------------------
-#define AXI_QSPI_FLASH_SIZE					(128*1024*1024)
-#define AXI_QSPI_FLASH_SEC_SIZE				(64*1024)
+#define QSPI_FLASH_WRITE_COPY_ADD_SIZE      (4)
 
 
 //----------------------------------------------------------------------------------
 // Flash MAP
 //----------------------------------------------------------------------------------
 #define FLASH_HEADER_ADRS					(0x00000000)	// Header
+#define FLASH_LOADER_ADRS					(0x00010000)	// Loader
 #define FLASH_XML_ADRS						(0x00100000)	// XML Address
 	#define FLASH_XML_SIZE					(0x000f0000)	// XML Size
 #define FLASH_XML_FILE_NAME_ADRS			(0x001f0000)	// XML File Name Address
 	#define FLASH_XML_FILE_NAME_SIZE		(0x00001000)	// XML File Name Size
 #define FLASH_UPDATE_ALL_ADRS				(0x00200000)	// All Address
-#define FLASH_FPGA_DATA_ADRS				(0x00500000)	// FPGA Data Address
+	#define FLASH_FIRM_DATA_SIZE			(0x00200000)	// All Size
+#define FLASH_FPGA_DATA_ADRS				(0x00400000)	// FPGA Data Address
+	#define FLASH_FPGA_DATA_SIZE			(0x01000000)	// FPGA Data Size
 #define FLASH_PHY_DATA_ADRS					(0x01500000)	// PHY Data Adrs
 	#define FLASH_PHY_DATA_SIZE				(0x00100000)	// PHY Data Size
 #define FLASH_UPDATE_ALL_ADMIN_ADRS			(0x01600000)	// All Address(Backup)
-#define FLASH_FPGA_DATA_ADMIN_ADRS			(0x01900000)	// FPGA Data Address(Backup)
+#define FLASH_FPGA_DATA_ADMIN_ADRS			(0x01800000)	// FPGA Data Address(Backup)
 #define FLASH_PHY_DATA_BACKUP_ADRS			(0x02900000)	// PHY Data Adrs(Backup)
 #define FLASH_LUT1_ADRS						(0x02A00000)	// LUT1データ格納Flashアドレス
 #define FLASH_LUT2_ADRS						(0x02A10000)	// LUT2データ格納Flashアドレス
@@ -435,20 +433,12 @@
 #define IMG_WIDTH_OFFSET					(16)
 #define IMG_HEIGHT_OFFSET					(4)
 
-#define IMG_WIDTH_IPU_MULTI_FULL			(CAMERA_WIDTH_MAX + (IPU_WIDTH_ADD_SIZE * IPU_COUNT))
-#define IMG_WIDTH_IPU_MULTI_HALF			((CAMERA_WIDTH_MAX / IPU_COUNT) + IPU_WIDTH_ADD_SIZE)
-#define IPU_WIDTH_ADD_SIZE					(32)
-
-#define IMG_WIDTH_IPU_SIZE					(IMG_WIDTH / IPU_COUNT)
-
 #define IMG_WIDTH_MIN						(0)
 #define IMG_HEIGHT_MIN						(0)
 #define IMG_WIDTH_MAX						(IMG_WIDTH)
 #define IMG_HEIGHT_MAX						(IMG_HEIGHT)
 
 #define IMG_STRIDE							(IMG_WIDTH)				// 画像ストライド:2byteのため本来は1280だが、2byteはunsigned shortで表現するためIMG_WIDTHと同数
-
-#define IMG_WIDTH_IPU_MULTI_ADD_SIZE		(32)
 
 
 // IPU Width / Height offset
@@ -550,11 +540,11 @@
 #define DPC_BRIGHTNESS_LOOP_MAX				(1)
 
 // 欠陥画素Data Align
-#define DPC_WIDTH_DATA_ALIGH				(256)
+#define DPC_WIDTH_DATA_ALIGH				(512)
 
 // Size
 #define DPC_MEMORY_NEW_SIZE					((IMG_WIDTH*IMG_HEIGHT)/8)			// 単純にWidth * height /8のサイズ ※Flash等の保存サイズ
-#define DPC_MEMORY_NEW_ALL_SIZE				(DPC_WIDTH_DATA_ALIGH*IMG_HEIGHT*IPU_COUNT)	// メモリへの展開サイズ。メモリはWidth方向でアラインがある
+#define DPC_MEMORY_NEW_ALL_SIZE				(DPC_WIDTH_DATA_ALIGH*IMG_HEIGHT)	// メモリへの展開サイズ。メモリはWidth方向でアラインがある
 #define DPC_MEMORY_NEW_UNIT_SIZE			(DPC_MEMORY_NEW_ALL_SIZE)			// Flashへの保存サイズにFlashのセクタを考慮してアラインされたサイズ
 #define DPC_MEMORY_NEW_FLASH_UNIT_SIZE		(DPC_MEMORY_NEW_UNIT_SIZE)			// Flashへの保存サイズにFlashのセクタを考慮してアラインされたサイズ
 
@@ -822,12 +812,16 @@
 #define PELTIER_DEFAULT_TEMP				(15*CAMERA_SAVE_TEMP_UNIT)
 
 // Sensor Alarm
-#define SENSOR_DEFAULT_LOW_TEMP				(0*CAMERA_SAVE_TEMP_UNIT)
-#define SENSOR_DEFAULT_HIGH_TEMP			(80*CAMERA_SAVE_TEMP_UNIT)
+#define SENSOR_DEFAULT_LOW_TEMP				(30*CAMERA_SAVE_TEMP_UNIT)
+#define SENSOR_DEFAULT_HIGH_TEMP			(35*CAMERA_SAVE_TEMP_UNIT)
 
 // Case Limit
 #define CASE_DEFAULT_LOW_TEMP				(80*CAMERA_SAVE_TEMP_UNIT)
 #define CASE_DEFAULT_HIGH_TEMP				(100*CAMERA_SAVE_TEMP_UNIT)
+
+// FPGA Limit
+#define FPGA_DEFAULT_LOW_TEMP				(80*CAMERA_SAVE_TEMP_UNIT)
+#define FPGA_DEFAULT_HIGH_TEMP				(100*CAMERA_SAVE_TEMP_UNIT)
 
 // Peltier Power Level
 #define PELTIER_POWER_LEVEL					(PELTIER_POWER_LEVEL_HIGH)
@@ -845,8 +839,8 @@
 // Framerate
 #define DEFAULT_FRAMERATE					(20)		// fps
 #define DEFAULT_FRAMERATE_TIME2				((1.0/DEFAULT_FRAMERATE) * ACQUISITION_FRAMERATE_UINIT)
-#define DEFAULT_FRAME_HTIME				(((SENSOR_H_CLOCK*1000*1000)/SENSOR_VINTERVAL_LINE)/DEFAULT_FRAMERATE)
-#define DEFAULT_FRAMERATE_TIME			((((1.0/DEFAULT_FRAMERATE)*1000000)/(DEFAULT_FRAME_HTIME * SENSOR_H_TIME))+0.5/*四捨五入*/)
+#define DEFAULT_FRAME_HTIME					(((SENSOR_H_CLOCK*1000*1000)/SENSOR_VINTERVAL_LINE)/DEFAULT_FRAMERATE)
+#define DEFAULT_FRAMERATE_TIME				((((1.0/DEFAULT_FRAMERATE)*1000000)/(DEFAULT_FRAME_HTIME * SENSOR_H_TIME))+0.5/*四捨五入*/)
 
 // Exposure
 #define DEFAULT_EXPOSURE					(10000)

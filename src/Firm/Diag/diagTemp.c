@@ -576,7 +576,7 @@ MORE:
 		//--------------------------------------------------------------------------------
 		// FPGA温度
 		//--------------------------------------------------------------------------------
-		if ((status = xadcGetFpgaTemp (&temp)) != AVAL_STATUS_SUCCESS)
+		if ((status = fpgaGetTemp (&temp)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		// Check FPGA Temp

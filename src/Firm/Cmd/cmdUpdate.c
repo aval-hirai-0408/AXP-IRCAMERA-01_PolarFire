@@ -313,6 +313,80 @@ int cmdFpgaUpdateHelp (void *str)
 
 
 //**********************************************************************************
+//	FPGA Update
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdFpgaUpdate2 (void *str)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	int argc;
+	int saveLed0 = -1;
+
+	// Get Argument
+	argc = cmdCheckArg ((char *)str);
+
+	// Help?
+	if (argc == 2)
+	{
+		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
+		{
+			cmdFpgaUpdateHelp (NULL);
+			goto _DONE;
+		}
+	}
+
+	if (argc == 1)
+	{
+		// プログラム設定ステート
+		saveLed0 = ledSettingState ();
+
+		// Update
+		if ((status = fpgaUpdate2 ()) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+	}
+	else
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
+		goto _DONE;
+	}
+
+_DONE:
+	// LEDの設定を元に戻す
+	ledReturnState (saveLed0, -1);
+	return (status);
+}
+
+
+//**********************************************************************************
+//	FPGA Update Help
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdFpgaUpdate2Help (void *str)
+{
+	DEBUG_PRINT_FORCE ("\n");
+	DEBUG_PRINT_FORCE ("[Set]\n");
+	DEBUG_PRINT_FORCE ("  Function          : FPGA data is updated.\n");
+	DEBUG_PRINT_FORCE ("  Command           : update-fpga2\n");
+	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
+	DEBUG_PRINT_FORCE ("  Output Param      : none\n");
+	DEBUG_PRINT_FORCE ("\n");
+
+	return (AVAL_STATUS_SUCCESS);
+}
+
+
+//**********************************************************************************
 //	Firmware All Download(全領域)
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
@@ -519,9 +593,6 @@ int cmdFirmXmlDownloadHelp (void *str)
 
 	return (AVAL_STATUS_SUCCESS);
 }
-
-
-
 
 
 //**********************************************************************************

@@ -20,6 +20,7 @@
 // externs
 //----------------------------------------------------------------------------------
 extern int gInterFaceID;
+extern unsigned int gDipsw;
 
 //@@@1
 extern unsigned int gDIPSW;
@@ -50,12 +51,7 @@ int cameraLogMsg (int level, const char *fileName, const char *funcName, unsigne
 	unsigned char data8;
 	char dataS8;
 	double tempD;
-	unsigned int dipsw;
 	int consoleMode;
-
-	// Get Dipsw
-	if ((status = getDipsw (&dipsw)) != AVAL_STATUS_SUCCESS)
-		dipsw = 0;
 
     // Error Device
     devCode = (short)(errorNumber>>16);
@@ -63,12 +59,9 @@ int cameraLogMsg (int level, const char *fileName, const char *funcName, unsigne
     // Error Code
     errCode = (short)(errorNumber&0xffff);
 
-//@@@@@@@@@
-	dipsw = gDIPSW;
-//@@@@@@@@@
 	// Checl Error Level & dipsw mode
-	//if ((level != MSG_LEVEL_ERROR) && (dipsw != 0x3))
-	if (dipsw != 0x3)
+	//if ((level != MSG_LEVEL_ERROR) && (gDipsw != 0x3))
+	if (gDipsw != 0x3)
 		goto _NEXT;
 	
 	// count
@@ -90,7 +83,7 @@ int cameraLogMsg (int level, const char *fileName, const char *funcName, unsigne
 	uartSend (UART_PORT0, (unsigned char *)&dataS8, 1);
 	
 	// FPGA Temp
-	if ((status = xadcGetFpgaTemp (&tempD)) != AVAL_STATUS_SUCCESS)
+	if ((status = fpgaGetTemp (&tempD)) != AVAL_STATUS_SUCCESS)
 		dataS8 = (char)-127;
 	else
 		dataS8 = (char)tempD;
@@ -258,6 +251,7 @@ unsigned int cameraGetCounter (void)
 	count = 0;	//@@@1
 	return (count);
 }
+
 
 //**********************************************************************************
 // Bit Swap

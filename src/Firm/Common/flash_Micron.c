@@ -25,10 +25,7 @@
 //@@@1#define QSPI_FLASH_WRITE_PROTECT_SUPPORT_N25Q
 
 // Status Check Timeout
-#define QSPI_FLASH_STATUS_COUNT_N25Q	(10000)		//10s
-
-// Bulk Erase Status Check Timeout
-#define QSPI_FLASH_BULK_STATUS_COUNT_N25Q (250000)	//250s
+#define QSPI_FLASH_STATUS_COUNT_N25Q	(1000000)		//10s
 
 // Bank Size
 #define QSPI_FLASH_BANK_SIZE_N25Q		(16*1024*1024)
@@ -173,14 +170,19 @@ int qspiFlashWrite_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int Index;
 	unsigned int transed, transSize;
-	unsigned int *srcPtrL, *desPtrL;
-	unsigned char *srcPtrB, *desPtrB;
-	unsigned int transSizeL, transSizeB;
 	unsigned int alignAdrs, alignSize;
 	unsigned int bank;
 	unsigned char cmdBuff[4];
 	unsigned int qspiFlashCurrentBank_N25Q;
 	unsigned char *ptr8;
+#if defined (MODE_FLASH_WRITE_COPY)
+	unsigned int *srcPtrL, *desPtrL;
+	unsigned char *srcPtrB, *desPtrB;
+	unsigned int transSizeL, transSizeB;
+#else
+	unsigned char *srcPtrB;
+	unsigned int saveData[4];
+#endif
 
 	// Check adrs Parameter
 	if (adrs >= QSPI_FLASH_SIZE)
@@ -293,8 +295,13 @@ int qspiFlashWrite_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int
 		//------------------------------------------------------------
 		// Wait Ready Check
 		//------------------------------------------------------------
-		if ((status = qspiFlashWaitReadyEraseCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
+		if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
+		{
+			if ((status = qspiFlashWaitReadyEraseCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
+				goto _DONE;
+		}
+
+#if defined (MODE_FLASH_WRITE_COPY)
 
 		//------------------------------------------------------------
 		// Writeコマンド発行
@@ -302,8 +309,8 @@ int qspiFlashWrite_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int
 		ptr8 = (unsigned char *)QspiFlashWriteBuffer;
 
 		*ptr8 = QSPI_WRITE_CMD_N25Q;			// Write Command
-		ptr8++;
 		//*ptr8 = QUAD_QSPI_WRITE_CMD_N25Q;		// Quad Write Command
+		ptr8++;
 		*ptr8 = (u8)((adrs >> 16) & 0xff);
 		ptr8++;
 		*ptr8 = (u8)((adrs >> 8) & 0xff);
@@ -319,16 +326,15 @@ int qspiFlashWrite_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int
 
 		// 転送元/転送先アドレス(4Byte)
 		srcPtrL = (unsigned int *)&pBuffer[transed];
-		desPtrL = (unsigned int *)&QspiFlashWriteBuffer[1];
+		desPtrL = (unsigned int *)&QspiFlashWriteBuffer[1];		// QspiFlashWriteBuffer[0]はコマンド格納用
 
 		// 転送元/転送先アドレス(1Byte)
 		srcPtrB = (unsigned char *)&pBuffer[transed];
-		desPtrB = (unsigned char *)&QspiFlashWriteBuffer[1];
+		desPtrB = (unsigned char *)&QspiFlashWriteBuffer[1];	// QspiFlashWriteBuffer[0]はコマンド格納用
 
 		//------------------------------------------------------------
 		// Writeデータ 4Byte Copy
 		//------------------------------------------------------------
-
 		// アドレスは4Byte単位?
 		if ((((unsigned int)srcPtrL & 0x03) == 0) && (((unsigned int)desPtrL & 0x03) == 0))
 		{
@@ -342,18 +348,11 @@ int qspiFlashWrite_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int
 			// 転送元/転送先アドレス(1Byte)
 			srcPtrB = (unsigned char *)&pBuffer[(transed+transSizeL*4)];
 			desPtrB = (unsigned char *)&QspiFlashWriteBuffer[(1+transSizeL)];
-
-			//@@@1
-			//DEBUG_PRINT_FORCE("@@@4Byte Size = %d, %d\n", transSizeL, transSizeB);
-			//DEBUG_PRINT_FORCE("@@@4Byte Adrs = 0x%x, 0x%x\n", srcPtrB, desPtrB);
-			//DEBUG_PRINT_FORCE("@@@4Byte Base = 0x%x, 0x%x\n", &pBuffer[transed], &QspiFlashWriteBuffer[1]);
-			//@@@1
 		}
 		
 		//------------------------------------------------------------
 		// Writeデータ 1Byte Copy
 		//------------------------------------------------------------
-
 		// データコピー
 		for (Index=0; Index<transSizeB; Index++, srcPtrB++, desPtrB++)
 			*desPtrB = *srcPtrB;
@@ -363,20 +362,78 @@ int qspiFlashWrite_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int
 		//------------------------------------------------------------
 		SPI_transfer_block (&g_flash_core_spi, (unsigned char *)QspiFlashWriteBuffer, (transSize+4), 0, 0);    
 
+
+#else	// #if defined (MODE_FLASH_WRITE_COPY)
+
+		//------------------------------------------------------------
+		// Data Save
+		//------------------------------------------------------------
+		ptr8 = &pBuffer[transed];
+		ptr8--;
+		saveData[3] = *ptr8;
+		ptr8--;
+		saveData[2] = *ptr8;
+		ptr8--;
+		saveData[1] = *ptr8;
+		ptr8--;
+		saveData[0] = *ptr8;
+
+		// Start Adrs
+		srcPtrB = ptr8;
+
+		//------------------------------------------------------------
+		// Writeコマンド発行
+		//------------------------------------------------------------
+		*ptr8 = QSPI_WRITE_CMD_N25Q;			// Write Command
+		//*ptr8 = QUAD_QSPI_WRITE_CMD_N25Q;		// Quad Write Command
+		ptr8++;
+		*ptr8 = (u8)((adrs >> 16) & 0xff);
+		ptr8++;
+		*ptr8 = (u8)((adrs >> 8) & 0xff);
+		ptr8++;
+		*ptr8 = (u8)(adrs & 0xFF);
+		ptr8++;
+
+		//------------------------------------------------------------
+		// Write
+		//------------------------------------------------------------
+		SPI_transfer_block (&g_flash_core_spi, (unsigned char *)srcPtrB, (transSize+4), 0, 0);    
+
+		//------------------------------------------------------------
+		// Data Restore
+		//------------------------------------------------------------
+		ptr8 = &pBuffer[transed];
+		ptr8--;
+		*ptr8 = saveData[3];
+		ptr8--;
+		*ptr8 = saveData[2];
+		ptr8--;
+		*ptr8 = saveData[1];
+		ptr8--;
+		*ptr8 = saveData[0];
+#endif
+
 		//------------------------------------------------------------
 		// ステータスCheck
 		//------------------------------------------------------------
-		if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
+		//@@@1if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
+			//@@@1goto _DONE;
 
 		//------------------------------------------------------------
 		// Write Disableコマンド発行
 		//------------------------------------------------------------
-		if ((status = qspiFlashWriteDisableCmd_N25Q ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
+		//@@@1if ((status = qspiFlashWriteDisableCmd_N25Q ()) != AVAL_STATUS_SUCCESS)
+			//@@@1goto _DONE;
 	}
 
+	//------------------------------------------------------------
+	// ステータスCheck
+	//------------------------------------------------------------
+	if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
 _DONE:
+
 	//------------------------------------------------------------
 	// Write Protectコマンド発行
 	//------------------------------------------------------------
@@ -518,9 +575,12 @@ int qspiFlashRead_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int 
 	    cmdBuff[4] = DONT_CARE;
 	    cmdBuff[5] = DONT_CARE;
 	    
-		// Wait Redy Check
-		if ((status = qspiFlashWaitReadyEraseCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
+		if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
+		{
+			// Wait Redy Check
+			if ((status = qspiFlashWaitReadyEraseCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
+				goto _DONE;
+		}
 
 		// Status Check
 		if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
@@ -714,7 +774,7 @@ int qspiFlashStatusCheck_N25Q (unsigned int timeout)
 		if ((ready_bit & 0x01) == 0)
 			break;
 
-		msDelay (1);
+		usDelay (10);
 	}
 
 	// Check Timeout
@@ -754,7 +814,7 @@ int qspiFlashWaitReadyEraseCheck_N25Q (unsigned int timeout)
 		if ((ready_bit & 0x80))
 			break;
 
-		msDelay (1);
+		usDelay (10);
 	}
 
 	// Check Timeout

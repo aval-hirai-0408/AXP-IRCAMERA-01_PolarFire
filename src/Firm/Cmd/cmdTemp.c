@@ -183,7 +183,7 @@ int cmdTempShow (void *str)
 	}
 
 	// FPGA温度
-	if (xadcGetFpgaTemp (&temp) == AVAL_STATUS_SUCCESS)
+	if (fpgaGetTemp (&temp) == AVAL_STATUS_SUCCESS)
 	{
 		DEBUG_PRINT_FORCE ("   FPGA Temp                 ");
 		DEBUG_PRINT_FORCE ("%.2f\n", temp);
@@ -321,16 +321,9 @@ int cmdTempAlarmStatusShow (void *str)
 
 	tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
 
-	// センサ上限温度ステータス
-	DEBUG_PRINT_FORCE ("   Sensor Upper Temp         ");
-	if (tempStatus & SENSOR_TEMP_OVER_STATUS)
-		DEBUG_PRINT_FORCE ("NG\n");
-	else
-		DEBUG_PRINT_FORCE ("OK\n");
-
-	// センサ下限温度ステータス
-	DEBUG_PRINT_FORCE ("   Sensor Lower Temp         ");
-	if (tempStatus & SENSOR_TEMP_UNDER_STATUS)
+	// センサ温度ステータス
+	DEBUG_PRINT_FORCE ("   Sensor Temp               ");
+	if (tempStatus & SENSOR_TEMP_STATUS)
 		DEBUG_PRINT_FORCE ("NG\n");
 	else
 		DEBUG_PRINT_FORCE ("OK\n");
@@ -341,6 +334,13 @@ int cmdTempAlarmStatusShow (void *str)
 		DEBUG_PRINT_FORCE ("NG\n");
 	else
 		DEBUG_PRINT_FORCE ("OK\n");
+
+    // FPGA温度ステータス
+    DEBUG_PRINT_FORCE ("   FPGA Temp                 ");
+    if (tempStatus & FPGA_TEMP_STATUS)
+        DEBUG_PRINT_FORCE ("NG\n");
+    else
+        DEBUG_PRINT_FORCE ("OK\n");
 
 	DEBUG_PRINT_FORCE ("\n");
 
@@ -428,7 +428,7 @@ int cmdTemp (void *str)
 		}
 
 		// FPGA温度
-		if ((statusLocal = xadcGetFpgaTemp (&fpgaTemp)) != AVAL_STATUS_SUCCESS)
+		if ((statusLocal = fpgaGetTemp (&fpgaTemp)) != AVAL_STATUS_SUCCESS)
 		{
 			status |= statusLocal;
 			fpgaTemp = -1;
@@ -689,6 +689,113 @@ int cmdCaseTempAlrmHelp (void *str)
 	DEBUG_PRINT_FORCE ("[Case Temperature High/Low Limit]\n");
 	DEBUG_PRINT_FORCE ("  Low  : %.2f\n", PELTIER_CASE_ALM_MIN_TEMP);
 	DEBUG_PRINT_FORCE ("  High : %.2f\n", PELTIER_CASE_ALM_MAX_TEMP);
+	DEBUG_PRINT_FORCE ("\n");
+
+	return (AVAL_STATUS_SUCCESS);
+}
+
+
+//**********************************************************************************
+//	FPGA Temp Limit設定
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdFpgaTempAlrm (void *str)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	int argc;
+	double tempOver, tempUnder;
+
+	// Get Argument
+	argc = cmdCheckArg ((char *)str);
+
+	// Help?
+	if (argc == 2)
+	{
+		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
+		{
+			cmdFpgaTempAlrmHelp (NULL);
+			goto _DONE;
+		}
+	}
+
+	if (argc == 1)
+	{
+		// FPGA温度リミット取得
+		if ((status = fpgaGetTempAlarm (&tempOver, &tempUnder)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+		
+		DEBUG_PRINT_FORCE ("%.2f %.2f ", tempOver, tempUnder);
+	}
+	else if (argc == 3)
+	{
+		// 上限値
+		if (sscanf (gCmdArg[1], "%lf", &tempOver) != 1)
+		{
+			status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
+			goto _DONE;
+		}
+
+		// 下限値
+		if (sscanf (gCmdArg[2], "%lf", &tempUnder) != 1)
+		{
+			status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
+			goto _DONE;
+		}
+
+		// FPGA温度リミット設定
+		if ((status = fpgaSetTempAlarm (tempOver, tempUnder)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+	}
+	else
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_ARGUMENT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
+		goto _DONE;
+	}
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	FPGA Temp Limit設定Help
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdFpgaTempAlrmHelp (void *str)
+{
+	DEBUG_PRINT_FORCE ("\n");
+	DEBUG_PRINT_FORCE ("[Get]\n");
+	DEBUG_PRINT_FORCE ("  Function          : The FPGA Temperature Alarm is acquired.\n");
+	DEBUG_PRINT_FORCE ("  Command           : fpga\n");
+	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
+	DEBUG_PRINT_FORCE ("  Output Param0     : FPGA Temperature High Limit\n");
+	DEBUG_PRINT_FORCE ("  Output Param1     : FPGA Temperature Low  Limit\n");
+	DEBUG_PRINT_FORCE ("\n");
+
+	DEBUG_PRINT_FORCE ("[Set]\n");
+	DEBUG_PRINT_FORCE ("  Function          : The FPGA Temperature Alarm is set.\n");
+	DEBUG_PRINT_FORCE ("  Command           : fpga [param0] [param1]\n");
+	DEBUG_PRINT_FORCE ("  Input Param0      : FPGA Temperature High Limit\n");
+	DEBUG_PRINT_FORCE ("  Input Param1      : FPGA Temperature Low  Limit\n");
+	DEBUG_PRINT_FORCE ("  Output  Param     : none\n");
+	DEBUG_PRINT_FORCE ("\n");
+
+	DEBUG_PRINT_FORCE ("[FPGA Temperature High/Low Limit]\n");
+	DEBUG_PRINT_FORCE ("  Low  : %.2f\n", FPGA_TEMP_MIN);
+	DEBUG_PRINT_FORCE ("  High : %.2f\n", FPGA_TEMP_MAX);
 	DEBUG_PRINT_FORCE ("\n");
 
 	return (AVAL_STATUS_SUCCESS);

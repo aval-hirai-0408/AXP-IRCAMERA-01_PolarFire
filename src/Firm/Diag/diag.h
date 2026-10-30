@@ -37,16 +37,11 @@
 // Memory Test Size
 //----------------------------------------------------------------------------------
 #define TEST_MEM_MAX_SIZE			(32*1024*1024)
-#define TEST_MEM_MAX_SIZE_VERSION2	(256*1024*1024)
+#define TEST_MEM_MAX_SIZE_VERSION2	(512*1024*1024)
 #define TEST_MEM_MIN_SIZE			(1024*1024)
 #define TEST_SIZE_B					(1*1024*1024)
 
-// Display Count
-#define MEMORY_DISPLAY_COUNT		(0x100000)
-
-
 //DDR info
-#define NT5AD_DDR_BASE_ADDR			(0x20000000)
 #define NT5AD_DDR_DQ				(64)
 #define NT5AD_DDR_CAS				(10)
 #define NT5AD_DDR_RAS				(16)
@@ -92,10 +87,10 @@ int cmdDiagMemWord (unsigned int tloop, unsigned int addr, unsigned int size);
 int cmdDiagMemByte (unsigned int tloop, unsigned int addr, unsigned int size);
 int cmdDiagMemLongShift (unsigned int tloop, unsigned int addr, unsigned int size);
 int cmdDiagMErrorDump (unsigned int addr);
-int cmdDiagMemDataLine(unsigned int bus);
-int cmdDiagMemCAS(unsigned int cas);
-int cmdDiagMemRAS(unsigned int cas, unsigned int ras);
-int cmdDiagMemBank(unsigned int bank);
+int cmdDiagMemDataLine(unsigned int adrs, unsigned int bus);
+int cmdDiagMemCAS(unsigned int adrs, unsigned int cas);
+int cmdDiagMemRAS(unsigned int adrs, unsigned int cas, unsigned int ras);
+int cmdDiagMemBank(unsigned int adrs, unsigned int bank);
 int diagDdrSetMode (int mode);
 int diagDdrGetMode (int *pMode);
 

@@ -1121,6 +1121,9 @@ int kermitGzipDataCheck (unsigned char **pUnCompress, int *pUncomprLen, unsigned
 
 				//@@@@1pTemp = (unsigned char *)FFC_BLACK_MEMORY_ADRS;
 				pTemp = (unsigned char *)FIRM_UPDATE_UNCOMP_ADRS;
+				#if !defined (MODE_FLASH_WRITE_COPY)
+				pTemp += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+				#endif
 
 				#endif // #if !defined (MODE_FFC_MEM_EXTERNAL_MALLOC)
 

@@ -48,27 +48,27 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	//------------------------------------------------------------------------------------------
 	// Peltier
 	//------------------------------------------------------------------------------------------
-#ifdef MODE_PELTIER
+	#ifdef MODE_PELTIER
 	{FPGA_PELTIER_TARGET_ADRS, 					PELTIER_DEFAULT_TEMP,		CAMERA_SAVE_MODE_DATA},			// センサターゲット温度(0x80)
-#else
+	#else
 	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x80)
-#endif
+	#endif
 
-	{FPGA_PELTIER_SENSOR_ALM_ADRS, 				((SENSOR_DEFAULT_HIGH_TEMP<<16) | (SENSOR_DEFAULT_LOW_TEMP & 0xffff)),	CAMERA_SAVE_MODE_DATA},		// センサ温度リミット(0x88)
-	{FPGA_PELTIER_CASE_ALM_ADRS, 			 	((CASE_DEFAULT_HIGH_TEMP<<16)   | (CASE_DEFAULT_LOW_TEMP & 0xffff)),	CAMERA_SAVE_MODE_DATA},		// ケース温度リミット(0x90)
-	{CAMERA_SAVE_RESERVE,		 				0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x98)
+	{FPGA_PELTIER_SENSOR_ALM_ADRS, 				((SENSOR_DEFAULT_HIGH_TEMP<<16) | SENSOR_DEFAULT_LOW_TEMP),	CAMERA_SAVE_MODE_DATA},	// Sensor Alarm(0x88)
+	{FPGA_PELTIER_CASE_ALM_ADRS, 			 	((CASE_DEFAULT_HIGH_TEMP<<16)   | CASE_DEFAULT_LOW_TEMP),	CAMERA_SAVE_MODE_DATA},	// Case Alarm(0x90)
+	{FPGA_TEMP_ALARM_ADRS,		 				((FPGA_DEFAULT_HIGH_TEMP<<16) | FPGA_DEFAULT_LOW_TEMP),	CAMERA_SAVE_MODE_DATA},		// FPGA Alarm(0x98)
 
-#if defined (MODE_PELTIER_CTRL)
+	#if defined (MODE_PELTIER_CTRL)
 	{FIRM_DATA_SENSOR_PERTIER_MODE,				0x01,						CAMERA_SAVE_MODE_DATA},			// センサペルチェモード(0xA0)
 	{FIRM_DATA_PELTIER_POWER_LEVEL, 			PELTIER_POWER_LEVEL,		CAMERA_SAVE_MODE_DATA},			// ペルチェパワーモード(0xA8)
 	{FPGA_PELTIER_CLIP_ADRS, 					0x00,						CAMERA_SAVE_MODE_REG_REF},		// ペルチェHigh Clip(0xB0)
-#else
+	#else
 	{CAMERA_SAVE_RESERVE,		 				0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA0)
 	{CAMERA_SAVE_RESERVE,		 				0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA8)
 	{CAMERA_SAVE_RESERVE,		 				0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xB0)
-#endif
+	#endif
 
-	{CAMERA_SAVE_RESERVE,		 				0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xB8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xB8)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xC0)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xC8)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xD0)
@@ -718,12 +718,7 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	{FIRM_DATA_ROI_Y6_ADRS, 					0x00,						CAMERA_SAVE_MODE_DATA},			// Height6(Memory)(0xA70)
 	{FIRM_DATA_ROI_Y7_ADRS, 					0x00,						CAMERA_SAVE_MODE_DATA},			// Height7(Memory)(0xA78)
 
-	#if !defined (MODE_IPU_MULTI)
 	{FPGA_ROI_CAMERA_X0_ADRS, 					DEFAULT_ROI_WIDTH0,			CAMERA_SAVE_MODE_DATA},			// Width0(FPGA/Sensor)(0xA80)
-	#else // #if !defined (MODE_IPU_MULTI)
-	{FPGA_HORIZONTAL_ROI_ADRS, 					DEFAULT_ROI_WIDTH0,			CAMERA_SAVE_MODE_DATA},			// Width0(FPGA/Sensor)(0xA80)
-	#endif
-
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA88)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA90)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA98)

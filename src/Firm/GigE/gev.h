@@ -334,9 +334,14 @@ typedef struct
 #define DeviceTemperatureSelector_Sensor						(   0 ) // InGaAs
 #define DeviceTemperatureSelector_Case							(   1 ) // InGaAs
 #define DeviceTemperatureSelector_FPGA							(   2 ) // InGaAs
+
 #define DeviceTemperaturePeltierMode							( 0x0000A20C)  // RW; 4 bytes
 #define DeviceTemperature_Sensor_Max							( 0x0000A210)  // RO; 4 bytes
 #define DeviceTemperature_Sensor_Min							( 0x0000A214)  // RO; 4 bytes
+
+#define DeviceTemperature_Fpga_Max								( 0x0000A218)  // RW; 4 bytes
+#define DeviceTemperature_Fpga_Min								( 0x0000A21C)  // RW; 4 bytes
+
 #define DeviceTemperatureAlarmMin_Sensor						( 0x0000A224)  // RW; 4 bytes
 #define DeviceTemperatureAlarmMin_Housing						( 0x0000A22C)  // RW; 4 bytes
 #define DeviceTemperatureTarget_Min								( 0x0000A230)  // RW; 4 bytes
@@ -803,14 +808,15 @@ typedef struct
 #define   FileSelector_FPGA										(          1)  // RW   4 bytes : IEnumEntry Custom
 #define   FileSelector_XML										(          2)  // RW   4 bytes : IEnumEntry Custom
 #define   FileSelector_LUTLuminance0 							(          3)  // RW   4 bytes : IEnumEntry
-#define   FileSelector_UserSetDefault   						(          4)  // RW   4 bytes : IEnumEntry
-#define   FileSelector_UserSet1									(          5)  // RW   4 bytes : IEnumEntry
-#define   FileSelector_UserSet2									(          6)  // RW   4 bytes : IEnumEntry
-#define   FileSelector_DPC0										(          7)  // RW   4 bytes : IEnumEntry Custom
-#define   FileSelector_FFC0										(          8)  // RW   4 bytes : IEnumEntry Custom DSNU + PRNU
-#define   FileSelector_SPECTRUM_WAVE							(          9)  // RW   4 bytes : IEnumEntry Custom
-#define   FileSelector_PHY										(         10)  // RW   4 bytes : IEnumEntry Custom
-#define   FileSelector_MAX										(         11)  // MAX of FileSelector
+#define   FileSelector_UserSetDefault   						(          6)  // RW   4 bytes : IEnumEntry
+#define   FileSelector_UserSet1									(          7)  // RW   4 bytes : IEnumEntry
+#define   FileSelector_UserSet2									(          8)  // RW   4 bytes : IEnumEntry
+#define   FileSelector_DPC0										(          9)  // RW   4 bytes : IEnumEntry Custom
+#define   FileSelector_FFC0										(         12)  // RW   4 bytes : IEnumEntry Custom DSNU + PRNU
+#define   FileSelector_SPECTRUM_WAVE							(         20)  // RW   4 bytes : IEnumEntry Custom
+#define   FileSelector_PHY										(         22)  // RW   4 bytes : IEnumEntry Custom
+#define   FileSelector_IF_FPGA									(         21)  // RW   4 bytes : IEnumEntry Custom
+#define   FileSelector_MAX										(         23)  // MAX of FileSelector
 #define FileOperationeSelector									( 0x0000D104)  // RW   4 bytes : IEnumeration Open,Close,Read,Write,Delete
 #define   FileOperationeSelector_Open							(          0)  // RW   4 bytes : IEnumEntry
 #define   FileOperationeSelector_Close							(          1)  // RW   4 bytes : IEnumEntry

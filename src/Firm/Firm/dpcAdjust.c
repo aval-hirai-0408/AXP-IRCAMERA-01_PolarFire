@@ -1182,12 +1182,23 @@ int dpcAdjustInfoSave (int dpcNum, int userMode, DPCINFO dpcInfo)
 	}
 
 	// メモリリクエスト
-	if ((pBuffer = malloc ((size))) == NULL)
+#if defined (MODE_FLASH_WRITE_COPY)
+	if ((pBuffer = (unsigned char *)malloc (size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Adjust Information Buffer Request Error.\n");
 		goto _DONE;
 	}
+#else
+	if ((pBuffer = (unsigned char *)malloc ((size + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Adjust Information Buffer Request Error.\n");
+		goto _DONE;
+	}
+	
+	pBuffer += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
 
 	// アドレスCopy
 	saveAdrs = (unsigned int)pBuffer;
@@ -1299,6 +1310,11 @@ int dpcAdjustInfoSave (int dpcNum, int userMode, DPCINFO dpcInfo)
 	}
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuffer != NULL)
+		pBuffer -= QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
+
 	// メモリ開放
 	if (pBuffer != NULL)
 		free (pBuffer);

@@ -51,6 +51,10 @@ int cameraParamInitialize (void)
 	// 共通パラメータ格納アドレス取得
 	gpCameraCommonParameter = (unsigned int *)CAMERA_PARAM_CONNON_ADRS;
 
+#if !defined (MODE_FLASH_WRITE_COPY)
+	gpCameraCommonParameter += (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
+
 #if 0   //@@@1
 	// 共通パラメータ領域取得
 	if ((status = cameraParamCommonAllRead ()) != AVAL_STATUS_SUCCESS)
@@ -77,6 +81,10 @@ int cameraParamInitialize (void)
 	gpCameraUserParameter = (unsigned int *)CAMERA_PARAM_USER_ADRS;
 #else
 	gpCameraUserParameter = (unsigned int *)CAMERA_PARAM_USER_EXTEND_ADRS;
+#endif
+	
+#if !defined (MODE_FLASH_WRITE_COPY)
+	gpCameraUserParameter += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
 #endif
 
 	// 保存パラメータ取得
@@ -527,12 +535,23 @@ int cameraParamUserWriteRomMulti (int userNum, unsigned int saveAdrs, unsigned c
 	}
 
 	// 読み込み用メモリ確保
+#if defined (MODE_FLASH_WRITE_COPY)
 	if ((pBuffer = malloc (CAMERA_SAVE_USER_SIZE)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Memory Reqest Error.\n");
 		goto _DONE;
 	}
+#else
+	if ((pBuffer = malloc ((CAMERA_SAVE_USER_SIZE + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Memory Reqest Error.\n");
+		goto _DONE;
+	}
+
+	pBuffer += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
 
 	// Flashアドレス取得
 	flashAdrs = CAMERA_SAVE_USER0_ADRS + CAMERA_SAVE_UINT_SIZE * userNum;
@@ -553,6 +572,11 @@ int cameraParamUserWriteRomMulti (int userNum, unsigned int saveAdrs, unsigned c
 		goto _DONE;
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuffer != NULL)
+		pBuffer -= QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
+
 	if (pBuffer != NULL)
 		free (pBuffer);
 
@@ -598,12 +622,23 @@ int cameraParamSpectrumWriteRomMulti (int userNum, unsigned int saveAdrs, unsign
 	}
 
 	// 読み込み用メモリ確保
+#if defined (MODE_FLASH_WRITE_COPY)
 	if ((pBuffer = malloc (CAMERA_SAVE_SPECTRUM_COMMON_SIZE)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Spectrum Reqest Error.\n");
 		goto _DONE;
 	}
+#else
+	if ((pBuffer = malloc ((CAMERA_SAVE_SPECTRUM_COMMON_SIZE + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Spectrum Reqest Error.\n");
+		goto _DONE;
+	}
+
+	pBuffer += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
 
 	// Flashアドレス取得
 	flashAdrs = CAMERA_SAVE_USER0_SPECTRUM_ADRS + CAMERA_SAVE_UINT_SIZE * userNum;
@@ -624,6 +659,11 @@ int cameraParamSpectrumWriteRomMulti (int userNum, unsigned int saveAdrs, unsign
 		goto _DONE;
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuffer != NULL)
+		pBuffer -= QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
+
 	if (pBuffer != NULL)
 		free (pBuffer);
 
@@ -716,12 +756,23 @@ int cameraParamCommonWriteRom (unsigned int saveAdrs, unsigned int data)
 	unsigned int *pBuffer = NULL;
 
 	// 読み込み用メモリ確保
+#if defined (MODE_FLASH_WRITE_COPY)
 	if ((pBuffer = malloc (CAMERA_SAVE_COMMON_SIZE)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Memory Reqest Error.\n");
 		goto _DONE;
 	}
+#else
+	if ((pBuffer = malloc ((CAMERA_SAVE_COMMON_SIZE + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Memory Reqest Error.\n");
+		goto _DONE;
+	}
+
+	pBuffer += (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
 
 	// 読み込み
 	if ((status = qspiFlashRead (CAMERA_SAVE_COMMON_ADRS, (unsigned char *)pBuffer, CAMERA_SAVE_COMMON_SIZE)) != AVAL_STATUS_SUCCESS)
@@ -739,6 +790,11 @@ int cameraParamCommonWriteRom (unsigned int saveAdrs, unsigned int data)
 		goto _DONE;
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuffer != NULL)
+		pBuffer -= (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
+
 	if (pBuffer != NULL)
 		free (pBuffer);
 
@@ -807,12 +863,23 @@ int cameraParamCommonWriteRomMulti (unsigned int saveAdrs, unsigned char *pData,
 	}
 
 	// 読み込み用メモリ確保
+#if defined (MODE_FLASH_WRITE_COPY)
 	if ((pBuffer = malloc (CAMERA_SAVE_COMMON_SIZE)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Memory Reqest Error.\n");
 		goto _DONE;
 	}
+#else
+	if ((pBuffer = malloc ((CAMERA_SAVE_COMMON_SIZE + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "UserSet Save Memory Reqest Error.\n");
+		goto _DONE;
+	}
+	
+	pBuffer += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
 
 	// Flashアドレス取得
 	flashAdrs = CAMERA_SAVE_COMMON_ADRS;
@@ -833,6 +900,11 @@ int cameraParamCommonWriteRomMulti (unsigned int saveAdrs, unsigned char *pData,
 		goto _DONE;
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuffer != NULL)
+		pBuffer -= QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
+
 	if (pBuffer != NULL)
 		free (pBuffer);
 
@@ -1528,7 +1600,8 @@ int cameraParamSaveRegister (int userNum)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int i;
-	unsigned int size = CAMERA_SAVE_USER_SIZE;
+	//unsigned int size = CAMERA_SAVE_USER_SIZE;
+	unsigned int size;
 	SAVE_PARAM	*pSaveparam = (SAVE_PARAM *)gpCameraUserParameter;
 	unsigned int data, black;
 	double tempL, tempH;
@@ -1541,8 +1614,11 @@ int cameraParamSaveRegister (int userNum)
 #endif
 	float dataf;
 
+    // リスト数取得
+    size = sizeof (saveParamDataList) / sizeof (saveParamDataList[0]);
+
 	// 先頭はマークなのでその次から
-	for (i=1; i<(size/8); i++)
+	for (i=1; i<(size-1); i++)
 	{
 		// レジスタ リストからアドレスを取得
 		if (saveParamDataList[i].mode == CAMERA_SAVE_MODE_REG_REF)

@@ -301,13 +301,14 @@ CMD_TBL mainCmdTbl [] =
 
 
 //============================================================================================================================================
-// 雋ゑｽｩ陟趣ｽｦ
+// Peltier
 //============================================================================================================================================
 	{ (char *)"temp",					   	(CMDFUNC)cmdTemp,						(CMDFUNC)cmdTempHelp, 							OPT_NONE},
 	{ (char *)"temperature",			   	(CMDFUNC)cmdTemp,						(CMDFUNC)cmdTempHelp, 							OPT_NONE},
 
 	{ (char *)"sensor",						(CMDFUNC)cmdSensorTempAlrm,				(CMDFUNC)cmdSensorTempAlrmHelp, 				OPT_NONE},
 	{ (char *)"case",						(CMDFUNC)cmdCaseTempAlrm,				(CMDFUNC)cmdCaseTempAlrmHelp, 					OPT_NONE},
+	{ (char *)"fpga",						(CMDFUNC)cmdFpgaTempAlrm,				(CMDFUNC)cmdFpgaTempAlrmHelp, 					OPT_NONE},
 	{ (char *)"target",					   	(CMDFUNC)cmdPeltierTarget,				(CMDFUNC)cmdPeltierTargetHelp, 					OPT_NONE},
 
 	{ (char *)"targetmax",					(CMDFUNC)cmdPeltierTempMax,				(CMDFUNC)cmdPeltierTempMaxHelp, 				OPT_NONE},
@@ -431,29 +432,15 @@ CMD_TBL mainCmdTbl [] =
 //============================================================================================================================================
 // Voltage FPGA Board
 //============================================================================================================================================
-#if 0	//@@@1
 #if defined (MODE_VOLTAGE_FPGA_BOARD)
 	{ (char *)"voltfpgashow",				(CMDFUNC)cmdVoltFpgaShow,				(CMDFUNC)cmdVoltFpgaShowHelp, 					OPT_NONE},
-	{ (char *)"voltfpga09",					(CMDFUNC)cmdVoltFpga09v,				(CMDFUNC)cmdVoltFpga09vHelp, 					OPT_NONE},
-	{ (char *)"voltfpga12sys",				(CMDFUNC)cmdVoltFpga12vSys,				(CMDFUNC)cmdVoltFpga12vSysHelp, 				OPT_NONE},
-	{ (char *)"voltfpga25",					(CMDFUNC)cmdVoltFpga25v,				(CMDFUNC)cmdVoltFpga25vHelp, 					OPT_NONE},
-	{ (char *)"voltfpga115",				(CMDFUNC)cmdVoltFpga115v,				(CMDFUNC)cmdVoltFpga115vHelp, 					OPT_NONE},
-	{ (char *)"voltfpga33vd",				(CMDFUNC)cmdVoltFpga33vd,				(CMDFUNC)cmdVoltFpga33vdHelp, 					OPT_NONE},
-	{ (char *)"voltfpgavtt",				(CMDFUNC)cmdVoltFpgaVtt,				(CMDFUNC)cmdVoltFpgaVttHelp, 					OPT_NONE},
-	{ (char *)"voltfpga12",					(CMDFUNC)cmdVoltFpga12v,				(CMDFUNC)cmdVoltFpga12vHelp, 					OPT_NONE},
-	{ (char *)"voltfpga33",					(CMDFUNC)cmdVoltFpga33v,				(CMDFUNC)cmdVoltFpga33vHelp, 					OPT_NONE},
-	{ (char *)"voltfpga33va",				(CMDFUNC)cmdVoltFpga33va,				(CMDFUNC)cmdVoltFpga33vaHelp, 					OPT_NONE},
-	{ (char *)"voltfpga50",					(CMDFUNC)cmdVoltFpga50v,				(CMDFUNC)cmdVoltFpga50vHelp, 					OPT_NONE},
-	{ (char *)"voltfpgavref",				(CMDFUNC)cmdVoltFpgaVRef,				(CMDFUNC)cmdVoltFpgaVRefHelp, 					OPT_NONE},
-	{ (char *)"voltfpgavccint",				(CMDFUNC)cmdVoltFpgaVccint,				(CMDFUNC)cmdVoltFpgaVccintHelp, 				OPT_NONE},
-	{ (char *)"voltfpgavccaux",				(CMDFUNC)cmdVoltFpgaVccaux,				(CMDFUNC)cmdVoltFpgaVccauxHelp, 				OPT_NONE},
-	{ (char *)"voltfpgavbram",				(CMDFUNC)cmdVoltFpgaVbram,				(CMDFUNC)cmdVoltFpgaVbramHelp, 					OPT_NONE},
-	{ (char *)"voltfpgavccpsintlp",			(CMDFUNC)cmdVoltFpgaVccPsintpl,			(CMDFUNC)cmdVoltFpgaVccPsintplHelp, 			OPT_NONE},
-	{ (char *)"voltfpgavccpsinfp",			(CMDFUNC)cmdVoltFpgaVccPsinfp,			(CMDFUNC)cmdVoltFpgaVccPsinfpHelp, 				OPT_NONE},
-	{ (char *)"voltfpgavccpsaux",			(CMDFUNC)cmdVoltFpgaVccPsaux,			(CMDFUNC)cmdVoltFpgaVccPsauxHelp, 				OPT_NONE},
+	{ (char *)"voltfpga18",					(CMDFUNC)cmdVoltFpgaV1_8,				(CMDFUNC)cmdVoltFpgaV1_8Help, 					OPT_NONE},
+	{ (char *)"voltfpga10",					(CMDFUNC)cmdVoltFpgaV1_0,				(CMDFUNC)cmdVoltFpgaV1_0Help, 					OPT_NONE},
+	{ (char *)"voltfpga25",					(CMDFUNC)cmdVoltFpgaV2_5,				(CMDFUNC)cmdVoltFpgaV2_5Help, 					OPT_NONE},
 #endif
 
-
+	
+#if 0	//@@@1
 //============================================================================================================================================
 // Voltage IF Board
 //============================================================================================================================================
@@ -553,7 +540,8 @@ CMD_TBL mainCmdTbl [] =
 	{ (char *)"download-xml",				(CMDFUNC)cmdFirmXmlDownload,			(CMDFUNC)cmdFirmXmlDownloadHelp, 				OPT_NONE},
 
 	{ (char *)"update-fpga",				(CMDFUNC)cmdFpgaUpdate,					(CMDFUNC)cmdFpgaUpdateHelp, 					OPT_NONE},
-	{ (char *)"firmcopy",					(CMDFUNC)cmdFirmDataCopy,				(CMDFUNC)cmdFirmDataCopyHelp, 						OPT_NONE},
+	{ (char *)"update-fpga2",				(CMDFUNC)cmdFpgaUpdate2,				(CMDFUNC)cmdFpgaUpdate2Help, 					OPT_NONE},
+	{ (char *)"firmcopy",					(CMDFUNC)cmdFirmDataCopy,				(CMDFUNC)cmdFirmDataCopyHelp,					OPT_NONE},
 	{ (char *)"fpgareconfig",			  	(CMDFUNC)cmdFpgaReConfig,				(CMDFUNC)cmdFpgaReConfigHelp, 					OPT_NONE},
 
 	
@@ -672,7 +660,8 @@ CMD_TBL mainCmdTbl [] =
 	{ (char *)"timer",						(CMDFUNC)cmdDiagTimer,					(CMDFUNC)cmdDiagTimerHelp, 						OPT_NONE},
 	{ (char *)"diag2",						(CMDFUNC)cmdDiagMain2,					(CMDFUNC)cmdDiagMain2Help, 						OPT_NONE},
 	{ (char *)"aging",						(CMDFUNC)cmdDiagAging,					(CMDFUNC)cmdDiagAgingHelp, 						OPT_NONE},
-	
+	{ (char *)"debug",						(CMDFUNC)cmdFuncDebug,					(CMDFUNC)cmdFuncDebugHelp, 						OPT_NONE},
+		
 	{ (char *)NULL, 0, 0, OPT_NONE}
 };
 

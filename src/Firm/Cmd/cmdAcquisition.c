@@ -56,12 +56,10 @@ int cmdAcquisitionGcp (void *str)
 		//--------------------------------------------------
 		acquisitionCamer ();
 
-#if defined (MODE_AOI)
 		//--------------------------------------------------
 		// AOI
 		//--------------------------------------------------
 		aoi ();
-#endif
 
 
 #if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)

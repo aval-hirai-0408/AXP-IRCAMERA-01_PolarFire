@@ -36,16 +36,7 @@ int fpgaRoiSetCameraWidth (int selector, int offset, int size, int valid)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-#if !defined (MODE_IPU_MULTI)
-
 	status = fpgaRoiSetCameraWidthMain (FPGA_ROI_CAMERA_X_ADRS, selector, offset, size, valid);
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-	status = fpgaRoiSetCameraWidthMain (FPGA_HORIZONTAL_ROI_ADRS, selector, offset, size, valid);
-
-#endif // #if !defined (MODE_IPU_MULTI)
-
 
 	return (status);
 }
@@ -278,9 +269,7 @@ int fpgaRoiSetCameraWidthMain (unsigned int adrs, int selector, int offset, int 
 {
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int data32;
-#if !defined (MODE_IPU_MULTI)
 	unsigned int rData32, offset32, size32;
-#endif
 
 	// Widthセレクタは0固定
 	selector = 0;
@@ -306,8 +295,6 @@ int fpgaRoiSetCameraWidthMain (unsigned int adrs, int selector, int offset, int 
 		goto _DONE;
 	}
 
-#if !defined (MODE_IPU_MULTI)
-
 	// Check size Parameters
 	if ((size < ROI_WIDTH_SIZE_MIN) || (size > ROI_WIDTH_SIZE_MAX))
 	{
@@ -325,28 +312,6 @@ int fpgaRoiSetCameraWidthMain (unsigned int adrs, int selector, int offset, int 
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-	// Check size Parameters
-	if ((size < ROI_WIDTH_SIZE_MIN) || (size > (ROI_WIDTH_SIZE_MAX + IMG_WIDTH_IPU_MULTI_ADD_SIZE)))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "ROI Camera FPGA Set Width Size(%d) Parameter Error.(Min:%d / Max:%d)\n", size, ROI_WIDTH_SIZE_MIN, (ROI_WIDTH_SIZE_MAX + IMG_WIDTH_IPU_MULTI_ADD_SIZE));
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// Check offset + size Parameters
-	if ((offset + size) > (ROI_WIDTH_SIZE_MAX + IMG_WIDTH_IPU_MULTI_ADD_SIZE))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "ROI Camera FPGA Set Width Offset(%d) + Size(%d) = %d Parameter Error.(Min:%d / Max:%d)\n", offset, size , offset + size, ROI_WIDTH_SIZE_MIN, (ROI_WIDTH_SIZE_MAX + IMG_WIDTH_IPU_MULTI_ADD_SIZE));
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-#endif // #if !defined (MODE_IPU_MULTI)
 
 	// Check offset Align Parameter
 	if ((offset % ROI_FPGA_WIDTH_OFFSET_ALIGH) != 0)
@@ -374,8 +339,6 @@ int fpgaRoiSetCameraWidthMain (unsigned int adrs, int selector, int offset, int 
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
-
-#if !defined (MODE_IPU_MULTI)
 
 	// Width取得
 	rData32 = IN32 ((adrs + selector * FPGA_ROI_ADRS_INTERVAL));
@@ -406,20 +369,6 @@ int fpgaRoiSetCameraWidthMain (unsigned int adrs, int selector, int offset, int 
 
 	// レジスタ設定
 	OUT32 ((adrs + selector * FPGA_ROI_ADRS_INTERVAL), data32);
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-	// Offset
-	data32 = (offset & FPGA_HORIZONTAL_ROI_OFFSET_MASK) << FPGA_HORIZONTAL_ROI_OFFSET_SHIFT;
-
-	// Size
-	data32 |= ((size & FPGA_HORIZONTAL_ROI_SIZE_MASK) << FPGA_HORIZONTAL_ROI_SIZE_SHIFT);
-
-	// レジスタ設定
-	OUT32 ((adrs + selector * FPGA_ROI_ADRS_INTERVAL), data32);
-
-
-#endif // #if !defined (MODE_IPU_MULTI)
 
 _DONE:
 	return (status);
@@ -482,7 +431,6 @@ int fpgaRoiGetCameraWidthMain (unsigned int adrs, int selector, int *pOffset, in
 		goto _DONE;
 	}
 
-#if !defined (MODE_IPU_MULTI)
 	// Width取得
 	data32 = IN32 ((adrs + selector * FPGA_ROI_ADRS_INTERVAL));
 
@@ -500,20 +448,6 @@ int fpgaRoiGetCameraWidthMain (unsigned int adrs, int selector, int *pOffset, in
 		*pValid = 1;
 	else
 		*pValid = 0;
-
-#else // #if !defined (MODE_IPU_MULTI)
-
-	// Width取得
-	data32 = IN32 ((adrs + selector * FPGA_ROI_ADRS_INTERVAL));
-
-	// オフセット取得
-	*pOffset = (data32 >> FPGA_HORIZONTAL_ROI_OFFSET_SHIFT) & FPGA_HORIZONTAL_ROI_OFFSET_MASK;
-
-	// サイズ取得
-	*pSize = (data32 >> FPGA_HORIZONTAL_ROI_SIZE_SHIFT) & FPGA_HORIZONTAL_ROI_SIZE_MASK;
-
-
-#endif // #if defined (MODE_IPU_MULTI)
 
 _DONE:
 	return (status);

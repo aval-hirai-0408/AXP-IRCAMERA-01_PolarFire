@@ -213,7 +213,7 @@ int cmdGcp (void *str)
 
 #if defined (MODE_VOLTAGE_IF_BOARD)
 		// Interface Board Voltage Show
-		voltIfBoardShow();
+		//@@@1voltIfBoardShow();
 #endif
 		}
 	}
@@ -1002,7 +1002,7 @@ int cmdDiagTimer (void *str)
 		// タイマカウンタ初期化
 		timerSetSec (0);
 		timerSetMs (0);
-		//timerStart ();
+		timerStart ();
 
 		while (1)
 		{
@@ -1062,6 +1062,110 @@ int cmdDiagTimerHelp (void *str)
 	DEBUG_PRINT_FORCE ("[Set]\n");
 	DEBUG_PRINT_FORCE ("  Function          : timer show.\n");
 	DEBUG_PRINT_FORCE ("  Command           : timer\n");
+	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
+	DEBUG_PRINT_FORCE ("  Output Param      : none\n");
+	DEBUG_PRINT_FORCE ("\n");
+
+	return (AVAL_STATUS_SUCCESS);
+}
+
+//@@@1
+extern miv_plic_instance_t g_plic;
+unsigned char abcde[(256+4)];
+//@@@1
+
+//**********************************************************************************
+//	Debug
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdFuncDebug (void *str)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	int argc;
+	unsigned int data32, temp32, timeData;
+	int i;
+
+	// Get Argument
+	argc = cmdCheckArg ((char *)str);
+
+	// Help?
+	if (argc == 2)
+	{
+		if (strcmp (gCmdArg[1], CMD_HELP_OPTION) == 0)
+		{
+			cmdFuncDebugHelp (NULL);
+			goto _DONE;
+		}
+	}
+
+	if (argc == 2)
+	{
+		// アドレス取得
+		if (sscanf (gCmdArg[1], "%d", &data32) != 1)
+		{
+			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
+			goto _DONE;
+		}
+
+		//@@@1
+	    //MIV_PLIC_disable_irq (&g_plic, MIV_PLIC_EXT1_IRQn);
+		//main2();
+		//@@@1
+		
+		//@@@1
+		//qspiFlashRead_N25Q (0x400000, (unsigned char *)&abcde[4], data32);
+		//@@@1
+		
+		#if 0
+		timerStart();
+		timerSetMs(0);
+
+		for (i=0; i<data32; i++)
+			//temp32 = IN32(0x63000008);
+			//temp32 = IN32(0x82000008);
+			temp32 = IN32(0x80000008);
+			//OUT32(0x63000008, i);
+			//OUT32(0x82000008, i);
+			//OUT32(0x80000008, i);
+		
+		timeData = timerGetMs();
+		DEBUG_PRINT_FORCE("Time = %d\n", timeData);
+		#endif
+
+	}
+	else
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_ARG);
+		goto _DONE;
+	}
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Debug Help
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		str						：文字列を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int cmdFuncDebugHelp (void *str)
+{
+	DEBUG_PRINT_FORCE ("\n");
+	DEBUG_PRINT_FORCE ("[Set]\n");
+	DEBUG_PRINT_FORCE ("  Function          : debug.\n");
+	DEBUG_PRINT_FORCE ("  Command           : debug\n");
 	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
 	DEBUG_PRINT_FORCE ("  Output Param      : none\n");
 	DEBUG_PRINT_FORCE ("\n");

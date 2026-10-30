@@ -32,7 +32,7 @@
 // globals
 //----------------------------------------------------------------------------------
 UART_instance_t g_uart;
-uint8_t g_read_buf[FLASH_READ_SIZE];
+//uint8_t g_read_buf[FLASH_READ_SIZE];
 
 
 //----------------------------------------------------------------------------------
@@ -70,10 +70,10 @@ int loaderMain (void)
 	//size_t rx_size;
 
 	// UART Initialize
-	UART_init (&g_uart, COREUARTAPB0_BASE_ADDR, BAUD_VALUE_115200, (DATA_8_BITS | NO_PARITY) );
+	UART_init (&g_uart, COREUARTAPB0_BASE_ADDR, BAUD_VALUE_115200, (DATA_8_BITS | NO_PARITY));
 
 	// BootStrap
-	UART_polled_tx_string (&g_uart, (uint8_t*)"BootLoader Ver.");
+	UART_polled_tx_string (&g_uart, (uint8_t*)"\r\nBootLoader Ver.");
 	UART_polled_tx_string (&g_uart, (uint8_t*)FIRM_VERSION);
     UART_polled_tx_string (&g_uart, (uint8_t*)"\r\n");
 	
@@ -83,7 +83,7 @@ int loaderMain (void)
     for (i=0; i<verSize; i++, ptr8++)
         (*(volatile unsigned char *)(FIRM_DATA_BOOT_VERSION + i)) = *ptr8;
 
-    // 邨らｫｯ
+    // NULL
     (*(volatile unsigned char *)(FIRM_DATA_BOOT_VERSION + i)) = '\0';
 
 	delay1(1000);

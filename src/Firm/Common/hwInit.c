@@ -17,6 +17,11 @@
 
 
 //----------------------------------------------------------------------------------
+// globals
+//----------------------------------------------------------------------------------
+unsigned int gDipsw = 0;
+
+//----------------------------------------------------------------------------------
 // externs
 //----------------------------------------------------------------------------------
 extern int gSpectrumType;
@@ -34,7 +39,6 @@ extern int gSpectrumType;
 int hwInitialize (int cpuType)
 {
 	int status;
-	unsigned int dipsw = 0;
 
 #if 0 //@@@1
 	//------------------------------------------------------------
@@ -156,6 +160,7 @@ int hwInitialize (int cpuType)
 	getSpectrumType (&gSpectrumType);
 #endif //@@@1
 	
+	
 	//------------------------------------------------------------
 	// Console Initialize
 	//------------------------------------------------------------
@@ -191,6 +196,12 @@ int hwInitialize (int cpuType)
 	if ((status = uartInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
 
+	//------------------------------------------------------------
+	// WatchDog Initialize
+	//------------------------------------------------------------
+	if ((status = watchDogInitialize ()) != AVAL_STATUS_SUCCESS)
+		firmErrorAttention (status);
+
 	// Memory Mapping
 	//@@@1map ();
 
@@ -203,16 +214,6 @@ int hwInitialize (int cpuType)
 		firmErrorAttention (status);
 #endif
 
-	//------------------------------------------------------------
-	// SPI PL PolaFire Initialize
-	//------------------------------------------------------------
-#if defined (MODE_FPGA_PF)
-	if (gInterFaceID == INTERFACE_CXP)
-	{
-		if ((status = PolarFireFlashInitialize ()) != AVAL_STATUS_SUCCESS)
-			firmErrorAttention (status);
-	}
-#endif
 #endif //@@@1
 
 	//------------------------------------------------------------
@@ -220,6 +221,10 @@ int hwInitialize (int cpuType)
 	//------------------------------------------------------------
 	if ((status = consoleInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
+
+//@@@@1
+	DEBUG_PRINT_FORCE("IN32 (FIRM_DATA_DIAG_DDR_MODE) = 0x%x\n", IN32 (FIRM_DATA_DIAG_DDR_MODE));
+//@@@@1
 
 #if 0 //@@@1
 	//------------------------------------------------------------
@@ -278,20 +283,29 @@ int hwInitialize (int cpuType)
 	//------------------------------------------------------------
 	if ((status = cameraInformationInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
+	
+//@@@1
+	// Get DeviceID
+	unsigned char manufacturer_id, device_id;
+	qspiFlashGetFlashId (&manufacturer_id, &device_id);
+	DEBUG_PRINT_FORCE("manufacturer_id = 0x%x\n", manufacturer_id);
+	DEBUG_PRINT_FORCE("device_id = 0x%x\n", device_id);
+//@@@1
+	
 #if 0 //@@@1
 	//------------------------------------------------------------
 	// DIPSW Bit0 ONならばFPGA系の初期化は実施しない
 	//------------------------------------------------------------
-	getDipsw (&dipsw);
+	getDipsw (&gDipsw);
 
 	if (gInterFaceID == INTERFACE_CAMERALINK)
 	{
 		// Dipsw=0x03はCameraLinkシリアル無効化設定
-		if (dipsw == 0x03)
-			dipsw = 0;
+		if (gDipsw == 0x03)
+			gDipsw = 0;
 	}
 	
-	if ((dipsw & 0x01) == 0)
+	if ((gDipsw & 0x01) == 0)
 	{
 		//------------------------------------------------------------
 		// HW Initialize2
@@ -442,10 +456,8 @@ int hwInitialize2 (int mode)
 	//------------------------------------------------------------
 	// AOI Initialize
 	//------------------------------------------------------------
-#if defined(MODE_AOI)
 	if ((status = aoiInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
-#endif
 
 	//------------------------------------------------------------
 	// FFC初期化

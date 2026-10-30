@@ -107,6 +107,11 @@ int firmUpdateMain (unsigned int flashAdrs, unsigned int size, int offsetMode)
 	// メモリリクエスト
 #if 1
 	pUpdateBuff = (char *)FIRM_UPDATE_ADRS;
+	
+	#if !defined (MODE_FLASH_WRITE_COPY)
+	pUpdateBuff += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+	#endif
+
 #else
 	if ((pUpdateBuff = malloc (size)) == NULL)
 	{
@@ -212,22 +217,25 @@ int firmUpdateMain (unsigned int flashAdrs, unsigned int size, int offsetMode)
 			adrs2 = (unsigned int)pUpdatePtr + updateSize;
 			OUT8 (adrs2, 0);	// NULL
 			updateSize++;
-			char str[128];
+			char str[128+ QSPI_FLASH_WRITE_COPY_ADD_SIZE];
+			char *ptr8;
+			
+			ptr8 = str + QSPI_FLASH_WRITE_COPY_ADD_SIZE;
 
 			//----------------------------------------
 			// File Name書き込み
 			//----------------------------------------
-			memset((void *)str, 0, 128);
-			sprintf(str, "local:%s;61700000;%X?SchemaVersion=1.0.0\n", gKermitFileName, updateSize-1);
+			memset((void *)ptr8, 0, 128);
+			sprintf(ptr8, "local:%s;61700000;%X?SchemaVersion=1.0.0\n", gKermitFileName, updateSize-1);
 
 			// ファイル名長取得
-			len = strlen (str);
+			len = strlen (ptr8);
 
 			// 終端NULL設定
-			str[len-1] = 0;
+			ptr8[len-1] = 0;
 
 			// Flash Write (XML File Name)
-			if ((status = firmUpdateFlashWrite (FLASH_XML_FILE_NAME_ADRS, (unsigned char *)str, len)) != AVAL_STATUS_SUCCESS)
+			if ((status = firmUpdateFlashWrite (FLASH_XML_FILE_NAME_ADRS, (unsigned char *)ptr8, len)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
 		}
 	}
@@ -296,6 +304,7 @@ int firmUpdateFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned in
 			goto _DONE;
 	}
 
+#if 0	//@@@1
 //@@@1
 	DEBUG_PRINT_FORCE("Blacnk Check..\n");
 //@@@1
@@ -320,7 +329,8 @@ int firmUpdateFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned in
 			}
 		}
 	}
-
+#endif //@@@1 #if 0
+	
 //@@@1
 	DEBUG_PRINT_FORCE("Write..\n");
 //@@@1
@@ -328,6 +338,9 @@ int firmUpdateFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned in
 	// Write
 	if ((status = qspiFlashWrite (adrs, (unsigned char *)pBuffer, size)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+
+	
+#if 0	//@@@1
 
 //@@@1
 	DEBUG_PRINT_FORCE("Verify..\n");
@@ -360,6 +373,7 @@ int firmUpdateFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned in
 			}
 		}
 	}
+#endif //#if 0	//@@@1
 
 //@@@1
 	DEBUG_PRINT_FORCE("End..\n");
@@ -386,7 +400,9 @@ int firmDownloadAll (unsigned int size)
 {
 	int status;
 
-	status = firmDownloadMain (FLASH_UPDATE_ALL_ADRS, size, "download.bin");
+	//@@@1status = firmDownloadMain (FLASH_UPDATE_ALL_ADRS, size, "download.bin");
+	status = firmDownloadMain (FLASH_FPGA_DATA_ADRS, size, "download.bin");
+	
 	return (status);
 }
 
@@ -453,6 +469,9 @@ int firmDownloadMain (unsigned int flashAdrs, unsigned int size, char *pName)
 		goto _DONE;
 	}
 
+#if 1
+	pBuffer = (char *)FIRM_UPDATE_ADRS;	
+#else
 	// メモリリクエスト
 	if ((pBuffer = malloc (size)) == NULL)
 	{
@@ -460,6 +479,7 @@ int firmDownloadMain (unsigned int flashAdrs, unsigned int size, char *pName)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Download Buffer Request Error.\n");
 		goto _DONE;
 	}
+#endif
 
 	// Check pName Parameter
 	if (pName == NULL)
@@ -483,8 +503,8 @@ int firmDownloadMain (unsigned int flashAdrs, unsigned int size, char *pName)
 	}
 
 _DONE:
-	if (pBuffer != NULL)
-		free (pBuffer);
+	//if (pBuffer != NULL)
+		//free (pBuffer);
 
 	return (status);
 }
@@ -533,6 +553,27 @@ _DONE:
 
 
 //**********************************************************************************
+//	FPGA Update
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		-
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int fpgaUpdate2 (void)
+{
+	int status;
+
+	if ((status = fpgaUpdateMain (FLASH_LOADER_ADRS, FLASH_UPDATE_ALL_SIZE, 0)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
 //	FPGA Update Main
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
@@ -555,10 +596,22 @@ int fpgaUpdateMain (unsigned int flashAdrs, unsigned int size, int offsetMode)
 	unsigned char *pUnCompBuf = NULL;
 	int uncomprLen;
 #endif // COMPRESS_MODE
-
+//@@@1
+#if 0
+	int ix;
+	unsigned int data32, data32Swap;
+	unsigned int *ptrL;
+#endif
+//@@@1
+	
 	// メモリリクエスト
 #if 1
 	pUpdateBuff = (char *)FIRM_UPDATE_ADRS;
+	
+	#if !defined (MODE_FLASH_WRITE_COPY)
+	pUpdateBuff += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+	#endif
+
 #else
 	if ((pUpdateBuff = malloc (size)) == NULL)
 	{
@@ -633,6 +686,22 @@ _NEXT:
 		updateSize -= FIRM_UPDATE_OFFSET;
 	}
 
+
+//@@@1
+#if 0
+	// SWAP
+	DEBUG_PRINT_FORCE("SWAP\n");
+	*ptrL = (unsigned int *)pUpdatePtr;
+	for (ix=0; ix<updateSize; ix+=4, ptrL)
+	{
+		data32 = *ptrL;
+		data32Swap = SWAP_L(data32);
+		*ptrL = data32Swap;
+	}
+#endif
+//@@@1
+	
+	
 	// Flash Write
 	if ((status = firmUpdateFlashWrite (flashAdrs, (unsigned char *)pUpdatePtr, updateSize)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
@@ -641,12 +710,14 @@ _NEXT:
 	if ((status = fpgaUpdateHeader ())!= AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
+#if 0//@@@1
 	if (flashAdrs == FLASH_FPGA_DATA_ADRS)
 	{
 		// ReConfig
 		if ((status = fpgaReconfig ()) !=  AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
+#endif //@@@1
 
 _DONE:
 	//if (pUpdateBuff != NULL)
@@ -712,12 +783,23 @@ int fpgaUpdateHeader (void)
 	unsigned int ix;
 
 	// Memory Reqest
-	if ((pTempBuff = malloc (data_size)) == NULL)
+#if defined (MODE_FLASH_WRITE_COPY)
+	if ((pTempBuff = (unsigned char *)malloc (data_size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Header Temp Buffer Request Error.\n");
 		goto _DONE;
 	}
+#else
+	if ((pTempBuff = (unsigned char *)malloc ((data_size + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Header Temp Buffer Request Error.\n");
+		goto _DONE;
+	}
+	
+	pTempBuff += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
 
 	// Memory Reqest
 	if ((pReadBuff = malloc (data_size)) == NULL)
@@ -747,6 +829,9 @@ int fpgaUpdateHeader (void)
 	pTempBuff[FLASH_HEADER_ADRS + 10] = (FLASH_FPGA_DATA_ADRS >> 16) & 0xFF;
 	pTempBuff[FLASH_HEADER_ADRS + 11] = (FLASH_FPGA_DATA_ADRS >> 24) & 0xFF;
 
+	// 0フィル
+	for (ix = FLASH_HEADER_ADRS + 12; ix < 0x1000; ix++)
+		pTempBuff[ix] = 0x00;
 
 	// Erase
 	if ((status = qspiFlashSectorErase (FLASH_HEADER_ADRS)) != AVAL_STATUS_SUCCESS)
@@ -773,6 +858,11 @@ int fpgaUpdateHeader (void)
 	}
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if(pTempBuff != NULL)
+		pTempBuff -= QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
+	
 	if(pTempBuff != NULL)
 		free(pTempBuff);
 
@@ -880,13 +970,18 @@ int firmDataCopy (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int size = FLASH_UPDATE_COPY_SIZE;
+	unsigned char *pUpdateBuff = (unsigned char *)FIRM_UPDATE_ADRS;
+	
+	#if !defined (MODE_FLASH_WRITE_COPY)
+	pUpdateBuff += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+	#endif
 
 	// Flash Read
-	if ((status = qspiFlashRead (FLASH_FPGA_DATA_ADRS, (unsigned char *)FIRM_UPDATE_ADRS, size)) != AVAL_STATUS_SUCCESS)
+	if ((status = qspiFlashRead (FLASH_FPGA_DATA_ADRS, (unsigned char *)pUpdateBuff, size)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// Flash Write
-	if ((status = firmUpdateFlashWrite (FLASH_FPGA_DATA_ADMIN_ADRS, (unsigned char *)FIRM_UPDATE_ADRS, size)) != AVAL_STATUS_SUCCESS)
+	if ((status = firmUpdateFlashWrite (FLASH_FPGA_DATA_ADMIN_ADRS, (unsigned char *)pUpdateBuff, size)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 _DONE:
@@ -937,13 +1032,18 @@ _DONE:
 int phyDataCopy (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
+	unsigned char *pUpdateBuff = (unsigned char *)FIRM_UPDATE_ADRS;
+	
+	#if !defined (MODE_FLASH_WRITE_COPY)
+	pUpdateBuff += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+	#endif
 
 	// データRead
-	if ((status = qspiFlashRead (FLASH_PHY_DATA_ADRS, (unsigned char *)FIRM_UPDATE_ADRS, FLASH_PHY_DATA_SIZE)) != AVAL_STATUS_SUCCESS)
+	if ((status = qspiFlashRead (FLASH_PHY_DATA_ADRS, (unsigned char *)pUpdateBuff, FLASH_PHY_DATA_SIZE)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// データWrite
-	if ((status = qspiFlashWrite (FLASH_PHY_DATA_BACKUP_ADRS, (unsigned char *)FIRM_UPDATE_ADRS, FLASH_PHY_DATA_SIZE)) != AVAL_STATUS_SUCCESS)
+	if ((status = qspiFlashWrite (FLASH_PHY_DATA_BACKUP_ADRS, (unsigned char *)pUpdateBuff, FLASH_PHY_DATA_SIZE)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 _DONE:

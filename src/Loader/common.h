@@ -18,11 +18,11 @@
 //----------------------------------------------------------------------------------
 
 // Version
-#define FIRM_VERSION				"0.4"
+#define FIRM_VERSION				"0.1"
 
 // DDR
 #define DDR_BASE_ADDRESS			(0x80010000)
-#define DDR_APP_MAX_SIZE			(3*1024*1024)
+#define DDR_APP_MAX_SIZE			(2*1024*1024)
 
 // Flash
 #define FLASH_PRGRAM_START_ADRS		(0x00200000)			// Flash Start Address

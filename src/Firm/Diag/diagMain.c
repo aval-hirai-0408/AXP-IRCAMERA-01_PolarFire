@@ -34,7 +34,7 @@ CMD_TBL cmdDiagTbl2 [] =
 	{ (char *)"Dump              ",	(CMDFUNC)cmdDiagDumpMain,				(CMDFUNC)NULL,		OPT_NONE},
 
 	// term
-	{ (char *)NULL, 0, 0, 0, (char *)NULL }
+	{ (char *)NULL, 0, 0, 0 }
 };
 
 
@@ -57,7 +57,7 @@ CMD_TBL cmdDiagDevelopTbl [] =
 	{ (char *)"UART              ", (CMDFUNC)cmdDiagUart,					(CMDFUNC)NULL,			OPT_LOOP},
 
 	// term
-	{ (char *)NULL, 0, 0, 0, (char *)NULL }
+	{ (char *)NULL, 0, 0, 0 }
 };
 
 
@@ -77,7 +77,7 @@ CMD_TBL cmdDiagDumpTbl [] =
 #endif
 	
 	// term
-	{ (char *)NULL, 0, 0, 0, (char *)NULL }
+	{ (char *)NULL, 0, 0, 0 }
 };
 
 

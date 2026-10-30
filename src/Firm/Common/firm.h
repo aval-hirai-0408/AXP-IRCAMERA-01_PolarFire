@@ -729,9 +729,9 @@ typedef unsigned char   u8;
 #define BOARD_STATUS_LUT_ADRS				(BOARD_ERROR_ADRS+0x48)		// LUT
 #define BOARD_STATUS_DOG_ADRS				(BOARD_ERROR_ADRS+0x4c)		// Digital Offset Gain
 #define BOARD_STATUS_USERSET_ADRS			(BOARD_ERROR_ADRS+0x50)		// UserSet
-#define BOARD_STATUS_SENSOR_TEMP_UPPER_ADRS	(BOARD_ERROR_ADRS+0x54)		// Sensor Upper Temp
-#define BOARD_STATUS_SENSOR_TEMP_LOWER_ADRS	(BOARD_ERROR_ADRS+0x58)		// Sensor Lower Temp
-#define BOARD_STATUS_CASE_TEMP_ADRS			(BOARD_ERROR_ADRS+0x5c)		// Case Temp
+#define BOARD_STATUS_SENSOR_TEMP_ADRS		(BOARD_ERROR_ADRS+0x54)		// Sensor Temp
+#define BOARD_STATUS_CASE_TEMP_ADRS			(BOARD_ERROR_ADRS+0x58)		// Case Temp
+#define BOARD_STATUS_FPGA_TEMP_ADRS			(BOARD_ERROR_ADRS+0x5C)		// FPGA Temp
 #define BOARD_STATUS_TEMP_ADRS				(BOARD_ERROR_ADRS+0x60)		// Temp Status
 #define BOARD_STATUS_ENCODER_CONTROL_ADRS	(BOARD_ERROR_ADRS+0x64)		// Encoder Control
 #define BOARD_STATUS_TIMING_GENERATOR_ADRS	(BOARD_ERROR_ADRS+0x68)		// Timing Generator
@@ -1514,7 +1514,6 @@ uintptr_t irq_save_disable_Mie (void);
 // board.c
 int cameraInformationInitialize (void);
 int getSpectrumType (int *pType);
-int setDipsw (unsigned int dipsw);
 int getDipsw (unsigned int *pDipsw);
 int boardReset (void);
 int setBoardParam (char *pParam, int offset, int size);
@@ -1647,7 +1646,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt);
 int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt);
 int cxpCalculateCrc32 (unsigned int *pCrc, unsigned int *pData, unsigned int count);
 int cxpGetCmdPacket (int port, unsigned int *pData);
-int cxpWriteFifo32 (int port, unsigned int data, unsigned int mark);
+int cxpWriteFifo32 (int port, unsigned int data);
 int cxpSendFifoStart (int port, int mode);
 int cxpSendFifoStartI2c (int port);
 int cxpSendFifoStartParallel (int port);
@@ -1716,7 +1715,6 @@ int gzipComp (unsigned char *pUnCompress, int uncomprLen, unsigned char *pCompre
 // console.c
 int consoleDefaultInitialize (void);
 int consoleInitialize (void);
-int consoleModeInitialize (void);
 int consoleSetMode (int mode);
 int consoleGetMode (int *pMode);
 int consoleSelectMain (int port);
@@ -2134,6 +2132,7 @@ int firmDownloadAllAdmin (unsigned int size);
 int firmDownloadXml (int size);
 int firmDownloadMain (unsigned int flashAdrs, unsigned int size, char *pName);
 int fpgaUpdate (void);
+int fpgaUpdate2 (void);
 int fpgaUpdateMain (unsigned int flashAdrs, unsigned int size, int offsetMode);
 int fpgaUpdate (void);
 int fpgaUpdateAdmin (void);
@@ -2210,6 +2209,7 @@ int gigeCmdSpectrumDefaulty(void);
 int gigeCmdAdmVersion (void);
 int gigeCmdSensorFpgaUpload (void);
 int gigeCmdFirmUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned int size);
+int gigeCmdFirmUploadMulti (unsigned int flashAdrs, unsigned char *pBuffer);
 int gigeCmdXmlUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned int size);
 int gigeCmdIfFpgaUpload  (unsigned int flashAdrs, unsigned char *pBuffer, unsigned int size);
 int gigeCmdPhyUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned int size);
@@ -2383,7 +2383,6 @@ int mdtFirmDownload (void);
 
 // peltier.c
 int peltierInitialize (void);
-void peltier_InterruptHandler (void *CallBackRef);
 int peltierSetMountState (int state);
 int peltierGetMountState (int *pState);
 int peltierCheckMountState (void);
@@ -2440,16 +2439,13 @@ int peltierGetPowerHighClip (unsigned int *pData);
 int peltierSetPowerHighClip (unsigned int data);
 int peltierGetPowerStartFlag (unsigned int *pData);
 int peltierSetPowerStartFlag (unsigned int data);
-
-// pfFlash.c
-int PolarFireFlashInitialize (void);
-int PolarFireFlashFinalize (void);
-int PolarFireFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned int size);
-int PolarFireFlashRead (unsigned int adrs, unsigned char *pBuffer, unsigned int size);
-int PolarFireFlashSectorErase (unsigned int adrs);
-int PolarFireFlashBlockErase (unsigned int adrs);
-int PolarFireFlashEraseAll (void);
-int PolarFireFlashStatusCheck (void);
+int fpgaGetInterrupt (unsigned int *pData);
+int fpgaSetInterrupt (unsigned int data);
+int fpgaGetTemp (double *pTemp);
+int fpgaCalcRegToTemp (unsigned int data, double *pTemp);
+int fpgaCalcTempToReg (double temp, unsigned int *pData);
+int fpgaGetTempAlarm (double *pTempOver, double *pTempUnder);
+int fpgaSetTempAlarm (double tempOver, double tempUnder);
 
 // qspiFlash.c
 int qspiFlashInitialize (void);
@@ -2865,15 +2861,7 @@ int ifGetInternalTemp (double *pData);
 int voltIfBoardShow (void);
 
 // voltageFpgaboard.c
-int voltFpgaGetVccint (double *pData);
-int voltFpgaGetVccaux (double *pData);
-int voltFpgaGetVbram (double *pData);
-int voltFpgaGetVccpint (double *pData);
-int voltFpgaGetVccpaux (double *pData);
-int voltFpgaGetVccoDdr (double *pData);
-int voltFpgaGet33vd (double *pData);
-int voltFpgaGet25v (double *pData);
-int voltFpgaGetVtt (double *pData);
+int voltFpgaGetV (unsigned int adrs, int hi, double *pVolt);
 int voltFpgaBoardShow (void);
 
 int voltFpgaGet09v (double *pData);
@@ -2888,8 +2876,9 @@ int voltFpgaGetVccPsintlp (double *pData);
 int voltFpgaGetVccPsinfp (double *pData);
 int voltFpgaGetVccPSAux (double *pData);
 
-// xad.c
-int xadcGetFpgaTemp (double *pTemp);
+// watchDog.c
+int watchDogInitialize (void);
+int watchDogStart (void);
 
 #endif  // __FIRM_H__
 

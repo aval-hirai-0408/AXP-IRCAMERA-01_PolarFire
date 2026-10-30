@@ -318,7 +318,7 @@ int acquisitionStop (void)
 	int status = AVAL_STATUS_SUCCESS;
 
 	// 取り込み停止
-	OUT32 (GENICAM_ACQUISITION_START_ADRS, GENICAM_ACQUISITION_STOP_BIT);
+	OUT32 (GENICAM_ACQUISITION_STOP_ADRS, GENICAM_ACQUISITION_STOP_BIT);
 
 	// Set Flag
 	OUT32 (FIRM_DATA_ACQUISITION_START_ADRS, 0);
@@ -346,7 +346,7 @@ int acquisitionAbort (void)
 //@@@1
 
 	// 取り込み中断
-	OUT32 (GENICAM_ACQUISITION_START_ADRS, GENICAM_ACQUISITION_ABORT_BIT);
+	OUT32 (GENICAM_ACQUISITION_ABORT_ADRS, GENICAM_ACQUISITION_ABORT_BIT);
 
 	// ステータスCheck
 	for (i=0; i<ACQUISITION_ABORT_TIMEOUT; i++)
@@ -374,7 +374,7 @@ int acquisitionAbort (void)
 	}
 
 	// 取り込み中断解除
-	//@@@1OUT32 (GENICAM_ACQUISITION_ABORT_ADRS, 0);
+	OUT32 (GENICAM_ACQUISITION_ABORT_ADRS, 0);
 
 	// Set Flag
 	OUT32 (FIRM_DATA_ACQUISITION_START_ADRS, 0);
@@ -681,10 +681,10 @@ int irSetFrameRate (double frameRate)
 	}
 	else
 	{
-		intervalD = (SENSOR_TGES + 1) * hTimeD;
+		intervalD = (SENSOR_TGES + SENSOR_TGES_MARGIN) * hTimeD;
 	}
 #else		
-	intervalD = (SENSOR_TGES + 1) * hTimeD;
+	intervalD = (SENSOR_TGES + SENSOR_TGES_MARGIN) * hTimeD;
 #endif
 
 	if ((double)((int)frameRateTime - (int)expTime) < (double)intervalD)
@@ -1549,7 +1549,6 @@ _DONE:
 }
 
 
-
 //**********************************************************************************
 //	露光時間モード設定
 //----------------------------------------------------------------------------------
@@ -1826,14 +1825,14 @@ int irSetExposure (unsigned int expTime)
 	}
 	else
 	{
-		intervalD = (SENSOR_TGES + 1) * hTimeD;
+		intervalD = (SENSOR_TGES + SENSOR_TGES_MARGIN) * hTimeD;
 	}
 
 	#else // #if defined (MODE_FRAMERATE_HIGH_SPEED)
 
 	// 設定可能なフレーム時間を算出(TGES)
 	// TGES:露光完了から次のフレームの開始までの時間
-	intervalD = (SENSOR_TGES + 1) * hTimeD;
+	intervalD = (SENSOR_TGES + SENSOR_TGES_MARGIN) * hTimeD;
 
 	#endif // #if defined (MODE_FRAMERATE_HIGH_SPEED)
 
@@ -2043,7 +2042,7 @@ int irSetExposureSimple (unsigned int expTime)
 
 	// 設定可能なフレーム時間を算出(TGES)
 	// TGES:露光完了から次のフレームの開始までの時間
-	intervalD = (SENSOR_TGES + 1) * hTimeD;
+	intervalD = (SENSOR_TGES + SENSOR_TGES_MARGIN) * hTimeD;
 	if ((int)((int)frameRateTime - (int)expTime) < intervalD)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
@@ -3272,7 +3271,6 @@ _DONE:
 }
 
 
-
 //**********************************************************************************
 //	センサRead Out時間
 //----------------------------------------------------------------------------------
@@ -3326,7 +3324,7 @@ int sensoreGetReadOut(int *pTime)
 	}
 	else
 	{
-		*pTime = (hIntervalClock * SENSOR_H_TIME * (SENSOR_TGES + 1)/*@*/) + 1/*切り上げ*/;
+		*pTime = (hIntervalClock * SENSOR_H_TIME * (SENSOR_TGES + SENSOR_TGES_MARGIN)/*@*/) + 1/*切り上げ*/;
 	}
 
 	#else // #if defined (MODE_FRAMERATE_HIGH_SPEED)
@@ -3339,7 +3337,7 @@ int sensoreGetReadOut(int *pTime)
 
 	// us時間
 	if (shutterMode == SHUTTER_MODE_TRIGGER)
-		*pTime = (hIntervalClock * SENSOR_H_TIME * (SENSOR_TGES + 1)/*@*/) + 1/*切り上げ*/;
+		*pTime = (hIntervalClock * SENSOR_H_TIME * (SENSOR_TGES + SENSOR_TGES_MARGIN)/*@*/) + 1/*切り上げ*/;
 	else
 		*pTime = 0;
 	

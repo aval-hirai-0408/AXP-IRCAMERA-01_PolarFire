@@ -472,6 +472,7 @@ int diagFlashRW (void *str, int devType)
 		goto _DONE;
 
 	// メモリリクエスト
+#if defined (MODE_FLASH_WRITE_COPY)
 	if ((pBuff = (unsigned int *)malloc(size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
@@ -479,6 +480,17 @@ int diagFlashRW (void *str, int devType)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
+#else
+	if ((pBuff = (unsigned int *)malloc((size + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		sprintf (gLogMsgBuff, "Flash RW Memory Request Error.\n", devType);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+	
+	pBuff += (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
 
 MORE:
 	for (tloop=0; tloop<loop; tloop++)
@@ -579,6 +591,11 @@ MORE:
 		goto MORE;
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuff != NULL)
+		pBuff -= (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
+
 	if (pBuff != NULL)
 		free (pBuff);
 
@@ -615,13 +632,23 @@ int diagFlashRWAll (void *str, int devType)
 		goto _DONE;
 
 	// メモリリクエスト
+#if defined (MODE_FLASH_WRITE_COPY)
 	if ((pBuff = (unsigned int *)malloc(size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash RW All Memory Request Error.\n");
 		goto _DONE;
 	}
+#else
+	if ((pBuff = (unsigned int *)malloc((size + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash RW All Memory Request Error.\n");
+		goto _DONE;
+	}
 
+	pBuff += (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
 
 MORE:
 	for (tloop=0; tloop<loop; tloop++)
@@ -707,6 +734,11 @@ MORE:
 		goto MORE;
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuff != NULL)
+		pBuff -= (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
+
 	if (pBuff != NULL)
 		free (pBuff);
 
@@ -746,6 +778,7 @@ int diagFlashRWRandom (void *str, int devType)
 		goto _DONE;
 
 	// メモリリクエスト
+#if defined (MODE_FLASH_WRITE_COPY)
 	if ((pBuff = (unsigned int *)malloc(size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
@@ -753,6 +786,16 @@ int diagFlashRWRandom (void *str, int devType)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
+#else
+	if ((pBuff = (unsigned int *)malloc((size + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		sprintf (gLogMsgBuff, "Flash RW Random Memory Request Error.\n", devType);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+	pBuff += (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
 
 MORE:
 	for (tloop=0; tloop<loop; tloop++)
@@ -861,6 +904,11 @@ MORE:
 		goto MORE;
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuff != NULL)
+		pBuff -= (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
+#endif
+
 	if (pBuff != NULL)
 		free (pBuff);
 
@@ -909,6 +957,7 @@ int diagFlashRWSector (void *str, int devType)
 	}
 
 	// メモリリクエスト
+#if defined (MODE_FLASH_WRITE_COPY)
 	if ((pBuff = (unsigned char *)malloc (size)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
@@ -916,6 +965,17 @@ int diagFlashRWSector (void *str, int devType)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
+#else
+	if ((pBuff = (unsigned char *)malloc ((size + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		sprintf (gLogMsgBuff, "Flash RW Memory Request Error.\n", devType);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+
+	pBuff += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
 
 MORE:
 	for (tloop=0; tloop<loop; tloop++)
@@ -1023,6 +1083,11 @@ _DONE:
 	// Read(バンク切り替え用途)
 	//--------------------------------------------------
 	devFlashRead (devType, 0, (unsigned char *)pBuff, 4);
+
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (pBuff != NULL)
+		pBuff -= QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
 
 	if (pBuff != NULL)
 		free (pBuff);

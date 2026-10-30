@@ -137,12 +137,15 @@ int cmdDiagMem2 (void *str)
 
 	if (mode == 0)
 	{
-		gTestMemReqSize = TEST_MEM_MAX_SIZE_VERSION2 / 2;
+		gTestMemReqSize = TEST_MEM_MAX_SIZE_VERSION2;
 	}
 	else
 	{
-		gTestMemReqSize = 32*1024*1024;
+		//gTestMemReqSize = 32*1024*1024;
+		gTestMemReqSize = TEST_MEM_MAX_SIZE_VERSION2;
 	}
+	
+	DEBUG_PRINT_FORCE("Mode = 0x%08x\n", mode);
 
 	//--------------------------------------------------------------------------------
 	// Test1
@@ -150,25 +153,6 @@ int cmdDiagMem2 (void *str)
 
 	// アドレス取得
 	addr = DIAG_DDR_BASE1_ADRS;
-
-	// DDR検査
-	if ((status = cmdDiagMemRW (loop, addr, gTestMemReqSize)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-
-	//--------------------------------------------------------------------------------
-	// Test2
-	//--------------------------------------------------------------------------------
-
-	// Check DDR Mode
-	if (mode != 0)
-		goto _DONE;
-
-	// アドレス取得
-	addr = DIAG_DDR_BASE2_ADRS;
-
-	// サイズ設定
-	gTestMemReqSize = TEST_MEM_MAX_SIZE_VERSION2;
 
 	// DDR検査
 	if ((status = cmdDiagMemRW (loop, addr, gTestMemReqSize)) != AVAL_STATUS_SUCCESS)
@@ -242,7 +226,7 @@ MORE_MEM:
 			DEBUG_PRINT ("Data Line Test\n");
 		fflush (stdout);
 
-		if ((status = cmdDiagMemDataLine (NT5AD_DDR_DQ)) != AVAL_STATUS_SUCCESS)
+		if ((status = cmdDiagMemDataLine (addr, NT5AD_DDR_DQ)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		/*---------------------------*/
@@ -252,7 +236,7 @@ MORE_MEM:
 			DEBUG_PRINT ("\nCAS Test\n");
 		fflush (stdout);
 
-		if ((status = cmdDiagMemCAS (NT5AD_DDR_CAS)) != AVAL_STATUS_SUCCESS)
+		if ((status = cmdDiagMemCAS (addr, NT5AD_DDR_CAS)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		/*---------------------------*/
@@ -262,7 +246,7 @@ MORE_MEM:
 			DEBUG_PRINT ("\nRAS Test\n");
 		fflush (stdout);
 
-		if ((status = cmdDiagMemRAS (NT5AD_DDR_CAS, NT5AD_DDR_RAS)) != AVAL_STATUS_SUCCESS)
+		if ((status = cmdDiagMemRAS (addr, NT5AD_DDR_CAS, NT5AD_DDR_RAS)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		/*---------------------------*/
@@ -272,7 +256,7 @@ MORE_MEM:
 			DEBUG_PRINT ("\nBank Test\n");
 		fflush (stdout);
 
-		if ((status = cmdDiagMemBank (NT5AD_DDR_BANK)) != AVAL_STATUS_SUCCESS)
+		if ((status = cmdDiagMemBank (addr, NT5AD_DDR_BANK)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
 
@@ -1041,16 +1025,18 @@ _DONE:
 //	DataLine検査
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
+//		addr					：評価アドレス
+//		bus						：Busサイズ
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS		：正常終了
 //		上記以外					：異常終了
 //==================================================================================
-int cmdDiagMemDataLine (unsigned int bus)
+int cmdDiagMemDataLine (unsigned int adrs, unsigned int bus)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int i;
 	unsigned int addr = 0;
-	unsigned int baseAddr = NT5AD_DDR_BASE_ADDR;
+	unsigned int baseAddr = adrs;
 	unsigned long long testData = 0;
 	unsigned long long readData = 0;
 
@@ -1091,16 +1077,18 @@ _DONE:
 //	CAS検査
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
+//		addr					：評価アドレス
+//		cas						：Casサイズ
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS		：正常終了
 //		上記以外					：異常終了
 //==================================================================================
-int cmdDiagMemCAS (unsigned int cas)
+int cmdDiagMemCAS (unsigned int adrs, unsigned int cas)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int i;
 	unsigned int addr = 0;
-	unsigned int baseAddr = NT5AD_DDR_BASE_ADDR;
+	unsigned int baseAddr = adrs;
 	unsigned long long testData = 0;
 	unsigned long long readData = 0;
 	unsigned long long tmpData = 0;
@@ -1162,16 +1150,19 @@ _DONE:
 //	RAS検査
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
+//		addr					：評価アドレス
+//		cas						：Casサイズ
+//		ras						：Rasサイズ
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS		：正常終了
 //		上記以外					：異常終了
 //==================================================================================
-int cmdDiagMemRAS(unsigned int cas, unsigned int ras)
+int cmdDiagMemRAS(unsigned int adrs, unsigned int cas, unsigned int ras)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int i;
 	unsigned int addr = 0;
-	unsigned int baseAddr = NT5AD_DDR_BASE_ADDR;
+	unsigned int baseAddr = adrs;
 	unsigned long long testData = 0;
 	unsigned long long readData = 0;
 	unsigned long long tmpData = 0;
@@ -1229,16 +1220,18 @@ _DONE:
 //	Bank検査
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
+//		addr					：評価アドレス
+//		bank					：Bankサイズ
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS		：正常終了
 //		上記以外					：異常終了
 //==================================================================================
-int cmdDiagMemBank (unsigned int bank)
+int cmdDiagMemBank (unsigned int adrs, unsigned int bank)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int i;
 	unsigned int addr = 0;
-	unsigned int baseAddr = NT5AD_DDR_BASE_ADDR;
+	unsigned int baseAddr = adrs;
 	unsigned long checkBank = 0;
 	unsigned long long testData = 0;
 	unsigned long long readData = 0;

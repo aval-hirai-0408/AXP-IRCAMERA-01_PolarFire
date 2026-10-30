@@ -55,14 +55,15 @@ extern unsigned char gXmlFileName1[];
 extern char deviceVersion[];
 extern unsigned char gXmlFileNameUpdate [];
 
-#if defined (MODE_FPGA_PF)
 extern int gIfFpgaReConfig;
-#endif
 
 extern int gLinkStatusCheck;
 
 extern int gCxpCmdProcessFlag;
 extern int gCxpIntProcsFlag;
+
+extern unsigned int gDipsw;
+
 
 //**********************************************************************************
 //	CXP Initialize(受信関連レジスタのみ：ARM0から初期化)
@@ -490,7 +491,8 @@ int cxpProcs (int port)
 	unsigned int crc_value;
 	unsigned int rxCount = 0;
 	unsigned int packetCount;
-	
+
+	#if 0
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
 	{
@@ -499,17 +501,7 @@ int cxpProcs (int port)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
-
-	//============================================================
-	//============================================================
-	//============================================================
-	// 初期化
-	//============================================================
-	//============================================================
-	//============================================================
-
-	// CXP受信データをDDRに取得するアドレス
-	pCxpRxBuff = (unsigned int *)(FIRM_CXP_RECV_DATA_CMD_ADRS + port * FIRM_CXP_DATA_INTERVAL);
+	#endif
 
 	//============================================================
 	//============================================================
@@ -518,6 +510,11 @@ int cxpProcs (int port)
 	//============================================================
 	//============================================================
 	//============================================================
+
+	//------------------------------------------------------------
+	// CXP受信データをDDRに取得するアドレス
+	//------------------------------------------------------------
+	pCxpRxBuff = (unsigned int *)(FIRM_CXP_RECV_DATA_CMD_ADRS + port * FIRM_CXP_DATA_INTERVAL);
 
 	//------------------------------------------------------------
 	// パケット数取得
@@ -566,83 +563,34 @@ int cxpProcs (int port)
 	//*pCxpRxBuff++ = cxpPaket.cmdIndication;
 	//rxCount++;
 
-	// Command Packet?
-	if (cxpPaket.cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND)
-	{
-#if defined (MODE_CXP_VERSION_20)
-		goto _NEXT_NOTAG;
-#else
-		goto _NEXT1;
-#endif
-	}
-
-	#if defined (MODE_CXP_VERSION_20)
-	if (VersionUsed_st == CXP_VERSION_20)
-	{
-		// Tag Command Packet?
-		if (cxpPaket.cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
-			goto _NEXT1;
-	}
-	#endif
-
-	// それ以外のindication
-#if defined (MODE_CXP_VERSION_20)
-	if (VersionUsed_st == CXP_VERSION_20)
-	{
-		if ((cxpPaket.cmdIndication != CXP_DATA_PACKET_TYPE_COMMAND) && (cxpPaket.cmdIndication != CXP_DATA_PACKET_TYPE_COMMAND_TAG))
-			goto _DONE;
-	}
-	else
-	{
-		if (cxpPaket.cmdIndication != CXP_DATA_PACKET_TYPE_COMMAND)
-			goto _DONE;
-	}
-#else
-	if (cxpPaket.cmdIndication != CXP_DATA_PACKET_TYPE_COMMAND)
+	// Check Indication
+	if ((cxpPaket.cmdIndication != CXP_DATA_PACKET_TYPE_COMMAND) && (cxpPaket.cmdIndication != CXP_DATA_PACKET_TYPE_COMMAND_TAG))
 		goto _DONE;
-#endif
 
-
-_NEXT1:
-	#if defined (MODE_CXP_VERSION_20)
 	//------------------------------------------------------------
 	// Tag取得
 	//------------------------------------------------------------
-	if (VersionUsed_st == CXP_VERSION_20)
-	{
-		if (cxpPaket.cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
-		{
-			// tagあり
-			if ((status = cxpGetCmdPacket (port, &cxpPaket.tag)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-
-			// DDRにデータ格納
-			*pCxpRxBuff++ = cxpPaket.tag;
-			rxCount++;
-
-			if (rxCount >= (FIRM_CXP_RECV_DATA_CMD_SIZE/4))
-			{
-				status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Command Buffer Over Flow Error\n");
-				goto _DONE;
-			}
-		}
-		else
-		{
-			cxpPaket.tag = 0;
-		}
-	}
-	else
-	{
-#if defined (MODE_CXP_VERSION_20)
-_NEXT_NOTAG:
-#endif
-		cxpPaket.tag = 0;
-	}
-	#else
+	// Tag Clear
 	cxpPaket.tag = 0;
-	#endif
 
+	if (cxpPaket.cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
+	{
+		// tagあり
+		if ((status = cxpGetCmdPacket (port, &cxpPaket.tag)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+
+		// DDRにデータ格納
+		*pCxpRxBuff++ = cxpPaket.tag;
+		rxCount++;
+
+		if (rxCount >= (FIRM_CXP_RECV_DATA_CMD_SIZE/4))
+		{
+			status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Command Buffer Over Flow Error\n");
+			goto _DONE;
+		}
+	}
+	
 	//------------------------------------------------------------
 	// Cmd & Size取得
 	//------------------------------------------------------------
@@ -663,7 +611,7 @@ _NEXT_NOTAG:
 	//------------------------------------------------------------
 	// アドレス取得
 	//------------------------------------------------------------
-	if ((status = cxpGetCmdPacket (port, &data)) != AVAL_STATUS_SUCCESS)
+	if ((status = cxpGetCmdPacket (port, &cxpPaket.adrs)) != AVAL_STATUS_SUCCESS)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Address No Data\n");
@@ -671,10 +619,8 @@ _NEXT_NOTAG:
 	}
 
 	// DDRにデータ格納
-	*pCxpRxBuff++ = data;
+	*pCxpRxBuff++ = cxpPaket.adrs;
 	rxCount++;
-
-	cxpPaket.adrs = data;
 
 	//------------------------------------------------------------
 	// コマンドデータ取得
@@ -683,7 +629,7 @@ _NEXT_NOTAG:
 
 	if (cxpPaket.cmd == CXP_CTRL_CMD_WRITE)
 	{
-		for (i=0; i<(cxpPaket.size/4); i++, pCxpRxBuff++, rxCount++)
+		for (i=0; i<cxpPaket.size/4; i++, pCxpRxBuff++, rxCount++)
 		{
 			if ((status = cxpGetCmdPacket (port, pCxpRxBuff)) != AVAL_STATUS_SUCCESS)
 			{
@@ -714,16 +660,14 @@ _NEXT_NOTAG:
 	//------------------------------------------------------------
 	// CRC取得
 	//------------------------------------------------------------
-	if ((status = cxpGetCmdPacket (port, &cxpPaket.crc)) != AVAL_STATUS_SUCCESS)
+	if ((status = cxpGetCmdPacket (port, &dataSwap)) != AVAL_STATUS_SUCCESS)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CRC No Data\n");
 		goto _DONE;
 	}
 
-	dataSwap = SWAP_L(cxpPaket.crc);
-	cxpPaket.crc = dataSwap;
-
+	cxpPaket.crc = SWAP_L(dataSwap);
 
 	//------------------------------------------------------------
 	// 終了 K Code取得
@@ -735,10 +679,10 @@ _NEXT_NOTAG:
 		goto _DONE;
 	}
 
-
 	//------------------------------------------------------------
 	// CRC計算
 	//------------------------------------------------------------
+#if 0	//@@@1
 	cxpCalculateCrc32 (&crc_value, (unsigned int *)(FIRM_CXP_RECV_DATA_CMD_ADRS + port * FIRM_CXP_DATA_INTERVAL), rxCount);
 
 	if (crc_value != cxpPaket.crc)
@@ -758,7 +702,8 @@ _NEXT_NOTAG:
 
 		goto _DONE;
 	}
-
+#endif //@@@1
+	
 	//============================================================
 	//============================================================
 	//============================================================
@@ -775,10 +720,11 @@ _NEXT_NOTAG:
 		//------------------------------------------------------------
 		// Exeコマンド処理中の場合は、エラーを返す（Writeの場合のみ）
 		//------------------------------------------------------------
+		#if !defined (MODE_UPDATE_ALL_MULTI)
 		if (cmdExecuteStatus() == 1)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Command Processing.\n");
+			sprintf (gLogMsgBuff, "Command Processing. Adrs = 0x%08x\n", cxpPaket.adrs);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			
 			// status設定
@@ -791,6 +737,7 @@ _NEXT_NOTAG:
 			cxpSetAckPacket (port, &cxpPaket);
 			goto _DONE;
 		}
+		#endif // #if defined (MODE_UPDATE_ALL_MULTI)
 
 		//------------------------------------------------------------
 		// Set User
@@ -819,8 +766,7 @@ _NEXT_NOTAG:
 		//------------------------------------------------------------
 		// IF Fpga Reconfig制御
 		//------------------------------------------------------------
-	#if 0	//@@@1
-	#if defined (MODE_FPGA_PF)
+		#if 0	//@@@1
 		if ((gIfFpgaReConfig == 1) && (cxpPaket.adrs == FileOperationExecute))
 		{
 			cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "IF FPGA ReConfig Start\n");
@@ -847,8 +793,7 @@ _NEXT_NOTAG:
 			cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "IF FPGA ReConfig End\n");
 
 		}
-	#endif
-	#endif //@@@1
+		#endif //@@@1
 	}
 	//------------------------------------------------------------
 	// Read
@@ -899,9 +844,15 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned int *ptrL;
 	unsigned int saveAckSize;
 
-	//sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size, status);
-	//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	#if 0
+	if ((gDipsw == 3) || (IN32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS) == 1))
+	{
+		sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size, status);
+		cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	}
+	#endif
 
+	#if 0
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
 	{
@@ -926,6 +877,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Set User pData NULL Parameter Error\n");
 		goto _DONE;
 	}
+	#endif
 
 	// アドレス取得
 	adrs = pCxpSt->adrs;
@@ -936,11 +888,9 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 	// 送信データ格納位置取得(0x00:Ackコード/0x04=Size/0x08=データなので0x08のオフセットを付加)
 	pDataSend = (unsigned int *)(FIRM_CXP_SEND_DATA_CMD_ADRS + FIRM_CXP_DATA_INTERVAL * port + CXP_SEND_DATA_OFFSET);
 
-	if (VersionUsed_st == CXP_VERSION_20)
-	{
-		if (pCxpSt->cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
-			pDataSend++;		// Tag追加(+4)
-	}
+	// Tag Command?
+	if (pCxpSt->cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
+		pDataSend++;		// Tag追加(+4)
 
 	switch (adrs)
 	{
@@ -1640,8 +1590,8 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			//------------------------------------------------------------
 			if ((adrs >= FileAccessBuffer) && (adrs < BASE_FILE_BUFFER_MAX))
 			{
-				if ((status = cxpUploadBuffer (adrs, (unsigned char *)pDataRecv, pCxpSt->size)) != AVAL_STATUS_SUCCESS)
-					goto _DONE;
+				status = cxpUploadBuffer (adrs, (unsigned char *)pDataRecv, pCxpSt->size);
+				//@@@1goto _DONE;
 				break;
 			}
 
@@ -1762,9 +1712,36 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 				cxpSetAckPacket (port, pCxpSt);
 
 				// Log
-				sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status=%d, flag=%d\n", pCxpSt->adrs, pCxpSt->size, *pCxpSt->pData, status, gCxpIntProcsFlag);
-				cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+				if ((gDipsw == 3) || (IN32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS) == 1))
+				{
+					sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status=%d, flag=%d\n", pCxpSt->adrs, pCxpSt->size, *pCxpSt->pData, status, gCxpIntProcsFlag);
+					cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+				}
 			}
+		
+			//------------------------------------------------------------
+			// Execute系(先にAckだけ返す)
+			//------------------------------------------------------------
+			#if defined (MODE_UPDATE_ALL_MULTI)
+			if ((fileSelector == FileSelector_SYSTEM) && (adrs == FileOperationeSelector_Open))
+			{
+				// Ack返信Flag設定
+				gCxpAckDoneFlag = 1;
+
+				// status設定
+				pCxpSt->status = 0;
+
+				// Ack Packet設定
+				cxpSetAckPacket (port, pCxpSt);
+
+				// Log
+				if ((gDipsw == 3) || (IN32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS) == 1))
+				{
+					sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status=%d, flag=%d\n", pCxpSt->adrs, pCxpSt->size, *pCxpSt->pData, status, gCxpIntProcsFlag);
+					cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+				}
+			}
+			#endif
 
 
 			//------------------------------------------------------------
@@ -1800,8 +1777,11 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 	}
 
-	sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status=%d, flag=%d\n", pCxpSt->adrs, pCxpSt->size, *pCxpSt->pData, status, gCxpIntProcsFlag);
-	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	if ((gDipsw == 3) || (IN32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS) == 1))
+	{
+		sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status=%d, flag=%d\n", pCxpSt->adrs, pCxpSt->size, *pCxpSt->pData, status, gCxpIntProcsFlag);
+		cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	}
 
 _DONE:
 	return (status);
@@ -1830,9 +1810,13 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned int ix;
 	unsigned int amari;
 
-	//sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size);
-	//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	//if ((gDipsw == 3) || (IN32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS) == 1))
+	//{
+		//sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size);
+		//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	//}
 	
+	#if 0
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
 	{
@@ -1857,6 +1841,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Get User pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
+	#endif
 
 	// アドレス取得
 	adrs = pCxpSt->adrs;
@@ -1864,11 +1849,9 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 	// 送信データ格納位置取得(0x00:Ackコード/0x04=Size/0x08=データなので0x08のオフセットを付加)
 	pData = (unsigned int *)(FIRM_CXP_SEND_DATA_CMD_ADRS + port * FIRM_CXP_DATA_INTERVAL + CXP_SEND_DATA_OFFSET);
 
-	if (VersionUsed_st == CXP_VERSION_20)
-	{
-		if (pCxpSt->cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
-			pData++;		// Tag追加(+4)
-	}
+	// Tag Command?
+	if (pCxpSt->cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
+		pData++;		// Tag追加(+4)
 
 	pData2 = pData;
 
@@ -2524,8 +2507,8 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 				{
 					// XML Fileデータ取得
 					*pData2 = IN32 ((FIRM_XML_FILE_ADRS+adrs2+(ix*4)));
-					swapData32 = SWAP_L (*pData2);
-					*pData2 = swapData32;
+					//swapData32 = SWAP_L (*pData2);
+					//*pData2 = swapData32;
 				}
 
 				amari = pCxpSt->ackSize%4;
@@ -2533,8 +2516,8 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 				{
 					// XML Fileデータ取得
 					*pData2 = IN32 ((FIRM_XML_FILE_ADRS+adrs2+(ix*4)));
-					swapData32 = SWAP_L (*pData2);
-					*pData2 = swapData32;
+					//swapData32 = SWAP_L (*pData2);
+					//*pData2 = swapData32;
 				}
 			}
 			//------------------------------------------------------------
@@ -2543,7 +2526,6 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			else if  (((adrs >= DevicePrimaryURL) && (adrs < DevicePrimaryURL + CXP_XML_URL_SIZE)) ||
                       ((adrs >= DeviceSecondaryURL) && (adrs < DeviceSecondaryURL + CXP_XML_URL_SIZE)))
 			{
-
 				// Primary & Secondary?
 				if ((adrs >= DevicePrimaryURL) && (adrs < DevicePrimaryURL + CXP_XML_URL_SIZE))
 					adrs2 = DevicePrimaryURL;
@@ -2588,8 +2570,11 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 	//if ((adrs >= 0x61000000) && (adrs < 0x61800000))
 		//goto _DONE;
 
-	sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status=%d, flag=%d\n", adrs, pCxpSt->ackSize, *pData2, status, gCxpIntProcsFlag);
-	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	if ((gDipsw == 3) || (IN32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS) == 1))
+	{
+		sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status=%d, flag=%d\n", adrs, pCxpSt->ackSize, *pData2, status, gCxpIntProcsFlag);
+		cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	}
 
 _DONE:
 	return (status);
@@ -2613,6 +2598,7 @@ int cxpGetCmdPacket (int port, unsigned int *pData)
 	unsigned int timeout;
 	unsigned int data32Save;
 
+	#if 0
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
 	{
@@ -2621,20 +2607,22 @@ int cxpGetCmdPacket (int port, unsigned int *pData)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
+	#endif
 
 	// Status Check
 	for (timeout=0; timeout<CXP_COMMAND_PACKET_TIMEOUT; timeout++)
 	{
-#if 0
+		#if 0
 		data32 = IN32 (FPGA_CXP_LSUC_RX_SW_PKT_STATUS_ADRS);
 		data32 &= (FPGA_CXP_LSUC_RX_SW_PKT_VAL_BIT | FPGA_CXP_LSUC_RX_SW_PKT_FIFI_EMPTY_BIT);
 		if (data32 == FPGA_CXP_LSUC_RX_SW_PKT_VAL_BIT)
 			break;
-#else
+		#else
 		data32 = IN32 (FPGA_CXP_LSUC_RX_SW_PKT_STATUS_ADRS);
 		if (data32 & FPGA_CXP_LSUC_RX_SW_PKT_VAL_BIT)
 			break;
-#endif
+		#endif
+
 		usDelay (2);
 	}
 
@@ -2648,12 +2636,9 @@ int cxpGetCmdPacket (int port, unsigned int *pData)
 
 	// データ取得
 	*pData = IN32 (FPGA_CXP_LSUC_SW_RX_PKT_DATA_ADRS);
-	//*pData = data32;
 
-//@@@@@@@@@@@@@@@@@@@@@
 	//data32Save = IN32 (FPGA_CXP_LSUC_RX_SW_PKT_STATUS_ADRS);
 	//DEBUG_PRINT_FORCE("[%d]0x%08x:0x%08x\n", ++gCxpAllRecvCount, *pData, data32Save);
-//@@@@@@@@@@@@@@@@@@@@@
 	
 	// 受信データをバッファに格納
 	//cxpRecvBuffer (port, *pData);
@@ -2681,8 +2666,8 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned int ackCode;
 	unsigned int crc_value;
 	unsigned int count = 0;
-	unsigned char cxpSendCount = 0;
 
+	#if 0
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
 	{
@@ -2691,7 +2676,9 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
+	#endif
 
+	#if 0
 	// Check pCxpSt Parameter
 	if (pCxpSt == NULL)
 	{
@@ -2699,10 +2686,10 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Ack Packet pCxpSt NULL Parameter Error.\n");
 		goto _DONE;
 	}
+	#endif
 
-
-// Ver.2.7 Start
-#if 0	//@@@1
+	#if 0
+	// Ver.2.7 Start
 	// Check size Parameter
 	if ((pCxpSt->ackSize % 4) != 0)
 	{
@@ -2713,8 +2700,8 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 		//goto _DONE;
 		// エラーのパケットを返す
 	}
-#endif //@@@1
-// Ver.2.7 End
+	// Ver.2.7 End
+	#endif
 
 	// Chekc ackSize Parameter
 	if ((pCxpSt->ackSize/4) > CXP_REG_DATA_SIZE_MAX)
@@ -2732,13 +2719,6 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	//------------------------------------------------------------
 	ptrL = (unsigned int *)(unsigned long)(FIRM_CXP_SEND_DATA_CMD_ADRS + port * FIRM_CXP_DATA_INTERVAL);
 
-	
-	//------------------------------------------------------------
-	// Recive Interrupt Disable
-	//------------------------------------------------------------
-	//@@@1if ((status = cxpSetRecvIntMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-		//@@@1goto _DONE;
-	
 	//------------------------------------------------------------
 	// コメント
 	//------------------------------------------------------------
@@ -2747,50 +2727,37 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	//------------------------------------------------------------
 	// 開始 K Code設定
 	//------------------------------------------------------------
-	if ((status = cxpWriteFifo32 (port, CXP_K_CODE_K27_7, CXP_K_CODE_K27_7)) != AVAL_STATUS_SUCCESS)
+	if ((status = cxpWriteFifo32 (port, CXP_K_CODE_K27_7)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 	//*ptrL = CXP_K_CODE_K27_7;			// CRC計算用
 	//ptrL++;
 	//count++;
-	cxpSendCount++;						// CXPレジスタ設定用
 
 	//------------------------------------------------------------
 	// Command Indication設定
 	//------------------------------------------------------------
-	if (VersionUsed_st == CXP_VERSION_20)
-	{
-		if (pCxpSt->cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
-			pCxpSt->sendcmdIndication = CXP_DATA_PACKET_TYPE_ACK_TAG;
-		else
-			pCxpSt->sendcmdIndication = CXP_DATA_PACKET_TYPE_ACK;
-	}
+	if (pCxpSt->cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
+		pCxpSt->sendcmdIndication = CXP_DATA_PACKET_TYPE_ACK_TAG;
 	else
-	{
 		pCxpSt->sendcmdIndication = CXP_DATA_PACKET_TYPE_ACK;
-	}
 
-	if ((status = cxpWriteFifo32 (port, pCxpSt->sendcmdIndication, 0)) != AVAL_STATUS_SUCCESS)
+	if ((status = cxpWriteFifo32 (port, pCxpSt->sendcmdIndication)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	//ptrL++;
 	//count++;
-	cxpSendCount++;						// CXPレジスタ設定用
 
 	//------------------------------------------------------------
 	// Tag設定
 	//------------------------------------------------------------
-	if (VersionUsed_st == CXP_VERSION_20)
+	if (pCxpSt->sendcmdIndication == CXP_DATA_PACKET_TYPE_ACK_TAG)
 	{
-		if (pCxpSt->sendcmdIndication == CXP_DATA_PACKET_TYPE_ACK_TAG)
-		{
-			if ((status = cxpWriteFifo32 (port, pCxpSt->tag, 0)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-			
-			*ptrL = pCxpSt->tag;				// CRC計算用 // 2025.06.19追加
-			ptrL++;								// 2025.06.19追加
-			count++;							// 2025.06.19追加
-			cxpSendCount++;						// CXPレジスタ設定用
-		}
+		if ((status = cxpWriteFifo32 (port, pCxpSt->tag)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+		
+		*ptrL = pCxpSt->tag;				// CRC計算用 // 2025.06.19追加
+		ptrL++;								// 2025.06.19追加
+		count++;							// 2025.06.19追加
 	}
 
 	//------------------------------------------------------------
@@ -2858,26 +2825,24 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 	}
 
 	// Write
-	if ((status = cxpWriteFifo32 (port, ackCode, 0)) != AVAL_STATUS_SUCCESS)
+	if ((status = cxpWriteFifo32 (port, ackCode)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	*ptrL = ackCode;						// CRC計算用
 	ptrL++;
 	count++;
-	cxpSendCount++;							// CXPレジスタ設定用
 
 	if ((ackCode == CXP_ACK_CODE_OK) || (ackCode == CXP_ACK_CODE_WAIT))
 	{
 		//------------------------------------------------------------
 		// size
 		//------------------------------------------------------------
-		if ((status = cxpWriteFifo32 (port, pCxpSt->ackSize, 0)) != AVAL_STATUS_SUCCESS)
+		if ((status = cxpWriteFifo32 (port, pCxpSt->ackSize)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		*ptrL = pCxpSt->ackSize;				// CRC計算用
 		ptrL++;
 		count++;
-		cxpSendCount++;							// CXPレジスタ設定用
 
 		//------------------------------------------------------------
 		// Data
@@ -2886,56 +2851,43 @@ int cxpSetAckPacket (int port, CXP_PACKET_ST *pCxpSt)
 		// 送信データ格納位置取得(0x00:Ackコード/0x04=Size/0x08=データなので0x08のオフセットを付加)
 		ptrL2 = (unsigned int *)(unsigned long)(FIRM_CXP_SEND_DATA_CMD_ADRS + port * FIRM_CXP_DATA_INTERVAL + CXP_SEND_DATA_OFFSET);
 
-		if (VersionUsed_st == CXP_VERSION_20)
-		{
-			if (pCxpSt->cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
-				ptrL2++;		// Tag追加(+4)
-		}
+		// Tag Command?
+		if (pCxpSt->cmdIndication == CXP_DATA_PACKET_TYPE_COMMAND_TAG)
+			ptrL2++;		// Tag追加(+4)
 
-		for (i=0; i<(pCxpSt->ackSize/4); i++, ptrL2++, count++, cxpSendCount++)
+		for (i=0; i<(pCxpSt->ackSize/4); i++, ptrL2++, count++)
 		{
-			if ((status = cxpWriteFifo32 (port, *ptrL2, 0)) != AVAL_STATUS_SUCCESS)
+			if ((status = cxpWriteFifo32 (port, *ptrL2)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
 		}
 
 		// Ver.2.7 Start
 		if ((pCxpSt->ackSize%4) != 0)
 		{
-			if ((status = cxpWriteFifo32 (port, *ptrL2, 0)) != AVAL_STATUS_SUCCESS)
+			if ((status = cxpWriteFifo32 (port, *ptrL2)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
 			
 			count++;
-			cxpSendCount++;
 		}
 		// Ver.2.7 End
 
 		//------------------------------------------------------------
 		// CRC
 		//------------------------------------------------------------
-	   	cxpCalculateCrc32 (&crc_value, (unsigned int *)(FIRM_CXP_SEND_DATA_CMD_ADRS + port * FIRM_CXP_DATA_INTERVAL), count);
+	   	//@@@1cxpCalculateCrc32 (&crc_value, (unsigned int *)(FIRM_CXP_SEND_DATA_CMD_ADRS + port * FIRM_CXP_DATA_INTERVAL), count);
 
 		dataSwap = SWAP_L (crc_value);
-		if ((status = cxpWriteFifo32 (port, dataSwap, 0)) != AVAL_STATUS_SUCCESS)
+		if ((status = cxpWriteFifo32 (port, dataSwap)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-
-		cxpSendCount++;						// CXPレジスタ設定用
 	}
-
 
 	//------------------------------------------------------------
 	// 終了 K Code設定
 	//------------------------------------------------------------
-	if ((status = cxpWriteFifo32 (port, CXP_K_CODE_K29_7, CXP_K_CODE_K29_7)) != AVAL_STATUS_SUCCESS)
+	if ((status = cxpWriteFifo32 (port, CXP_K_CODE_K29_7)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	cxpSendCount++;						// CXPレジスタ設定用
-
 _DONE:
-	//------------------------------------------------------------
-	// Recive Interrupt Enable
-	//------------------------------------------------------------
-	//@@@1cxpSetRecvIntMode (MODE_ENABLE);
-
 	return (status);
 }
 
@@ -3058,12 +3010,11 @@ _DONE:
 //	[ INPUT ]
 //		port				：ポート番号
 //		data				：送信データ(4byte)
-//		mark				：マークデータ(開始の場合：CXP_K_CODE_K27_7/終了の場合：CXP_K_CODE_K29_7/それ以外=0) 	// 2025.06.20
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int cxpWriteFifo32 (int port, unsigned int data, unsigned int mark)
+int cxpWriteFifo32 (int port, unsigned int data)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int ctrl;
@@ -3071,6 +3022,7 @@ int cxpWriteFifo32 (int port, unsigned int data, unsigned int mark)
 	unsigned int ix;
 	unsigned int data32;
 
+	#if 0
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
 	{
@@ -3079,6 +3031,7 @@ int cxpWriteFifo32 (int port, unsigned int data, unsigned int mark)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
+	#endif
 
 	//--------------------------------------------------------------------------------
 	// Check Tx Ready
@@ -3103,12 +3056,13 @@ int cxpWriteFifo32 (int port, unsigned int data, unsigned int mark)
 	// FIFO Data Write
 	OUT32 (FPGA_CXP_LSUC_SW_TX_PKT_DATA_ADRS, data);
 
-_DONE:
-
 	// 送信データをバッファに格納
-	swapData = SWAP_L(data);
-	cxpSendBuffer (port, swapData);
+	//@@@1swapData = SWAP_L(data);
+	//@@@1cxpSendBuffer (port, swapData);
+	
+	cxpSendBuffer (port, data);
 
+_DONE:
 	return (status);
 }
 
@@ -3129,6 +3083,7 @@ int cxpSendBuffer (int port, unsigned int data)
 	unsigned int count;
 	unsigned int *pBuff32;
 
+	#if 0
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
 	{
@@ -3137,6 +3092,7 @@ int cxpSendBuffer (int port, unsigned int data)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
+	#endif
 
 	// 送信カウンタ取得
 	count = IN32 ((FIRM_DATA_CXP_SEND_DATA_COUNT_MULTI_ADRS + port * 4));
@@ -3454,8 +3410,6 @@ int cxpSetDSizeL (int port, int wSize)
 	// Sensor Width Max
 	wMax = sensorWidth ();
 
-	wMax += IMG_WIDTH_IPU_MULTI_ADD_SIZE;
-
 	// Check wSize Parameter
 	if ((wSize <= wMin) || (wSize > wMax))
 	{
@@ -3555,8 +3509,6 @@ int cxpSetWidth (int port, int size)
 
 	// Sensor Width Max
 	wMax = sensorWidth ();
-
-	wMax += IMG_WIDTH_IPU_MULTI_ADD_SIZE;
 
 	// Check size Parameter
 	if ((size <= wMin) || (size > wMax))
@@ -4019,6 +3971,9 @@ int cxpUploadBuffer (unsigned int adrs, unsigned char *pData, unsigned int size)
 	unsigned int offset;
 	int i;
 	unsigned int adrs2;
+	unsigned char *pSrc8, *pDst8;
+	unsigned int *pSrc32, *pDst32;
+	int amari;
 
 	// Check pData Parameter
 	if (pData == NULL)
@@ -4038,20 +3993,40 @@ int cxpUploadBuffer (unsigned int adrs, unsigned char *pData, unsigned int size)
 	}
 
 #if 1
-	// オフセット
-	offset = adrs - FileAccessBuffer;
+
+	// 転送元格納アドレス
+	pSrc32 = (unsigned int *)pData;
 
 	// 転送先格納アドレス
 	ptrB = (unsigned char *)fileBuffer[fileSelector];
-	pDst = (unsigned char *)(ptrB + offset);
-
-	// 転送元格納アドレス
-	pSrc = pData;
+	offset = adrs - FileAccessBuffer;
+	pDst32 = (unsigned int *)(ptrB + offset);
 
 	// データCopy
-	for (i=0; i<size; i++, pSrc++, pDst++)
-		*pDst = *pSrc;
+	if ((((unsigned int)pSrc32&0x03) == 0) && (((unsigned int)pDst32&0x03) == 0))
+	{
+		for (i=0; i<(size/4); i++, pSrc32++, pDst32++)
+			*pDst32 = *pSrc32;
+		
+		amari = size%4;
+		if (amari != 0)
+		{
+			pSrc8 = (unsigned char *)pSrc32;
+			pDst8 = (unsigned char *)pDst32;
+			for (i=0; i<amari; i++, pSrc8++, pDst8++)
+				*pDst8 = *pSrc8;
+		}
+	}
+	else
+	{
+		pSrc8 = (unsigned char *)pSrc32;
+		pDst8 = (unsigned char *)pDst32;
+		for (i=0; i<size; i++, pSrc8++, pDst8++)
+			*pDst8 = *pSrc8;
+	}
+
 #else
+
 	// オフセット
 	offset = adrs - FileAccessBuffer;
 
@@ -4065,6 +4040,7 @@ int cxpUploadBuffer (unsigned int adrs, unsigned char *pData, unsigned int size)
 	// データCopy
 	for (i=0; i<size; i++, pSrc++, pDst++)
 		*pDst = *pSrc;
+
 #endif
 
 	adrs2 = adrs & BASE_FILE_BUFFER_MASK;

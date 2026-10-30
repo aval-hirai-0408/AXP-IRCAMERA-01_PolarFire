@@ -213,10 +213,10 @@ int cameraSetStatusAll (void)
 	OUT32 (BOARD_STATUS_USERSET_ADRS, gCameraSaveStatus);
 
 	// センサ温度上限カウント
-	OUT32 (BOARD_STATUS_SENSOR_TEMP_UPPER_ADRS, gPeltierSensorUpperTempCount);
+	OUT32 (BOARD_STATUS_SENSOR_TEMP_ADRS, gPeltierSensorUpperTempCount);
 
 	// センサ温度下限カウント
-	OUT32 (BOARD_STATUS_SENSOR_TEMP_LOWER_ADRS, gPeltierSensorLowerTempCount);
+	//@@@1OUT32 (BOARD_STATUS_SENSOR_TEMP_LOWER_ADRS, gPeltierSensorLowerTempCount);
 
 	// ケース温度カウント
 	OUT32 (BOARD_STATUS_CASE_TEMP_ADRS, gPeltierCaseTempCount);

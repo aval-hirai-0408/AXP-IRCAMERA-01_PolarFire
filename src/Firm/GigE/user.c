@@ -109,6 +109,7 @@ unsigned int fileLength[FileSelector_MAX][FileOperationeSelector_MAX];
 unsigned int fileStatus[FileSelector_MAX][FileOperationeSelector_MAX];
 unsigned int fileResult[FileSelector_MAX][FileOperationeSelector_MAX];
 unsigned int fileSize[FileSelector_MAX];
+unsigned int fileExecWriteDoneSize = 0;
 
 // --  Global Flash variables -------------
 volatile u32 ExposureTime_Auto = 0;
@@ -212,10 +213,8 @@ int gDrrsMode = MODE_DISABLE;
 #endif
 
 // ---- Global PF update for variables  -------------------------
-#if defined (MODE_FPGA_PF)
 unsigned int gIfFpgaFlashAdrs = 0;
 int gIfFpgaReConfig = 0;
-#endif
 
 //----------------------------------------------------------------------------------
 // Externs
@@ -2250,7 +2249,8 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Sensor Gain取得
 		//--------------------------------------------------------------------------------
 		case SensorGainX:
-			value = IN32(FIRM_DATA_SENSOR_GAIN_ADRS);
+			*status = sensorGetGainX (&fltValue);
+			value = (int)(fltValue * DEVICE_GAINX_UNIT);
 			break;
 #endif
 
@@ -3254,7 +3254,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// FPGA Temperature Float取得
 		//--------------------------------------------------------------------------------
 		case DeviceTemperature_FPGA_Float:
-			*status = xadcGetFpgaTemp (&dblValue);
+			*status = fpgaGetTemp (&dblValue);
 			fltValue = (float) dblValue;
 			value = (int)(fltValue * DEVICE_TEMP_UNIT);
 			break;
@@ -3328,6 +3328,24 @@ u32 get_user_reg (u32 address, u16 *status)
 			break;
 
 		//--------------------------------------------------------------------------------
+		// FPGA Alarm Max Temperature取得
+		//--------------------------------------------------------------------------------
+		case DeviceTemperature_Fpga_Max:
+			*status = fpgaGetTempAlarm (&dblValue, &dblValue2nd);
+			fltValue = (float) dblValue;
+			value = (int) fltValue;
+			break;
+
+		//--------------------------------------------------------------------------------
+		// FPGA Alarm Min Temperature取得
+		//--------------------------------------------------------------------------------
+		case DeviceTemperature_Fpga_Min:
+			*status = fpgaGetTempAlarm (&dblValue, &dblValue2nd);
+			fltValue = (float) dblValue2nd;
+			value = (int) fltValue;
+			break;
+		
+		//--------------------------------------------------------------------------------
 		// DeviceTemperatureAlarmStatus取得
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureAlarmStatus:
@@ -3345,7 +3363,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// DeviceTemperatureSensorAlarmCount取得
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureSensorAlarmCount:
-			value = (int)IN32 (BOARD_STATUS_SENSOR_TEMP_UPPER_ADRS);
+			value = (int)IN32 (BOARD_STATUS_SENSOR_TEMP_ADRS);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -3774,7 +3792,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			if (value == command_done)
 			{
 				value = 0;
-
+				
 				// Success or Failure
 				fileStatus[fileSelector][fileSel[fileSelector]] = *status;
 			}
@@ -3818,9 +3836,6 @@ u32 get_user_reg (u32 address, u16 *status)
 		//--------------------------------------------------------------------------------
 		case FileOperationResult:
 			value = fileResult[fileSelector][fileSel[fileSelector]];
-			//@@@1
-		//DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@value = %d\n", value);
-			//@@@1
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -7120,10 +7135,9 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// Sensor Gain設定
 		//--------------------------------------------------------------------------------
 		case SensorGainX:
-			//value2nd = executeCommand(FIRM_CMD_SENSOR_GAIN, CPU_CMD_SYNC_ON, (u32*) &value, 1);
-			//*status = value2nd;
-			fltValue = (float)((float)value / (float)SENSOR_GAIN_UNIT);
-			*status = sensorSetGainX (fltValue);
+			// Sensor Gain設定
+			fltValue = (float)((float)value / (float)DEVICE_GAINX_UNIT);
+			*status = toG(sensorSetGainX (fltValue));
 			break;
 #endif
 
@@ -8237,14 +8251,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case FPGA_PELTIER_SENSOR_ALM_ADRS:
 			// Alarm取得
-			if ((*status = peltierGetSensorTempAlarm(&dblValue, &dblValue2nd)) != AVAL_STATUS_SUCCESS)
+			if ((*status = peltierGetSensorTempAlarm (&dblValue, &dblValue2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			intValue = (int)value;
 			dblValue = (double)intValue;
 
 			// Alarm設定
-			*status = peltierSetSensorTempAlarm(dblValue, dblValue2nd);
+			*status = peltierSetSensorTempAlarm (dblValue, dblValue2nd);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -8252,32 +8266,50 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureAlarmMin_Sensor:
 			// Alarm取得
-			if ((*status = peltierGetSensorTempAlarm(&dblValue, &dblValue2nd)) != AVAL_STATUS_SUCCESS)
+			if ((*status = peltierGetSensorTempAlarm (&dblValue, &dblValue2nd)) != AVAL_STATUS_SUCCESS)
 				break;
 
 			intValue = (int)value;
 			dblValue2nd = (double)intValue;
 
 			// Alarm設定
-			*status = peltierSetSensorTempAlarm(dblValue, dblValue2nd);
+			*status = peltierSetSensorTempAlarm (dblValue, dblValue2nd);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// Case Alarm Max Temperature設定
 		//--------------------------------------------------------------------------------
 		case FPGA_PELTIER_CASE_ALM_ADRS:
-			*status = peltierGetCaseTempAlarm(&dblValue, &dblValue2nd);
+			*status = peltierGetCaseTempAlarm (&dblValue, &dblValue2nd);
 			dblValue = value;
-			*status = peltierSetCaseTempAlarm(dblValue, dblValue2nd);
+		*status = peltierSetCaseTempAlarm (dblValue, dblValue2nd);
 			break;
 
 		//--------------------------------------------------------------------------------
 		// Case Alarm Min Temperature設定
 		//--------------------------------------------------------------------------------
 		case DeviceTemperatureAlarmMin_Housing:
-			*status = peltierGetCaseTempAlarm(&dblValue, &dblValue2nd);
+			*status = peltierGetCaseTempAlarm (&dblValue, &dblValue2nd);
 			dblValue2nd = value;
-			*status = peltierSetCaseTempAlarm(dblValue, dblValue2nd);
+			*status = peltierSetCaseTempAlarm (dblValue, dblValue2nd);
+			break;
+
+		//--------------------------------------------------------------------------------
+		// FPGA Alarm Max Temperature設定
+		//--------------------------------------------------------------------------------
+		case DeviceTemperature_Fpga_Max:
+			*status = fpgaGetTempAlarm (&dblValue, &dblValue2nd);
+			dblValue = value;
+			*status = fpgaSetTempAlarm (dblValue, dblValue2nd);
+			break;
+
+		//--------------------------------------------------------------------------------
+		// FPGA Alarm Min Temperature設定
+		//--------------------------------------------------------------------------------
+		case DeviceTemperature_Fpga_Min:
+			*status = fpgaGetTempAlarm (&dblValue, &dblValue2nd);
+			dblValue2nd = value;
+			*status = fpgaSetTempAlarm (dblValue, dblValue2nd);
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -8872,6 +8904,10 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					 break;
 				#endif
 
+				case FileSelector_IF_FPGA:
+					*status = FileSelectorIfFpgaWrite();
+					break;
+
 				#if defined (MODE_GIGE_10G)
 				case FileSelector_PHY:
 					*status = FileSelectorPhyWrite();
@@ -8884,7 +8920,12 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 					break;
 				}
 
+				#if !defined (MODE_UPDATE_ALL_MULTI)
 				fileExec[fileSelector] = 0;
+				#else
+				if (fileSelector != FileSelector_FPGA)
+					fileExec[fileSelector] = 0;
+				#endif
 				break;
 
 		//--------------------------------------------------------------------------------
@@ -10035,6 +10076,11 @@ void user_init(u32* status)
 			case FileSelector_FPGA:
 				fileBuffer[i] = (u32*)FIRM_UPDATE_ADRS;
 				memset((void*) fileBuffer[i], 0, FIRM_UPDATE_SIZE);
+			
+				#if !defined (MODE_FLASH_WRITE_COPY)
+				fileBuffer[i]++;
+				#endif
+
 				break;
 
 			case FileSelector_XML:
@@ -11393,10 +11439,37 @@ int FileSelectorFpga (void)
 			fileStatus[fileSelector][fileSel[fileSelector]] = 0; // Success or Failure
 			fileResult[fileSelector][fileSel[fileSelector]] = 0; // if Success, N bytes is written
 			fileSize[fileSelector] = 0; // 0 bytes
+			
+			#if defined (MODE_UPDATE_ALL_MULTI)
+		
+			// Flag Clear
+			fileExecWriteDoneSize = 0;
+		
+			// Cmd Initialze
+			if ((status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
+				break;
+		
+			// Flash Write
+			if ((status = gigeCmdFirmUploadMulti (FLASH_UPDATE_ALL_ADRS, (unsigned char *)fileBuffer[FileSelector_FPGA])) != AVAL_STATUS_SUCCESS)
+			{
+				// Exec Clear
+				fileExec[fileSelector] = 0;
+				cmdExecuteDone ();
+				break;
+			}
+
+			// Exec Clear
+			fileExec[fileSelector] = 0;
+
+			// Cmd Done
+			cmdExecuteDone ();
+		
+			#endif
+		
 			break;
 
 		case FileOperationeSelector_Close:
-			memset((void*) fileBuffer[fileSelector], 0, UPDATE_DATA_SIZE);
+			//@@@1memset((void*) fileBuffer[fileSelector], 0, UPDATE_DATA_SIZE);
 			break;
 
 		case FileOperationeSelector_Read:
@@ -11414,6 +11487,9 @@ int FileSelectorFpga (void)
 			size = fileLength[fileSelector][fileSel[fileSelector]]; // Gets the address of offset by starting point
 			valueBuffer = fileBuffer[fileSelector]; //Gets the start pointer of temporary buffer
 
+		
+			#if !defined (MODE_UPDATE_ALL_MULTI)
+		
 			// Cmd Initialze
 			if ((status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
@@ -11425,15 +11501,27 @@ int FileSelectorFpga (void)
 				break;
 			}
 
+			#else	// #if !defined (MODE_UPDATE_ALL_MULTI)
+			
+			//@@@1
+			DEBUG_PRINT_FORCE("fileExecWriteDoneSize = %d, fileExec[%d]  = %d\n", size, fileSelector, fileExec[fileSelector]);
+			//@@@1
+
+			// Flag Set
+			fileExecWriteDoneSize = size;
+			#endif	// #if !defined (MODE_UPDATE_ALL_MULTI)
+
 			// Success or Failure
 			fileStatus[fileSelector][fileSel[fileSelector]] = status;
 
 			// Stores the total written size of bit-stream image int the flash device
 			fileResult[fileSelector][fileSel[fileSelector]] = size; // in bytes
 		
+			#if !defined (MODE_UPDATE_ALL_MULTI)
 			// Cmd Done
 			cmdExecuteDone ();
-
+			#endif
+	
 			break;
 
 		case FileOperationeSelector_Delete:
@@ -11458,6 +11546,10 @@ int FileSelectorFpga (void)
 			status = GEV_STATUS_INVALID_PARAMETER;
 			break;
 	}
+
+	//@@@1
+	DEBUG_PRINT_FORCE("@@@fileExec[%d]  = %d\n", fileSelector, fileExec[fileSelector]);
+	//@@@1
 
 	return (status);
 }
@@ -11494,7 +11586,7 @@ int FileSelectorXML (void)
 			break;
 
 		case FileOperationeSelector_Close:
-			memset((void*) fileBuffer[fileSelector], 0, XMLFILE_SIZE);
+			//@@@1memset((void*) fileBuffer[fileSelector], 0, XMLFILE_SIZE);
 			break;
 
 		case FileOperationeSelector_Read:
@@ -11570,8 +11662,6 @@ int FileSelectorXML (void)
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-#if defined (MODE_FPGA_PF)
-#if 0 //@@@1
 int FileSelectorIfFpgaWrite (void)
 {
 	int status = GEV_STATUS_SUCCESS;
@@ -11584,7 +11674,7 @@ int FileSelectorIfFpgaWrite (void)
 	{
 		case FileOperationeSelector_Open:
 			// Zero-fill to the empty buffer
-			memset((void*) fileBuffer[fileSelector], 0, FLASH_UPDATE_POLAFIRE_SIZE); // temporary DDR memories
+			//@@@1memset((void*) fileBuffer[fileSelector], 0, UPDATE_DATA_SIZE); // temporary DDR memories
 			fileOffset[fileSelector][fileSel[fileSelector]] = 0; // Address
 			fileLength[fileSelector][fileSel[fileSelector]] = 0; // 0 bytes
 			fileStatus[fileSelector][fileSel[fileSelector]] = 0; // Success or Failure
@@ -11594,8 +11684,7 @@ int FileSelectorIfFpgaWrite (void)
 			break;
 
 		case FileOperationeSelector_Close:
-			// Clear the temporary buffer
-			memset((void*) fileBuffer[fileSelector], 0, FLASH_UPDATE_POLAFIRE_SIZE);
+			//@@@1memset((void*) fileBuffer[fileSelector], 0, UPDATE_DATA_SIZE);
 
 			// Success or Failure
 			if (fileStatus[fileSelector][fileSel[fileSelector]] == 0)
@@ -11604,7 +11693,7 @@ int FileSelectorIfFpgaWrite (void)
 				if (gIfFpgaFlashAdrs == FLASH_FPGA_DATA_ADRS)
 				{
 					// ReConfig Flag設定
-					gIfFpgaReConfig = 1;
+					//@@@1gIfFpgaReConfig = 1;
 				}
 			}
 
@@ -11628,9 +11717,6 @@ int FileSelectorIfFpgaWrite (void)
 			if ((status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
-			//if ((status = executeCommand(FIRM_CMD_IF_FPGA_UPLOAD, CPU_CMD_SYNC_OFF, (u32*)&cmd, sizeof(CPU_CMD) / 4)) != 0)
-				//goto _DONE;
-
 			// Flash Write
 			if ((status = gigeCmdIfFpgaUpload (gIfFpgaFlashAdrs, (unsigned char *)valueBuffer, size)) != AVAL_STATUS_SUCCESS)
 			{
@@ -11638,38 +11724,12 @@ int FileSelectorIfFpgaWrite (void)
 				break;
 			}
 
-#if 0
-			if (gInterFaceID != INTERFACE_CXP)
-			{
-				for (i=0; i<GE_UPDATE_IF_FPGA_TIMEOUT; i++)
-				{
-					// コマンドステータス取得
-					//if ((status = isExecuteCommandDone(CPU_CMD_TIMEOUT*4, FIRM_CMD_IF_FPGA_UPLOAD, &isDone)) != 0)
-					value = cmdExecuteStatus ();
-			
-					// コマンド終了?
-					if (isDone == command_done)
-						break;
-
-					usDelay (1000);
-				}
-
-				if (i >= GE_UPDATE_IF_FPGA_TIMEOUT)
-				{
-					status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_TIMEOUT);
-					cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "IF FPGA Update Timeout Error.\n");
-					DEBUG_PRINT();
-					goto _DONE;
-				}
-			}
-#endif
-_DONE:
-			// Stores the total written size of bit-stream image int the flash device
-			fileResult[fileSelector][fileSel[fileSelector]] = size; // in bytes
-
 			// Success or Failure
 			fileStatus[fileSelector][fileSel[fileSelector]] = status;
-		
+
+					// Stores the total written size of bit-stream image int the flash device
+			fileResult[fileSelector][fileSel[fileSelector]] = size; // in bytes
+
 			// Cmd Done
 			cmdExecuteDone ();
 
@@ -11684,8 +11744,6 @@ _DONE:
 
 	return (status);
 }
-#endif //@@1
-#endif // #if defined (MODE_FPGA_PF)
 
 
 //**********************************************************************************

@@ -1267,6 +1267,12 @@ int cmdDiagDeviceWrite (unsigned long adrs, unsigned int data, int acesSize, int
 	unsigned char data8;
 	unsigned short data16;
 	unsigned int data32;
+#if !defined (MODE_FLASH_WRITE_COPY)
+	unsigned char dataA[8];
+	unsigned char *ptr8;
+	unsigned short *ptr16;
+	unsigned int *ptr32;
+#endif
 #if defined (MODE_GIGE_10G)
 	unsigned int dev;
 #endif
@@ -1276,6 +1282,7 @@ int cmdDiagDeviceWrite (unsigned long adrs, unsigned int data, int acesSize, int
 	//------------------------------------------------------------
 	if (devType == FLASH_DEV_TYPE_QSPI_FLASH)
 	{
+#if defined (MODE_FLASH_WRITE_COPY)
 		if (acesSize == 1)
 		{
 			data8 = (unsigned char)data;
@@ -1291,6 +1298,26 @@ int cmdDiagDeviceWrite (unsigned long adrs, unsigned int data, int acesSize, int
 			data32 = (unsigned int)data;
 			status = qspiFlashWrite (adrs, (unsigned char *)&data32, 4);
 		}
+#else
+		if (acesSize == 1)
+		{
+			ptr8 = (unsigned char *)&dataA[4];
+			*ptr8 = (unsigned char)data;
+			status = qspiFlashWrite (adrs, (unsigned char *)&dataA[4], 1);
+		}
+		else if (acesSize == 2)
+		{
+			ptr16 = (unsigned short *)&dataA[4];
+			*ptr16 = (unsigned short)data;
+			status = qspiFlashWrite (adrs, (unsigned char *)&dataA[4], 2);
+		}
+		else
+		{
+			ptr32 = (unsigned int *)&dataA[4];
+			*ptr32 = (unsigned int)data;
+			status = qspiFlashWrite (adrs, (unsigned char *)&dataA[4], 4);
+		}
+#endif
 
 		if (status != AVAL_STATUS_SUCCESS)
 		{

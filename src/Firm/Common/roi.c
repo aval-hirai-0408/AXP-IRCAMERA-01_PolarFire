@@ -166,12 +166,6 @@ int roiInitialize (void)
 		goto _DONE;
 	}
 
-	#if defined (MODE_IPU_MULTI)
-
-	// 従来のROIは固定値を設定
-	OUT32 (FPGA_ROI_CAMERA_X_ADRS, DEFAULT_ROI_WIDTH0_LEFT);
-	#endif
-
 	// 設定通知
 	if ((gRoiStatus = roiSetEnd ()) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
@@ -362,80 +356,6 @@ int roiGetErrStatus (unsigned int *pStat)
 _DONE:
 	return (status);
 }
-
-
-#if defined (MODE_IPU_MULTI)
-//**********************************************************************************
-// ROI エラー取得
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		selector			：セレクタ
-//		pStat				：エラー情報を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int roiGetErrStatusMulti (int selector, unsigned int *pStat)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int data32;
-	unsigned int vol, vop, hop;
-	unsigned int adrs;
-
-	// Check selector Parameter
-	if ((selector < 0) || (selector >= IPU_COUNT))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "ROI Check Error selector(%d) Parameter Error.(Min=0 / Max=%d)\n", IPU_COUNT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// Check pStat Parameter
-	if (pStat == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "ROI Check Error pStat NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// Get Adrs
-	adrs = FPGA_ROI_CAMERA_ERROR_ADRS;
-
-	// エラー取得
-	data32 = IN32 (adrs);
-
-	// VOL取得
-	vol = FPGA_ROI_CAMERA_ERROR_GET_VOL (data32);
-	if (vol != 0)
-	{
-		sprintf (gLogMsgBuff, "ROI Vertical OverLapping Error. Error = 0x%x\n", vol);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-	}
-
-	// VOP取得
-	vop = FPGA_ROI_CAMERA_ERROR_GET_VOP (data32);
-	if (vop != 0)
-	{
-		sprintf (gLogMsgBuff, "ROI Vertical Out of Active Pixel. Error = 0x%x\n", vop);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-	}
-
-	// HOP取得
-	hop = FPGA_ROI_CAMERA_ERROR_GET_HOP (data32);
-	if (hop != 0)
-	{
-		sprintf (gLogMsgBuff, "ROI Horizontal Out of Active Pixel. Error = 0x%x\n", hop);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-	}
-
-	// エラー情報格納
-	*pStat = data32;
-
-_DONE:
-	return (status);
-}
-#endif // #if defined (MODE_IPU_MULTI)
 
 
 //**********************************************************************************
@@ -787,9 +707,7 @@ int aoiSetWidth (int size)
 	}
 	else
 	{
-		#if !defined (MODE_IPU_MULTI)
 		rOffset -= IMG_WIDTH_OFFSET;
-		#endif
 	}
 
 	// オフセット設定
@@ -1134,19 +1052,11 @@ int aoiGetWidthOffset (int *pOffset)
 	// オフセット格納
 	if (rOffset < IMG_WIDTH_OFFSET)
 	{
-#if !defined (MODE_IPU_MULTI)
 		tmpOffset = 0;
-#else
-		tmpOffset = rOffset;
-#endif
 	}
 	else
 	{
-#if !defined (MODE_IPU_MULTI)
 		tmpOffset = rOffset - IMG_WIDTH_OFFSET;
-#else
-		tmpOffset = rOffset;
-#endif
 	}
 
 	*pOffset = tmpOffset;
@@ -1217,11 +1127,7 @@ int roiSetWidthMain (int offset, int size)
 		goto _DONE;
 
 	// FPGA Camera Widthのレジスタは１つのみ
-#if !defined (MODE_IPU_MULTI)
 	fpgaOffset = offset + IMG_WIDTH_OFFSET;
-#else
-	fpgaOffset = offset;
-#endif
 
 	fpgaSize = size;
 
@@ -3092,11 +2998,6 @@ int roiSetAreaSize (int mode)
 #if defined (MODE_CXP)
 	int cxpPort = 0;
 #endif
-#if defined (MODE_IPU_MULTI)
-	unsigned int data32Left, data32Right;
-	unsigned int offsetOld, sizeOld;
-	unsigned int offsetOldLeft, offsetOldRight;
-#endif
 #if defined (MODE_SENSOR_IMX992) || defined (MODE_SENSOR_IMX993)
 	int bit;
 	double frameRate;
@@ -3209,39 +3110,6 @@ int roiSetAreaSize (int mode)
 		if ((gRoiStatus = sensorRoiSetWidth (selector, 0, 0, 0)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
-
-	//--------------------------------------------------------------------------------
-	// 旧ROI設定
-	//--------------------------------------------------------------------------------
-#if defined (MODE_IPU_MULTI)
-	if (mode == ROI_AREA_MODE_DEFAULT_SIZE)
-	{
-		data32Left = DEFAULT_ROI_WIDTH0_LEFT;
-		data32Right = DEFAULT_ROI_WIDTH0_RIGHT;
-	}
-	else if (mode == ROI_AREA_MODE_DMA_SIZE)
-	{
-		offsetOld = 0;
-		sizeOld = FPGA_ROI_CAMERA_SIZE_SET(IMG_WIDTH_IPU_SIZE);
-
-		data32Left = offsetOld | sizeOld;
-		data32Right = data32Left;
-	}
-	else	// ROI_AREA_MODE_FULL_SIZE
-	{
-		offsetOldLeft = 0;
-		offsetOldRight = FPGA_ROI_CAMERA_START_SET(IMG_WIDTH_OFFSET);
-
-		sizeOld = FPGA_ROI_CAMERA_SIZE_SET(IMG_WIDTH_IPU_SIZE);
-
-		data32Left = offsetOldLeft | sizeOld;
-		data32Right = offsetOldRight | sizeOld;
-	}
-
-	// 従来のROIを設定
-	OUT32 (FPGA_ROI_CAMERA_X_ADRS, data32Left);
-
-#endif // #if defined (MODE_IPU_MULTI)
 
 	//--------------------------------------------------------------------------------
 	// Height Size
@@ -3477,17 +3345,10 @@ int roiGetAreaWidthSize (int mode, int *pFpgaSize, int *pFpgaOffset, int *pSenso
 	//--------------------------------------------------------------------------------
 	if (mode == ROI_AREA_MODE_DEFAULT_SIZE)
 	{
-#if !defined (MODE_IPU_MULTI)
 		*pFpgaSize     = WidthMax();
 		*pSensorSize   = IMG_WIDTH_MAX;
 		*pFpgaOffset   = IMG_WIDTH_OFFSET;
 		*pSensorOffset = 0;
-#else // #if !defined (MODE_IPU_MULTI)
-		*pFpgaSize     = WidthMax();
-		*pSensorSize   = IMG_WIDTH_MAX;
-		*pFpgaOffset   = 0;
-		*pSensorOffset = 0;
-#endif // #if !defined (MODE_IPU_MULTI)
 	}
 	else if (mode == ROI_AREA_MODE_FULL_SIZE)
 	{
@@ -3498,17 +3359,10 @@ int roiGetAreaWidthSize (int mode, int *pFpgaSize, int *pFpgaOffset, int *pSenso
 	}
 	else
 	{
-#if !defined (MODE_IPU_MULTI)
 		*pFpgaSize     = WidthMax();
 		*pSensorSize   = IMG_WIDTH_MAX;
 		*pFpgaOffset   = IMG_WIDTH_OFFSET;
 		*pSensorOffset = 0;
-#else
-		*pFpgaSize     = WidthMax();
-		*pSensorSize   = IMG_WIDTH_MAX;
-		*pFpgaOffset   = 0;
-		*pSensorOffset = 0;
-#endif
 	}
 
 _DONE:

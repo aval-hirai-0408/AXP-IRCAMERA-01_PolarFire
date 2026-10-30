@@ -280,8 +280,8 @@
 //--------------------------------------------------------------------------------
 #define SENSOR_REG_CHIPID7_BASE								(SENSOR_REG_BASE + 0x00)
 #define SENSOR_REG_GAIN_RTS_ADRS							(SENSOR_REG_CHIPID7_BASE + 0x02)
-  #define SENSOR_REG_GAIN_RTS_FRAME_SAME					(0x08)
-  #define SENSOR_REG_GAIN_RTS_FRAME_LATE					(0x09)
+  #define SENSOR_REG_GAIN_RTS_FRAME_SAME					(0x00)
+  #define SENSOR_REG_GAIN_RTS_FRAME_LATE					(0x01)
 #define SENSOR_REG_CONVERSION_GAIN_ADRS						(SENSOR_REG_CHIPID7_BASE + 0x10)
   #define SENSOR_REG_CONVERSION_GAIN_LHGC					(1<<0)
 #define SENSOR_REG_GAIN_L_ADRS								(SENSOR_REG_CHIPID7_BASE + 0x14)

@@ -66,24 +66,6 @@ int consoleDefaultInitialize (void)
 //==================================================================================
 int consoleInitialize (void)
 {
-	// Console Mode Initialize
-	consoleModeInitialize ();
-
-	return (AVAL_STATUS_SUCCESS);
-}
-
-
-//**********************************************************************************
-//	ConSole Mode Initialize
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int consoleModeInitialize (void)
-{
 	int status;
 	int mode;
 
@@ -93,9 +75,8 @@ int consoleModeInitialize (void)
 		return (status);
 
 #else
-	mode = 1;
+	mode = 0;
 #endif //@@@1
-
 
 	// 管理外に設定
 	OUT32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS, mode);

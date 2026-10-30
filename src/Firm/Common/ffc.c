@@ -3735,7 +3735,7 @@ int ffcToFlash (unsigned int flashAdrs, unsigned int memAdrs, int size)
 #endif
 
 	// Erase
-	for (adrs=flashAdrs; adrs<(flashAdrs + size); adrs+=AXI_QSPI_FLASH_SEC_SIZE)
+	for (adrs=flashAdrs; adrs<(flashAdrs + size); adrs+=QSPI_FLASH_SEC_SIZE)
 	{
 		if ((status = qspiFlashSectorErase (adrs)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;

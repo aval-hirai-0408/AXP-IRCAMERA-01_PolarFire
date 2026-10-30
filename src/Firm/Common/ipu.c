@@ -308,11 +308,11 @@ int ipuIntEnable (unsigned int data)
 	unsigned int temp;
 
 	// 割り込みEnableレジスタ取得
-	temp = IN32 (FPGA_CAMERA_IRQ_MASK_ADRS);
+	//@@@1temp = IN32 (FPGA_CAMERA_IRQ_MASK_ADRS);
 
 	// 割り込みEnableレジスタ設定
 	temp |= data;
-	OUT32 (FPGA_IPU_IRQ_MASK_ADRS, temp);
+	//@@@1OUT32 (FPGA_IPU_IRQ_MASK_ADRS, temp);
 
 	return (status);
 }
@@ -333,11 +333,11 @@ int ipuIntDisable (unsigned int data)
 	unsigned int temp;
 
 	// 割り込みEnableレジスタ取得
-	temp = IN32 (FPGA_CAMERA_IRQ_MASK_ADRS);
+	//@@@1temp = IN32 (FPGA_CAMERA_IRQ_MASK_ADRS);
 
 	// 割り込みEnableレジスタ設定
 	temp &= ~data;
-	OUT32 (FPGA_IPU_IRQ_MASK_ADRS, temp);
+	//@@@1OUT32 (FPGA_IPU_IRQ_MASK_ADRS, temp);
 
 	return (status);
 }

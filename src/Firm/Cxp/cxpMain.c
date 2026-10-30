@@ -50,42 +50,42 @@ extern unsigned int xmlSizeSecond;
 extern unsigned char xmlURLSecond[];
 
 // ---- Global variables for File Access Control --------------------------------
-extern volatile u32 fileSelector;
-extern volatile u32 fileSel[];
-extern volatile u32 fileExec[];
-extern volatile u32 fileMode[];
-extern volatile u32* fileBuffer[];
-extern volatile u32 fileOffset[FileSelector_MAX][FileOperationeSelector_MAX];
-extern volatile u32 fileLength[FileSelector_MAX][FileOperationeSelector_MAX];
-extern volatile u32 fileStatus[FileSelector_MAX][FileOperationeSelector_MAX];
-extern volatile u32 fileResult[FileSelector_MAX][FileOperationeSelector_MAX];
-extern volatile u32 fileSize[];
+extern unsigned int fileSelector;
+extern unsigned int fileSel[];
+extern unsigned int fileExec[];
+extern unsigned int fileMode[];
+extern unsigned int* fileBuffer[];
+extern unsigned int fileOffset[FileSelector_MAX][FileOperationeSelector_MAX];
+extern unsigned int fileLength[FileSelector_MAX][FileOperationeSelector_MAX];
+extern unsigned int fileStatus[FileSelector_MAX][FileOperationeSelector_MAX];
+extern unsigned int fileResult[FileSelector_MAX][FileOperationeSelector_MAX];
+extern unsigned int fileSize[];
 
 // ---- Global variables for Device Control ------------------------------------
-extern volatile u32 DeviceIndicatorMode_Selecotr;
+extern unsigned int DeviceIndicatorMode_Selecotr;
 
 // --  Global Flash variables -------------
-extern volatile u32 Flash_UserSetSelector;
-extern volatile u32 Flash_UserSetLoad;
-extern volatile u32 Flash_UserSetSave;
-extern volatile u32 Flash_UserSetDefault;
+extern unsigned int Flash_UserSetSelector;
+extern unsigned int Flash_UserSetLoad;
+extern unsigned int Flash_UserSetSave;
+extern unsigned int Flash_UserSetDefault;
 
 // --  Global Counter variables -------------
-extern volatile u32 Counter_CounterSelector;
+extern unsigned int Counter_CounterSelector;
 
 // --  Global LUTControl variables -------------
-extern volatile u32 LUTSelector_Selector;
-extern volatile u32 LUTFormat_Selector;
+extern unsigned int LUTSelector_Selector;
+extern unsigned int LUTFormat_Selector;
 
 // --  Global FlatFiledCorrectionControl variables -------------
-extern volatile u32 FlatFieldCorrection_Selector;
-extern volatile u32 FlatFieldCorrectionBrightAdjustment_Lumi;
-extern volatile u32 FlatFieldCorrectionModeSelector;
+extern unsigned int FlatFieldCorrection_Selector;
+extern unsigned int FlatFieldCorrectionBrightAdjustment_Lumi;
+extern unsigned int FlatFieldCorrectionModeSelector;
 
 // --  Global DefectivePixeiControl variables -------------
-extern volatile u32 DefectPixelCorrection_Selector;
-extern volatile u32 DefectPixelCorrection_AdjustFfcSelector;
-extern volatile u32 DefectPixelCorrection_AdjustBrightSelector;
+extern unsigned int DefectPixelCorrection_Selector;
+extern unsigned int DefectPixelCorrection_AdjustFfcSelector;
+extern unsigned int DefectPixelCorrection_AdjustBrightSelector;
 
 // --  Global High Speed Mode variables -------------
 #if defined (MODE_FRAMERATE_HIGH_SPEED)
@@ -201,6 +201,8 @@ int cxpUserInit (void)
 	char str16[16 + 1] = { 0 };
 	char strXMLAddress[10] = { 0 };
 	char strXMLSize[6] = { 0 };
+	unsigned int *ptrL;
+	unsigned int swapData32;
 
 //@@@@1
 	char c;
@@ -429,6 +431,20 @@ int cxpUserInit (void)
 //@@@@1
 
 		qspiFlashRead (FLASH_XML_ADRS, (unsigned char *)FIRM_XML_FILE_ADRS, gXMLSize);
+
+		// Swap
+		ptrL = (unsigned int *)FIRM_XML_FILE_ADRS;
+		for (i=0; i<(gXMLSize/4); i++, ptrL++)
+		{
+			swapData32 = SWAP_L (*ptrL);
+			*ptrL = swapData32;
+		}
+		
+		if ((gXMLSize%4) != 0)
+		{
+			swapData32 = SWAP_L (*ptrL);
+			*ptrL = swapData32;
+		}
 	}
 	else
 	{
@@ -454,14 +470,20 @@ int cxpUserInit (void)
 			// FPGA
 			//------------------------------------------------------------
 			case FileSelector_FPGA:
-				fileBuffer[i] = (u32*)FIRM_UPDATE_ADRS;
+				fileBuffer[i] = (unsigned int *)FIRM_UPDATE_ADRS;
+
+				#if !defined (MODE_FLASH_WRITE_COPY)
+				fileBuffer[i]++;
+				#endif
+
 				//memset((void*) fileBuffer[i], 0, FIRM_UPDATE_SIZE);
+				break;
 
 			//------------------------------------------------------------
 			// XML
 			//------------------------------------------------------------
 			case FileSelector_XML:
-				fileBuffer[i] = (u32*)FIRM_UPDATE_ADRS;
+				fileBuffer[i] = fileBuffer[FileSelector_FPGA];	// FileSelector_FPGAで確保した領域を使用
 				break;
 
 			//------------------------------------------------------------
@@ -489,6 +511,13 @@ int cxpUserInit (void)
 			// Spectrum Wave Information
 			//------------------------------------------------------------
 			case FileSelector_SPECTRUM_WAVE:
+				fileBuffer[i] = fileBuffer[FileSelector_FPGA];	// FileSelector_FPGAで確保した領域を使用
+				break;
+
+			//------------------------------------------------------------
+			// IF FPGA
+			//------------------------------------------------------------
+			case FileSelector_IF_FPGA:
 				fileBuffer[i] = fileBuffer[FileSelector_FPGA];	// FileSelector_FPGAで確保した領域を使用
 				break;
 

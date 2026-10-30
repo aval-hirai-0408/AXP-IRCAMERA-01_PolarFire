@@ -53,6 +53,7 @@
 #include "miv_i2c/miv_i2c.h"
 #include "miv_timer/miv_timer.h"
 #include "miv_plic/miv_plic.h"
+#include "miv_watchdog/miv_watchdog.h"
 
 #endif  // _COMMON_H_
 

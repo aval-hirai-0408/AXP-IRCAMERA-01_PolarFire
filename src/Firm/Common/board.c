@@ -127,29 +127,6 @@ _DONE:
 }
 
 
-//@@@1
-unsigned int gDIPSW = 0;
-//**********************************************************************************
-//	DIPSW設定
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		dipsw				：DIPSW
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int setDipsw (unsigned int dipsw)
-{
-	int status = AVAL_STATUS_SUCCESS;
-
-	gDIPSW = dipsw;
-	
-_DONE:
-	return (status);
-}
-//@@@1
-
-
 //**********************************************************************************
 //	DIPSW取得
 //----------------------------------------------------------------------------------
@@ -250,12 +227,23 @@ int setBoardParam (char *pParam, int offset, int size)
 	}
 
 	// メモリリクエスト
+#if defined (MODE_FLASH_WRITE_COPY)
 	if ((ptr = malloc (BOARD_PARAM_SIZE)) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Board ID Buffer Request Error.\n");
 		goto _DONE;
 	}
+#else
+	if ((ptr = malloc ((BOARD_PARAM_SIZE + QSPI_FLASH_WRITE_COPY_ADD_SIZE))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Board ID Buffer Request Error.\n");
+		goto _DONE;
+	}
+	
+	ptr += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
 
 	// Board Parameter読み込み
 	if ((status = qspiFlashRead (FLASH_BOARD_PARAM_ADRS, (unsigned char *)ptr, BOARD_PARAM_SIZE)) != AVAL_STATUS_SUCCESS)
@@ -273,6 +261,11 @@ int setBoardParam (char *pParam, int offset, int size)
 		goto _DONE;
 
 _DONE:
+#if !defined (MODE_FLASH_WRITE_COPY)
+	if (ptr != NULL)
+		ptr -= QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
+	
 	// メモリ開放
 	if (ptr != NULL)
 		free (ptr);
@@ -967,7 +960,7 @@ int cameraPowerSupply (unsigned int *pData)
 		goto _DONE;
 	}
 
-	*pData = IN32 (FPGA_POWER_STATUS_ADRS);
+	//@@@1*pData = IN32 (FPGA_POWER_STATUS_ADRS);
 
 _DONE:
 	return (status);

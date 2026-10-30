@@ -196,11 +196,7 @@ int ledBootState (void)
 //==================================================================================
 int ledHwSystemErrorState (void)
 {
-	if (gInterFaceID == INTERFACE_CXP)
-		setLed (LED_STATE, LED_HW_SYSTEM_ERROR);
-	else
-		setLed (LED_POWER, LED_HW_SYSTEM_ERROR);
-
+	setLed (LED_POWER, LED_HW_SYSTEM_ERROR);
 	return (AVAL_STATUS_SUCCESS);
 }
 
@@ -241,15 +237,7 @@ int ledConnectState (void)
 //==================================================================================
 int ledConnectStateForce (void)
 {
-	// CameraLinkのみ
-	if (gInterFaceID == INTERFACE_CXP)
-	{
-		setLed (LED_STATE, LED_CONNECTED);
-	}
-	else
-	{
-		setLed (LED_POWER, LED_CONNECTED);
-	}
+	setLed (LED_POWER, LED_CONNECTED);
 
 	return (AVAL_STATUS_SUCCESS);
 }

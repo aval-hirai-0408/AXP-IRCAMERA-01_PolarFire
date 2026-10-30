@@ -67,7 +67,7 @@ int cmdDigitaiIoStatusAll (void *str)
 
 	if (argc == 1)
 	{
-		// Get Line Select(Ver.1.2)
+		// Get Line Select
 		if ((status = digitalIoGetLineSelect (&saveSelect)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 

@@ -1631,13 +1631,25 @@ int ffcAdjustInfoBlackSave (int ffcNum, int userMode, FFCINFO ffcInfo)
 	}
 
 	// メモリリクエスト
-	if ((pBuffer = malloc ((size))) == NULL)
+#if defined (MODE_FLASH_WRITE_COPY)
+	if ((pBuffer = (unsigned char *)malloc ((size))) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		sprintf (gLogMsgBuff, "FFC Adjust Black Info Buffer Request Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
+#else
+	if ((pBuffer = (unsigned char *)malloc (((size + QSPI_FLASH_WRITE_COPY_ADD_SIZE)))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		sprintf (gLogMsgBuff, "FFC Adjust Black Info Buffer Request Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+
+	pBuffer += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
 
 	// アドレスCopy
 	saveAdrs = (unsigned int)pBuffer;
@@ -1725,6 +1737,11 @@ int ffcAdjustInfoBlackSave (int ffcNum, int userMode, FFCINFO ffcInfo)
 	ffcInfo.frameRate = 0xffffffff;
 
 _DONE:
+#if defined (MODE_FLASH_WRITE_COPY)
+	if (pBuffer != NULL)
+		pBuffer -= QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
+
 	// メモリ開放
 	if (pBuffer != NULL)
 		free (pBuffer);
@@ -1773,13 +1790,25 @@ int ffcAdjustInfoWhiteSave (int ffcNum, int userMode, FFCINFO ffcInfo)
 	}
 
 	// メモリリクエスト
-	if ((pBuffer = malloc ((size))) == NULL)
+#if defined (MODE_FLASH_WRITE_COPY)
+	if ((pBuffer = (unsigned char *)malloc ((size))) == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
 		sprintf (gLogMsgBuff, "FFC Adjust White Info Buffer Request Error.\n");
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
+#else
+	if ((pBuffer = (unsigned char *)malloc (((size + QSPI_FLASH_WRITE_COPY_ADD_SIZE)))) == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FFC, AVAL_STATUS_RESOURCE_EXHAUSTED);
+		sprintf (gLogMsgBuff, "FFC Adjust White Info Buffer Request Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+
+	pBuffer += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
 
 	// アドレスCopy
 	saveAdrs = (unsigned int)pBuffer;
@@ -1867,6 +1896,11 @@ int ffcAdjustInfoWhiteSave (int ffcNum, int userMode, FFCINFO ffcInfo)
 	ffcInfo.frameRate = 0xffffffff;
 
 _DONE:
+#if defined (MODE_FLASH_WRITE_COPY)
+	if (pBuffer != NULL)
+		pBuffer -= QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+#endif
+
 	// メモリ開放
 	if (pBuffer != NULL)
 		free (pBuffer);

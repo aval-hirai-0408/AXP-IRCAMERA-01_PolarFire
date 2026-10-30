@@ -15,6 +15,7 @@
 //----------------------------------------------------------------------------------
 #include "../Common/common.h"
 #include "../Cxp/cxp.h"
+#include "../GigE/gev.h"
 
 
 #if defined (MODE_CXP)
@@ -22,6 +23,11 @@
 // externs
 //----------------------------------------------------------------------------------
 extern double *gpSpectrumBandInfo;
+extern unsigned int fileSelector;
+extern unsigned int fileSel[];
+extern unsigned int fileLength[FileSelector_MAX][FileOperationeSelector_MAX];
+extern unsigned int fileResult[FileSelector_MAX][FileOperationeSelector_MAX];
+extern unsigned int fileExecWriteDoneSize;
 
 
 //**********************************************************************************
@@ -44,9 +50,13 @@ int gigeCmdFirmUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned 
 	unsigned int updateSize;
 	int uncomprLen;
 	int saveLed0 = -1;
-#ifdef COMPRESS_MODE
-	unsigned char *pUnCompBuf = NULL;
-#endif
+	unsigned char *pUnCompBuf = (unsigned char *)FIRM_UPDATE_UNCOMP_ADRS;
+	unsigned char *pUpdateBuff = (unsigned char *)FIRM_UPDATE_ADRS;
+
+	#if !defined (MODE_FLASH_WRITE_COPY)
+	pUnCompBuf  += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+	pUpdateBuff += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+	#endif
 
 	// 調整ステート
 	saveLed0 = ledSettingState ();
@@ -67,7 +77,7 @@ int gigeCmdFirmUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned 
 		uncomprLen = FIRM_UPDATE_UNCOMP_SIZE;
 
 		// Uncompress
-		if ((status = gzipUncomp ((unsigned char *)FIRM_UPDATE_UNCOMP_ADRS, &uncomprLen, (unsigned char *)FIRM_UPDATE_ADRS, size)) != 0)
+		if ((status = gzipUncomp ((unsigned char *)pUnCompBuf, &uncomprLen, (unsigned char *)pUpdateBuff, size)) != 0)
 		{
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Uncompress Error.");
 			goto _DONE;
@@ -76,6 +86,10 @@ int gigeCmdFirmUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned 
 		// バッファ&サイズ更新
 		pUpdatePtr = (unsigned char *)FIRM_UPDATE_UNCOMP_ADRS;
 		updateSize = uncomprLen;
+
+		#if !defined (MODE_FLASH_WRITE_COPY)
+		pUpdatePtr += QSPI_FLASH_WRITE_COPY_ADD_SIZE;
+		#endif
 	}
 #endif
 
@@ -87,13 +101,12 @@ int gigeCmdFirmUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned 
 	if ((status = firmUpdateFlashWrite (flashAdrs, pUpdatePtr, updateSize)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
+
+	// Update Header
+	if ((status = fpgaUpdateHeader ()) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
 _DONE:
-
-#ifdef COMPRESS_MODE
-	if (pUnCompBuf != NULL)
-		free (pUnCompBuf);
-#endif // COMPRESS_MODE
-
 	// LEDの設定を元に戻す
 	ledReturnState (saveLed0, -1);
 
@@ -103,6 +116,129 @@ _DONE:
 
 	return (status);
 }
+
+#define UPDATE_ALL_TIMEOUT		(5000000)
+
+#if defined (MODE_UPDATE_ALL_MULTI)
+//**********************************************************************************
+//	Firm Upload Multi
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		flashAdrs			：Flashアドレス
+//		pBuffer				：Bufferアドレスを格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int gigeCmdFirmUploadMulti (unsigned int flashAdrs, unsigned char *pBuffer)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	int endCmd = FIRM_CMD_OK;
+	int saveLed0 = -1;
+	unsigned int size;
+	int sec;
+	int flashTransed, cxpTransed;
+	int writeSize;
+	unsigned int flashAdrs2;
+	int secSize = QSPI_FLASH_SEC_SIZE;
+	unsigned int timeout;
+
+	// 調整ステート
+	saveLed0 = ledSettingState ();
+
+	//@@@1
+	DEBUG_PRINT_FORCE("Erase!!!!!!!!!\n");
+	//@@@1
+
+	// Erase
+	size = FLASH_FIRM_DATA_SIZE + FLASH_FPGA_DATA_SIZE;
+	for (sec=flashAdrs; sec<(flashAdrs + size); sec+=secSize)
+	{
+		// Erase
+		if ((status = qspiFlashSectorErase (sec)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+	}
+
+	//@@@1
+	DEBUG_PRINT_FORCE("Write.....\n");
+	//@@@1
+	
+	flashTransed = 0;
+	flashAdrs2 = flashAdrs;
+
+	// 書き込みデータがなくなったから10秒のタイムアウト
+	for (timeout=0; timeout<UPDATE_ALL_TIMEOUT; timeout++)
+	{
+		// Get Size
+		cxpTransed = fileResult[fileSelector][fileSel[fileSelector]];
+
+		if (flashTransed != cxpTransed)
+		{
+			writeSize = cxpTransed - flashTransed;
+
+			//@@@1
+			DEBUG_PRINT_FORCE("flashTransed = %d, cxpTransed = %d, writeSize = %d\n", flashTransed, cxpTransed, writeSize);
+			//@@@1
+
+			if (writeSize <= 0)
+			{
+				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+				sprintf (gLogMsgBuff, "Update Size Error. Flash Transed = %d, CXP Transed = %d\n", flashTransed, cxpTransed);
+				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+				goto _DONE;
+			}
+
+			// Write
+			if ((status = qspiFlashWrite (flashAdrs2, (unsigned char *)(pBuffer + flashTransed), writeSize)) != AVAL_STATUS_SUCCESS)
+				goto _DONE;
+
+			// Clear
+			timeout = 0;
+
+			// Update
+			flashAdrs2 += writeSize;
+			flashTransed += writeSize;
+		}
+		else
+		{
+			if (fileExecWriteDoneSize != 0)
+			{
+				if (flashTransed == fileExecWriteDoneSize)
+					break;
+			}
+			
+			usDelay (2);
+			timeout++;
+		}
+	}
+
+	if (timeout >= UPDATE_ALL_TIMEOUT)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_TIMEOUT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Update Timeout Error.");
+		goto _DONE;
+	}
+	
+	//@@@1
+	DEBUG_PRINT_FORCE("End..\n");
+	DEBUG_PRINT_FORCE("flashTransed = %d, cxpTransed = %d, fileExecWriteDoneSize = %d\n", flashTransed, cxpTransed, fileExecWriteDoneSize);
+	//@@@1
+
+	// Update Header
+	if ((status = fpgaUpdateHeader ()) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+_DONE:
+	// LEDの設定を元に戻す
+	ledReturnState (saveLed0, -1);
+
+	//@@@@@@@@@@@@@@@@
+	DEBUG_PRINT_FORCE("Update End!!!!!!!!!!\n");
+	//@@@@@@@@@@@@@@@@
+
+	return (status);
+}
+#endif // #if defined (MODE_UPDATE_ALL_MULTI)
 #endif // ##if defined (MODE_CXP)
 
 
@@ -163,7 +299,6 @@ DEBUG_PRINT_FORCE("Update XML End\n")	;
 }
 
 
-#if defined (MODE_CXP)
 //**********************************************************************************
 //	IF FPGA Upload
 //----------------------------------------------------------------------------------
@@ -180,16 +315,19 @@ int gigeCmdIfFpgaUpload  (unsigned int flashAdrs, unsigned char *pBuffer, unsign
 	int status = AVAL_STATUS_SUCCESS;
 	int saveLed0 = -1;
 
+//@@@1
+DEBUG_PRINT_FORCE("IF FPGA Start. Adrs = 0x%x\n", flashAdrs);
+//@@@1
+
 	// 調整ステート
 	saveLed0 = ledSettingState ();
 
-#if defined (MODE_FPGA_PF)
 	// Flash Write
 	if ((status = firmUpdateFlashWrite (flashAdrs, pBuffer, size)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// ヘッダー更新
-	if ((status = fpgaUpdateFireHeader ())!= AVAL_STATUS_SUCCESS)
+	if ((status = fpgaUpdateHeader ())!= AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// Reconfig
@@ -199,14 +337,16 @@ int gigeCmdIfFpgaUpload  (unsigned int flashAdrs, unsigned char *pBuffer, unsign
 		//if ((status = fpgaUpdatePolarFireReconfig ()) != AVAL_STATUS_SUCCESS)
 			//goto _DONE;
 	//}
-#endif
 
 _DONE:
+//@@@1
+DEBUG_PRINT_FORCE("Update IF FPGA End\n")	;
+//@@@1
+
 	// LEDの設定を元に戻す
 	ledReturnState (saveLed0, -1);
 	return (status);
 }
-#endif
 
 
 #if defined (MODE_GIGE_10G)

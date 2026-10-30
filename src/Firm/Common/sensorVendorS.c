@@ -1012,7 +1012,7 @@ int sensorVendorSInitialize (void)
 	//------------------------------------------------------------
 	// Gain RTS
 	//------------------------------------------------------------
-	data8 = SENSOR_REG_GAIN_RTS_FRAME_LATE;	// 1 Frame遅れ
+	data8 = SENSOR_REG_GAIN_RTS_FRAME_SAME;
 	if ((status = sensorRegWriteByte (id, SENSOR_REG_GAIN_RTS_ADRS, data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 

@@ -20,9 +20,6 @@
 // defines
 //----------------------------------------------------------------------------------
 
-// 割り込みID
-#define PELTIER_INTR_ID				(0)
-
 
 //----------------------------------------------------------------------------------
 // globals
@@ -33,6 +30,12 @@ int gPeltierCaseTempCount = 0;			// ケース温度カウント
 
 // Peltier Status
 int gPeltierStatus = 0;
+
+
+//----------------------------------------------------------------------------------
+// externs
+//----------------------------------------------------------------------------------
+extern miv_plic_instance_t g_plic;
 
 
 //**********************************************************************************
@@ -64,11 +67,8 @@ int peltierInitialize (void)
 
 	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "Peltier Initialize\n");
 
-	// 個別割り込み無効
-	peltierSetIntEnable (0);
-
-	// グローバル割り込み無効
-	peltierSetGlobalInt (MODE_DISABLE);
+	// FPGA割り込み無効
+	fpgaSetInterrupt (0);
 
 	// Peltier Disable
 	peltierDisable ();
@@ -99,7 +99,6 @@ int peltierInitialize (void)
 	// 温度異常ステータスクリア
 	//------------------------------------------------------------
 #if defined (MODE_TEMP_ABNORMAL_CHECK)
-
 	// Temp Abnormal Status設定
 	tempSetAbnormalStatus (0);
 	
@@ -108,7 +107,6 @@ int peltierInitialize (void)
 	
 	// Temp Abnormal Aqquisition設定
 	tempSetAbnormalAcquisition (0);
-
 #endif
 
 	//------------------------------------------------------------
@@ -183,6 +181,24 @@ int peltierInitialize (void)
 
 
 	//------------------------------------------------------------
+	// FPGA Alarm
+	//------------------------------------------------------------
+
+	// FPGA Alarm温度初期化
+	cameraParamUserReadMem (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_FPGA_LIMIT_TEMP_ADRS, &adrs, &data);
+
+	// 上限温度
+	datai16 = (short)(data >> 16);
+	tempH = (double)((double)datai16 / (double)CAMERA_SAVE_TEMP_UNIT);
+
+	// 下限温度
+	datai16 = (short)data;
+	tempL = (double)((double)datai16 / (double)CAMERA_SAVE_TEMP_UNIT);
+
+	// Case Alarm設定
+	fpgaSetTempAlarm (tempH, tempL);
+
+	//------------------------------------------------------------
 	// Target温度設定
 	//------------------------------------------------------------
 
@@ -209,31 +225,89 @@ int peltierInitialize (void)
 		// Target温度設定
 		peltierSetTarget (temp);
 	}
-
 #endif // #if defined (MODE_PELTIER)
 
 	// Peltier Enable
-	msDelay (200);
 	//peltierEnable ();	///@@@@1
 	peltierPowerInitialize();
+
+	// Interrupt Enable
+    MIV_PLIC_enable_irq (&g_plic, MIV_PLIC_EXT3_IRQn);
 
 _DONE:
 	return (status);
 }
 
+
 //**********************************************************************************
 //	ハンドラ
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
-//		CallBackRef				：コールバック引数ポインタ
+//		-
 //	[ OUTPUT ]
 //		-
 //==================================================================================
-void peltier_InterruptHandler (void *CallBackRef)
+void MIV_PLIC_EXT3_IRQHandler (void)
 {
-	unsigned int data;
+	unsigned int data32;
+	unsigned int intStatus, intEnable;
 	unsigned int tempStatus;
 
+	// Get Status
+	intStatus = IN32 (FPGA_INT_STATUS_ADRS);
+	
+	// Clear Status
+	OUT32 (FPGA_INT_STATUS_ADRS, intStatus);
+
+	// FPGA上限値異常
+	if (intStatus & FPGA_INT_TEMP_UPPER)
+	{
+		// Get Interrupt Enable
+		fpgaGetInterrupt (&intEnable);
+
+		intEnable &= ~FPGA_INT_TEMP_UPPER;	// 上限割り込み無効
+		intEnable |= FPGA_INT_TEMP_LOWER;	// 下限割り込み有効
+		
+		// Set Interrupt Enable
+		fpgaSetInterrupt (intEnable);
+
+		// ステータス設定
+		tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
+		tempStatus |= FPGA_TEMP_STATUS;
+		OUT32 (BOARD_STATUS_TEMP_ADRS, tempStatus);
+
+		// センサ温度カウント取得
+		data32 = IN32(BOARD_STATUS_FPGA_TEMP_ADRS);
+
+		// センサ温度カウント設定
+		OUT32 (BOARD_STATUS_FPGA_TEMP_ADRS, ++data32);
+
+		// HW System Error
+		ledHwSystemErrorState ();
+	}
+	// FPGA下限値異常
+	else if (intStatus & FPGA_INT_TEMP_LOWER)
+	{
+		// Get Interrupt Enable
+		fpgaGetInterrupt (&intEnable);
+
+		intEnable &= ~FPGA_INT_TEMP_LOWER;	// 下限割り込み無効
+		intEnable |= FPGA_INT_TEMP_UPPER;	// 上限割り込み有効
+		
+		// Set Interrupt Enable
+		fpgaSetInterrupt (intEnable);
+
+		// ステータスクリア
+		tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
+		tempStatus &= ~FPGA_TEMP_STATUS;
+		OUT32 (BOARD_STATUS_TEMP_ADRS, tempStatus);
+
+		// HW System ErrorClear
+		if (tempStatus == 0)
+			ledConnectStateForce ();
+	}
+
+#if 0	//@@@1
 	// Clear
 	data = IN32 (FPGA_PELTIER_IRQ_STATUS_ADRS);
 	data &= FPGA_PELTIER_STATUS_MASK;
@@ -244,7 +318,7 @@ void peltier_InterruptHandler (void *CallBackRef)
 	{
 		// ステータス設定
 		tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
-		OUT32 (BOARD_STATUS_TEMP_ADRS, (tempStatus | SENSOR_TEMP_OVER_STATUS));
+		//@@@1OUT32 (BOARD_STATUS_TEMP_ADRS, (tempStatus | SENSOR_TEMP_OVER_STATUS));
 
 		// センサ温度上限カウント
 		gPeltierSensorUpperTempCount++;
@@ -261,7 +335,7 @@ void peltier_InterruptHandler (void *CallBackRef)
 	{
 		// ステータス設定
 		tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
-		OUT32 (BOARD_STATUS_TEMP_ADRS, (tempStatus | SENSOR_TEMP_UNDER_STATUS));
+		//@@@1OUT32 (BOARD_STATUS_TEMP_ADRS, (tempStatus | SENSOR_TEMP_UNDER_STATUS));
 
 		// センサ温度下限カウント
 		gPeltierSensorLowerTempCount++;
@@ -289,7 +363,8 @@ void peltier_InterruptHandler (void *CallBackRef)
 		// HW System Error
 		ledHwSystemErrorState ();
 	}
-
+#endif //@@@1
+	
 	return;
 }
 
@@ -354,7 +429,7 @@ _DONE:
 
 
 //**********************************************************************************
-// Analog Out Function Valid Check
+// Check Mount
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		-
@@ -716,7 +791,7 @@ int peltierPowerInitialize (void)
 
 #if defined (MODE_TEMP_ABNORMAL_CHECK)
 	// FPGA温度
-	if ((status = xadcGetFpgaTemp (&fpgaTemp)) != AVAL_STATUS_SUCCESS)
+	if ((status = fpgaGetTemp (&fpgaTemp)) != AVAL_STATUS_SUCCESS)
 		fpgaTemp = 0;
 
 	// Get Power Supply
@@ -1127,14 +1202,14 @@ int peltierSetSensorTempAlarm (double tempOver, double tempUnder)
 	// センサ温度ステータスクリア
 	tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
 
-	if (tempStatus & (SENSOR_TEMP_OVER_STATUS | SENSOR_TEMP_UNDER_STATUS))
+	//@@@1if (tempStatus & (SENSOR_TEMP_OVER_STATUS | SENSOR_TEMP_UNDER_STATUS))
 	{
 		// グローバル割り込み無効
 		if ((status = peltierSetGlobalInt (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		// ステータスクリア
-		tempStatus &= ~(SENSOR_TEMP_OVER_STATUS | SENSOR_TEMP_UNDER_STATUS);
+		//@@@1tempStatus &= ~(SENSOR_TEMP_OVER_STATUS | SENSOR_TEMP_UNDER_STATUS);
 		OUT32 (BOARD_STATUS_TEMP_ADRS, tempStatus);
 
 		// Check Status
@@ -1902,12 +1977,12 @@ int peltierGetMakeTempAlarmStatus (unsigned int *pStatus)
 	temp = 0;
 
 	// Sensor Over?
-	if (data & FPGA_PELTIER_STATUS_TEMP_OVER_BIT)
-		temp |= SENSOR_TEMP_OVER_STATUS;
+	//@@@1if (data & FPGA_PELTIER_STATUS_TEMP_OVER_BIT)
+		//@@@1temp |= SENSOR_TEMP_OVER_STATUS;
 
 	// Sensor Under?
-	if (data & FPGA_PELTIER_STATUS_TEMP_UNDER_BIT)
-		temp |= SENSOR_TEMP_UNDER_STATUS;
+	//@@@1if (data & FPGA_PELTIER_STATUS_TEMP_UNDER_BIT)
+		//@@@1temp |= SENSOR_TEMP_UNDER_STATUS;
 
 	// Case Over?
 	if (data & FPGA_PELTIER_STATUS_CASE_FAIL_BIT)
@@ -2261,7 +2336,7 @@ int tempAbnormalCheck (void)
 	unsigned int powerSupply;
 
 	// FPGA温度
-	if ((status = xadcGetFpgaTemp (&fpgaTemp)) != AVAL_STATUS_SUCCESS)
+	if ((status = fpgaGetTemp (&fpgaTemp)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	//	Temp Abnormal Status取得
@@ -2666,5 +2741,348 @@ _DONE:
 }
 
 #endif // #if defined (MODE_PELTIER_CURRENT_LIMIT_CTRL)
+
+
+//**********************************************************************************
+//	Get FPGA Interrupt
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		*pData					：FPGA割り込み有効／無効データを格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int fpgaGetInterrupt (unsigned int *pData)
+{
+	int status = AVAL_STATUS_SUCCESS;
+
+	// Check pData Parameter
+	if (pData == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Get Interrupt NULL Parameter Error.\n");
+		goto _DONE;
+	}
+
+	*pData = IN32 (FPGA_INT_ENABLE_ADRS);
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Set FPGA Interrupt
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		data					：FPGA割り込み有効／無効データ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int fpgaSetInterrupt (unsigned int data)
+{
+	int status = AVAL_STATUS_SUCCESS;
+
+	OUT32 (FPGA_INT_ENABLE_ADRS, data);
+	
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Get FPGA Interrupt Status
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		*pData					：FPGA割り込み有効／無効データを格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int fpgaGetIntStatus (unsigned int *pData)
+{
+	int status = AVAL_STATUS_SUCCESS;
+
+	// Check pData Parameter
+	if (pData == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Get Interrupt Status NULL Parameter Error.\n");
+		goto _DONE;
+	}
+
+	*pData = IN32 (FPGA_INT_STATUS_ADRS);
+	
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Get FPGA Temp
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		pTemp					：FPGA温度を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int fpgaGetTemp (double *pTemp)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	unsigned int data32;
+	int dataI;
+	double dataD;
+
+//@@@1
+	*pTemp = 0;
+//@@@1
+	
+	// Check pTemp Parameter
+	if (pTemp == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Temp NULL Parameter Error.\n");
+		goto _DONE;
+	}
+
+	// Get Data
+	data32 = IN32 (FPGA_TEMP_ADRS);
+
+	// Get Temp
+	if ((status = fpgaCalcRegToTemp (data32, pTemp)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Get FPGA Temp
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		data					：レジスタ値
+//		pTemp					：FPGA温度を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int fpgaCalcRegToTemp (unsigned int data, double *pTemp)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	unsigned int data32;
+	int dataI, dataI2;
+	double dataD;
+
+	// Check pTemp Parameter
+	if (pTemp == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Calc Temp NULL Parameter Error.\n");
+		goto _DONE;
+	}
+
+	// 整数部
+	dataI = data >> FPGA_TEMP_INTEGER_SHIFT;
+	dataI &= FPGA_TEMP_INTEGER_MASK;
+	
+	// 2の補数で計算
+	dataI2 = ~dataI + 1;
+	
+	// 小数部
+	dataD = (double)(data & FPGA_TEMP_FRACTIONAL_MASK);
+	dataD /= FPGA_TEMP_FRACTIONAL_POINT;
+	
+	// 温度取得
+	*pTemp = (double)dataI2 + dataD;
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Get FPGA Temp
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		temp					：FPGA温度
+//		pData					：レジスタ値を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int fpgaCalcTempToReg (double temp, unsigned int *pData)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	unsigned int data32, data32Point;
+	int dataI, dataI2;
+	double dataD;
+
+	// Check pTemp Parameter
+	if (pData == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Calc Data NULL Parameter Error.\n");
+		goto _DONE;
+	}
+
+	// 整数部
+	dataI = (int)temp;
+
+	// 2の補数で計算
+	dataI2 = ~dataI - 1;
+
+	// 整数部
+	data32 = dataI2 & FPGA_TEMP_INTEGER_MASK;
+	data32 = data32 << FPGA_TEMP_INTEGER_SHIFT;
+	
+	// 小数部
+	data32Point = (data32 - dataI) * FPGA_TEMP_FRACTIONAL_POINT;
+	
+	// レジスタ値
+	*pData = data32 | data32Point;
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	FPGA通知温度取得
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		pTempOver				：センサ通知温度の上限値を格納するポインタ
+//		pTempUnder				：センサ通知温度の下限値を格納するポインタ
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int fpgaGetTempAlarm (double *pTempOver, double *pTempUnder)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	unsigned int reg32, data32;
+
+	// Check pTempOver Parameter
+	if (pTempOver == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Temp Alarm Over NULL Parameter Error.\n");
+		goto _DONE;
+	}
+
+	// Check pTempUnder Parameter
+	if (pTempUnder == NULL)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Temp Alarm Under NULL Parameter Error.\n");
+		goto _DONE;
+	}
+
+	// データ取得
+	reg32 = IN32 (FPGA_TEMP_ALARM_ADRS);
+
+	// 上限値取得
+	data32 = reg32 >> 16;
+	data32 &= 0xffff;
+
+	// 上限値計算
+	if ((status = fpgaCalcRegToTemp (data32, pTempOver)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// 下限値取得
+	data32 = reg32 & 0xffff;
+
+	// 下限値計算
+	if ((status = fpgaCalcRegToTemp (data32, pTempUnder)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+_DONE:
+	return (status);
+}
+
+
+//**********************************************************************************
+//	FPGA通知温度設定
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		tempOver				：センサ通知温度の上限値
+//		tempUnder				：センサ通知温度の下限値
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS		：正常終了
+//		上記以外					：異常終了
+//==================================================================================
+int fpgaSetTempAlarm (double tempOver, double tempUnder)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	unsigned int data32, data32H, data32L;
+	double tempMin, tempMax;
+	unsigned int tempStatus;
+	unsigned int dataOver, dataUnder;
+
+	// Check tempOver Parameter
+	if ((tempOver < FPGA_TEMP_MIN) || (tempOver > FPGA_TEMP_MAX))
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "FPGA Alarm tempOver(%.2f) Parameter Error.(Min:%.2f / Max:%.2f)\n", tempOver, FPGA_TEMP_MIN, FPGA_TEMP_MAX);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+
+	// Check tempUnder Parameter
+	if ((tempUnder < FPGA_TEMP_MIN) || (tempUnder > FPGA_TEMP_MAX))
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "FPGA Alarm tempUnder(%.2f) Parameter Error.(Min:%.2f / Max:%.2f)\n", tempUnder, FPGA_TEMP_MIN, FPGA_TEMP_MAX);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+
+	// Check tempOver/tempUnder Parameter
+	if (tempOver < tempUnder)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "FPGA Alarm tempOver(%.2f) < tempUnder(%.2f) Parameter Error.\n", tempOver, tempUnder);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+
+	// 温度ステータスクリア
+	tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
+
+	if (tempStatus & FPGA_TEMP_STATUS)
+	{
+		// FPGA割り込み無効
+		if ((status = fpgaSetInterrupt (0)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+		
+		// ステータスクリア
+		tempStatus &= ~FPGA_TEMP_STATUS;
+		OUT32 (BOARD_STATUS_TEMP_ADRS, tempStatus);
+
+		// Check Status
+		if (tempStatus == 0)
+			ledConnectStateForce();
+
+		// FPGA割り込み有効
+		if ((status = fpgaSetInterrupt (FPGA_INT_TEMP_UPPER)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+	}
+
+	// 上限値計算
+	if ((status = fpgaCalcTempToReg (tempOver, &dataOver)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// 下限値計算
+	if ((status = fpgaCalcTempToReg (tempUnder, &dataUnder)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// レジスタ設定
+	data32 = (dataOver << 16) | dataUnder;
+	OUT32 (FPGA_TEMP_ALARM_ADRS, data32);
+
+_DONE:
+	return (status);
+}
 
 // eof
