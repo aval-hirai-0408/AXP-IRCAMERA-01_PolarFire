@@ -751,6 +751,11 @@ int fpgaRoiGetSensorHeightTotalSize (int *pSize)
 	unsigned int totalSize;
 	int valid;
 
+//@@@1
+	*pSize = 2048;
+	goto _DONE;
+//@@@1
+
 	// Check pSize Parameter
 	if (pSize == NULL)
 	{

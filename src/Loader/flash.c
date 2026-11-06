@@ -24,19 +24,17 @@
 // defines
 //----------------------------------------------------------------------------------
 
-// Flash Select
-#define QSPI_FLASH_SELECT_N25Q				(1)		// Micron
-#define QSPI_FLASH_SELECT_ISSI				(2)		// ISSI
-
-// Device ID
-
-// Micron
+// Flash Device Micron
 #define QSPI_FLASH_READ_ID_MANUFACTURE_N25Q	(0x20)
 #define QSPI_FLASH_READ_ID_DEVICE_N25Q		(0xBA)
 
-// ISSI
+// Flash Device ISSI
 #define QSPI_FLASH_READ_ID_MANUFACTURE_ISSI	(0x9D)
 #define QSPI_FLASH_READ_ID_DEVICE_ISSI		(0x60)
+
+// Flash Device Winbond
+#define QSPI_FLASH_READ_ID_MANUFACTURE_W25Q	(0xEF)
+#define QSPI_FLASH_READ_ID_DEVICE_W25Q		(0x20)
 
 
 //----------------------------------------------------------------------------------
@@ -67,11 +65,11 @@ int qspiFlashInitialize (void)
 	int status = AVAL_STATUS_SUCCESS;
 	uint8_t manufacturer_id, device_id;
 
-//@@@1	
+	// SPI Divider
 	OUT32 ((CORESPI_BASE_ADDR+0x00), 2);
 	OUT32 ((CORESPI_BASE_ADDR+0x2c), 2);
 	OUT32 ((CORESPI_BASE_ADDR+0x00), 3);
-//@@@1	
+
 	// Initialize
     SPI_init (&g_flash_core_spi, CORESPI_BASE_ADDR, 32);
 
@@ -82,21 +80,22 @@ int qspiFlashInitialize (void)
 	qspiFlashGetFlashId (&manufacturer_id, &device_id);
 	
 	// Check Read ID
-	if ((manufacturer_id == QSPI_FLASH_READ_ID_MANUFACTURE_ISSI) && (device_id == QSPI_FLASH_READ_ID_DEVICE_ISSI))
+	if ((manufacturer_id == QSPI_FLASH_READ_ID_MANUFACTURE_W25Q) && (device_id == QSPI_FLASH_READ_ID_DEVICE_W25Q))
+	{
+		gQspiFlashSelect = QSPI_FLASH_SELECT_W25Q;
+	}
+	else if ((manufacturer_id == QSPI_FLASH_READ_ID_MANUFACTURE_ISSI) && (device_id == QSPI_FLASH_READ_ID_DEVICE_ISSI))
 	{
 		gQspiFlashSelect = QSPI_FLASH_SELECT_ISSI;
-		
-		if ((status = qspiFlashInitialize_ISSI ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
 	}
 	else if ((manufacturer_id == QSPI_FLASH_READ_ID_MANUFACTURE_N25Q) && (device_id == QSPI_FLASH_READ_ID_DEVICE_N25Q))
 	{
 		gQspiFlashSelect = QSPI_FLASH_SELECT_N25Q;
-		
-		if ((status = qspiFlashInitialize_N25Q ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
 	}
-	
+
+	if ((status = qspiFlashInitialize_N25Q ()) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
 _DONE:
 	return (status);
 }
@@ -117,18 +116,7 @@ int qspiFlashRead (unsigned int adrs, unsigned char *pBuffer, unsigned int size)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
-	{
-		status = qspiFlashRead_ISSI (adrs, pBuffer, size);
-	}
-	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
-	{
-		status = qspiFlashRead_N25Q (adrs, pBuffer, size);
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
-	}
+	status = qspiFlashRead_N25Q (adrs, pBuffer, size);
 
 _DONE:
 	return (status);

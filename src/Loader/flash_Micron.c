@@ -44,14 +44,18 @@
 #define QSPI_FAST_QSPI_READ_CMD_N25Q	(0x0B)
 #define QSPI_DUAL_QSPI_READ_CMD_N25Q	(0x3B)
 #define QSPI_READ_ID_N25Q				(0x9F)
+#define QSPI_WREAR_CMD_N25Q				(0xC5)
 #define QSPI_READ_FLAG_STATUS_CMD_N25Q	(0x70)
 #define QSPI_EXIT_4BYTE_ADRS_CMD_N25Q	(0xE9)
-#define QSPI_WREAR_CMD_N25Q				(0xC5)
+#define QSPI_EXIT_4BYTE_ADRS_CMD_ISSI	(0x29)
 
 
 //----------------------------------------------------------------------------------
 // externs
 //----------------------------------------------------------------------------------
+
+// QSPI Flash Select
+extern int gQspiFlashSelect;
 
 // Instance
 extern spi_instance_t g_flash_core_spi; 
@@ -221,10 +225,14 @@ int qspiFlashRead_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int 
 	    cmdBuff[4] = DONT_CARE;
 	    cmdBuff[5] = DONT_CARE;
 	    
-		// Wait Redy Check
-		if ((status = qspiFlashWaitReadyEraseCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
+#if defined (MODE_FLASH_MICRON)
+		if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
+		{
+			// Wait Redy Check
+			if ((status = qspiFlashWaitReadyEraseCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
+				goto _DONE;
+		}
+#endif
 		// Status Check
 		if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
@@ -289,6 +297,7 @@ _DONE:
 }
 
 
+#if defined (MODE_FLASH_MICRON)
 //**********************************************************************************
 //	Wait ReadyCheck
 //----------------------------------------------------------------------------------
@@ -327,6 +336,7 @@ int qspiFlashWaitReadyEraseCheck_N25Q (unsigned int timeout)
 _DONE:
 	return (status);
 }
+#endif
 
 
 //**********************************************************************************
@@ -349,7 +359,7 @@ int qspiFlashWriteEnableCmd_N25Q (void)
 
 	// Weite Enable
     cmd_buffer[0] = QSPI_WRITE_ENABLE_CMD_N25Q;
-    SPI_transfer_block (&g_flash_core_spi, cmd_buffer, 1, 0, 0);     	
+    SPI_transfer_block (&g_flash_core_spi, cmd_buffer, 1, 0, 0);
 
 _DONE:
 	return (status);
@@ -376,7 +386,7 @@ int qspiFlashWriteDisableCmd_N25Q (void)
 
 	// Weite Disable
     cmd_buffer[0] = QSPI_WRITE_DISABLE_CMD_N25Q;
-    SPI_transfer_block (&g_flash_core_spi, cmd_buffer, 1, 0, 0);     	
+    SPI_transfer_block (&g_flash_core_spi, cmd_buffer, 1, 0, 0);
 
 _DONE:
 	return (status);
@@ -436,7 +446,13 @@ int qspiFlash3ByteAddresseCmd_N25Q (void)
 		goto _DONE;
 
 	// Extend Command設定
-	cmdBuff[0] = QSPI_EXIT_4BYTE_ADRS_CMD_N25Q;
+	if ((gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q) || (gQspiFlashSelect == QSPI_FLASH_SELECT_W25Q))
+		cmdBuff[0] = QSPI_EXIT_4BYTE_ADRS_CMD_N25Q;
+	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
+		cmdBuff[0] = QSPI_EXIT_4BYTE_ADRS_CMD_ISSI;
+	else
+		goto _DONE;
+
     SPI_transfer_block (&g_flash_core_spi, cmdBuff, sizeof(cmdBuff), 0, 0);     	
 
 _DONE:

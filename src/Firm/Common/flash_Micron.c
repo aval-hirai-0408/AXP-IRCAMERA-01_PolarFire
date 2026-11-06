@@ -53,6 +53,7 @@
 #define QSPI_WREAR_CMD_N25Q				(0xC5)
 #define QSPI_READ_FLAG_STATUS_CMD_N25Q	(0x70)
 #define QSPI_EXIT_4BYTE_ADRS_CMD_N25Q	(0xE9)
+#define QSPI_EXIT_4BYTE_ADRS_CMD_ISSI	(0x29)
 
 // Write Protect
 #define QSPI_STATUS_TOP_BOTTOM_N25Q		(1<<5)		// Top or Bottom
@@ -292,6 +293,7 @@ int qspiFlashWrite_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int
 		if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
+#if defined (MODE_FLASH_MICRON)
 		//------------------------------------------------------------
 		// Wait Ready Check
 		//------------------------------------------------------------
@@ -300,6 +302,7 @@ int qspiFlashWrite_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int
 			if ((status = qspiFlashWaitReadyEraseCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
 		}
+#endif
 
 #if defined (MODE_FLASH_WRITE_COPY)
 
@@ -575,12 +578,14 @@ int qspiFlashRead_N25Q (unsigned int adrs, unsigned char *pBuffer, unsigned int 
 	    cmdBuff[4] = DONT_CARE;
 	    cmdBuff[5] = DONT_CARE;
 	    
+#if defined (MODE_FLASH_MICRON)
 		if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
 		{
 			// Wait Redy Check
 			if ((status = qspiFlashWaitReadyEraseCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
 		}
+#endif
 
 		// Status Check
 		if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
@@ -1014,7 +1019,7 @@ _DONE:
 int qspiFlashWriteEnableCmd_N25Q (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
-    uint8_t cmd_buffer[1];	//@@@@1
+    uint8_t cmd_buffer[1];
 
 	// ステータスCheck
 	if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
@@ -1022,7 +1027,7 @@ int qspiFlashWriteEnableCmd_N25Q (void)
 
 	// Weite Enable
     cmd_buffer[0] = QSPI_WRITE_ENABLE_CMD_N25Q;
-    SPI_transfer_block (&g_flash_core_spi, cmd_buffer, 1, 0, 0);     	
+    SPI_transfer_block (&g_flash_core_spi, cmd_buffer, 1, 0, 0);
 
 _DONE:
 	return (status);
@@ -1041,7 +1046,7 @@ _DONE:
 int qspiFlashWriteDisableCmd_N25Q (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
-    uint8_t cmd_buffer[1];	//@@@1
+    uint8_t cmd_buffer[1];
 
 	// ステータスCheck
 	if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
@@ -1049,7 +1054,7 @@ int qspiFlashWriteDisableCmd_N25Q (void)
 
 	// Weite Disable
     cmd_buffer[0] = QSPI_WRITE_DISABLE_CMD_N25Q;
-    SPI_transfer_block (&g_flash_core_spi, cmd_buffer, 1, 0, 0);     	
+    SPI_transfer_block (&g_flash_core_spi, cmd_buffer, 1, 0, 0);
 
 _DONE:
 	return (status);
@@ -1070,10 +1075,6 @@ int qspiFlashExAddresseCmd_N25Q (unsigned int adrs)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned char cmdBuff[2];
 	unsigned int qspiFlashCurrentBank_N25Q;
-
-	//------------------------------------------------------------
-	// 拡張アドレスコマンド発行
-	//------------------------------------------------------------
 
 	// ステータスCheck
 	if ((status = qspiFlashStatusCheck_N25Q (QSPI_FLASH_STATUS_COUNT_N25Q)) != AVAL_STATUS_SUCCESS)
@@ -1113,7 +1114,18 @@ int qspiFlash3ByteAddresseCmd_N25Q (void)
 		goto _DONE;
 
 	// Extend Command設定
-	cmdBuff[0] = QSPI_EXIT_4BYTE_ADRS_CMD_N25Q;
+	if ((gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q) || (gQspiFlashSelect == QSPI_FLASH_SELECT_W25Q))
+		cmdBuff[0] = QSPI_EXIT_4BYTE_ADRS_CMD_N25Q;
+	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
+		cmdBuff[0] = QSPI_EXIT_4BYTE_ADRS_CMD_ISSI;
+	else
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Flash 3Byte Adress Select(%d) Parameter Error.\n", gQspiFlashSelect);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
+	}
+	
     SPI_transfer_block (&g_flash_core_spi, cmdBuff, sizeof(cmdBuff), 0, 0);     	
 
 _DONE:

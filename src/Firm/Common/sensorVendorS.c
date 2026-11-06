@@ -640,6 +640,7 @@ int sensorVendorSInitialize (void)
 
 	msDelay (100);
 
+#if 0	//@@@1
 
 	//============================================================
 	//============================================================
@@ -901,6 +902,7 @@ int sensorVendorSInitialize (void)
 	// Chip ID = 0x06
 	//============================================================
 	id = 0x06;
+#endif //@@@1
 
 	//------------------------------------------------------------
 	// TRG EN
@@ -909,6 +911,7 @@ int sensorVendorSInitialize (void)
 	if ((status = sensorGetShutterMode (&shutterMode)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
+#if 0	//@@@1
 	if (shutterMode == SHUTTER_MODE_TRIGGER)
 		data8 = SENSOR_REG_TRG_EN_BIT;
 	else
@@ -916,10 +919,13 @@ int sensorVendorSInitialize (void)
 
 	if ((status = sensorRegWriteByte (id, SENSOR_REG_TRG_EN_ADRS, data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+#endif //@@@1
+	
 #else
 	shutterMode = SHUTTER_MODE_NORMAL;
 #endif
 
+#if 0	//@@@1
 	//------------------------------------------------------------
 	// OD Bit
 	//------------------------------------------------------------
@@ -1190,16 +1196,20 @@ int sensorVendorSInitialize (void)
 		goto _DONE;
 #endif
 
+#endif //@@@1	
+	
 	//------------------------------------------------------------
 	// H Interval取得
 	//------------------------------------------------------------
 #if !defined (MODE_SENSOR_MASTER)
+	DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@1\n");
 
 	if (shutterMode == 1)
 	{
 		// Shutter ModeがTrigger Modeの場合は、bit/IFの回線速度に合わせたH intervalを取得
 		if ((status = sensorHIntervalData (bit, &data32)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
+		DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2 Bit=%d, Data=0x%x\n", bit, data32);
 	}
 	else
 	{
@@ -1222,6 +1232,7 @@ int sensorVendorSInitialize (void)
 	if ((status = sensorSetHIntervalReg (data32)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
+#if 0	//@@@1
 
 	//------------------------------------------------------------
 	// FPGA Shutter Normal Mode
@@ -1256,7 +1267,7 @@ int sensorVendorSInitialize (void)
 
 	// TEMP OK初期化
 	OUT32 (FPGA_PELTIER_TEC_POK_ADRS, 1);
-
+#endif //@@@1
 _DONE:
 	return (status);
 }
@@ -2537,7 +2548,7 @@ int sensorStandByCancel (void)
 	if (drrsMode == MODE_DISABLE)
 	{
 		// H Interval保存
-		if ((status = sensorGetHIntervalReg (&saveHInterval)) != AVAL_STATUS_SUCCESS)
+		if ((status = irvGetHIntervalClock (&saveHInterval)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 		
 		// H Interval設定
@@ -2559,7 +2570,7 @@ int sensorStandByCancel (void)
 			goto _DONE;
 
 		// H Interval保存
-		if ((status = sensorGetHIntervalReg (&saveHInterval)) != AVAL_STATUS_SUCCESS)
+		if ((status = irvGetHIntervalClock (&saveHInterval)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 		
 		// H Interval設定
@@ -3246,8 +3257,12 @@ int sensorSetHIntervalReg (unsigned int data)
 	int status = AVAL_STATUS_SUCCESS;
 
 	// H Interval
-	OUT32 (FPGA_SENSOR_HINTERVAL_ADRS, (data & FPGA_SENSOR_HINTERVAL_MASK));
+//@@@1	OUT32 (FPGA_SENSOR_HINTERVAL_ADRS, (data & FPGA_SENSOR_HINTERVAL_MASK));
 
+//@@@1
+	OUT32 (FIRM_DATA_H_DATA, (data & FPGA_SENSOR_HINTERVAL_MASK));
+//@@@1
+	
 	return (status);
 }
 
@@ -3256,25 +3271,27 @@ int sensorSetHIntervalReg (unsigned int data)
 //	H Interval取得
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
-//		pData				：H Intervalを格納するポインタ
+//		pClock				：H Interval Clockを格納するポインタ
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int sensorGetHIntervalReg (unsigned int *pData)
+int irvGetHIntervalClock (unsigned int *pHinterval)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-	// Check pData Parameter
-	if (pData == NULL)
+	// Check pHInterval Parameter
+	if (pHinterval == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "H Interval Get NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Get H Interval NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
-	// H Interval
-	*pData = IN32 (FPGA_SENSOR_HINTERVAL_ADRS) & FPGA_SENSOR_HINTERVAL_MASK;
+	//@@@1
+	//*pHinterval = IN32 (FPGA_SENSOR_HINTERVAL_ADRS) & FPGA_SENSOR_HINTERVAL_MASK;
+	*pHinterval = IN32 (FIRM_DATA_H_DATA) & FPGA_SENSOR_HINTERVAL_MASK;
+	//@@@1
 
 _DONE:
 	return (status);

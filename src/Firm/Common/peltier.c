@@ -27,6 +27,7 @@
 int gPeltierSensorUpperTempCount = 0;	// センサ温度上限カウント
 int gPeltierSensorLowerTempCount = 0;	// センサ温度下限カウント
 int gPeltierCaseTempCount = 0;			// ケース温度カウント
+int gPeltierFpgaTempCount = 0;			// FPGA温度カウント
 
 // Peltier Status
 int gPeltierStatus = 0;
@@ -65,8 +66,12 @@ int peltierInitialize (void)
 	int powerLevel;
 #endif
 
+	//@@@1
+	DEBUG_PRINT_FORCE("@@@Pertier Star\n");
+	//@@@1
 	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "Peltier Initialize\n");
 
+#if 0	//@@@1
 	// FPGA割り込み無効
 	fpgaSetInterrupt (0);
 
@@ -178,14 +183,22 @@ int peltierInitialize (void)
 
 	// Case Alarm設定
 	peltierSetCaseTempAlarm (tempH, tempL);
-
+#endif //@@@1
 
 	//------------------------------------------------------------
 	// FPGA Alarm
 	//------------------------------------------------------------
 
+	//@@@1
+	DEBUG_PRINT_FORCE("FPGA Alarm\n");
+	//@@@1
+	
 	// FPGA Alarm温度初期化
-	cameraParamUserReadMem (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_FPGA_LIMIT_TEMP_ADRS, &adrs, &data);
+	//@@@1cameraParamUserReadMem (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_FPGA_LIMIT_TEMP_ADRS, &adrs, &data);
+
+	//@@1
+	data = (unsigned int)((unsigned int)(DIAG_TEMP_FPGA_MAX * CAMERA_SAVE_TEMP_UNIT)<<16) | (unsigned int)(DIAG_TEMP_FPGA_MIN * CAMERA_SAVE_TEMP_UNIT);
+	//@@1
 
 	// 上限温度
 	datai16 = (short)(data >> 16);
@@ -195,9 +208,19 @@ int peltierInitialize (void)
 	datai16 = (short)data;
 	tempL = (double)((double)datai16 / (double)CAMERA_SAVE_TEMP_UNIT);
 
-	// Case Alarm設定
+	//@@@1
+	DEBUG_PRINT_FORCE("Data  = 0x%x\n", data);
+	DEBUG_PRINT_FORCE("tempH = %f\n", tempH);
+	DEBUG_PRINT_FORCE("tempL = %f\n", tempL);
+	//@@@1
+
+	// Alarm設定
 	fpgaSetTempAlarm (tempH, tempL);
 
+	// Set Interrupt Enable
+	fpgaSetInterrupt (FPGA_INT_TEMP_UPPER);
+
+#if 0	//@@@1
 	//------------------------------------------------------------
 	// Target温度設定
 	//------------------------------------------------------------
@@ -230,6 +253,7 @@ int peltierInitialize (void)
 	// Peltier Enable
 	//peltierEnable ();	///@@@@1
 	peltierPowerInitialize();
+#endif //@@@1
 
 	// Interrupt Enable
     MIV_PLIC_enable_irq (&g_plic, MIV_PLIC_EXT3_IRQn);
@@ -253,8 +277,18 @@ void MIV_PLIC_EXT3_IRQHandler (void)
 	unsigned int intStatus, intEnable;
 	unsigned int tempStatus;
 
-	// Get Status
+	// Get Interrupt Status
 	intStatus = IN32 (FPGA_INT_STATUS_ADRS);
+	
+	// Get Interrupt Status
+	fpgaGetInterrupt (&intEnable);
+
+//@@@1
+	DEBUG_PRINT_FORCE("@@@1 Temp Int = 0x%x / Enable = 0x%x\n", intStatus, intEnable);
+//@@@1
+
+	// Mask
+	intStatus &= intEnable;
 	
 	// Clear Status
 	OUT32 (FPGA_INT_STATUS_ADRS, intStatus);
@@ -276,11 +310,8 @@ void MIV_PLIC_EXT3_IRQHandler (void)
 		tempStatus |= FPGA_TEMP_STATUS;
 		OUT32 (BOARD_STATUS_TEMP_ADRS, tempStatus);
 
-		// センサ温度カウント取得
-		data32 = IN32(BOARD_STATUS_FPGA_TEMP_ADRS);
-
-		// センサ温度カウント設定
-		OUT32 (BOARD_STATUS_FPGA_TEMP_ADRS, ++data32);
+		// 温度カウント設定
+		gPeltierFpgaTempCount++;
 
 		// HW System Error
 		ledHwSystemErrorState ();
@@ -1316,6 +1347,12 @@ int peltierGetSensorTempAlarm (double *pTempOver, double *pTempUnder)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int reg32, data32;
 
+//@@@1
+*pTempOver = 59;
+*pTempUnder = 20;
+goto _DONE;
+//@@@1
+
 	// Check pTempOver Parameter
 	if (pTempOver == NULL)
 	{
@@ -1360,7 +1397,7 @@ _DONE:
 //	Peltier Sensor取得計算
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
-//		reg					：センサ通知温度レジスタ値
+//		reg						：センサ通知温度レジスタ値
 //		pTempAlarm				：センサ通知温度を格納するポインタ
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS		：正常終了
@@ -1756,6 +1793,11 @@ int peltierGetSensorTemp (double *pTemp)
 	unsigned int data;
 	short dataS16;
 
+//@@@1
+	*pTemp = 0;
+	return (0);
+//@@@1
+	
 	// Check pTemp Parameter
 	if (pTemp == NULL)
 	{
@@ -1803,6 +1845,11 @@ int peltierGetCaseTemp (double *pTemp)
 	unsigned int data32, reg32;
 	int dataS32;
 	double dataD;
+//@@@1
+	*pTemp = 0;
+	return (0);
+//@@@1
+	
 
 	// Check pTemp Parameter
 	if (pTemp == NULL)
@@ -2834,10 +2881,6 @@ int fpgaGetTemp (double *pTemp)
 	int dataI;
 	double dataD;
 
-//@@@1
-	*pTemp = 0;
-//@@@1
-	
 	// Check pTemp Parameter
 	if (pTemp == NULL)
 	{
@@ -2871,9 +2914,10 @@ _DONE:
 int fpgaCalcRegToTemp (unsigned int data, double *pTemp)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned int data32;
+	unsigned int data32Save;
 	int dataI, dataI2;
 	double dataD;
+	
 
 	// Check pTemp Parameter
 	if (pTemp == NULL)
@@ -2883,19 +2927,32 @@ int fpgaCalcRegToTemp (unsigned int data, double *pTemp)
 		goto _DONE;
 	}
 
+	// save
+	data32Save = data;
+	
+	// 負数をクリア
+	data &= ~FPGA_TEMP_CODE_BIT;
+	
 	// 整数部
 	dataI = data >> FPGA_TEMP_INTEGER_SHIFT;
 	dataI &= FPGA_TEMP_INTEGER_MASK;
 	
-	// 2の補数で計算
-	dataI2 = ~dataI + 1;
+	if (data32Save & FPGA_TEMP_CODE_BIT)
+	{
+		// 2の補数で計算
+		dataI2 = ~dataI + 1;
+	}
+	else
+	{
+		dataI2 = dataI;
+	}
 	
 	// 小数部
 	dataD = (double)(data & FPGA_TEMP_FRACTIONAL_MASK);
 	dataD /= FPGA_TEMP_FRACTIONAL_POINT;
 	
 	// 温度取得
-	*pTemp = (double)dataI2 + dataD;
+	*pTemp = (double)dataI + dataD;
 
 _DONE:
 	return (status);
@@ -2917,7 +2974,7 @@ int fpgaCalcTempToReg (double temp, unsigned int *pData)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int data32, data32Point;
 	int dataI, dataI2;
-	double dataD;
+	double dataDPoint;
 
 	// Check pTemp Parameter
 	if (pData == NULL)
@@ -2930,16 +2987,26 @@ int fpgaCalcTempToReg (double temp, unsigned int *pData)
 	// 整数部
 	dataI = (int)temp;
 
-	// 2の補数で計算
-	dataI2 = ~dataI - 1;
+	// 負数？
+	if (dataI < 0)
+	{
+		// 2の補数で計算
+		dataI2 = ~dataI + 1;
+	}
+	else
+	{
+		dataI2 = dataI;
+	}
 
 	// 整数部
 	data32 = dataI2 & FPGA_TEMP_INTEGER_MASK;
 	data32 = data32 << FPGA_TEMP_INTEGER_SHIFT;
-	
+
 	// 小数部
-	data32Point = (data32 - dataI) * FPGA_TEMP_FRACTIONAL_POINT;
-	
+	dataDPoint = (temp - dataI);
+	dataDPoint += 0.05;			// 四捨五入
+	data32Point = dataDPoint * FPGA_TEMP_FRACTIONAL_POINT;
+
 	// レジスタ値
 	*pData = data32 | data32Point;
 

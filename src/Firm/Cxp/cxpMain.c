@@ -171,7 +171,7 @@ int cxpMain (void)
 	// CXP Rx Interrupt Enable
 	//------------------------------------------------------------
 	cxpSetRecvIntMode (MODE_ENABLE);
-
+	
 	//------------------------------------------------------------
 	// Main Loop
 	//------------------------------------------------------------
@@ -795,8 +795,8 @@ int MIV_PLIC_EXT2_IRQHandler (void)
 	if (intState & FPGA_CXP_INT_STATUS_RX_PACKET)
 	{
 		// Exeコマンド実行中？
-		exeFlag = IN32 (FIRM_DATA_CMD_EXE_FLAG);
-		
+		exeFlag = IN32 (FIRM_DATA_CXP_INT_FLAG);
+
 		if (exeFlag == 1)
 		{
 			gCxpIntProcsFlag = 1;
@@ -934,7 +934,7 @@ int cxpIpInitialize (void)
 	DEBUG_PRINT_FORCE("Param4\n");
 //@@@@1
 
-	OUT32(0x6b200008, 0x08000A00);
+	OUT32(FPGA_CXP_TEST_PATTERN_WIDTH_HEIGHT_ADRS, 0x08000A00);
 
 	return (status);
 }
@@ -990,10 +990,7 @@ int cmdExecuteInit (void)
 
 	// Execute
 	OUT32 (FIRM_DATA_CMD_EXE_FLAG, 1);
-
-	// Cmd Interrupt Enable
-	//@@@1if ((status = cmdInterruptMode (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
-		//@@@1goto _DONE;
+	OUT32 (FIRM_DATA_CXP_INT_FLAG, 1);
 
 _DONE:
 	return (status);
@@ -1010,6 +1007,27 @@ _DONE:
 //		上記以外				：異常終了
 //==================================================================================
 int cmdExecuteDone (void)
+{
+	int status = AVAL_STATUS_SUCCESS;
+
+	// Execute Clear
+	OUT32 (FIRM_DATA_CMD_EXE_FLAG, 0);
+	OUT32 (FIRM_DATA_CXP_INT_FLAG, 0);
+
+	return (status);
+}
+
+
+//**********************************************************************************
+//	Cmd Execute Done Only
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		-
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int cmdExecuteDoneOnly (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 

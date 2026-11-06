@@ -42,9 +42,33 @@ int fpgaRegMap (void)
 
 	DEBUG_PRINT_FORCE("\n");
 	DEBUG_PRINT_FORCE("[Register]\n");
+	DEBUG_PRINT_FORCE("\n");
+
+	DEBUG_PRINT_FORCE("  PLIC                    : 0x%08x\n", MIV_PLIC_BASE_ADDR);
+	DEBUG_PRINT_FORCE("  UART                    : 0x%08x\n", COREUARTAPB0_BASE_ADDR);
+	DEBUG_PRINT_FORCE("  Generic                 : 0x%08x\n", FPGA_GENERIC_ADRS);
+	DEBUG_PRINT_FORCE("  SPI                     : 0x%08x\n", CORESPI_BASE_ADDR);
+	DEBUG_PRINT_FORCE("  Timer                   : 0x%08x\n", CORETIMER0_BASE_ADDR);
+
+	DEBUG_PRINT_FORCE("  Acquisition Ctrl        : 0x%08x\n", GENICAM_ACQUISITION_CONTROL_ADRS);
+	DEBUG_PRINT_FORCE("  Digital IO              : 0x%08x\n", GENICAM_DIGITAL_CONTROL_ADRS);
+	DEBUG_PRINT_FORCE("  Counter                 : 0x%08x\n", GENICAM_COUNTER_CONTROL_ADRS);
+	DEBUG_PRINT_FORCE("  Timer                   : 0x%08x\n", GENICAM_TIMER_CONTROL_ADRS);
+	#ifdef MODE_ENCODER
+	DEBUG_PRINT_FORCE("  Encoder                 : 0x%08x\n", GENICAM_ENCODER_CONTROL_ADRS);
+	#endif
+
 	DEBUG_PRINT_FORCE("  CoaxPress IP            : 0x%08x\n", CORECXP_BASE_ADDR);
 	DEBUG_PRINT_FORCE("  CoaxPress FPGA          : 0x%08x\n", FPGA_CXP_BASE_ADDR);
 
+	DEBUG_PRINT_FORCE("\n");
+	DEBUG_PRINT_FORCE("[DDR]\n");
+	DEBUG_PRINT_FORCE("  UserSet Common          : 0x%08x\n", gpCameraCommonParameter);
+	DEBUG_PRINT_FORCE("  UserSet Param           : 0x%08x\n", gpCameraUserParameter);
+	DEBUG_PRINT_FORCE("  UserSet Spectrum        : 0x%08x\n", gpCameraUserParameter);
+
+	DEBUG_PRINT_FORCE("  FFC                     : 0x%08x\n", FFC_MEMORY_ADRS);
+	DEBUG_PRINT_FORCE("  DPC                     : 0x%08x\n", DPC_MEMORY_ADRS);
 	
 #if 0//@@@1	
 	
@@ -70,24 +94,6 @@ int fpgaRegMap (void)
 	DEBUG_PRINT_FORCE("  Spectrum                : 0x%08x\n", FPGA_SPECTRUM_ADRS);
 #endif
 
-	DEBUG_PRINT_FORCE("\n");
-	DEBUG_PRINT_FORCE("  Device Ctrl             : 0x%08x\n", GENICAM_DEVICE_CONTROL_ADRS);
-	DEBUG_PRINT_FORCE("  Acquisition Ctrl        : 0x%08x\n", GENICAM_ACQUISITION_CONTROL_ADRS);
-	DEBUG_PRINT_FORCE("  Digital IO              : 0x%08x\n", GENICAM_DIGITAL_CONTROL_ADRS);
-	DEBUG_PRINT_FORCE("  Counter                 : 0x%08x\n", GENICAM_COUNTER_CONTROL_ADRS);
-	DEBUG_PRINT_FORCE("  Timer                   : 0x%08x\n", GENICAM_TIMER_CONTROL_ADRS);
-#ifdef MODE_ENCODER
-	DEBUG_PRINT_FORCE("  Encoder                 : 0x%08x\n", GENICAM_ENCODER_CONTROL_ADRS);
-#endif
-
-	DEBUG_PRINT_FORCE("\n");
-	DEBUG_PRINT_FORCE("[DDR]\n");
-	DEBUG_PRINT_FORCE("  UserSet Common          : 0x%08x\n", gpCameraCommonParameter);
-	DEBUG_PRINT_FORCE("  UserSet Param           : 0x%08x\n", gpCameraUserParameter);
-	DEBUG_PRINT_FORCE("  UserSet Spectrum        : 0x%08x\n", gpCameraUserParameter);
-
-	DEBUG_PRINT_FORCE("  FFC                     : 0x%08x\n", FFC_MEMORY_ADRS);
-	DEBUG_PRINT_FORCE("  DPC                     : 0x%08x\n", DPC_MEMORY_ADRS);
 
 #if defined (MODE_CXP)
 	if (gInterFaceID == INTERFACE_CXP)

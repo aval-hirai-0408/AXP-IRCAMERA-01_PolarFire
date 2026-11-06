@@ -23,9 +23,6 @@ char gConsoleKey[CONSOLE_BUFF_COUNT];
 int gConsoleIndex = 0;
 int gConsolePassword = 0;
 
-//@@@@@@@@@@
-UART_instance_t g_uart;
-//@@@@@@@@@@
 
 //**********************************************************************************
 //	ファームウェアMain
@@ -38,16 +35,12 @@ UART_instance_t g_uart;
 //==================================================================================
 int main (void)
 {
-//@@@@@@@@@@@@@@@@@@@@
-    gInterFaceID = INTERFACE_CXP;
-//@@@@@@@@@@@@@@@@@@@@
-
 	// 起動状態
 	//@@@1ledBootState ();
 
 	// HW Initialize
 	hwInitialize (0);
-	
+
 	// Connect状態
 	//@@@1ledConnectState ();
 	
@@ -124,52 +117,5 @@ int firmCheckConsole (void)
 
 	return (AVAL_STATUS_SUCCESS);
 }
-
-//@@@1
-//**********************************************************************************
-//	Firm Cmd Status設定
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		mode
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int firmSetCmdStatus (int mode)
-{
-	OUT32 (FIRM_DATA_FIRM_CMD_STATUS_ADRS, mode);
-	return (AVAL_STATUS_SUCCESS);
-}
-//@@@1
-
-//@@@1
-//**********************************************************************************
-//	Firm Cmd Status取得
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		pMode				：モードを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int firmGetCmdStatus (int *pMode)
-{
-	int status = AVAL_STATUS_SUCCESS;
-
-	// Check pMode Parameter
-	if (pMode == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
-		goto _DONE;
-	}
-
-	// データ取得
-	*pMode = IN32 (FIRM_DATA_FIRM_CMD_STATUS_ADRS);
-
-_DONE:
-	return (status);
-}
-//@@@1
 
 // eof

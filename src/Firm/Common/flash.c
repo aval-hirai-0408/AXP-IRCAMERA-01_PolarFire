@@ -18,8 +18,6 @@
 #include "CoreSPI/corespi_regs.h"
 
 
-#define MODE_FLASH_COMMON
-
 //----------------------------------------------------------------------------------
 // globals
 //----------------------------------------------------------------------------------
@@ -89,26 +87,12 @@ int qspiFlashInitialize (void)
 	// Get DeviceID
 	qspiFlashGetFlashId (&manufacturer_id, &device_id);
 	
-#if !defined (MODE_FLASH_COMMON)
 	// Check Read ID
-	if ((manufacturer_id == QSPI_FLASH_READ_ID_MANUFACTURE_ISSI) && (device_id == QSPI_FLASH_READ_ID_DEVICE_ISSI))
+	if ((manufacturer_id == QSPI_FLASH_READ_ID_MANUFACTURE_W25Q) && (device_id == QSPI_FLASH_READ_ID_DEVICE_W25Q))
 	{
-		gQspiFlashSelect = QSPI_FLASH_SELECT_ISSI;
-		
-		if ((gQspiFlashStatus = qspiFlashInitialize_ISSI ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
+		gQspiFlashSelect = QSPI_FLASH_SELECT_W25Q;
 	}
-	else if ((manufacturer_id == QSPI_FLASH_READ_ID_MANUFACTURE_N25Q) && (device_id == QSPI_FLASH_READ_ID_DEVICE_N25Q))
-	{
-		gQspiFlashSelect = QSPI_FLASH_SELECT_N25Q;
-		
-		if ((gQspiFlashStatus = qspiFlashInitialize_N25Q ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-#else	
-	
-	// Check Read ID
-	if ((manufacturer_id == QSPI_FLASH_READ_ID_MANUFACTURE_ISSI) && (device_id == QSPI_FLASH_READ_ID_DEVICE_ISSI))
+	else if ((manufacturer_id == QSPI_FLASH_READ_ID_MANUFACTURE_ISSI) && (device_id == QSPI_FLASH_READ_ID_DEVICE_ISSI))
 	{
 		gQspiFlashSelect = QSPI_FLASH_SELECT_ISSI;
 	}
@@ -120,7 +104,6 @@ int qspiFlashInitialize (void)
 	if ((gQspiFlashStatus = qspiFlashInitialize_N25Q ()) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-#endif	//@@@1	
 _DONE:
 	return (gQspiFlashStatus);
 }
@@ -141,27 +124,8 @@ int qspiFlashWrite (unsigned int adrs, unsigned char *pBuffer, unsigned int size
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-#if !defined (MODE_FLASH_COMMON)
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
-	{
-		status = qspiFlashWrite_ISSI (adrs, pBuffer, size);
-	}
-	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
-	{
-		status = qspiFlashWrite_N25Q (adrs, pBuffer, size);
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Device Select Error.\n");
-		goto _DONE;
-	}
-#else	//@@@1
+	status = qspiFlashWrite_N25Q (adrs, pBuffer, size);
 	
-		status = qspiFlashWrite_N25Q (adrs, pBuffer, size);
-	
-#endif	//@@@1f
-
 _DONE:
 	return (status);
 }
@@ -182,26 +146,8 @@ int qspiFlashRead (unsigned int adrs, unsigned char *pBuffer, unsigned int size)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-#if !defined (MODE_FLASH_COMMON)
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
-	{
-		status = qspiFlashRead_ISSI (adrs, pBuffer, size);
-	}
-	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
-	{
-		status = qspiFlashRead_N25Q (adrs, pBuffer, size);
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Read Device Select Error.\n");
-		goto _DONE;
-	}
-#else //@@@1
-
 	status = qspiFlashRead_N25Q (adrs, pBuffer, size);
 
-#endif //@@@1
 _DONE:
 	return (status);
 }
@@ -220,26 +166,7 @@ int qspiFlashSectorErase (unsigned int adrs)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-#if !defined (MODE_FLASH_COMMON)
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
-	{
-		status = qspiFlashSectorErase_ISSI (adrs);
-	}
-	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
-	{
-		status = qspiFlashSectorErase_N25Q (adrs);
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Erase Device Select Error.\n");
-		goto _DONE;
-	}
-#else //@@@1
-
 	status = qspiFlashSectorErase_N25Q (adrs);
-
-#endif //@@@1
 
 _DONE:
 	return (status);
@@ -259,28 +186,8 @@ int qspiFlashEraseAll (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-#if !defined (MODE_FLASH_COMMON)
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
-	{
-		status = qspiFlashEraseAll_ISSI ();
-	}
-	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
-	{
-		status = qspiFlashEraseAll_N25Q ();
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Erase All Device Select Error.\n");
-		goto _DONE;
-	}
-
-#else //@@@1
+	status = qspiFlashEraseAll_N25Q ();
 	
-		status = qspiFlashEraseAll_N25Q ();
-	
-#endif //@@@1
-
 _DONE:
 	return (status);
 }
@@ -299,29 +206,8 @@ int qspiFlashWriteProtect (unsigned int address)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-#if !defined (MODE_FLASH_COMMON)
-
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
-	{
-		status = qspiFlashWriteProtect_ISSI (address);
-	}
-	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
-	{
-		status = qspiFlashWriteProtect_N25Q (address);
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Protect All Device Select Error.\n");
-		goto _DONE;
-	}
-	
-#else //@@@1
-
 	status = qspiFlashWriteProtect_N25Q (address);
 
-
-#endif//@@@1
 _DONE:
 	return (status);
 }
@@ -340,28 +226,8 @@ int qspiFlashWriteProtectRead (int *pStatus)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-#if !defined (MODE_FLASH_COMMON)
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
-	{
-		status = qspiFlashWriteProtectRead_ISSI (pStatus);
-	}
-	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
-	{
-		status = qspiFlashWriteProtectRead_N25Q (pStatus);
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Protect Read All Device Select Error.\n");
-		goto _DONE;
-	}
-
-#else //@@@1
-
 	status = qspiFlashWriteProtectRead_N25Q (pStatus);
 	
-#endif //@@@1
-
 _DONE:
 	return (status);
 }
@@ -380,28 +246,8 @@ int qspiFlashWriteProtectReadShow (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
-#if !defined (MODE_FLASH_COMMON)
-	if (gQspiFlashSelect == QSPI_FLASH_SELECT_ISSI)
-	{
-		status = qspiFlashWriteProtectReadShow_ISSI ();
-	}
-	else if (gQspiFlashSelect == QSPI_FLASH_SELECT_N25Q)
-	{
-		status = qspiFlashWriteProtectReadShow_N25Q ();
-	}
-	else
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_FLASH, AVAL_STATUS_IO);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Flash Write Protect Show All Device Select Error.\n");
-		goto _DONE;
-	}
-#else //@@@1
-
 	status = qspiFlashWriteProtectReadShow_N25Q ();
 
-#endif //@@@1
-
-	
 _DONE:
 	return (status);
 }

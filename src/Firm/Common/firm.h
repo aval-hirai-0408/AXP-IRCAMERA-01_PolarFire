@@ -404,8 +404,6 @@ typedef unsigned char   u8;
 #define QSPI_FLASH_SELECT_ISSI				(2)		// ISSI
 #define QSPI_FLASH_SELECT_W25Q				(3)		// Winbond
 
-// READ ID
-
 // Micron
 #define QSPI_FLASH_READ_ID_MANUFACTURE_N25Q	(0x20)
 #define QSPI_FLASH_READ_ID_DEVICE_N25Q		(0xBA)
@@ -415,6 +413,10 @@ typedef unsigned char   u8;
 // ISSI
 #define QSPI_FLASH_READ_ID_MANUFACTURE_ISSI	(0x9D)
 #define QSPI_FLASH_READ_ID_DEVICE_ISSI		(0x60)
+
+// Winbond
+#define QSPI_FLASH_READ_ID_MANUFACTURE_W25Q	(0xEF)
+#define QSPI_FLASH_READ_ID_DEVICE_W25Q		(0x20)
 
 // Qspi Flash Device Select
 #define QSPI_FLASH_DEVICE_SELECT_BOOT		(0)
@@ -522,7 +524,7 @@ typedef unsigned char   u8;
 #define FIRM_DATA_FFC_ADJUST_BLACK_BIT_ADRS			(FIRM_DATA_ADRS+0x98)	// FFC 黒レベルBit
 #define FIRM_DATA_FFC_ADJUST_WHITE_BIT_ADRS			(FIRM_DATA_ADRS+0x9c)	// FFC白レベルBit
 #define FIRM_DATA_FIRM_BOOT_FLAG_ADRS				(FIRM_DATA_ADRS+0xa0)	// Boot Flag(0=起動時/1=起動済)
-#define FIRM_DATA_FIRM_CMD_STATUS_ADRS				(FIRM_DATA_ADRS+0xa4)	// Firm Cmd Status
+//@@@1#define FIRM_DATA_FIRM_CMD_STATUS_ADRS				(FIRM_DATA_ADRS+0xa4)	// Firm Cmd Status
 #define FIRM_DATA_QSPI_FLASH_TYPE_ADRS				(FIRM_DATA_ADRS+0xa8)	// QSPI Flash Device Type
 #define FIRM_DATA_AXI_QSPI_FLASH_TYPE_ADRS			(FIRM_DATA_ADRS+0xac)	// AXI QSPI Flash Device Type
 #define FIRM_DATA_SPECTRUM_BANDVALUE_RANGE_ADRS		(FIRM_DATA_ADRS+0xb0)	// Spectrum Band Value Range
@@ -673,15 +675,19 @@ typedef unsigned char   u8;
 #define FIRM_DATA_CXP_RECV_DATA_COUNT_MULTI_ADRS	(FIRM_DATA_ADRS+0x650)	//0x650から0x67Fまで
 #define FIRM_DATA_CXP_RATE_ADRS						(FIRM_DATA_ADRS+0x680)
 #define FIRM_DATA_SENSOR_CONVERSION_GAIN_ADRS		(FIRM_DATA_ADRS+0x684)
-#define FIRM_DATA_DDR_DIAG_FLAG						(FIRM_DATA_ADRS+0x68c)
-#define FIRM_DATA_DDR_DIAG_FLAG_NONE				(0)
-#define FIRM_DATA_DDR_DIAG_FLAG_MALLOC				(1)
-#define FIRM_DATA_DDR_DIAG_FLAG_MALLOC_DONE			(2)
-#define FIRM_DATA_DDR_DIAG_FLAG_FREE				(3)
-#define FIRM_DATA_DDR_DIAG_FLAG_FREE_DONE			(4)
+//@@@1#define FIRM_DATA_DDR_DIAG_FLAG						(FIRM_DATA_ADRS+0x68c)
+//@@@1#define FIRM_DATA_DDR_DIAG_FLAG_NONE				(0)
+//@@@1#define FIRM_DATA_DDR_DIAG_FLAG_MALLOC				(1)
+//@@@1#define FIRM_DATA_DDR_DIAG_FLAG_MALLOC_DONE			(2)
+//@@@1#define FIRM_DATA_DDR_DIAG_FLAG_FREE				(3)
+//@@@1#define FIRM_DATA_DDR_DIAG_FLAG_FREE_DONE			(4)
 
 //#define FIRM_DATA_DDR_DIAG_ADRS						(FIRM_DATA_ADRS+0x690)
 //#define FIRM_DATA_DDR_DIAG_SIZE						(FIRM_DATA_ADRS+0x694)
+
+//@@@1
+#define FIRM_DATA_H_DATA							(FIRM_DATA_ADRS+0x694)
+//@@@1
 #define FIRM_DATA_DIAG_DDR_MODE						(FIRM_DATA_ADRS+0x698)
 #define FIRM_DATA_PIXEL_FORMAT						(FIRM_DATA_ADRS+0x69c)
 #define FIRM_DATA_SENSOR_SHUTTER_MODE				(FIRM_DATA_ADRS+0x670)
@@ -703,6 +709,7 @@ typedef unsigned char   u8;
 #define FIRM_DATA_PHY_FIRM_VERSION					(FIRM_DATA_ADRS+0x6b0)	// 16byte
 #define FIRM_DATA_PHY_API_VERSION					(FIRM_DATA_ADRS+0x6c0)	// 8byte
 #define FIRM_DATA_BOOT_VERSION						(FIRM_DATA_ADRS+0x6c8)	// 8byte
+#define FIRM_DATA_CXP_INT_FLAG						(FIRM_DATA_ADRS+0x6d0)
 
 
 //----------------------------------------------------------------------------------
@@ -1420,7 +1427,6 @@ int rateSetClMax (double rate);
 int rateSetGigEMax (double rate);
 int sensoreGetReadOut(int *pTime);
 int acquisitionGetTrgSourceEncoder (int *pStatus);
-int irvGetHIntervalClock (unsigned int *pHinterval);
 int acquisitionSetRateMode (int mode);
 int acquisitionGetRateMode (int *pMode);
 int acquisitionGetTrgCount (unsigned int *pCount);
@@ -1616,10 +1622,6 @@ int cmdHistoryShowHelp (void *str);
 int cmdHistoryClear (void *str);
 int cmdHistoryClearHelp (void *str);
 
-//cxpI2c.c
-int cxpI2cRegWrite (unsigned int adrs, unsigned char data);
-int cxpI2cRegRead (unsigned int adrs, unsigned char *pData);
-
 //cxpMain.c
 int cxpMain (void);
 int cxpUserInit (void);
@@ -1633,6 +1635,7 @@ int cxpIpInitialize (void);
 int cmdInterruptMode (int mode);
 int cmdExecuteInit (void);
 int cmdExecuteDone (void);
+int cmdExecuteDoneOnly (void);
 int cmdExecuteStatus (void);
 
 //cxpProcs.c
@@ -2118,8 +2121,8 @@ int cmdSensorTempBatch (double sensorTemp);
 int firmMain (void);
 int firmErrorAttention (int errNo);
 int firmCheckConsole (void);
-int firmSetCmdStatus (int mode);
-int firmGetCmdStatus (int *pMode);
+//@@@1int firmSetCmdStatus (int mode);
+//@@@1int firmGetCmdStatus (int *pMode);
 
 // firmUpdate.c
 int firmUpdateAll (void);
@@ -2677,7 +2680,7 @@ int sensorHIntervalData (int bit, unsigned int *pData);
 int sensorHIntervalDataDrrs (int bit, unsigned int *pData);
 int sensorHIntervalCalc (double frameRate, unsigned int *pData);
 int sensorSetHIntervalReg (unsigned int data);
-int sensorGetHIntervalReg (unsigned int *pData);
+int irvGetHIntervalClock (unsigned int *pHinterval);
 int sensorSetHInterval (int bit);
 int sensorSetHIntervalTrgNormal (double frameRate);
 int sensorSetHIntervalData (unsigned int data);

@@ -68,7 +68,6 @@ int firmStartMsg (int mode)
 	// BootLoader Version
 	bootVersion (bootVer);
 
-#if 0	//@@@1
 	// 基板バージョン取得
 	boardVersion (boardVer);
 
@@ -78,26 +77,19 @@ int firmStartMsg (int mode)
 	// Firmバージョン取得
 	firmVersion (firmVer);
 
-#if defined (MODE_CXP)
-	// CXP FPGAバージョン
-	if (gInterFaceID == INTERFACE_CXP)
-		 ifFpgaVersion = IN32 (FIRM_DATA_IF_VERSION_ADRS);
-#endif
-
 #if defined (MODE_GIGE_10G) && defined (IF_GIGE)
 	if ((gInterFaceID == INTERFACE_GIGE) || (gInterFaceID == INTERFACE_GIGE20))
 	{
 		phyGetFirmVersionMem (phyFirmVer);
 	}
 #endif
-#endif //@@@1
 
 	DEBUG_PRINT_FORCE ("\n[Version informations]\n");
 
 	// Mainバージョン表示
 	DEBUG_PRINT_FORCE ("   Main                      ");
 	DEBUG_PRINT_FORCE ("Version %s\n", mainVer);
-#if 0//@@@1
+
 	// 基板バージョン表示
 	DEBUG_PRINT_FORCE ("   Board                     ");
 	DEBUG_PRINT_FORCE ("Version %s\n", boardVer);
@@ -110,15 +102,6 @@ int firmStartMsg (int mode)
 	DEBUG_PRINT_FORCE ("   Firmware                  ");
 	DEBUG_PRINT_FORCE ("Version %s\n", firmVer);
 
-	// CXP FPGAバージョン
-#if defined (MODE_CXP)
-	if (gInterFaceID == INTERFACE_CXP)
-	{
-		DEBUG_PRINT_FORCE ("   IF FPGA                   ");
-		DEBUG_PRINT_FORCE ("Version %x.%x\n", ifFpgaVersion>>4, ifFpgaVersion&0x0f);
-	}
-#endif
-	
 	// PHY Version
 #if defined (MODE_GIGE_10G)
 	if ((gInterFaceID == INTERFACE_GIGE) || (gInterFaceID == INTERFACE_GIGE20))
@@ -127,7 +110,6 @@ int firmStartMsg (int mode)
 		DEBUG_PRINT_FORCE ("Version %s\n", phyFirmVer);
 	}
 #endif
-#endif  //@@@1
 	
 	// BootLoaderバージョン表示
 	DEBUG_PRINT_FORCE ("   Boot                      ");
@@ -253,8 +235,8 @@ _DONE:
 int fpgaVersion (char *pVer)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned int i;
 	char *ptr;
+	unsigned char data32;
 
 	// Check pVer Parameter
 	if (pVer == NULL)
@@ -265,9 +247,10 @@ int fpgaVersion (char *pVer)
 	}
 
 	ptr = pVer;
-	for(i=0; i<FPGA_VERSION_SIZE; i++, ptr++)
-		*ptr = IN8((GENICAM_VER_FPGA_ADRS+i));
-
+	*ptr++ = (IN8((FPGA_VER_FPGA_ADRS+0x01)) & 0x0f) + 0x30;
+	*ptr++ = '.';
+	*ptr++ = ((IN8((FPGA_VER_FPGA_ADRS+0x00)) & 0xf0) >> 4) + 0x30;
+	*ptr++ = (IN8((FPGA_VER_FPGA_ADRS+0x00)) & 0x0f) + 0x30;
 	*ptr = '\0';
 
 _DONE:

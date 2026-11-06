@@ -146,7 +146,7 @@ int cmdVoltFpgaV1_8Help (void *str)
 	DEBUG_PRINT_FORCE ("\n");
 	DEBUG_PRINT_FORCE ("[Get]\n");
 	DEBUG_PRINT_FORCE ("  Function          : The FPGA board V1.8 volt is acquired.\n");
-	DEBUG_PRINT_FORCE ("  Command           : voltfpgav18\n");
+	DEBUG_PRINT_FORCE ("  Command           : voltfpga18\n");
 	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
 	DEBUG_PRINT_FORCE ("  Output Param      : Voltage\n");
 	DEBUG_PRINT_FORCE ("\n");
@@ -217,7 +217,7 @@ int cmdVoltFpgaV1_0Help (void *str)
 	DEBUG_PRINT_FORCE ("\n");
 	DEBUG_PRINT_FORCE ("[Get]\n");
 	DEBUG_PRINT_FORCE ("  Function          : The FPGA board V1.0 volt is acquired.\n");
-	DEBUG_PRINT_FORCE ("  Command           : voltfpgav10\n");
+	DEBUG_PRINT_FORCE ("  Command           : voltfpga10\n");
 	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
 	DEBUG_PRINT_FORCE ("  Output Param      : Voltage\n");
 	DEBUG_PRINT_FORCE ("\n");
@@ -288,7 +288,7 @@ int cmdVoltFpgaV2_5Help (void *str)
 	DEBUG_PRINT_FORCE ("\n");
 	DEBUG_PRINT_FORCE ("[Get]\n");
 	DEBUG_PRINT_FORCE ("  Function          : The FPGA board V2.5 volt is acquired.\n");
-	DEBUG_PRINT_FORCE ("  Command           : voltfpgav25\n");
+	DEBUG_PRINT_FORCE ("  Command           : voltfpga25\n");
 	DEBUG_PRINT_FORCE ("  Input  Param      : none\n");
 	DEBUG_PRINT_FORCE ("  Output Param      : Voltage\n");
 	DEBUG_PRINT_FORCE ("\n");

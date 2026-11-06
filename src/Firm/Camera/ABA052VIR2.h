@@ -18,13 +18,13 @@
 //----------------------------------------------------------------------------------
 
 // Firmware Version
-#define FIRM_VERSION						"0.2"
+#define FIRM_VERSION						"0.3"
 
 // Main Version
-#define MAIN_VERSION						"0.2"
+#define MAIN_VERSION						"0.3"
 
 // HW Version
-#define HW_VERSION							"0.2"
+#define HW_VERSION							"0.3"
 
 
 //----------------------------------------------------------------------------------
@@ -65,7 +65,8 @@
 //#define MODE_ACQUISITION_TRG_EXTEND		// Acquisition Trigger Extend
 //#define MODE_FLASH_PROTECT_NEW			// Flash Protect New Mode
 #define MODE_FLASH_PROTECT_SIMPLE			// Flash Protect Simple
-//#define MODE_FLASH_WRITE_COPY               // Flash Write Copy Mode
+//#define MODE_FLASH_WRITE_COPY				// Flash Write Copy Mode
+//#define MODE_FLASH_MICRON					// Flash Micron
 #define MODE_VOLTAGE_FPGA_BOARD				// FPGA Board Voltage Mode
 #define MODE_VOLTAGE_IF_BOARD				// IF Board Voltage Mode
 //#define MODE_VOLTAGE_SUB_BOARD			// Sub Board Voltage Mode
@@ -951,7 +952,7 @@
 #define DIAG_TEMP_CASE_MAX							(PELTIER_CASE_ALM_MAX_TEMP)
 
 // FPGA温度範囲
-#define DIAG_TEMP_FPGA_MIN							(0.0)
+#define DIAG_TEMP_FPGA_MIN							(60.0)
 #define DIAG_TEMP_FPGA_MAX							(80.0)
 
 // センサ温度Check範囲

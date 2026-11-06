@@ -554,10 +554,10 @@ int aoiSetWidth (int size)
 	//OUT32(FPGA_CXP_S0_DSIZE_ADRS, (size*8/32));
 	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (size/4));
 	
-	rOffset = IN32(0x6b200008);
+	rOffset = IN32(FPGA_CXP_TEST_PATTERN_WIDTH_HEIGHT_ADRS);
 	rOffset &= 0xffff0000;
 	rOffset |= size;
-	OUT32(0x6b200008, rOffset);
+	OUT32(FPGA_CXP_TEST_PATTERN_WIDTH_HEIGHT_ADRS, rOffset);
 	
 	goto _DONE;
 	//@@@1
@@ -1209,10 +1209,10 @@ int aoiSetHeight (int size)
 //@@@1
 	OUT32 (FPGA_CXP_S0_YSIZE_OFFSET_ADRS, size);
 	
-	rOffset = IN32(0x6b200008);
+	rOffset = IN32(FPGA_CXP_TEST_PATTERN_WIDTH_HEIGHT_ADRS);
 	rOffset &= 0xffff;
 	rOffset |= (size << 16);
-	OUT32(0x6b200008, rOffset);
+	OUT32(FPGA_CXP_TEST_PATTERN_WIDTH_HEIGHT_ADRS, rOffset);
 	
 
 	goto _DONE;

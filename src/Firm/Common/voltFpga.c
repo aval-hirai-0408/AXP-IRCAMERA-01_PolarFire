@@ -31,7 +31,7 @@
 int voltFpgaGetV (unsigned int adrs, int hi, double *pVolt)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned int data32;
+	unsigned int data32, data32Save;
 	int dataI;
 	double dataD;
 
@@ -39,17 +39,22 @@ int voltFpgaGetV (unsigned int adrs, int hi, double *pVolt)
 	if (pVolt == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_BOARD, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Board 1.8V Voltage NULL Parameter Error.\n");
+		sprintf (gLogMsgBuff, "FPGA Board Voltage NULL Parameter Error. Adrs = 0x%08x, Hi_Low = %d\n", adrs, hi);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
 	// Get Data
-	data32 = IN32 (FPGA_VOLT0_ADRS);
+	data32 = IN32 (adrs);
 	
 	if (hi == 1)
 		data32 >>= 16;
 	
 	data32 &= 0xffff;
+	data32Save = data32;
+	
+	// 符号を消す
+	data32 &= ~FPGA_VOLT_SIGH_BIT;
 
 	// 整数部
 	dataI = data32 >> FPGA_VOLT_INTEGER_SHIFT;
@@ -61,9 +66,10 @@ int voltFpgaGetV (unsigned int adrs, int hi, double *pVolt)
 	
 	// 温度取得
 	*pVolt  = (double)dataI + dataD;
+	*pVolt /= 1000.0;		// mv単位をvに変更
 
 	// 負数？
-	if (data32 & FPGA_VOLT_SIGH_BIT)
+	if (data32Save & FPGA_VOLT_SIGH_BIT)
 		*pVolt = 0 - *pVolt;
 
 _DONE:

@@ -71,7 +71,7 @@ enum bootStrap
 	//manf specific boot strap registers
 	Image2StreamID = 0x30E0,
 	Image1StreamID = 0x30E4,
-	IfFpgaVersion = 0x000030F0,
+	IfFpgaVersion = 0x000030F0,	//@@@1
 };
 
 unsigned int XmlManifestSize_st           = 1;

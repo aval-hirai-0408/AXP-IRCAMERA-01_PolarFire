@@ -66,6 +66,7 @@ int gigeCmdFirmUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned 
 	updateSize = size;
 
 	//@@@@@@@@@@@@@@@@
+	consoleSetMode(1);
 	DEBUG_PRINT_FORCE("UnComp!!!!!!!!!!\n");
 	//@@@@@@@@@@@@@@@@
 
@@ -101,17 +102,21 @@ int gigeCmdFirmUpload (unsigned int flashAdrs, unsigned char *pBuffer, unsigned 
 	if ((status = firmUpdateFlashWrite (flashAdrs, pUpdatePtr, updateSize)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
+	//@@@@@@@@@@@@@@@@
+	DEBUG_PRINT_FORCE("Header Write!!!!!!!!!!\n");
+	//@@@@@@@@@@@@@@@@
 
 	// Update Header
 	if ((status = fpgaUpdateHeader ()) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+
 
 _DONE:
 	// LEDの設定を元に戻す
 	ledReturnState (saveLed0, -1);
 
 	//@@@@@@@@@@@@@@@@
-	DEBUG_PRINT_FORCE("Update End!!!!!!!!!!\n");
+	//DEBUG_PRINT_FORCE("Update End!!!!!!!!!!\n");
 	//@@@@@@@@@@@@@@@@
 
 	return (status);
@@ -224,8 +229,21 @@ int gigeCmdFirmUploadMulti (unsigned int flashAdrs, unsigned char *pBuffer)
 	DEBUG_PRINT_FORCE("flashTransed = %d, cxpTransed = %d, fileExecWriteDoneSize = %d\n", flashTransed, cxpTransed, fileExecWriteDoneSize);
 	//@@@1
 
+	//@@@@@@@@@@@@@@@@
+	DEBUG_PRINT_FORCE("Header Write!!!!!!!!!!\n");
+	//@@@@@@@@@@@@@@@@
+
 	// Update Header
 	if ((status = fpgaUpdateHeader ()) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	//@@@@@@@@@@@@@@@@
+	DEBUG_PRINT_FORCE("ReConfig!!!!!!!!!!\n");
+	//@@@@@@@@@@@@@@@@
+
+
+	// FPGA ReConfig
+	if ((status = fpgaReconfig ()) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 _DONE:

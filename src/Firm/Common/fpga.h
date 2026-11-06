@@ -20,8 +20,9 @@
 
 // FPGA
 #define FPGA_BASE_ADRS												(0x80000000)
-#define FPGA_BASE_ADRS_COMMON										(0x63000000)	//0x63000000
-#define FPGA_BASE_ADRS_SENSOR										(0x6B000000)
+#define FPGA_BASE_ADRS_COMMON										(0x63000000)
+//@@@1#define FPGA_BASE_ADRS_SENSOR									(0x6B000000)
+#define FPGA_BASE_ADRS_SENSOR										(0x63000000)
 #define FPGA_BASE_ADRS_IPU											(0x6C000000)
 #define GENICAM_ADRS												(0x6D000000)
 
@@ -35,16 +36,16 @@
 	#define FPGA_INT_TEMP_LOWER										(1<<0)
 #define FPGA_INT_STATUS_ADRS										(FPGA_GENERIC_ADRS+0x04)
 
-#define FPGA_VER_FPGA_ADRS											(FPGA_GENERIC_ADRS+0x00)
+#define FPGA_VER_FPGA_ADRS											(FPGA_GENERIC_ADRS+0x10)
 	#define BOARD_VERSION_SIZE										(3)
-	#define FPGA_VERSION_SIZE										(3)
+	#define FPGA_VERSION_SIZE										(4)
 	#define FIRM_VERSION_SIZE										(3)
 	#define MAIN_VERSION_SIZE										(3)
 	#define BOOT_VERSION_SIZE										(3)
 #define FPGA_BUILD_DATE_ADRS										(FPGA_GENERIC_ADRS+0x14)
 #define FPGA_BUILD_TIME_ADRS										(FPGA_GENERIC_ADRS+0x18)
 #define FPGA_USERINFO_ADRS											(FPGA_GENERIC_ADRS+0x1C)
-#define FPGA_INTERFACE_ID_ADRS										(FPGA_GENERIC_ADRS+0x3)
+#define FPGA_INTERFACE_ID_ADRS										(FPGA_GENERIC_ADRS+0x30)
 	#define INTERFACE_NONE											(0)
 	#define INTERFACE_CAMERALINK									(1)
 	#define INTERFACE_GIGE											(2)
@@ -58,15 +59,16 @@
 	#define FPGA_RECONFIG_START_BIT									(1<<4)
 	#define FPGA_RECONFIG_INDEX_DEFAULT								(2)
 
-#define FPGA_TEMP_ALARM_ADRS										(FPGA_GENERIC_ADRS+0x54)
 #define FPGA_TEMP_ADRS												(FPGA_GENERIC_ADRS+0x50)
+#define FPGA_TEMP_ALARM_ADRS										(FPGA_GENERIC_ADRS+0x54)
 	#define FPGA_TEMP_INTEGER_SHIFT									(4)
 	#define FPGA_TEMP_INTEGER_MASK									(0x7ff)
+	#define FPGA_TEMP_CODE_BIT										(1<<11)
 	#define FPGA_TEMP_FRACTIONAL_MASK								(0xf)
 	#define FPGA_TEMP_FRACTIONAL_POINT								(1<<4)
 
-	#define FPGA_TEMP_MAX											(125)
-	#define FPGA_TEMP_MIN											(-55)
+	#define FPGA_TEMP_MAX											(100)
+	#define FPGA_TEMP_MIN											(5)
 
 #define FPGA_VOLT0_ADRS												(FPGA_GENERIC_ADRS+0x58)
 #define FPGA_VOLT1_ADRS												(FPGA_GENERIC_ADRS+0x5C)
@@ -75,6 +77,9 @@
 	#define FPGA_VOLT_INTEGER_MASK									(0xfff)
 	#define FPGA_VOLT_FRACTIONAL_MASK								(0x7)
 	#define FPGA_VOLT_FRACTIONAL_POINT								(1<<3)
+
+
+
 
 //@@@1
 // Voltage
@@ -940,6 +945,8 @@
 #define FPGA_CXP_HSDC_HB_ID_ADRS									(FPGA_CXP_IP_ADRS + 0x34)
 #define FPGA_CXP_S0_FLAG_SID_MZXSIZE_ADRS							(FPGA_CXP_IP_ADRS + 0x40)
 	#define FPGA_CXP_S0_SID_MASK									(0xff)
+	#define CXP_STREAM_ID1_NUMBER									(0x00)
+	#define CXP_STREAM_ID2_NUMBER									(0x01)
 #define FPGA_CXP_S0_XSIZE_OFFSET_ADRS								(FPGA_CXP_IP_ADRS + 0x44)
 #define FPGA_CXP_S0_YSIZE_OFFSET_ADRS								(FPGA_CXP_IP_ADRS + 0x48)
 #define FPGA_CXP_S0_DSIZE_ADRS										(FPGA_CXP_IP_ADRS + 0x4C)
@@ -978,6 +985,16 @@
 
 	#define FPGA_CXP_TOP_CTRL_RSTN_TIMEOUT							(5000)
 
+//----------------------------------------------------------------------
+// Test Pattern
+//----------------------------------------------------------------------
+#define FPGA_CXP_TEST_PATTERN_BASE_ADRS								(0x6E002000)
+	#define FPGA_CXP_TEST_PATTERN_MODE_ADRS							(FPGA_CXP_TEST_PATTERN_BASE_ADRS+0x04)
+	#define FPGA_CXP_TEST_PATTERN_WIDTH_HEIGHT_ADRS					(FPGA_CXP_TEST_PATTERN_BASE_ADRS+0x08)
+	#define FPGA_CXP_TEST_PATTERN_PIXEL_ADRS						(FPGA_CXP_TEST_PATTERN_BASE_ADRS+0x0C)
+	#define FPGA_CXP_TEST_PATTERN_FRAME_BLANK_ADRS					(FPGA_CXP_TEST_PATTERN_BASE_ADRS+0x10)
+	#define FPGA_CXP_TEST_PATTERN_LINE_BLANK_ADRS					(FPGA_CXP_TEST_PATTERN_BASE_ADRS+0x14)
+
 
 //------------------------------------------------------------------------------------------
 // Genicam
@@ -998,7 +1015,7 @@
 // Acquisition Control
 //------------------------------------------------------------------------------------------
 #if 1
-#define GENICAM_ACQUISITION_CONTROL_ADRS							(GENICAM_ADRS+0x100000)
+#define GENICAM_ACQUISITION_CONTROL_ADRS							(GENICAM_ADRS+0x0000)
  #define GENICAM_ACQUISITION_MODE_ADRS								(GENICAM_ACQUISITION_CONTROL_ADRS+0x00)
  	#define GENICAM_ACQUISITION_MODE_SINGLE_BIT 					(0)
  	#define GENICAM_ACQUISITION_MODE_MULTI_BIT 						(1)
@@ -1551,7 +1568,7 @@
 	#define COUNTER2_SELECT											(2)
 	#define COUNTER3_SELECT											(3)
 	#define COUNTER_SELECT_MIN										(COUNTER0_SELECT)
-	#define COUNTER_SELECT_MAX										(COUNTER3_SELECT)
+	#define COUNTER_SELECT_MAX										(COUNTER1_SELECT)
  #define GENICAM_COUNTER_SOURCE_ADRS								(GENICAM_COUNTER_CONTROL_ADRS+0x04)
 	#define GENICAM_COUNTER_SOURCE_MASK								(0xff)
 	#define GENICAM_COUNTER_EVENT_SOURCE_ACQUISITION_START_TRIGGER	(0x02)
@@ -1838,7 +1855,7 @@
 	#define TIMER2_SELECT											(2)
 	#define TIMER3_SELECT											(3)
 	#define TIMER_SELECT_MIN										(TIMER0_SELECT)
-	#define TIMER_SELECT_MAX										(TIMER3_SELECT)
+	#define TIMER_SELECT_MAX										(TIMER1_SELECT)
  #define GENICAM_TIMER_DURATION_ADRS								(GENICAM_TIMER_CONTROL_ADRS+0x04)
  	#define GENICAM_TIMER_DURATION_MASK								(0x00ffffff)
  	#define GENICAM_TIMER_DURATION_MAX								(GENICAM_TIMER_DURATION_MASK)

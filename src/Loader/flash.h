@@ -34,6 +34,20 @@
 
 
 //----------------------------------------------------------------------------------
+// Mode
+//----------------------------------------------------------------------------------
+//#define MODE_FLASH_MICRON
+
+
+//----------------------------------------------------------------------------------
+// Flash Select
+//----------------------------------------------------------------------------------
+#define QSPI_FLASH_SELECT_N25Q			(1)		// Micron
+#define QSPI_FLASH_SELECT_ISSI			(2)		// ISSI
+#define QSPI_FLASH_SELECT_W25Q			(3)		// Winbond
+
+
+//----------------------------------------------------------------------------------
 // Function Define
 //----------------------------------------------------------------------------------
 int qspiFlashInitialize (void);
@@ -50,13 +64,6 @@ int qspiFlashWriteEnableCmd_N25Q (void);
 int qspiFlashWriteDisableCmd_N25Q (void);
 int qspiFlashExAddresseCmd_N25Q (unsigned int adrs);
 int qspiFlash3ByteAddresseCmd_N25Q (void);
-
-int qspiFlashInitialize_ISSI (void);
-int qspiFlashRead_ISSI (unsigned int adrs, unsigned char *pBuffer, unsigned int size);
-int qspiFlashStatusCheck_ISSI (unsigned int timeout);
-int qspiFlashWriteEnableCmd_ISSI (void);
-int qspiFlashWriteDisableCmd_ISSI (void);
-int qspiFlashExAddresseCmd_ISSI (unsigned int adrs);
 
 #endif // __QSPI_FLASH_H__
 

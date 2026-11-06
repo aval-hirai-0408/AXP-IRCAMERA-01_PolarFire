@@ -783,8 +783,9 @@ typedef struct
 // Group: DeviceControl
 //
 //====================================================================================
-#define DeviceTemperatureSensorAlarmCount						( 0x0000D3C4)  // RW; 4 bytes
-#define DeviceTemperatureCaseAlarmCount							( 0x0000D3C8)  // RW; 4 bytes
+#define DeviceTemperatureSensorAlarmCount						( 0x0000D3C0)  // RW; 4 bytes
+#define DeviceTemperatureCaseAlarmCount							( 0x0000D3C4)  // RW; 4 bytes
+#define DeviceTemperatureFpgaAlarmCount							( 0x0000D3C8)  // RW; 4 bytes
 #define DeviceTemperatureAlarmClear								( 0x0000D3CC)  // RW; 4 bytes
 #define DeviceTemperatureAlarmStatus							( 0x0000D3D0)  // RW; 4 bytes
 #define DeviceTemperature_Sensor_Float							( 0x0000D3D4)  // RW; 4 bytes

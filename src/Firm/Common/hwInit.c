@@ -40,7 +40,6 @@ int hwInitialize (int cpuType)
 {
 	int status;
 
-#if 0 //@@@1
 	//------------------------------------------------------------
 	// Flag初期化
 	//------------------------------------------------------------
@@ -59,6 +58,7 @@ int hwInitialize (int cpuType)
 	// Frame Rate Time初期化
 	OUTF (FIRM_DATA_MAX_FRAME_RATE_TIME, 0);
 
+#if 0 //@@@1
 	// X Flip Mode
 #if defined (MODE_SENSOR_XFLIP)
 
@@ -91,10 +91,8 @@ int hwInitialize (int cpuType)
 #if defined (MODE_FFC_SHADING_LINE)
 	// FFC Move Average
 	ffcSetMoveAverage (MODE_DISABLE);
-#endif
 
 	// White Gain
-#if defined (MODE_FFC_SHADING_LINE)
 	ffcSetWhiteGainX (DEFAULT_FFC_WHITE_GAINX);
 #endif
 
@@ -103,11 +101,7 @@ int hwInitialize (int cpuType)
 	OUT32 (FIRM_DATA_8BIT_MODE, MODE_DISABLE);
 #endif
 
-	// IF Version
-	OUT32 (FIRM_DATA_IF_VERSION_ADRS, 0);
-
-	// Firm Command
-	firmSetCmdStatus (0);
+#endif //@@@1
 
 
 #if defined (MODE_FRAMERATE_HIGH_SPEED)
@@ -121,11 +115,11 @@ int hwInitialize (int cpuType)
 #endif
 
 	// ARM1 DDR malloc Flag初期化
-	OUT32(FIRM_DATA_DDR_DIAG_FLAG, FIRM_DATA_DDR_DIAG_FLAG_NONE);
+	//@@@1OUT32(FIRM_DATA_DDR_DIAG_FLAG, FIRM_DATA_DDR_DIAG_FLAG_NONE);
 
 	// DDR Mode初期化
 	diagDdrSetMode (0);
-
+	
 	// Sensor Shutter Mode(Trigger Mode)
 	OUT32 (FIRM_DATA_SENSOR_SHUTTER_MODE, 1);	// Triggerモード
 
@@ -140,14 +134,11 @@ int hwInitialize (int cpuType)
 	// TG Mode
 	OUT32 (FIRM_DATA_TG_CTRL_MODE, 0);
 
-	// CPU1 Runnning
-	//@@@1cpu1SetRunning (MODE_ENABLE);
-
 	// High Speed Initialize2
 	OUT32 (FIRM_DATA_HIGHSPPED_INIT2_ADRS, 0);
 	
 	// Cmd Execute Flag Clear
-	OUT32 (FIRM_DATA_CMD_EXE_FLAG, 0);
+	cmdExecuteDone ();
 
 	//------------------------------------------------------------
 	// Get Type
@@ -157,8 +148,7 @@ int hwInitialize (int cpuType)
 	getInterfaceId (&gInterFaceID);
 
 	// Get Spectrum Type
-	getSpectrumType (&gSpectrumType);
-#endif //@@@1
+	//@@@getSpectrumType (&gSpectrumType);
 	
 	
 	//------------------------------------------------------------
@@ -202,9 +192,6 @@ int hwInitialize (int cpuType)
 	if ((status = watchDogInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
 
-	// Memory Mapping
-	//@@@1map ();
-
 #if 0//@@@1
 	//------------------------------------------------------------
 	// I2C Initialize
@@ -222,16 +209,13 @@ int hwInitialize (int cpuType)
 	if ((status = consoleInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
 
-//@@@@1
-	DEBUG_PRINT_FORCE("IN32 (FIRM_DATA_DIAG_DDR_MODE) = 0x%x\n", IN32 (FIRM_DATA_DIAG_DDR_MODE));
-//@@@@1
-
 #if 0 //@@@1
 	//------------------------------------------------------------
 	// DMA Initialize
 	//------------------------------------------------------------
 	if ((status = dmaInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
+#endif //@@@1
 
 	//------------------------------------------------------------
 	// Sensor Initialize
@@ -244,15 +228,7 @@ int hwInitialize (int cpuType)
 	//------------------------------------------------------------
 	if ((status = buffInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
-#endif //@@@1
 
-	//------------------------------------------------------------
-	//	XML Fileメモリロード
-	//------------------------------------------------------------
-	//@@1if ((status = xmlFileLoadMemory ()) != AVAL_STATUS_SUCCESS)
-		//@@@1firmErrorAttention (status);
-
-#if 0 //@@@1
 	//------------------------------------------------------------
 	//	Gev Parameter Initialize
 	//------------------------------------------------------------
@@ -277,20 +253,20 @@ int hwInitialize (int cpuType)
 	//------------------------------------------------------------
 	if ((status = cameraStatusInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
-#endif //@@@1
+
 	//------------------------------------------------------------
 	// カメラ情報初期化
 	//------------------------------------------------------------
 	if ((status = cameraInformationInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
 	
-//@@@1
+	#if 0
 	// Get DeviceID
 	unsigned char manufacturer_id, device_id;
 	qspiFlashGetFlashId (&manufacturer_id, &device_id);
 	DEBUG_PRINT_FORCE("manufacturer_id = 0x%x\n", manufacturer_id);
 	DEBUG_PRINT_FORCE("device_id = 0x%x\n", device_id);
-//@@@1
+	#endif
 	
 #if 0 //@@@1
 	//------------------------------------------------------------
@@ -304,7 +280,8 @@ int hwInitialize (int cpuType)
 		if (gDipsw == 0x03)
 			gDipsw = 0;
 	}
-	
+#endif //@@@1
+	gDipsw = 0;
 	if ((gDipsw & 0x01) == 0)
 	{
 		//------------------------------------------------------------
@@ -312,6 +289,7 @@ int hwInitialize (int cpuType)
 		//------------------------------------------------------------
 		hwInitialize2 (HW_INIT_MODE_POWER_ON);
 	}
+#if 0 //@@@1
 	else
 	{
 		//------------------------------------------------------------
@@ -398,7 +376,7 @@ int hwInitialize2 (int mode)
 	int hsModeNew, hsModeOld;
 #endif
 
-
+#if 0	//@@@1
 	//------------------------------------------------------------
 	// FrameRate High Speed Mode取得
 	//------------------------------------------------------------
@@ -412,7 +390,7 @@ int hwInitialize2 (int mode)
 	if ((status = sensorFrameRateHighSpeedModeInitializeDefault ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
 #endif
-
+#endif //@@@1
 
 #if defined(MODE_TEMP)
 	//------------------------------------------------------------
@@ -422,6 +400,8 @@ int hwInitialize2 (int mode)
 		firmErrorAttention (status);
 #endif
 
+	
+#if 0	//@@@1
 #if defined (MODE_PELTIER_CTRL)
 	//------------------------------------------------------------
 	// Peltier Control Initialize
@@ -625,7 +605,7 @@ int hwInitialize2 (int mode)
 		peltierPowerInitialize ();
 	}
 #endif
-
+#endif //@@@1
 	return (AVAL_STATUS_SUCCESS);
 }
 

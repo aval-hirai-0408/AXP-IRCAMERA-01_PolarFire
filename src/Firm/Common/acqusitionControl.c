@@ -278,10 +278,10 @@ int acquisitionStart (void)
 		goto _DONE;
 
 	// Pixel
-	OUT32 (0x6b20000C, 8);
+	OUT32 (FPGA_CXP_TEST_PATTERN_PIXEL_ADRS, 8);
 
 	// Frame Blank
-	OUT32 (0x6b200010, 0xFE7F);
+	OUT32 (FPGA_CXP_TEST_PATTERN_FRAME_BLANK_ADRS, 0xFE7F);
 
 	// Line Blank
 	if (wSize == 2560)
@@ -291,10 +291,10 @@ int acquisitionStart (void)
 	else
 		data32 = 0x4bfb;
 	
-	OUT32 (0x6b200014, data32);
+	OUT32 (FPGA_CXP_TEST_PATTERN_LINE_BLANK_ADRS, data32);
 	
 	// Test Pattern
-	OUT32 (0x6b200004, 1);
+	OUT32 (FPGA_CXP_TEST_PATTERN_MODE_ADRS, 1);
 //@@@@@@@@@@@@@@@@@@@@@@
 	
 #if defined (MODE_TEMP_ABNORMAL_CHECK)
@@ -341,12 +341,13 @@ int acquisitionAbort (void)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int state1, state2;
 	unsigned int i;
-//@@@1
-	goto _DONE;
-//@@@1
 
 	// 取り込み中断
 	OUT32 (GENICAM_ACQUISITION_ABORT_ADRS, GENICAM_ACQUISITION_ABORT_BIT);
+
+//@@@1
+#if 0
+
 
 	// ステータスCheck
 	for (i=0; i<ACQUISITION_ABORT_TIMEOUT; i++)
@@ -372,7 +373,8 @@ int acquisitionAbort (void)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Acquisition Abort Timeout Error.\n");
 		goto _DONE;
 	}
-
+#endif
+//@@@1
 	// 取り込み中断解除
 	OUT32 (GENICAM_ACQUISITION_ABORT_ADRS, 0);
 
@@ -387,7 +389,7 @@ _DONE:
 	usDelay(100);
 	
 	// Test Pattern Off
-    OUT32 (0x6b200004, 0);
+    OUT32 (FPGA_CXP_TEST_PATTERN_MODE_ADRS, 0);
 //@@@@@@@@@@@@@@@@@@@@@@
 	return (status);
 }
@@ -2970,6 +2972,14 @@ int rateGetSensorMax (double *pRate)
 	// 最大フレームレート
 	*pRate = SENSOR_H_CLOCK * 1000 * 1000 / hIntervalClock / (height + SENSOR_VINTERVAL_FIX_LINE);
 
+//@@@@@@@@@@@@@@@@@@
+#if 0
+	DEBUG_PRINT_FORCE("hIntervalClock = %d\n", hIntervalClock);
+	DEBUG_PRINT_FORCE("height = %d\n", height);
+	DEBUG_PRINT_FORCE("*pRate = %f\n", *pRate);
+#endif
+//@@@@@@@@@@@@@@@@@@
+
 #endif // #if defined (MODE_FRAMERATE_HIGH_SPEED)
 
 
@@ -3240,8 +3250,8 @@ int rateGetCxpMax (double *pRate)
 		goto _DONE;
 
 	// Dual?
-	if (connection == CXP_PORT_DUAL)
-		cxpRateGbps *= 2;
+	//@@@1if (connection == CXP_PORT_DUAL)
+		//@@@1cxpRateGbps *= 2;
 
 	// 8b10b実効帯域補正
 	cxpRateGbps *= 1000 * 1000 * 1000 /10 * 8;
@@ -3265,6 +3275,18 @@ int rateGetCxpMax (double *pRate)
 	frameTimeDouble *= (double)_1US;
 	frameTimeFloat = (float)frameTimeDouble;
 	OUTF (FIRM_DATA_MAX_FRAME_RATE_TIME, frameTimeFloat);
+
+//@@@@@@@@@@@@@@@@@@
+#if 0
+	DEBUG_PRINT_FORCE("Bit = %d\n", bit);
+	DEBUG_PRINT_FORCE("width = %d\n", width);
+	DEBUG_PRINT_FORCE("height = %d\n", height);
+	DEBUG_PRINT_FORCE("rateSensorD = %f\n", rateSensorD);
+	DEBUG_PRINT_FORCE("cxpRate = %d\n", cxpRate);
+	DEBUG_PRINT_FORCE("cxpRateGbps = %f\n", cxpRateGbps);
+	DEBUG_PRINT_FORCE("*pRate  = %f\n", *pRate );
+#endif
+//@@@@@@@@@@@@@@@@@@
 
 _DONE:
 	return (status);
@@ -3346,36 +3368,6 @@ int sensoreGetReadOut(int *pTime)
 _DONE:
 	return (status);
 }
-
-
-#if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
-//**********************************************************************************
-//	H Interval取得
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		pClock				：H Interval Clockを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int irvGetHIntervalClock (unsigned int *pHinterval)
-{
-	int status = AVAL_STATUS_SUCCESS;
-
-	// Check pHInterval Parameter
-	if (pHinterval == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Get H Interval NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	*pHinterval = IN32 (FPGA_SENSOR_HINTERVAL_ADRS) & FPGA_SENSOR_HINTERVAL_MASK;
-
-_DONE:
-	return (status);
-}
-#endif // #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
 
 
 #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)

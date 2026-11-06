@@ -116,7 +116,7 @@ int cxpInitialize2 (void)
 	int dataI32;
 	unsigned int cxpSpeed;
 	unsigned int linkCount;
-	int streamMode = CXP_MODE_SINGLE_STREAM;
+	//int streamMode = CXP_MODE_SINGLE_STREAM;
 	unsigned int regData;
 #if defined (MODE_SENSOR_IMX992) || defined (MODE_SENSOR_IMX993)
 	int bit;
@@ -256,8 +256,8 @@ goto _DONE;
 	streamMode = CXP_MODE_MULTI_STREAM;
 	#endif
 
-	if ((status = cxpSetStreamMode (0/*共通レジスタの為、Port=0に設定*/, streamMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//if ((status = cxpSetStreamMode (0/*共通レジスタの為、Port=0に設定*/, streamMode)) != AVAL_STATUS_SUCCESS)
+		//goto _DONE;
 
 
 	//------------------------------------------------------------
@@ -364,7 +364,6 @@ int cxpCmdFifoReset (void)
 		{
 			if (data32 == 0x00)
 			{
-				DEBUG_PRINT_FORCE ("@@@@@@@@@@@@@@@@@@@@FIFO 00000\n");
 				break;
 			}
 		}
@@ -844,7 +843,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned int *ptrL;
 	unsigned int saveAckSize;
 
-	#if 0
+	#if 1
 	if ((gDipsw == 3) || (IN32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS) == 1))
 	{
 		sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size, status);
@@ -1810,11 +1809,13 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned int ix;
 	unsigned int amari;
 
-	//if ((gDipsw == 3) || (IN32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS) == 1))
-	//{
-		//sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size);
-		//cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-	//}
+	#if 0
+	if ((gDipsw == 3) || (IN32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS) == 1))
+	{
+		sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size);
+		cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+	}
+	#endif
 	
 	#if 0
 	// Check port Parameter
@@ -1919,6 +1920,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 		//------------------------------------------------------------
 		// CXP Interface FPGA Version取得
 		//------------------------------------------------------------
+		#if 0	//@@@1
 		case IfFpgaVersion:
 			data1 = IN32(FIRM_DATA_IF_VERSION_ADRS);
 
@@ -1938,6 +1940,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			*pData = SWAP_L (swapData32);
 
 			break;
+		#endif	//@@@1
 
 		//------------------------------------------------------------
 		// DeviceVendorName取得
@@ -2464,6 +2467,8 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 #endif
 
+
+#if 0	//@@@1
 		//--------------------------------------------------------------------------------
 		// Encoder Value取得
 		//--------------------------------------------------------------------------------
@@ -2490,6 +2495,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 			pData++;
 			*pData = data1;
 			break;
+#endif //@@@1
 
 		//------------------------------------------------------------
 		// default取得
@@ -4460,6 +4466,7 @@ _DONE:
 int cxpSetPortDual (int port, int mode)
 {
 	int status = AVAL_STATUS_SUCCESS;
+#if 0	//@@@1
 	unsigned int data32;
 
 	// Check port Parameter
@@ -4492,7 +4499,7 @@ int cxpSetPortDual (int port, int mode)
 	// CTRL設定
 	//@@@1if ((status = cxpRegWrite (0, CXP_REG_CTRL_ADRS, data32, 4)) != AVAL_STATUS_SUCCESS)
 		//@@@1goto _DONE;
-
+#endif //@@@1
 _DONE:
 	return (status);
 }
@@ -4512,7 +4519,7 @@ int cxpGetPortDual (int port, int *pMode)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int data32;
-
+#if 0	//@@@1
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
 	{
@@ -4540,6 +4547,7 @@ int cxpGetPortDual (int port, int *pMode)
 		*pMode = CXP_PORT_DUAL;
 
 _DONE:
+#endif //@@@1
 	return (status);
 }
 
@@ -4558,7 +4566,7 @@ int cxpSetStreamMode (int port, int mode)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int data32;
-
+#if 0	//@@@1
 	// Check port Parameter
 	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
 	{
@@ -4589,7 +4597,7 @@ int cxpSetStreamMode (int port, int mode)
 	// CTRL設定
 	//@@@1if ((status = cxpRegWrite (0, CXP_REG_CTRL_ADRS, data32, 4)) != AVAL_STATUS_SUCCESS)
 		//@@@1goto _DONE;
-
+#endif	//@@@1
 _DONE:
 	return (status);
 }
@@ -4608,6 +4616,7 @@ _DONE:
 int cxpGetStreamMode (int port, int *pMode)
 {
 	int status = AVAL_STATUS_SUCCESS;
+#if 0	//@@@1
 	unsigned int data32;
 
 	// Check port Parameter
@@ -4635,7 +4644,7 @@ int cxpGetStreamMode (int port, int *pMode)
 		*pMode = CXP_MODE_MULTI_STREAM;
 	else
 		*pMode = CXP_MODE_SINGLE_STREAM;
-
+#endif //@@@1
 _DONE:
 	return (status);
 }

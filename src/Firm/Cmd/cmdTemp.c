@@ -23,7 +23,7 @@
 extern int gPeltierSensorUpperTempCount;	// センサ温度上限カウント
 extern int gPeltierSensorLowerTempCount;	// センサ温度下限カウント
 extern int gPeltierCaseTempCount;			// ケース温度カウント
-
+extern int gPeltierFpgaTempCount;			// FPGA温度カウント
 
 //**********************************************************************************
 //	温度情報表示
@@ -286,6 +286,13 @@ int cmdTempAlarm (void *str)
 		DEBUG_PRINT_FORCE ("Over = %.2f / Under = %.2f\n", tempOver, tempUnder);
 	}
 
+	// FPGA温度上限／下限値取得
+	if ((status = fpgaGetTempAlarm (&tempOver, &tempUnder)) == AVAL_STATUS_SUCCESS)
+	{
+		DEBUG_PRINT_FORCE ("   FPGA                      ");
+		DEBUG_PRINT_FORCE ("Over = %.2f / Under = %.2f\n", tempOver, tempUnder);
+	}
+
 #ifdef MODE_PELTIER
 	// Target温度取得
 	if ((status = peltierGetTarget (&target)) == AVAL_STATUS_SUCCESS)
@@ -368,13 +375,13 @@ int cmdTempAlarmCount (void *str)
 	DEBUG_PRINT_FORCE ("   Sensor Upper Temp         ");
 	DEBUG_PRINT_FORCE ("%d\n", gPeltierSensorUpperTempCount);
 
-	// センサ下限温度カウント
-	DEBUG_PRINT_FORCE ("   Sensor Lower Temp         ");
-	DEBUG_PRINT_FORCE ("%d\n", gPeltierSensorLowerTempCount);
-
 	//  ケース温度カウント
 	DEBUG_PRINT_FORCE ("   Case Temp                 ");
 	DEBUG_PRINT_FORCE ("%d\n", gPeltierCaseTempCount);
+
+	//  FPGA温度カウント
+	DEBUG_PRINT_FORCE ("   FPGA Temp                 ");
+	DEBUG_PRINT_FORCE ("%d\n", gPeltierFpgaTempCount);
 
 	DEBUG_PRINT_FORCE ("\n");
 

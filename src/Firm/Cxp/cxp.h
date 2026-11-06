@@ -28,23 +28,9 @@
 #define CXP_RATE_10_00G						(0x50)
 #define CXP_RATE_12_50G						(0x58)
 
-//@@@1
-// StreamID
-#define CXP_STREAM_ID1_NUMBER				(0x00)
-#define CXP_STREAM_ID2_NUMBER				(0x01)
+#define CXP_PORT_SINGLE						(1)
+#define CXP_PORT_DUAL						(2)
 
-
-// PolaFire Register
-	#define CXP_REG_CTRL_FIFO_RESET			(1<<0)
-	#define CXP_REG_CTRL_2PORT_2STREAM		(1<<8)
-	#define CXP_REG_CTRL_PORT_DUAL			(1<<16)
-
-	#define CXP_PORT_SINGLE					(1)
-	#define CXP_PORT_DUAL					(2)
-
-	#define CXP_MODE_SINGLE_STREAM			(1)
-	#define CXP_MODE_MULTI_STREAM			(2)
-//@@@1
 
 // Version
 #define CXP_VERSION_10						(0x00010000)

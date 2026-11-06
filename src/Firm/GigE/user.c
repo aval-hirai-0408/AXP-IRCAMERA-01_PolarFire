@@ -765,7 +765,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// 露光時間(us単位)取得
 		//----------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_EXPOSURE_ADRS:
-			//@@@*status = acquisitionGetExposure ((unsigned int*) &value);
+			*status = acquisitionGetExposure ((unsigned int*) &value);
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -3373,6 +3373,13 @@ u32 get_user_reg (u32 address, u16 *status)
 			value = (int)IN32 (BOARD_STATUS_CASE_TEMP_ADRS);
 			break;
 
+		//--------------------------------------------------------------------------------
+		// DeviceTemperatureFpgaAlarmCount取得
+		//--------------------------------------------------------------------------------
+		case DeviceTemperatureFpgaAlarmCount:
+			value = (int)IN32 (BOARD_STATUS_FPGA_TEMP_ADRS);
+			break;
+	
 #if defined (MODE_PELTIER_CTRL)
 		//--------------------------------------------------------------------------------
 		// DevicePeltierPowerLevel取得
@@ -5082,8 +5089,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// ExposureTime 露光時間(us単位)設定
 		//--------------------------------------------------------------------------------
 		case GENICAM_ACQUISITION_EXPOSURE_ADRS:
-			//@@1*status = acquisitionSetExposure((unsigned int) value);
-			value = 10000;	//@@@1
+			*status = acquisitionSetExposure((unsigned int) value);
 
 			// フレームレートを正式に変更してきたので、以下領域はクリア
 			// この領域がクリアされるまでは、CXPのConnectionConfigの
@@ -8340,6 +8346,13 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			*status = GEV_STATUS_WRITE_PROTECT;
 			break;
 
+		//--------------------------------------------------------------------------------
+		// DeviceTemperatureFpgaAlarmCount設定
+		//--------------------------------------------------------------------------------
+		case DeviceTemperatureFpgaAlarmCount:
+			*status = GEV_STATUS_WRITE_PROTECT;
+			break;
+
 #if defined (MODE_PELTIER_CTRL)
 		//--------------------------------------------------------------------------------
 		// DevicePeltierPowerLevel設定
@@ -11517,10 +11530,23 @@ int FileSelectorFpga (void)
 			// Stores the total written size of bit-stream image int the flash device
 			fileResult[fileSelector][fileSel[fileSelector]] = size; // in bytes
 		
-			#if !defined (MODE_UPDATE_ALL_MULTI)
+
+		#if !defined (MODE_UPDATE_ALL_MULTI)
+			// Clear Execute Flag
+			cmdExecuteDoneOnly ();
+
+			msDelay(3000);
+
+			//@@@@@@@@@@@@@@@@
+			DEBUG_PRINT_FORCE("ReConfig!!!!!!!!!!\n");
+			//@@@@@@@@@@@@@@@@
+
+			// FPGA ReConfig
+			fpgaReconfig ();
+		
 			// Cmd Done
 			cmdExecuteDone ();
-			#endif
+		#endif
 	
 			break;
 
