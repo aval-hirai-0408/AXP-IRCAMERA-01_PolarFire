@@ -116,7 +116,6 @@ int cxpInitialize2 (void)
 	int dataI32;
 	unsigned int cxpSpeed;
 	unsigned int linkCount;
-	//int streamMode = CXP_MODE_SINGLE_STREAM;
 	unsigned int regData;
 #if defined (MODE_SENSOR_IMX992) || defined (MODE_SENSOR_IMX993)
 	int bit;
@@ -155,43 +154,25 @@ int cxpInitialize2 (void)
 			goto _DONE;
 	}
 
-
 	//------------------------------------------------------------
 	// DeviceConnectionID
 	//------------------------------------------------------------
 	for (port=0; port<CXP_PORT_COUNT; port++)
 		ConnectionDeviceConnection_st[port] = port;
 
-//@@@1
-goto _DONE;
-//@@@1
-
-#if 0	//@@@1
 	//------------------------------------------------------------
 	// Register Data Restore
 	//------------------------------------------------------------
 	if ((status = cameraParamWriteRegister (CAMERA_SAVE_USER_NUM, CAMERA_CXP_ADRS, CAMERA_CXP_SIZE)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-#endif //@@@1
-
 
 	//--------------------------------------------------------------------------------
 	// Set CXP Rate
 	//--------------------------------------------------------------------------------
 
-	// 受信FIFO Disable
-	//@@@@data32 = IN32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL));
-	//@@@@OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 & ~FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
-
 	// Up Link Rate変更
 	OUT32 (FPGA_CXP_LSUC_SPEED_MODE_ADRS, 0);
 
-	// 受信FIFO Reset
-	//@@@@OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 | FPGA_CXP_RX_CMD_FIFO_CTRL_RESET));
-
-	// 受信FIFO ENABLE
-	//@@@@OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 | FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
-	
 	// IPレジスタ設定値取得
 	data32 = CXP_RATE_3_125G;
 	if ((status = cxpGetDataToRegData (data32, &regData)) != AVAL_STATUS_SUCCESS)
@@ -204,6 +185,9 @@ goto _DONE;
 	// Connection Config設定
 	cxpSetRateData (((1<<16) | CXP_RATE_3_125G));
 
+//@@@1
+//goto _DONE;
+//@@@1
 
 	//------------------------------------------------------------
 	// CXP Rate & Connection
@@ -219,13 +203,9 @@ goto _DONE;
 	if ((status = cxpGetLinkCount (&linkCount)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	// Usersetの値のリンクカウントが2ならば、現在のリンクカウント値を参照
-	// Usersetの値のリンクカウントが1ならば、リンクカウントは1にする
-	if (data32 == 2)
-	{
-		ConnectionConfig_st &= 0xffff;
-		ConnectionConfig_st |= (linkCount << 16); 
-	}
+	// リンクカウント設定
+	ConnectionConfig_st &= 0xffff;
+	ConnectionConfig_st |= (linkCount << 16); 
 	
 	// Connection Config設定
 	//cxpSetRateData (ConnectionConfig_st);
@@ -239,26 +219,6 @@ goto _DONE;
 
 	OUT32 (FIRM_DATA_CXP_CONNECTION_CONFIG, ConnectionConfig_st);
 	
-	//------------------------------------------------------------
-	// Single/Dual
-	//------------------------------------------------------------
-	if ((linkCount != 1) && (linkCount != 2))
-		linkCount = 1;
-
-	if ((status = cxpSetPortDual (0/*共通レジスタの為、Port=0に設定*/, 1/*linkCount*/)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-
-	//------------------------------------------------------------
-	// Stream Mode
-	//------------------------------------------------------------
-	#if defined MODE_MULTI_STREAM
-	streamMode = CXP_MODE_MULTI_STREAM;
-	#endif
-
-	//if ((status = cxpSetStreamMode (0/*共通レジスタの為、Port=0に設定*/, streamMode)) != AVAL_STATUS_SUCCESS)
-		//goto _DONE;
-
 
 	//------------------------------------------------------------
 	// Set H Interval
@@ -294,9 +254,6 @@ goto _DONE;
 			goto _DONE;
 
 		port = 0;
-		// 受信FIFO Disable
-		//@@@1data32 = IN32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL));
-		//@@@1OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 & ~FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
 
 		// Up Link Rate変更
 		if ((cxpSpeed == CXP_RATE_10_000GBPS) || (cxpSpeed == CXP_RATE_12_500GBPS))
@@ -304,26 +261,9 @@ goto _DONE;
 		else
 			OUT32 (FPGA_CXP_LSUC_SPEED_MODE_ADRS, 0);
 
-		// 受信FIFO Reset
-		//@@@1OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 | FPGA_CXP_RX_CMD_FIFO_CTRL_RESET));
-
-		// 受信FIFO ENABLE
-		//@@@1OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data32 | FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
-
 		// CXP Rate設定
 		if ((status = cxpSetRateReg (regData)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-
-		// Single設定
-		if ((status = cxpSetPortDual (0/*共通レジスタの為、Port=0に設定*/, 1/*linkCount*/)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		// 送信テストモード開始
-		for (port=0; port<1/*CXP_PORT_COUNT*/; port++)
-		{
-			//@@@1if ((status = cxpRegWrite (port, CXP_REG_TEST_MODE_ADRS, 1, 1)) != AVAL_STATUS_SUCCESS)
-				//@@@1goto _DONE;
-		}
 
 		// TestModeステータス設定
 		TestMode_st = 1;
@@ -369,7 +309,7 @@ int cxpCmdFifoReset (void)
 		}
 	}
 	
-	DEBUG_PRINT_FORCE("FIFO Clear = %d\n", i);
+	//DEBUG_PRINT_FORCE("FIFO Clear = %d\n", i);
 
 	return (status);
 }
@@ -2909,6 +2849,7 @@ _DONE:
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
+#if defined (MODE_CXP_CRC_SOFT)
 int cxpCalculateCrc32 (unsigned int *pCrc, unsigned int *pData, unsigned int count)
 {
 	int status = AVAL_STATUS_SUCCESS;
@@ -2962,6 +2903,28 @@ int cxpCalculateCrc32 (unsigned int *pCrc, unsigned int *pData, unsigned int cou
 _DONE:
 	return (status);
 }
+
+#else // #if defined (MODE_CXP_CRC_SOFT)
+
+//**********************************************************************************
+//	CXP CRC Calculation
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		pCrc				：CRCデータを格納するポインタ
+//		pData				：データを格納するポインタ
+//		count				：データ数
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int cxpCalculateCrc32 (unsigned int *pCrc, unsigned int *pData, unsigned int count)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	
+	return (status);
+}
+
+#endif // #if defined (MODE_CXP_CRC_SOFT)
 
 
 //**********************************************************************************
@@ -3255,38 +3218,6 @@ _DONE:
 
 
 //**********************************************************************************
-//	CXP FIFO Reset
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int cxpSetFifoReset (void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-#if 0 //@@@1
-	unsigned int data32;
-
-	// CTRL取得
-	if ((status = cxpRegRead (0, CXP_REG_CTRL_ADRS, &data32, 4)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// FIFO Reset
-	data32 |= CXP_REG_CTRL_FIFO_RESET;
-
-	// CTRL設定
-	if ((status = cxpRegWrite (0, CXP_REG_CTRL_ADRS, data32, 4)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-_DONE:
-#endif //@@@1
-	return (status);
-}
-
-
-//**********************************************************************************
 //	CXP Connection Config設定
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
@@ -3474,10 +3405,6 @@ int cxpSetBit (int port, int bit)
 
 	// Data Size設定
 	if ((status = cxpSetDSizeL (port, wsize)) !=  AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// FIFO設定
-	if ((status = cxpSetFifoReset ()) !=  AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 _DONE:
@@ -3888,7 +3815,6 @@ int cxpDownloadBuffer (unsigned int adrs, unsigned char *pData, unsigned int siz
 		goto _DONE;
 	}
 
-#if 1	//@@@1
 	//------------------------------------------------------------
 	// Set Param
 	//------------------------------------------------------------
@@ -3935,24 +3861,6 @@ int cxpDownloadBuffer (unsigned int adrs, unsigned char *pData, unsigned int siz
 
 	adrs2 = adrs & BASE_FILE_BUFFER_MASK;
 	fileResult[fileSelector][fileSel[fileSelector]] = adrs2 + size;
-#else	//@@@1
-	// オフセット
-	offset = adrs - FileAccessBuffer;
-
-	// 転送先格納アドレス
-	ptrB = (unsigned char *)fileBuffer[fileSelector];
-	pDst8 = (unsigned char *)(ptrB + offset);
-
-	// 転送元格納アドレス
-	pSrc8 = pData;
-
-	// データCopy
-	for (i=0; i<size; i++, pSrc8++, pDst8++)
-		*pDst8 = *pSrc8;
-
-	adrs2 = adrs & BASE_FILE_BUFFER_MASK;
-	fileResult[fileSelector][fileSel[fileSelector]] = adrs2 + size;
-#endif	//@@@1
 
 _DONE:
 	return (status);
@@ -3998,8 +3906,6 @@ int cxpUploadBuffer (unsigned int adrs, unsigned char *pData, unsigned int size)
 		goto _DONE;
 	}
 
-#if 1
-
 	// 転送元格納アドレス
 	pSrc32 = (unsigned int *)pData;
 
@@ -4030,24 +3936,6 @@ int cxpUploadBuffer (unsigned int adrs, unsigned char *pData, unsigned int size)
 		for (i=0; i<size; i++, pSrc8++, pDst8++)
 			*pDst8 = *pSrc8;
 	}
-
-#else
-
-	// オフセット
-	offset = adrs - FileAccessBuffer;
-
-	// 転送先格納アドレス
-	ptrB = (unsigned char *)fileBuffer[fileSelector];
-	pDst = (unsigned char *)(ptrB + offset);
-
-	// 転送元格納アドレス
-	pSrc = pData;
-
-	// データCopy
-	for (i=0; i<size; i++, pSrc++, pDst++)
-		*pDst = *pSrc;
-
-#endif
 
 	adrs2 = adrs & BASE_FILE_BUFFER_MASK;
 	fileResult[fileSelector][fileSel[fileSelector]] = adrs2 + size;
@@ -4090,7 +3978,8 @@ int cxpGetCableConnection (int port, int *pMode)
 
 	// Cable Connection状態を取得する
 	//@@@1*pMode = IN32 ((FPGA_CXP_LINK_STATUS_ADRS + FPGA_CXP_REGISTER_PORT_INTERVAL * port)) & FPGA_CXP_LINK_STATUS_CONNECTION;
-
+	*pMode = 1;
+	
 _DONE:
 	return (status);
 }
@@ -4454,203 +4343,6 @@ _DONE:
 
 
 //**********************************************************************************
-//	CXP Port Mode設定
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		port				：ポート番号
-//		mode				：0=Single / 1=Dualモード
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int cxpSetPortDual (int port, int mode)
-{
-	int status = AVAL_STATUS_SUCCESS;
-#if 0	//@@@1
-	unsigned int data32;
-
-	// Check port Parameter
-	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP Port Mode port(%d) Parameter Error.(Min:%d / Max:%d)\n", port, CXP_PORT_MIN, CXP_PORT_MAX);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// Check mode Parameter
-	if ((mode != CXP_PORT_SINGLE) && (mode != CXP_PORT_DUAL))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP Port Mode mode(%d) Parameter Error.(Min:%d / Max:%d)\n", mode, CXP_PORT_SINGLE, CXP_PORT_DUAL);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// CTRL取得
-	//@@@1if ((status = cxpRegRead (0, CXP_REG_CTRL_ADRS, &data32, 4)) != AVAL_STATUS_SUCCESS)
-		//@@@1goto _DONE;
-
-	if (mode == CXP_PORT_DUAL)
-		data32 |= CXP_REG_CTRL_PORT_DUAL;
-	else
-		data32 &= ~CXP_REG_CTRL_PORT_DUAL;
-
-	// CTRL設定
-	//@@@1if ((status = cxpRegWrite (0, CXP_REG_CTRL_ADRS, data32, 4)) != AVAL_STATUS_SUCCESS)
-		//@@@1goto _DONE;
-#endif //@@@1
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	CXP Port Mode取得
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		port				：ポート番号
-//		mode				：Single/Dualモードを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int cxpGetPortDual (int port, int *pMode)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int data32;
-#if 0	//@@@1
-	// Check port Parameter
-	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP Port Mode port(%d) Parameter Error.(Min:%d / Max:%d)\n", port, CXP_PORT_MIN, CXP_PORT_MAX);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// Check pMode Parameter
-	if (pMode == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Port Mode NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// CTRL取得
-	//@@@1if ((status = cxpRegRead (0, CXP_REG_CTRL_ADRS, &data32, 4)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	if ((data32 & CXP_REG_CTRL_PORT_DUAL) == 0)
-		*pMode = CXP_PORT_SINGLE;
-	else
-		*pMode = CXP_PORT_DUAL;
-
-_DONE:
-#endif //@@@1
-	return (status);
-}
-
-
-//**********************************************************************************
-//	CXP Stream Mode設定
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		port				：ポート番号
-//		mode				：0= 2Port&2Stream(AMS) / 1=2Port&1Stream(ABA)
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int cxpSetStreamMode (int port, int mode)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int data32;
-#if 0	//@@@1
-	// Check port Parameter
-	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP Port Stream Mode port(%d) Parameter Error.(Min:%d / Max:%d)\n", port, CXP_PORT_MIN, CXP_PORT_MAX);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// Check mode Parameter
-	if ((mode != CXP_MODE_SINGLE_STREAM) && (mode != CXP_MODE_MULTI_STREAM))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP Port Stream Mode port(%d) Parameter Error.(Min:%d / Max:%d)\n", port, CXP_MODE_SINGLE_STREAM, CXP_MODE_MULTI_STREAM);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// CTRL取得
-	//@@@1if ((status = cxpRegRead (0, CXP_REG_CTRL_ADRS, &data32, 4)) != AVAL_STATUS_SUCCESS)
-		//@@@1goto _DONE;
-
-	if (mode == CXP_MODE_MULTI_STREAM)
-		data32 &= ~CXP_REG_CTRL_2PORT_2STREAM;
-	else
-		data32 |= CXP_REG_CTRL_2PORT_2STREAM;
-
-	// CTRL設定
-	//@@@1if ((status = cxpRegWrite (0, CXP_REG_CTRL_ADRS, data32, 4)) != AVAL_STATUS_SUCCESS)
-		//@@@1goto _DONE;
-#endif	//@@@1
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	CXP Stream Mode取得
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		port				：ポート番号
-//		mode				：2Port&2Stream / 2Port&1Streamを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int cxpGetStreamMode (int port, int *pMode)
-{
-	int status = AVAL_STATUS_SUCCESS;
-#if 0	//@@@1
-	unsigned int data32;
-
-	// Check port Parameter
-	if ((port < CXP_PORT_MIN) || (port > CXP_PORT_MAX))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP Stream Mode port(%d) Parameter Error.(Min:%d / Max:%d)\n", port, CXP_PORT_MIN, CXP_PORT_MAX);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// Check pMode Parameter
-	if (pMode == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CXP, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "CXP Stream Mode NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// CTRL取得
-	//@@@1if ((status = cxpRegRead (0, CXP_REG_CTRL_ADRS, &data32, 4)) != AVAL_STATUS_SUCCESS)
-		//@@@1goto _DONE;
-
-	if ((data32 & CXP_REG_CTRL_2PORT_2STREAM) == 0)
-		*pMode = CXP_MODE_MULTI_STREAM;
-	else
-		*pMode = CXP_MODE_SINGLE_STREAM;
-#endif //@@@1
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
 //	CXP LED設定
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
@@ -4692,7 +4384,7 @@ _DONE:
 
 
 //**********************************************************************************
-//	CXP Port Mode取得
+//	CXP LED取得
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		port				：ポート番号
@@ -4844,12 +4536,10 @@ int cxpSetRateReg (unsigned int data)
 		goto _DONE;
 	}
 
-
 	//--------------------------------------------------------------------------------
 	// Dynamic Reconfig
 	//--------------------------------------------------------------------------------
 	OUT32 (CXP_REG_DRI_CTRLADRS, data);
-
 
 	//--------------------------------------------------------------------------------
 	// Check Busy
@@ -4965,22 +4655,6 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 
 	// 受信FIFO ENABLE
 	//@@@1OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data3 | FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
-
-#if 0	//@@@1
-	//--------------------------------------------------------------------------------
-	// Single / Dualモード設定
-	//--------------------------------------------------------------------------------
-	data1 = configData >> 16 & 0xffff;
-
-	if ((status = cxpGetPortDual (port, (int *)&data3)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	if (data1 != data3)
-	{
-		if ((status = cxpSetPortDual (port, data1)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-#endif //@@@1
 
 	//--------------------------------------------------------------------------------
 	// ConnectionConfig設定

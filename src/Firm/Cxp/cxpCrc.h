@@ -9,10 +9,12 @@
 // 
 // crc.h - CRC Header
 //**********************************************************************************
+#include "../Common/common.h"
 
 #ifndef CRC_H
 #define CRC_H
 
+#if defined (MODE_CXP_CRC_SOFT)
 static const unsigned int crc32_table[] =
 {
         0x00000000, 0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B, 0x1A864DB2, 0x1E475005,
@@ -48,7 +50,7 @@ static const unsigned int crc32_table[] =
         0x89B8FD09, 0x8D79E0BE, 0x803AC667, 0x84FBDBD0, 0x9ABC8BD5, 0x9E7D9662, 0x933EB0BB, 0x97FFAD0C,
         0xAFB010B1, 0xAB710D06, 0xA6322BDF, 0xA2F33668, 0xBCB4666D, 0xB8757BDA, 0xB5365D03, 0xB1F740B4
 };
+#endif // #if defined (MODE_CXP_CRC_SOFT)
 
 #endif // CRC_H
-
 

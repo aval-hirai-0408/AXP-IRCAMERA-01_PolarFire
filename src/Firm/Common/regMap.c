@@ -50,6 +50,10 @@ int fpgaRegMap (void)
 	DEBUG_PRINT_FORCE("  SPI                     : 0x%08x\n", CORESPI_BASE_ADDR);
 	DEBUG_PRINT_FORCE("  Timer                   : 0x%08x\n", CORETIMER0_BASE_ADDR);
 
+	DEBUG_PRINT_FORCE("  Sensor Image            : 0x%08x\n", FPGA_SENSOR_IMAGE_ADRS);
+	DEBUG_PRINT_FORCE("  Sensor Other            : 0x%08x\n", FPGA_SENSOR_OTHER_ADRS);
+	DEBUG_PRINT_FORCE("  Peltier                 : 0x%08x\n", FPGA_PELTIER_ADRS);
+
 	DEBUG_PRINT_FORCE("  Acquisition Ctrl        : 0x%08x\n", GENICAM_ACQUISITION_CONTROL_ADRS);
 	DEBUG_PRINT_FORCE("  Digital IO              : 0x%08x\n", GENICAM_DIGITAL_CONTROL_ADRS);
 	DEBUG_PRINT_FORCE("  Counter                 : 0x%08x\n", GENICAM_COUNTER_CONTROL_ADRS);

@@ -82,7 +82,7 @@ extern int gSensorStatus;
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int sensorTimingInitialize (void)
+int sensorTimingInitialize (void)	//@@@1
 {
 	int gSensorTmgStatus = AVAL_STATUS_SUCCESS;
 	unsigned char id;
@@ -584,6 +584,71 @@ _DONE:
 
 
 //**********************************************************************************
+//	センサ初期化(FPGA部)
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		-
+//	[ OUTPUT ]
+//		AVAL_STATUS_SUCCESS	：正常終了
+//		上記以外				：異常終了
+//==================================================================================
+int sensorVendorSPowerOn (void)
+{
+	int status = AVAL_STATUS_SUCCESS;
+	int i;
+	int id;
+	int acTmg, regHold;
+	unsigned char data8;
+	unsigned int data32;
+
+	//------------------------------------------------------------
+	// 1.Pin Setting 
+	//------------------------------------------------------------
+	OUT32 (FPGA_SENSOR_MODE_ADRS, (FPGA_SENSOR_MODE_TRIGGER | FPGA_SENSOR_MODE_SLAVE));
+
+	//------------------------------------------------------------
+	// 2.Power On
+	//------------------------------------------------------------
+	OUT32 (FPGA_SENSOR_INIT_SEQUENCE_ADRS, FPGA_SENSOR_INIT_SEQUENCE_POWERON_BIT);
+
+	// Wait End
+	for (i=0; i<SENSOR_POWERON_TIMEOUT; i++)
+	{
+		data32 = IN32 (FPGA_SENSOR_INIT_SEQUENCE_ADRS);
+		if (data32 & FPGA_SENSOR_INIT_SEQUENCE_POWERON_END_BIT)
+			break;
+		
+		usDelay (2);
+	}
+	
+	// Check Timeout
+	if (i>=SENSOR_POWERON_TIMEOUT)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Power On Timeout Error.");
+	}
+	
+	//------------------------------------------------------------
+	// VR_EN
+	//------------------------------------------------------------
+	id = 0x1c;
+	acTmg = 0;
+	regHold = 0;
+
+	if ((status = sensorRegReadByte (id, SENSOR_REG_POWER_ADRS, &data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	data8 |= SENSOR_REG_VR_EN;
+	if ((status = sensorRegWriteByte (id, SENSOR_REG_POWER_ADRS, data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+_DONE:
+	return (status);
+}
+
+
+
+//**********************************************************************************
 //	センサ初期化
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
@@ -640,7 +705,6 @@ int sensorVendorSInitialize (void)
 
 	msDelay (100);
 
-#if 0	//@@@1
 
 	//============================================================
 	//============================================================
@@ -902,7 +966,6 @@ int sensorVendorSInitialize (void)
 	// Chip ID = 0x06
 	//============================================================
 	id = 0x06;
-#endif //@@@1
 
 	//------------------------------------------------------------
 	// TRG EN
@@ -911,7 +974,6 @@ int sensorVendorSInitialize (void)
 	if ((status = sensorGetShutterMode (&shutterMode)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-#if 0	//@@@1
 	if (shutterMode == SHUTTER_MODE_TRIGGER)
 		data8 = SENSOR_REG_TRG_EN_BIT;
 	else
@@ -919,13 +981,10 @@ int sensorVendorSInitialize (void)
 
 	if ((status = sensorRegWriteByte (id, SENSOR_REG_TRG_EN_ADRS, data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-#endif //@@@1
-	
 #else
 	shutterMode = SHUTTER_MODE_NORMAL;
 #endif
 
-#if 0	//@@@1
 	//------------------------------------------------------------
 	// OD Bit
 	//------------------------------------------------------------
@@ -1138,12 +1197,12 @@ int sensorVendorSInitialize (void)
 	//------------------------------------------------------------
 	// VR_EN
 	//------------------------------------------------------------
-	// ACB-930マイコンFWで制御
+	// sensorVendorSPowerOn関数で制御
 
 	//------------------------------------------------------------
 	// VR_RG_DIS
 	//------------------------------------------------------------
-	// ACB-930マイコンFWで制御
+	// boardReset関数で制御
 
 
 	//------------------------------------------------------------
@@ -1170,6 +1229,32 @@ int sensorVendorSInitialize (void)
 	if ((status = sensorBitSetHide (bit)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
+
+//@@@1
+	OUT32(0x6d0000cc, 1000);
+	
+	//============================================================
+	// Chip ID = 0x03
+	//============================================================
+	id = 0x03;
+
+	if ((status = sensorRegWriteByte (id, 0x04, 3, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	if ((status = sensorRegWriteByte (id, 0x24, 0x20, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	if ((status = sensorRegWriteByte (id, 0x25, 0x0a, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	if ((status = sensorRegWriteByte (id, 0x26, 0x08, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	if ((status = sensorRegWriteByte (id, 0x27, 0x08, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+//@@@1
+	
+	
 	//============================================================
 	//============================================================
 	//============================================================
@@ -1196,8 +1281,6 @@ int sensorVendorSInitialize (void)
 		goto _DONE;
 #endif
 
-#endif //@@@1	
-	
 	//------------------------------------------------------------
 	// H Interval取得
 	//------------------------------------------------------------
@@ -1232,7 +1315,6 @@ int sensorVendorSInitialize (void)
 	if ((status = sensorSetHIntervalReg (data32)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-#if 0	//@@@1
 
 	//------------------------------------------------------------
 	// FPGA Shutter Normal Mode
@@ -1244,30 +1326,40 @@ int sensorVendorSInitialize (void)
 	}
 
 	//------------------------------------------------------------
+	// TGES/TGSE/TGPD初期化(デフォルト値)
+	//------------------------------------------------------------
+
+	// TGSE設定
+	//@@@1if ((status = tgSetTgse (SENSOR_TGSE)) != AVAL_STATUS_SUCCESS)
+		//@@@1goto _DONE;
+
+	// Set TGSE
+	OUT32 (FPGA_TG_TGSE_ADRS, (SENSOR_TGSE & FPGA_TG_TGSE_MASK));
+
+	// TGES設定
+	//@@@1if ((status = tgSetTges (SENSOR_TGES)) != AVAL_STATUS_SUCCESS)
+		//@@@1goto _DONE;
+
+	// Set TGES
+	OUT32 (FPGA_TG_TGES_ADRS, (SENSOR_TGES & FPGA_TG_TGES_MASK));
+
+	// TGPD設定
+	//@@@1if ((status = tgSetTgpd (SENSOR_TGPD)) != AVAL_STATUS_SUCCESS)
+		//@@@1goto _DONE;
+
+	// Set TGPD
+	OUT32 (FPGA_TG_TGPD_ADRS, (SENSOR_TGPD & FPGA_TG_TGPD_MASK));
+
+
+	//------------------------------------------------------------
 	// Sensor Standby解除
 	//------------------------------------------------------------
 	if ((status = sensorStandByCancel ()) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	//------------------------------------------------------------
-	// TGES/TGSE/TGPD初期化(デフォルト値)
-	//------------------------------------------------------------
-
-	// TGSE設定
-	if ((status = tgSetTgse (SENSOR_TGSE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// TGES設定
-	if ((status = tgSetTges (SENSOR_TGES)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// TGPD設定
-	if ((status = tgSetTgpd (SENSOR_TGPD)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
 	// TEMP OK初期化
 	OUT32 (FPGA_PELTIER_TEC_POK_ADRS, 1);
-#endif //@@@1
+
 _DONE:
 	return (status);
 }
@@ -2421,21 +2513,6 @@ int sensorStandBy (void)
 		goto _DONE;
 
 	//------------------------------------------------------------
-	// Sensor Output Disable
-	//------------------------------------------------------------
-	OUT32 (FPGA_SENSOR_OUTPUT_CTRL_ADRS, 0);
-
-	//------------------------------------------------------------
-	// Sensor Temp Auto Refresh Disable
-	//------------------------------------------------------------
-	OUT32 (FPGA_SENSOR_TEMP_REFRESH_ADRS, 0);
-
-	//------------------------------------------------------------
-	// Set Sensor Input Ctrl Disable
-	//------------------------------------------------------------
-	OUT32 (FPGA_SENSOR_INPUT_CTRL_ADRS, 0);
-
-	//------------------------------------------------------------
 	// StandBy
 	//------------------------------------------------------------
 	id = 0x02;
@@ -2448,6 +2525,20 @@ int sensorStandBy (void)
 
 	usDelay(200);		// 仕様上は150us Delay
 
+	//------------------------------------------------------------
+	// Sensor Output Disable
+	//------------------------------------------------------------
+	OUT32 (FPGA_SENSOR_IMG_CTRL_ADRS, 0);
+
+	//------------------------------------------------------------
+	// Sensor Temp Auto Refresh Disable
+	//------------------------------------------------------------
+	OUT32 (FPGA_SENSOR_TEMP_REFRESH_ADRS, 0);
+
+	//------------------------------------------------------------
+	// Set Sensor Input Ctrl Disable
+	//------------------------------------------------------------
+	//@@@1OUT32 (FPGA_SENSOR_INPUT_CTRL_ADRS, 0);
 
 #if !defined (MODE_SENSOR_MASTER)
 	//------------------------------------------------------------
@@ -2542,24 +2633,37 @@ int sensorStandByCancel (void)
 	// 仕様上は29ms
 	msDelay (30);
 
+//@@@1
+DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@3\n");
+//@@@1
+	
 	//------------------------------------------------------------
 	// H Interval
 	//------------------------------------------------------------
 	if (drrsMode == MODE_DISABLE)
 	{
+//@@@1
+DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@4\n");
+//@@@1
+
 		// H Interval保存
 		if ((status = irvGetHIntervalClock (&saveHInterval)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 		
 		// H Interval設定
-		if (saveHInterval != HINTERVAL_CLOCK_12BIT_SINGLE_10_00G)
+		if (saveHInterval != HINTERVAL_CLOCK_12BIT_SINGLE_12_50G)
 		{
-			if ((status = sensorSetHIntervalReg (HINTERVAL_CLOCK_12BIT_SINGLE_10_00G)) != AVAL_STATUS_SUCCESS)
+			if ((status = sensorSetHIntervalReg (HINTERVAL_CLOCK_12BIT_SINGLE_12_50G)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
 		}
 	}
 	else	// DRRS Enable
 	{
+		
+//@@@1
+DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@5\n");
+//@@@1
+
 		//------------------------------------------------------------
 		// フレームレート設定=>DRRS時はフレームレートが決まれば露光時間も決まる
 		//------------------------------------------------------------
@@ -2578,6 +2682,11 @@ int sensorStandByCancel (void)
 			goto _DONE;
 	}
 
+//@@@1
+DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@6\n");
+//@@@1
+
+#if 0	//@@@1
 	//------------------------------------------------------------
 	// Set Sensor Input Ctrl Enable
 	//------------------------------------------------------------
@@ -2603,6 +2712,11 @@ int sensorStandByCancel (void)
 		//status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_TIMEOUT);
 		//goto _DONE;
 	}
+#endif //@@@1
+
+//@@@1
+DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@7\n");
+//@@@1
 
 	//------------------------------------------------------------
 	// Get Shutter Mode
@@ -2610,6 +2724,10 @@ int sensorStandByCancel (void)
 	if ((status = sensorGetShutterMode (&shutterMode)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
+
+//@@@1
+DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@8\n");
+//@@@1
 
 	//@@@1#if defined (MODE_SENSOR_MASTER)
 	//------------------------------------------------------------
@@ -2631,6 +2749,9 @@ int sensorStandByCancel (void)
 		goto _DONE;
 	#endif
 
+//@@@1
+DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@9\n");
+//@@@1
 
 	//------------------------------------------------------------
 	// Sensor Temp Auto Refresh Enable
@@ -2643,13 +2764,22 @@ int sensorStandByCancel (void)
 	//------------------------------------------------------------
 	if ((status = sensorSetHvGen (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
+//@@@1
+DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@10\n");
+//@@@1
 
 	//------------------------------------------------------------
 	// Enable Trg Control
 	//------------------------------------------------------------
-	if ((status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//@@@1if ((status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
+		//@@@1goto _DONE;
+	
+	sensorSetTrgControl (MODE_ENABLE);	//@@@1
 #endif // #if defined (MODE_SENSOR_MASTER)
+
+//@@@1
+DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@11\n");
+//@@@1
 
 	//------------------------------------------------------------
 	// 撮像モード設定
@@ -2728,6 +2858,9 @@ int sensorStandByCancel (void)
 		saveFrameRateTime = IN32 (GENICAM_ACQUISITION_FRAMERATE_ADRS) & GENICAM_ACQUISITION_FRAMERATE_MASK;
 		OUT32 (GENICAM_ACQUISITION_FRAMERATE_ADRS, (frameRateTime & GENICAM_ACQUISITION_FRAMERATE_MASK));
 	}
+//@@@1
+DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@11\n");
+//@@@1
 
 	//------------------------------------------------------------
 	// トリガセレクタ取得
@@ -2830,8 +2963,25 @@ int sensorStandByCancel (void)
 		goto _DONE;
 
 _DONE:
-	usDelay(200);
+	usDelay(200);	//@@@1
 
+	//------------------------------------------------------------
+	// Check Sensor Training
+	//------------------------------------------------------------
+	data32 = IN32 (FPGA_SENSOR_SERDES_STATUS_COMMON_ADRS);
+	if ((data32 & FPGA_SENSOR_SERDES_STATUS_CLK_TRAIN_DONE_BIT) != FPGA_SENSOR_SERDES_STATUS_CLK_TRAIN_DONE_BIT)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Sensor Training(0x%x) Error.\n", data32);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		//goto _DONE;
+	}
+	
+	//------------------------------------------------------------
+	// Sensor Output Enable
+	//------------------------------------------------------------
+	OUT32 (FPGA_SENSOR_IMG_CTRL_ADRS, FPGA_SENSOR_IMG_CTRL_OUTPUT_BIT);
+	
 	// H Intervalリストア
 	if (saveHInterval != 0xffffffff)
 	{
@@ -2847,11 +2997,6 @@ _DONE:
 			sensorTrgEnable (trgMode, hvGenMode);
 		}
 	}
-
-	//------------------------------------------------------------
-	// Sensor Output Enable
-	//------------------------------------------------------------
-	OUT32 (FPGA_SENSOR_OUTPUT_CTRL_ADRS, FPGA_SENSOR_OUTPUT_CTRL_ENABLE_BIT);
 
 	// AcquisitionMode設定
 	if (saveAcMode != -1)
@@ -3257,11 +3402,7 @@ int sensorSetHIntervalReg (unsigned int data)
 	int status = AVAL_STATUS_SUCCESS;
 
 	// H Interval
-//@@@1	OUT32 (FPGA_SENSOR_HINTERVAL_ADRS, (data & FPGA_SENSOR_HINTERVAL_MASK));
-
-//@@@1
-	OUT32 (FIRM_DATA_H_DATA, (data & FPGA_SENSOR_HINTERVAL_MASK));
-//@@@1
+	OUT32 (FPGA_SENSOR_HINTERVAL_ADRS, (data & FPGA_SENSOR_HINTERVAL_MASK));
 	
 	return (status);
 }
@@ -3288,10 +3429,7 @@ int irvGetHIntervalClock (unsigned int *pHinterval)
 		goto _DONE;
 	}
 
-	//@@@1
-	//*pHinterval = IN32 (FPGA_SENSOR_HINTERVAL_ADRS) & FPGA_SENSOR_HINTERVAL_MASK;
-	*pHinterval = IN32 (FIRM_DATA_H_DATA) & FPGA_SENSOR_HINTERVAL_MASK;
-	//@@@1
+	*pHinterval = IN32 (FPGA_SENSOR_HINTERVAL_ADRS) & FPGA_SENSOR_HINTERVAL_MASK;
 
 _DONE:
 	return (status);
@@ -3507,13 +3645,9 @@ int sensorSetHvGen (int mode)
 	}
 
 	if (mode == MODE_ENABLE)
-	{
 		setData = FPGA_SENSOR_HV_GEN_ENABLE_BIT;
-	}
 	else
-	{
 		setData = 0;
-	}
 
 	// Enable/Disable HV Gen
 	OUT32 (FPGA_SENSOR_HV_GEN_ADRS, setData);
@@ -3605,9 +3739,6 @@ int sensorSetTrgControl (int mode)
 	unsigned int i;
 	unsigned int data32, setData;
 
-	// TG UnLock
-	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_UNLOCK);
-
 	// Check mode Parameter
 	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
 	{
@@ -3618,14 +3749,11 @@ int sensorSetTrgControl (int mode)
 	}
 
 	if (mode == MODE_ENABLE)
-	{
 		setData = FPGA_SENSOR_TRG_CTRL_ENABLE_BIT;
-	}
 	else
-	{
 		setData = 0;
-	}
 
+	
 	// Enable/Disable Trg Control
 	OUT32 (FPGA_SENSOR_TRG_CTRL_ADRS, setData);
 
@@ -3662,9 +3790,6 @@ int sensorSetTrgControl (int mode)
 	}
 
 _DONE:
-	// TG Lock
-	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_LOCK);
-
 	return (status);
 }
 
@@ -8986,7 +9111,7 @@ int sensorRegWriteByte (unsigned char id, unsigned char adrs, unsigned char data
 	}
 
 	// Sensor Write
-	if ((status = sensorRegWriteBase (&id, &adrs, &data, 1, acTmg)) != AVAL_STATUS_SUCCESS)
+	if ((status = sensorRegWriteBase (id, adrs, data, acTmg)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 _DONE:
@@ -9023,7 +9148,7 @@ int sensorRegReadByte (unsigned char id, unsigned char adrs, unsigned char *pDat
 	}
 
 	// Sensor Read
-	if ((status = sensorRegReadBase (&id, &adrs, pData, 1, acTmg)) != AVAL_STATUS_SUCCESS)
+	if ((status = sensorRegReadBase (id, adrs, pData, acTmg)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 _DONE:
@@ -9039,99 +9164,47 @@ _DONE:
 //	センサレジスタ書き込み
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
-//		id					：chip IDデータを格納するポインタ
-//		adrs				：アドレスデータを格納するポインタ
-//		pData				：読み込みデータを格納するポインタ
-//		サイズ				：サイズ
+//		id					：chip ID
+//		adrs				：アドレス
+//		data				：書き込みデータ
 //		acTmg				：Access Timing EN(0=Disable/1=Enable)
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int sensorRegWriteBase (unsigned char *pId, unsigned char *pAdrs, unsigned char *pData, int size, int acTmg)
+int sensorRegWriteBase (unsigned char id, unsigned char adrs, unsigned char data, int acTmg)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned char id, adrs, data8;
 	unsigned int data32;
 	int i;
-	unsigned char *ptr8;
 
-	// Check pId Parameter
-	if (pId == NULL)
+	// Check id Parameter
+	if ((id < 0) || (id > FPGA_SENSOR_REG_ID_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Write pId NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// Check pAdrs Parameter
-	if (pAdrs == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Write pAdrs NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// Check size Parameter
-	if ((size < 0) || (size > FPGA_SENSOR_REG_SIZE_MAX))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Register Write size(0x%x) Parameter Error.(Min:0 / Max:%d)\n", size, FPGA_SENSOR_REG_SIZE_MAX);
+		sprintf (gLogMsgBuff, "Sensor Reg Write id(%d) Parameter Error.(Min:0 / Max:%d). Index=%d\n", id, FPGA_SENSOR_REG_ID_MAX, i);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
-	// Check pData Parameter
-	if (pData == NULL)
+	// Check adrs Parameter
+	if ((adrs < 0) || (adrs > FPGA_SENSOR_REG_ADRS_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Write pData NULL Parameter Error.\n");
+		sprintf (gLogMsgBuff, "Sensor Reg Write adrs(0x%x) Parameter Error.(Min:0 / Max:%d). Index=%d\n", adrs, FPGA_SENSOR_REG_ADRS_MAX, i);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
-	//------------------------------------------------------------
-	// ID & アドレス & データ書き込み
-	//------------------------------------------------------------
-	ptr8 = pData;
-	for (i=0; i<size; i++, pId++, pAdrs++, ptr8++)
-	{
-		// IDデータ
-		id = *pId;
-
-		// アドレスデータ
-		adrs = *pAdrs;
-
-		// データ
-		data8 = *ptr8;
-
-		// Check id Parameter
-		if ((id < 0) || (id > FPGA_SENSOR_REG_ID_MAX))
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Sensor Register Write id(%d) Parameter Error.(Min:0 / Max:%d). Index=%d\n", id, FPGA_SENSOR_REG_ID_MAX, i);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-
-		// Check adrs Parameter
-		if ((adrs < 0) || (adrs > FPGA_SENSOR_ADRS_MAX_))
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Sensor Register Write adrs(0x%x) Parameter Error.(Min:0 / Max:%d). Index=%d\n", adrs, FPGA_SENSOR_ADRS_MAX_, i);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-
-		// 設定
-		data32 = FPGA_SENSOR_REG_TBL_WRITE_DATA_MAKE(data8) | FPGA_SENSOR_REG_TBL_ADRS_MAKE(adrs) | FPGA_SENSOR_REG_TBL_WRITE_BIT | FPGA_SENSOR_REG_TBL_CHIPID_MAKE(id);
-		OUT32 (FPGA_SENSOR_REG_TBL_ADRS, data32);
-	}
+	// 設定
+	data32 = FPGA_SENSOR_REG_TBL_WRITE_DATA_MAKE(data) | FPGA_SENSOR_REG_TBL_ADRS_MAKE(adrs) | FPGA_SENSOR_REG_TBL_WRITE_BIT | FPGA_SENSOR_REG_TBL_CHIPID_MAKE(id);
+	OUT32 (FPGA_SENSOR_REG_TBL_ADRS, data32);
 
 	// End Clear
 	OUT32 (FPGA_SENSOR_REG_CTRL_ADRS, FPGA_SENSOR_REG_CTRL_END_BIT);
 
 	// Start
-	data32 = FPGA_SENSOR_REG_CTRL_START_BIT | FPGA_SENSOR_REG_CTRL_ACES_COUNT_SET(size);
+	data32 = FPGA_SENSOR_REG_CTRL_START_BIT;
 	if (acTmg != 0)
 		data32 |= FPGA_SENSOR_REG_CTRL_ACES_TMG_ENABLE_BIT;
 
@@ -9151,7 +9224,7 @@ int sensorRegWriteBase (unsigned char *pId, unsigned char *pAdrs, unsigned char 
 	if (i >= SENSOR_REG_ACES_TIMEOUT)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_TIMEOUT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Write Timeout Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Reg Write Timeout Error.\n");
 		goto _DONE;
 	}
 
@@ -9165,44 +9238,34 @@ _DONE:
 //	センサレジスタ読み込み
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
-//		id					：chip IDデータを格納するポインタ
-//		adrs				：アドレスデータを格納するポインタ
+//		id					：chip ID
+//		adrs				：アドレス
 //		pData				：読み込みデータを格納するポインタ
-//		サイズ				：サイズ
 //		acTmg				：Access Timing EN(0=Disable/1=Enable)
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int sensorRegReadBase (unsigned char *pId, unsigned char *pAdrs, unsigned char *pData, int size, int acTmg)
+int sensorRegReadBase (unsigned char id, unsigned char adrs, unsigned char *pData, int acTmg)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned char id, adrs, data8;
 	unsigned int data32;
-	unsigned char *ptr8;
 	int i;
 
-	// Check pId Parameter
-	if (pId == NULL)
+	// Check id Parameter
+	if ((id < 0) || (id > FPGA_SENSOR_REG_ID_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Read pId NULL Parameter Error.\n");
+		sprintf (gLogMsgBuff, "Sensor Reg Read id(%d) Parameter Error.(Min:0 / Max:%d). Index=%d\n", id, FPGA_SENSOR_REG_ID_MAX, i);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
 
-	// Check pAdrs Parameter
-	if (pAdrs == NULL)
+	// Check adrs Parameter
+	if ((adrs < 0) || (adrs > FPGA_SENSOR_REG_ADRS_MAX))
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Read pAdrs NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// Check size Parameter
-	if ((size < 0) || (size > FPGA_SENSOR_REG_SIZE_MAX))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Sensor Register Read size(0x%x) Parameter Error.(Min:0 / Max:%d)\n", size, FPGA_SENSOR_REG_SIZE_MAX);
+		sprintf (gLogMsgBuff, "Sensor Reg Read adrs(0x%x) Parameter Error.(Min:0 / Max:%d). Index=%d\n", adrs, FPGA_SENSOR_REG_ADRS_MAX, i);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
@@ -9211,49 +9274,19 @@ int sensorRegReadBase (unsigned char *pId, unsigned char *pAdrs, unsigned char *
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Register Read pData NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Reg Read pData NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
-	//------------------------------------------------------------
-	// ID & アドレス読み込み
-	//------------------------------------------------------------
-	for (i=0; i<size; i++, pId++, pAdrs++)
-	{
-		// IDデータ
-		id = *pId;
-
-		// アドレスデータ
-		adrs = *pAdrs;
-
-		// Check id Parameter
-		if ((id < 0) || (id > FPGA_SENSOR_REG_ID_MAX))
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Sensor Register Read id(%d) Parameter Error.(Min:0 / Max:%d). Index=%d\n", id, FPGA_SENSOR_REG_ID_MAX, i);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-
-		// Check adrs Parameter
-		if ((adrs < 0) || (adrs > FPGA_SENSOR_ADRS_MAX_))
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Sensor Register Read adrs(0x%x) Parameter Error.(Min:0 / Max:%d). Index=%d\n", adrs, FPGA_SENSOR_ADRS_MAX_, i);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-
-		// 設定
-		data32 = FPGA_SENSOR_REG_TBL_ADRS_MAKE(adrs) | FPGA_SENSOR_REG_TBL_READ_BIT | FPGA_SENSOR_REG_TBL_CHIPID_MAKE(id);
-		OUT32 (FPGA_SENSOR_REG_TBL_ADRS, data32);
-	}
+	// 設定
+	data32 = FPGA_SENSOR_REG_TBL_ADRS_MAKE(adrs) | FPGA_SENSOR_REG_TBL_READ_BIT | FPGA_SENSOR_REG_TBL_CHIPID_MAKE(id);
+	OUT32 (FPGA_SENSOR_REG_TBL_ADRS, data32);
 
 	// End Clear
 	OUT32 (FPGA_SENSOR_REG_CTRL_ADRS, FPGA_SENSOR_REG_CTRL_END_BIT);
 
 	// Start
-	data32 = FPGA_SENSOR_REG_CTRL_START_BIT | FPGA_SENSOR_REG_CTRL_ACES_COUNT_SET(size);
+	data32 = FPGA_SENSOR_REG_CTRL_START_BIT;
 	if (acTmg != 0)
 		data32 |= FPGA_SENSOR_REG_CTRL_ACES_TMG_ENABLE_BIT;
 
@@ -9273,20 +9306,15 @@ int sensorRegReadBase (unsigned char *pId, unsigned char *pAdrs, unsigned char *
 	if (i >= SENSOR_REG_ACES_TIMEOUT)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_SENSOR, AVAL_STATUS_TIMEOUT);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Read Timeout Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Sensor Reg Read Timeout Error.\n");
 		goto _DONE;
 	}
 
 	//------------------------------------------------------------
 	// データ取得
 	//------------------------------------------------------------
-	ptr8 = pData;
-	for (i=0; i<size; i++, ptr8++)
-	{
-		data32 = IN32 (FPGA_SENSOR_REG_TBL_ADRS);
-		data8 = FPGA_SENSOR_REG_TBL_READ_DATA_MAKE(data32);
-		*ptr8 = data8;
-	}
+	data32 = IN32 (FPGA_SENSOR_REG_TBL_ADRS);
+	*pData = FPGA_SENSOR_REG_TBL_READ_DATA_MAKE(data32);
 
 _DONE:
 	return (status);
@@ -10335,6 +10363,7 @@ int sensorGradationCompInitialize (void)
 	int shutterMode;
 #endif
 
+#if 0//@@@1
 	//--------------------------------------------------------------------------------
 	// Register Data Restore
 	//--------------------------------------------------------------------------------
@@ -10343,7 +10372,17 @@ int sensorGradationCompInitialize (void)
 		gSensorStatus = status;
 		goto _DONE;
 	}
+#endif//@@@1
 
+		//@@@1
+	OUT32 (FIRM_DATA_GRADATION_COMPRESS_POS_FIRST, GC_POS_FIRST_DEFAULT);
+	OUT32 (FIRM_DATA_GRADATION_COMPRESS_POS_SECOND, GC_POS_SECOND_DEFAULT);
+	OUT32 (FIRM_DATA_GRADATION_COMPRESS_GAIN_FIRST, GC_GAIN_FIRST_DEFAULT);
+	OUT32 (FIRM_DATA_GRADATION_COMPRESS_GAIN_SECOND, GC_GAIN_SECOND_DEFAULT);
+	OUT32 (FIRM_DATA_GRADATION_COMPRESS_MODE, GC_MODE_DEFAULT);
+	//@@@1
+
+	
 	//--------------------------------------------------------------------------------
 	// Position
 	//--------------------------------------------------------------------------------
@@ -11385,9 +11424,19 @@ int sensorSetFrameRateHighSpeedMode (int mode)
 #if defined (MODE_SENSOR_IMX992) || defined (MODE_SENSOR_IMX993)
 		if ((status = sensorGetTgesHighSpeed (4, (int *)&tges)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-		
-		if ((status = tgSetTges (tges)) != AVAL_STATUS_SUCCESS)
+
+		// Disable Trg Control
+		if ((status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
+
+		// TGES
+		if ((status = tgSetTges2 (tges)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+		
+		// Enable Trg Control
+		if ((status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+
 #endif
 
 		// Width Offset設定
@@ -12171,16 +12220,28 @@ int sensorVendorSFrameRateSpeedModeInitialize (int mode)
 #endif
 
 		//------------------------------------------------------------
+		// Disable Trg Control
+		//------------------------------------------------------------
+		if ((status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+
+		//------------------------------------------------------------
 		// TGES
 		//------------------------------------------------------------
-		if ((status = tgSetTges (SENSOR_TGES)) != AVAL_STATUS_SUCCESS)
+		if ((status = tgSetTges2 (SENSOR_TGES)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		//------------------------------------------------------------
 		// TGPD
 		//------------------------------------------------------------
 		tgpd = SENSOR_VINTERVAL_LINE;
-		if ((status = tgSetTgpd (tgpd)) != AVAL_STATUS_SUCCESS)
+		if ((status = tgSetTgpd2 (tgpd)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+		
+		//------------------------------------------------------------
+		// Enable Trg Control
+		//------------------------------------------------------------
+		if ((status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
 	else
@@ -12216,6 +12277,12 @@ int sensorVendorSFrameRateSpeedModeInitialize (int mode)
 			goto _DONE;
 
 		//------------------------------------------------------------
+		// Disable Trg Control
+		//------------------------------------------------------------
+		if ((status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+
+		//------------------------------------------------------------
 		// TGES
 		//------------------------------------------------------------
 #if defined (MODE_SENSOR_IMX992) || defined (MODE_SENSOR_IMX993)
@@ -12225,7 +12292,7 @@ int sensorVendorSFrameRateSpeedModeInitialize (int mode)
 		
 #endif
 
-		if ((status = tgSetTges (tges)) != AVAL_STATUS_SUCCESS)
+		if ((status = tgSetTges2 (tges)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		//------------------------------------------------------------
@@ -12236,7 +12303,13 @@ int sensorVendorSFrameRateSpeedModeInitialize (int mode)
 			goto _DONE;
 #endif
 		// Get TGPD
-		if ((status = tgSetTgpd (VSize)) != AVAL_STATUS_SUCCESS)
+		if ((status = tgSetTgpd2 (VSize)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+		
+		//------------------------------------------------------------
+		// Enable Trg Control
+		//------------------------------------------------------------
+		if ((status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
 

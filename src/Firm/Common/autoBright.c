@@ -1997,10 +1997,10 @@ int autoBrightSetWidthOffset (int offset)
 	// Check offset Parameter
 	if (gInterFaceID == INTERFACE_CXP)
 	{
-		if ((offset < 0) || (offset > widthMax-CXP_WIDTH_MIN))
+		if ((offset < 0) || (offset > widthMax-ROI_FPGA_WIDTH_SIZE_ALIGH))
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Auto Bright Width Offset(%d) Parameter Error.(Min:%d / Max:%d)\n", offset / binningNum, widthMin, (widthMax / binningNum) - CXP_WIDTH_MIN);
+			sprintf (gLogMsgBuff, "Auto Bright Width Offset(%d) Parameter Error.(Min:%d / Max:%d)\n", offset / binningNum, widthMin, (widthMax / binningNum) - ROI_FPGA_WIDTH_SIZE_ALIGH);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}

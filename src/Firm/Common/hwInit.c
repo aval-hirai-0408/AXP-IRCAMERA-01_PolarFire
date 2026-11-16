@@ -21,11 +21,6 @@
 //----------------------------------------------------------------------------------
 unsigned int gDipsw = 0;
 
-//----------------------------------------------------------------------------------
-// externs
-//----------------------------------------------------------------------------------
-extern int gSpectrumType;
-
 
 //**********************************************************************************
 //	HW初期化
@@ -43,6 +38,7 @@ int hwInitialize (int cpuType)
 	//------------------------------------------------------------
 	// Flag初期化
 	//------------------------------------------------------------
+
 	// Acquisition Start初期化
 	OUT32 (FIRM_DATA_ACQUISITION_START_ADRS, 0);
 
@@ -70,7 +66,7 @@ int hwInitialize (int cpuType)
 
 	ffcSetXFlipFlag (MODE_ENABLE);
 #endif
-
+#endif //@@@1
 
 #if defined (MODE_CAMERA_EVENT_VERSION2)
 	memset ((void *)CAMERA_EVENT, 0x00, CAMERA_SIZE);
@@ -101,8 +97,6 @@ int hwInitialize (int cpuType)
 	OUT32 (FIRM_DATA_8BIT_MODE, MODE_DISABLE);
 #endif
 
-#endif //@@@1
-
 
 #if defined (MODE_FRAMERATE_HIGH_SPEED)
 	// High Speed Reg設定。レジスタの初期値を１度設定。
@@ -114,14 +108,11 @@ int hwInitialize (int cpuType)
 	cxpSetPort (0);
 #endif
 
-	// ARM1 DDR malloc Flag初期化
-	//@@@1OUT32(FIRM_DATA_DDR_DIAG_FLAG, FIRM_DATA_DDR_DIAG_FLAG_NONE);
-
 	// DDR Mode初期化
 	diagDdrSetMode (0);
 	
 	// Sensor Shutter Mode(Trigger Mode)
-	OUT32 (FIRM_DATA_SENSOR_SHUTTER_MODE, 1);	// Triggerモード
+	OUT32 (FIRM_DATA_SENSOR_SHUTTER_MODE, 1);
 
 #if defined (MODE_GIGE_10G) && defined (IF_GIGE)
 	// GE Speed Default
@@ -147,9 +138,6 @@ int hwInitialize (int cpuType)
 	// Get InterFace ID
 	getInterfaceId (&gInterFaceID);
 
-	// Get Spectrum Type
-	//@@@getSpectrumType (&gSpectrumType);
-	
 	
 	//------------------------------------------------------------
 	// Console Initialize
@@ -260,13 +248,6 @@ int hwInitialize (int cpuType)
 	if ((status = cameraInformationInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
 	
-	#if 0
-	// Get DeviceID
-	unsigned char manufacturer_id, device_id;
-	qspiFlashGetFlashId (&manufacturer_id, &device_id);
-	DEBUG_PRINT_FORCE("manufacturer_id = 0x%x\n", manufacturer_id);
-	DEBUG_PRINT_FORCE("device_id = 0x%x\n", device_id);
-	#endif
 	
 #if 0 //@@@1
 	//------------------------------------------------------------
@@ -376,7 +357,6 @@ int hwInitialize2 (int mode)
 	int hsModeNew, hsModeOld;
 #endif
 
-#if 0	//@@@1
 	//------------------------------------------------------------
 	// FrameRate High Speed Mode取得
 	//------------------------------------------------------------
@@ -390,7 +370,6 @@ int hwInitialize2 (int mode)
 	if ((status = sensorFrameRateHighSpeedModeInitializeDefault ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
 #endif
-#endif //@@@1
 
 #if defined(MODE_TEMP)
 	//------------------------------------------------------------
@@ -402,20 +381,11 @@ int hwInitialize2 (int mode)
 
 	
 #if 0	//@@@1
-#if defined (MODE_PELTIER_CTRL)
-	//------------------------------------------------------------
-	// Peltier Control Initialize
-	//------------------------------------------------------------
-	if ((status = peltierControlInitiallize ()) != AVAL_STATUS_SUCCESS)
-		firmErrorAttention (status);
-#endif
-
-
 	//------------------------------------------------------------
 	// Timing Generator Version2初期化
 	//------------------------------------------------------------
-	if ((status = timingGeneratorVersion2Initalize ()) != AVAL_STATUS_SUCCESS)
-		firmErrorAttention (status);
+	//@@@1if ((status = timingGeneratorVersion2Initalize ()) != AVAL_STATUS_SUCCESS)
+		//@@@1firmErrorAttention (status);
 
 
 	if (mode == HW_INIT_MODE_POWER_ON)

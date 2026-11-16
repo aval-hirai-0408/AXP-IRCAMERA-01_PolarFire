@@ -114,7 +114,7 @@
 #define CXP_RATE_12_500GBPS					(0x58)
 
 // Timeout
-#define CXP_COMMAND_PACKET_TIMEOUT			(2500000)	// 5us
+#define CXP_COMMAND_PACKET_TIMEOUT			(25000)	// 5sec
 
 // Connection Test Size
 #define CXP_CONNECTION_TEST_SIZE_BYTE		(4096)

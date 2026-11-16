@@ -14,13 +14,13 @@
 // includes
 //----------------------------------------------------------------------------------
 #include "../Common/common.h"
+#include "sensorVendors.h"
 
 
 //----------------------------------------------------------------------------------
 // globals
 //----------------------------------------------------------------------------------
 int gInterFaceID = 0;
-int gSpectrumType = CAMERA_TYPE_NO_SPECTRUM;
 
 
 //**********************************************************************************
@@ -117,9 +117,9 @@ int getSpectrumType (int *pType)
 
 	// Check Camera ID
 #ifdef MODE_SPECTRUM
-		*pType = CAMERA_TYPE_SPECTRUM;
+	*pType = CAMERA_TYPE_SPECTRUM;
 #else
-		*pType = CAMERA_TYPE_NO_SPECTRUM;
+	*pType = CAMERA_TYPE_NO_SPECTRUM;
 #endif
 
 _DONE:
@@ -169,22 +169,121 @@ _DONE:
 //==================================================================================
 int boardReset (void)
 {
-	// Acquisition Abort
+	int status = AVAL_STATUS_SUCCESS;
+	unsigned char id;
+	int acTmg, regHold;
+	unsigned char data8;
+	unsigned int data32;
+	int i;
+
+	//------------------------------------------------------------
+	// 画像入力停止
+	//------------------------------------------------------------
 	OUT32 (GENICAM_ACQUISITION_START_ADRS, GENICAM_ACQUISITION_ABORT_BIT);
 
-	// TG UnLock
-	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_UNLOCK);
 
+	//------------------------------------------------------------
+	// StandBy
+	//------------------------------------------------------------
+	id = 0x02;
+	acTmg = 1;
+	regHold = 0;
+
+	data8 = SENSOR_REG_STANDBY_BIT;	// Standbyモード
+	if ((status = sensorRegWriteByte (id, SENSOR_REG_STANDBY_ADRS, data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	usDelay(200);		// 仕様上は150us Delay
+
+	//------------------------------------------------------------
+	// Sensor Output Disable
+	//------------------------------------------------------------
+	OUT32 (FPGA_SENSOR_IMG_CTRL_ADRS, 0);
+
+	//------------------------------------------------------------
+	// Sensor Temp Auto Refresh Disable
+	//------------------------------------------------------------
+	OUT32 (FPGA_SENSOR_TEMP_REFRESH_ADRS, 0);
+
+	//------------------------------------------------------------
+	// Set Sensor Input Ctrl Disable
+	//------------------------------------------------------------
+	//@@@1OUT32 (FPGA_SENSOR_INPUT_CTRL_ADRS, 0);
+
+#if !defined (MODE_SENSOR_MASTER)
+	//------------------------------------------------------------
 	// Disable Trg Control
-	sensorSetTrgControl (MODE_DISABLE);
+	//------------------------------------------------------------
+	if ((status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
-	usDelay (2);
+	//------------------------------------------------------------
+	// Disable HV Gen
+	//------------------------------------------------------------
+	//if ((status = sensorSetHvGen (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+		//goto _DONE;
+	OUT32 (FPGA_SENSOR_HV_GEN_ADRS, 0);
+#endif // #if defined (MODE_SENSOR_MASTER)
+	
+	//------------------------------------------------------------
+	// Master Mode
+	//------------------------------------------------------------
+#if defined (MODE_SENSOR_MASTER)
+	id = 2;
+	regHold = 0;
+	acTmg = 0;
 
-	// Acquisition Abort解除
-	//OUT32 (GENICAM_ACQUISITION_START_ADRS, 0);
+	data8 = 1;	// 動作停止
+	if ((status = sensorRegWriteByte (id, SENSOR_REG_XMSTA_ADRS, data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+#endif
 
-	usDelay (300);
+	//------------------------------------------------------------
+	// VR_EN
+	//------------------------------------------------------------
+	id = 0x1c;
+	acTmg = 0;
+	regHold = 0;
 
+	if ((status = sensorRegReadByte (id, SENSOR_REG_POWER_ADRS, &data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	data8 &= ~SENSOR_REG_VR_EN;
+	if ((status = sensorRegWriteByte (id, SENSOR_REG_POWER_ADRS, data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	//------------------------------------------------------------
+	// VR_RG_DIS
+	//------------------------------------------------------------
+	id = 0x1c;
+	acTmg = 0;
+	regHold = 0;
+
+	if ((status = sensorRegReadByte (id, SENSOR_REG_POWER_OFF_ADRS, &data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	data8 |= SENSOR_REG_DIS;
+	if ((status = sensorRegWriteByte (id, SENSOR_REG_POWER_OFF_ADRS, data8, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// 仕様上は4ms
+	msDelay (5);
+
+	// Sensor Power Off
+	data32 = IN32 (FPGA_SENSOR_INIT_SEQUENCE_ADRS);
+	data32 &= ~FPGA_SENSOR_INIT_SEQUENCE_POWERON_BIT;
+	OUT32 (FPGA_SENSOR_INIT_SEQUENCE_ADRS, data32);
+
+	for (i=0; i<SENSOR_POWEROFF_TIMEOUT; i++)
+	{
+		data32 = IN32 (FPGA_SENSOR_INIT_SEQUENCE_ADRS);
+		//@@@1if (data32 & FPGA_SENSOR_INIT_SEQUENCE_POWEROFF_END_BIT)
+			//@@1break;
+
+		usDelay (2);
+	}
+
+_DONE:
 	return (AVAL_STATUS_SUCCESS);
 }
 

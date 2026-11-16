@@ -231,8 +231,6 @@ int cxpUserInit (void)
 	Flash_UserSetSave = 0;
 	Flash_UserSetDefault = CAMERA_SAVE_USER_NUM;
 
-//@@@1
-#if 0
 	//------------------------------------------------------------
 	// Counter
 	//------------------------------------------------------------
@@ -240,11 +238,8 @@ int cxpUserInit (void)
 	Counter_CounterSelector = IN32(GENICAM_COUNTER_SELECT_ADRS);
 #endif
 
-	//------------------------------------------------------------
-	// Initiates the CounterDiagnosticValue on the DDR:
-	//------------------------------------------------------------
-	//@@@1for (i = ARM1_DIAG_VALUE_START_ADRS; i <= ARM1_DIAG_VALUE_END_ADRS; i += 4)
-		//@@@1OUT32(i, 0);
+//@@@1
+#if 0
 
 	//------------------------------------------------------------
 	// LUT
@@ -290,6 +285,7 @@ int cxpUserInit (void)
 	DefectPixelCorrection_AdjustFfcSelector = 0;
 	DefectPixelCorrection_AdjustBrightSelector = 0;
 #endif
+#endif//@@@1
 
 
 	//---------------------------------------------------------------
@@ -319,8 +315,6 @@ int cxpUserInit (void)
 #if defined (MODE_SENSOR_DRRS)
 	sensorGetDrrs (&gDrrsMode);
 #endif
-
-#endif//@@@1
 
 	
 	//---------------------------------------------------------------
@@ -898,31 +892,23 @@ int cxpIpInitialize (void)
 
 //@@@@1
 	DEBUG_PRINT_FORCE("Param0\n");
-#if 0
-	while(1)
-		{
-            if (_kbhit(&c))
-            {
-                if (c == 'q')
-                    break;
-            }
-		}
-#endif
-//@@@@1
 
-	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, 2560);
+	//@@@1OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, 2560);
+	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, 2592);
 
 //@@@@1
 	DEBUG_PRINT_FORCE("Param1\n");
 //@@@@1
 
-	OUT32(FPGA_CXP_S0_YSIZE_OFFSET_ADRS, 2048);
+	//@@@1OUT32(FPGA_CXP_S0_YSIZE_OFFSET_ADRS, 2048);
+	OUT32(FPGA_CXP_S0_YSIZE_OFFSET_ADRS, 2056);
 
 //@@@@1
 	DEBUG_PRINT_FORCE("Param2\n");
 //@@@@1
 
-	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (2560*8/32));
+	//OUT32(FPGA_CXP_S0_DSIZE_ADRS, (2560*8/32));
+	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (2592*8/32));
 
 //@@@@1
 	DEBUG_PRINT_FORCE("Param3\n");
@@ -934,43 +920,8 @@ int cxpIpInitialize (void)
 	DEBUG_PRINT_FORCE("Param4\n");
 //@@@@1
 
-	OUT32(FPGA_CXP_TEST_PATTERN_WIDTH_HEIGHT_ADRS, 0x08000A00);
+	//@@@2OUT32(FPGA_CXP_TEST_PATTERN_WIDTH_HEIGHT_ADRS, 0x08000A00);
 
-	return (status);
-}
-
-//**********************************************************************************
-//	Cmd Interrupt Mode
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		mode				:MODE_DISABLE/MODE_ENABLE
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int cmdInterruptMode (int mode)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	
-	// Check mode Parameter
-	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "CXP Cmd Interrupt Mode(%d) Parameter Error. (Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__,  __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-	
-	if (gInterFaceID == INTERFACE_CXP)
-	{
-		//@@@1
-	}
-	else if ((gInterFaceID == INTERFACE_GIGE) || (gInterFaceID == INTERFACE_GIGE20))
-	{
-		//@@@1
-	}
-	
-_DONE:
 	return (status);
 }
 

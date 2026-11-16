@@ -62,8 +62,16 @@ int cmdTgse (void *str)
 			goto _DONE;
 		}
 
+		// Disable Trg Control
+		if ((status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+
 		// TGSE設定
-		if ((status = tgSetTgse (data)) != AVAL_STATUS_SUCCESS)
+		if ((status = tgSetTgse2 (data)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+		
+		// Enable Trg Control
+		if ((status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
 	else
@@ -153,8 +161,16 @@ int cmdTges (void *str)
 			goto _DONE;
 		}
 
+		// Disable Trg Control
+		if ((status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+
 		// TGES設定
-		if ((status = tgSetTges (data)) != AVAL_STATUS_SUCCESS)
+		if ((status = tgSetTges2 (data)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+		
+		// Enable Trg Control
+		if ((status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
 	else
@@ -244,8 +260,16 @@ int cmdTgpd (void *str)
 			goto _DONE;
 		}
 
+		// Disable Trg Control
+		if ((status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+
 		// TGPD設定
-		if ((status = tgSetTgpd (data)) != AVAL_STATUS_SUCCESS)
+		if ((status = tgSetTgpd2 (data)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+		
+		// Enable Trg Control
+		if ((status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
 	else

@@ -56,7 +56,8 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 
 	{FPGA_PELTIER_SENSOR_ALM_ADRS, 				((SENSOR_DEFAULT_HIGH_TEMP<<16) | SENSOR_DEFAULT_LOW_TEMP),	CAMERA_SAVE_MODE_DATA},	// Sensor Alarm(0x88)
 	{FPGA_PELTIER_CASE_ALM_ADRS, 			 	((CASE_DEFAULT_HIGH_TEMP<<16)   | CASE_DEFAULT_LOW_TEMP),	CAMERA_SAVE_MODE_DATA},	// Case Alarm(0x90)
-	{FPGA_TEMP_ALARM_ADRS,		 				((FPGA_DEFAULT_HIGH_TEMP<<16) | FPGA_DEFAULT_LOW_TEMP),	CAMERA_SAVE_MODE_DATA},		// FPGA Alarm(0x98)
+	//{FPGA_TEMP_ALARM_ADRS,		 				((FPGA_DEFAULT_HIGH_TEMP<<16) | FPGA_DEFAULT_LOW_TEMP),	CAMERA_SAVE_MODE_DATA},		// FPGA Alarm(0x98)
+	{CAMERA_SAVE_RESERVE,		 				0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x98)
 
 	#if defined (MODE_PELTIER_CTRL)
 	{FIRM_DATA_SENSOR_PERTIER_MODE,				0x01,						CAMERA_SAVE_MODE_DATA},			// センサペルチェモード(0xA0)
@@ -78,7 +79,8 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xF0)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xF8)
 
-	
+
+#if 0	//@@@1
 	//------------------------------------------------------------------------------------------
 	// FFC
 	//------------------------------------------------------------------------------------------
@@ -99,7 +101,29 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x168)
 	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x170)
 	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x178)
+#else	//@@@1
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x120)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x128)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x130)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x138)
+	
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x120)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x128)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x130)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x138)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x140)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x148)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x150)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x158)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x160)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x168)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x170)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x178)
+	
+#endif //@@@1
 
+
+#if 0//@@@1
 
 	//------------------------------------------------------------------------------------------
 	// DPC
@@ -121,11 +145,33 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1e8)
 	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1f0)
 	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1f8)
+#else//@@@1
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1a8)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1b0)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1b8)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1c0)
+	
+	
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1a8)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1b0)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1b8)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1c0)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1c8)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1d0)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1d8)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1e0)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1e8)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1f0)
+	{CAMERA_SAVE_RESERVE, 						0x00, 						CAMERA_SAVE_MODE_NONE},			// Reserve(0x1f8)
+	
+#endif//@@@1
+
 
 	//------------------------------------------------------------------------------------------
 	// LUT
 	//------------------------------------------------------------------------------------------
-#if defined (MODE_LUT)
+#if 0//@@@1
+//@@@1#if defined (MODE_LUT)
 	{FPGA_LUT_CTRL_ADRS, 						0x00, 						CAMERA_SAVE_MODE_REG_REF},		// LUTイネーブル(0x200)
 	{0x00, 										LUT_DEFAULT_BIN_THRESHOLD, 	CAMERA_SAVE_MODE_WRITE_OTHER},	// LUT1 2値化しきい値(特殊)(0x208)
 	{0x00, 										LUT_DEFAULT_BIN_THRESHOLD, 	CAMERA_SAVE_MODE_WRITE_OTHER},	// LUT2 2値化しきい値(特殊)(0x210)
@@ -144,7 +190,7 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x278)
 
 #else //#if defined (MODE_LUT)
-
+	
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x200)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x208)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x210)
@@ -164,6 +210,8 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 #endif //#if defined (MODE_LUT)
 
 
+//@@@1
+#if 0
 	//------------------------------------------------------------------------------------------
 	// AOI
 	//------------------------------------------------------------------------------------------
@@ -193,8 +241,29 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2e8)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2f0)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2f8)
+#else
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2a0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2a0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2a0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2a0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2a0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2a0)
 
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2a8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2b0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2b8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2c0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2c8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2d0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2d8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2e0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2e8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2f0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x2f8)
 
+	#endif//@@@1
+
+#if 0	//@@@1
 	//------------------------------------------------------------------------------------------
 	// Acquisition Control
 	//------------------------------------------------------------------------------------------
@@ -275,7 +344,85 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4e8)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4f0)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4f8)
+#else //@@@1
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x348)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x348)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x348)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x348)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x348)
 
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x348)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x348)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x348)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x348)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x348)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x350)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x358)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x360)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x368)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x370)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x378)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x420)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x428)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x430)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x438)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x438)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x420)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x428)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x430)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x438)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x438)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x420)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x428)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x430)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x438)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x438)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x420)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x428)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x430)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x438)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x438)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x420)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x428)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x430)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x438)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x440)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x448)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x450)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x458)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x460)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x468)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x470)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x478)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x480)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x488)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x490)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x498)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4a0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4a8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4b0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4b8)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4c0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4c8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4d0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4d8)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4e0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4e8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4f0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x4f8)
+#endif	//@@@1
 
 #if defined (MODE_GENICAM_COUNTER)
 	//------------------------------------------------------------------------------------------
@@ -301,25 +448,21 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	{GENICAM_COUNTER1_TRG_SOURCE_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter1 Trg Source(0x560)
 	{GENICAM_COUNTER1_TRG_ACTIVE_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter1 Trg Active(0x568)
 
-	{GENICAM_COUNTER2_EVENT_SOURCE_ADRS,		0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter2 Event Source(0x570)
-	{GENICAM_COUNTER2_EVENT_ACTIVE_ADRS,		0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter2 Event Active(0x578)
-	{GENICAM_COUNTER2_RESET_SOURCE_ADRS,		0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter2 Reset Source(0x580)
-	{GENICAM_COUNTER2_RESET_ACTIVE_ADRS,		0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter2 Reset Active(0x588)
-//	{GENICAM_COUNTER2_VALUE_ADRS,				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter2 Value
-//	{GENICAM_COUNTER2_VALUE_AT_RESET_ADRS,		0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter2 Value at Reset
-	{GENICAM_COUNTER2_DURATION_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter2 Duration(0x590)
-	{GENICAM_COUNTER2_TRG_SOURCE_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter2 Trg Source(0x598)
-	{GENICAM_COUNTER2_TRG_ACTIVE_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter2 Trg Active(0x5a0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x570)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x578)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x580)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x588)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x590)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x598)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x5a0)
 
-	{GENICAM_COUNTER3_EVENT_SOURCE_ADRS,		0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter3 Event Source(0x5a8)
-	{GENICAM_COUNTER3_EVENT_ACTIVE_ADRS,		0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter3 Event Active(0x5b0)
-	{GENICAM_COUNTER3_RESET_SOURCE_ADRS,		0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter3 Reset Source(0x5b8)
-	{GENICAM_COUNTER3_RESET_ACTIVE_ADRS,		0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter3 Reset Active(0x5c0)
-//	{GENICAM_COUNTER3_VALUE_ADRS,				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter3 Value
-//	{GENICAM_COUNTER3_VALUE_AT_RESET_ADRS,		0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter3 Value at Reset(0x5c8)
-	{GENICAM_COUNTER3_DURATION_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter3 Duration(0x5d0)
-	{GENICAM_COUNTER3_TRG_SOURCE_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter3 Trg Source(0x5d8)
-	{GENICAM_COUNTER3_TRG_ACTIVE_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter3 Trg Active(0x5e0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x5a8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x5b0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x5b8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x5c0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x5c8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x5d0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x5d8)
 
 	{GENICAM_COUNTER_SELECT_ADRS, 				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Counter Selector(0x5e0)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x5e8)
@@ -364,6 +507,7 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x5e8)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x5f0)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x5f8)
+
 #endif
 
 
@@ -383,17 +527,15 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	{GENICAM_TIMER1_SOURCE_ADRS,				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Timer1 Source(0x630)
 	{GENICAM_TIMER1_ACTIVE_ADRS,				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Timer1 Activation(0x638)
 
-	{GENICAM_TIMER2_DURATION_ADRS,				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Timer2 Duration(0x640)
-	{GENICAM_TIMER2_DELAY_ADRS,					0x00,						CAMERA_SAVE_MODE_REG_REF},		// Timer2 Delay(0x648)
-//	{GENICAM_TIMER2_VALUE_ADRS,					0x00,						CAMERA_SAVE_MODE_REG_REF},		// Timer2 Value
-	{GENICAM_TIMER2_SOURCE_ADRS,				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Timer2 Source(0x650)
-	{GENICAM_TIMER2_ACTIVE_ADRS,				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Timer2 Activation(0x658)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x640)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x648)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x650)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x658)
 
-	{GENICAM_TIMER3_DURATION_ADRS,				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Timer3 Duration(0x660)
-	{GENICAM_TIMER3_DELAY_ADRS,					0x00,						CAMERA_SAVE_MODE_REG_REF},		// Timer3 Delay(0x668)
-//	{GENICAM_TIMER3_VALUE_ADRS,					0x00,						CAMERA_SAVE_MODE_REG_REF},		// Timer3 Value
-	{GENICAM_TIMER3_SOURCE_ADRS,				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Timer3 Source(0x670)
-	{GENICAM_TIMER3_ACTIVE_ADRS,				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Timer3 Activation(0x678)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x660)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x668)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x670)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0x678)
 
 #else
 
@@ -422,7 +564,8 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	//------------------------------------------------------------------------------------------
 	// Encoder Control
 	//------------------------------------------------------------------------------------------
-#if defined (MODE_ENCODER)
+#if 0	//@@@1
+//@@@1#if defined (MODE_ENCODER)
 	{GENICAM_ENCODER_0_PASEA_TRG_SOURCE_ADRS,	0x00,						CAMERA_SAVE_MODE_REG_REF},		// PhaseA Trg Source(0x680)
 	{GENICAM_ENCODER_0_PASEB_TRG_SOURCE_ADRS,	0x00,						CAMERA_SAVE_MODE_REG_REF},		// PhaseB Trg Source(0x688)
 	{GENICAM_ENCODER_0_MODE_ADRS,				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Mode(0x690)
@@ -518,74 +661,71 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x830)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x838)
 
-	// Line5
-	{GENICAM_DIGITAL_LINE5_MODE_ADRS, 			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Line5 Mode(0x840)
-	{GENICAM_DIGITAL_LINE5_INVERT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Line5 Inverter(0x848)
-	{GENICAM_DIGITAL_LINE5_SOURCE_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Line5 Source(0x850)
-	{GENICAM_DIGITAL_LINE5_FORMAT_ADRS, 		0x00,						CAMERA_SAVE_MODE_REG_REF},		// Line5 Format(0x858)
-	{GENICAM_DIGITAL_LINE5_DNF_ADRS, 			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Line5 Dnf(0x860)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x840)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x848)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x850)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x858)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x860)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x868)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x870)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x878)
 
-	// Line6
-	{GENICAM_DIGITAL_LINE6_MODE_ADRS, 			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Line6 Mode(0x980)
-	{GENICAM_DIGITAL_LINE6_INVERT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Line6 Inverter(0x988)
-	{GENICAM_DIGITAL_LINE6_SOURCE_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Line6 Source(0x990)
-	{GENICAM_DIGITAL_LINE6_FORMAT_ADRS, 		0x00,						CAMERA_SAVE_MODE_REG_REF},		// Line6 Format(0x998)
-	{GENICAM_DIGITAL_LINE6_DNF_ADRS, 			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Line6 Dnf(0x9A0)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x9A8)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x9B0)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x9B8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x880)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x888)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x890)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x898)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x8a0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x8a8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x8b0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x8b8)
 
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x9C0)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x9C8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x8c0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x8c8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x8d0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x8d8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x8e0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x8e8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x8f0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x8f8)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x900)
+	{CAMERA_SAVE_RESERVE,						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x908)
+	{CAMERA_SAVE_RESERVE,						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x910)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x918)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x920)
+	{CAMERA_SAVE_RESERVE,						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x928)
+	{CAMERA_SAVE_RESERVE,						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x930)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x938)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x940)
+	{CAMERA_SAVE_RESERVE,						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x948)
+	{CAMERA_SAVE_RESERVE,						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x950)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x958)
+
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x960)
+	{CAMERA_SAVE_RESERVE,						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x968)
+	{CAMERA_SAVE_RESERVE,						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x970)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x978)
+
+	// User Outout
+	{GENICAM_DIGITAL_USER_MASK_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// User Mask(0x980)
+	{CAMERA_SAVE_RESERVE,						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x988)
+	{CAMERA_SAVE_RESERVE,						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x990)
+	{CAMERA_SAVE_RESERVE,						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x998)
+	{GENICAM_DIGITAL_USER3_OUTPUT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// User3 Output(0x9A0)
+	{GENICAM_DIGITAL_USER4_OUTPUT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// User4 Output(0x9A8)
+	{CAMERA_SAVE_RESERVE,						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x9B0)
+	{CAMERA_SAVE_RESERVE,						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x9B8)
+
+	{GENICAM_DIGITAL_LINE_SELECT_ADRS, 			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Line Selector(0x9C0)
+	{GENICAM_DIGITAL_USER_SELECT_ADRS, 			0x00,						CAMERA_SAVE_MODE_REG_REF},		// User Selector(0x9C8)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x9D0)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x9D8)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x9E0)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x9E8)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x9F0)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0x9F8)
-
-	// CC
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA00)
-	{GENICAM_DIGITAL_CC1_INVERT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// CC1 Inverter(0xA08)
-	{GENICAM_DIGITAL_CC1_SOURCE_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// CC1 Source(0xA10)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA18)
-
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA20)
-	{GENICAM_DIGITAL_CC2_INVERT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// CC2 Inverter(0xA28)
-	{GENICAM_DIGITAL_CC2_SOURCE_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// CC2 Source(0xA30)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA38)
-
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA40)
-	{GENICAM_DIGITAL_CC3_INVERT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// CC3 Inverter(0xA48)
-	{GENICAM_DIGITAL_CC3_SOURCE_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// CC3 Source(0xA50)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA58)
-
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA60)
-	{GENICAM_DIGITAL_CC4_INVERT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// CC4 Inverter(0xA68)
-	{GENICAM_DIGITAL_CC4_SOURCE_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// CC4 Source(0xA70)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA78)
-
-	// User Outout
-	{GENICAM_DIGITAL_USER_MASK_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// User Mask(0xA80)
-	{GENICAM_DIGITAL_USER0_OUTPUT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// User0 Output(0xA88)
-	{GENICAM_DIGITAL_USER1_OUTPUT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// User1 Output(0xA90)
-	{GENICAM_DIGITAL_USER2_OUTPUT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// User2 Output(0xA98)
-	{GENICAM_DIGITAL_USER3_OUTPUT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// User3 Output(0xAA0)
-	{GENICAM_DIGITAL_USER4_OUTPUT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// User4 Output(0xAA8)
-	{GENICAM_DIGITAL_USER5_OUTPUT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// User5 Output(0xAB0)
-	{GENICAM_DIGITAL_USER6_OUTPUT_ADRS,			0x00,						CAMERA_SAVE_MODE_REG_REF},		// User6 Output(0xAB8)
-
-	{GENICAM_DIGITAL_LINE_SELECT_ADRS, 			0x00,						CAMERA_SAVE_MODE_REG_REF},		// Line Selector(0xAC0)
-	{GENICAM_DIGITAL_USER_SELECT_ADRS, 			0x00,						CAMERA_SAVE_MODE_REG_REF},		// User Selector(0xAC8)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xAD0)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xAD8)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xAE0)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xAE8)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xAF0)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xAF8)
 
 #else // #if defined (MODE_GENICAM_DIGITALIO)
 
@@ -699,7 +839,8 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	//------------------------------------------------------------------------------------------
 	// ROI
 	//------------------------------------------------------------------------------------------
-#if defined (MODE_ROI_VERSION2)
+//@@@1#if defined (MODE_ROI_VERSION2)
+#if 0//@@@1
 	{FPGA_ROI_CAMERA_Y0_ADRS, 					DEFAULT_ROI_HEIGHT0,		CAMERA_SAVE_MODE_DATA},			// Height0(FPGA/Sensor)(0xA00)
 	{FPGA_ROI_CAMERA_Y1_ADRS, 					0x00,						CAMERA_SAVE_MODE_REG_REF},		// Height1(FPGA/Sensor)(0xA08)
 	{FPGA_ROI_CAMERA_Y2_ADRS, 					0x00,						CAMERA_SAVE_MODE_REG_REF},		// Height2(FPGA/Sensor)(0xA10)
@@ -821,11 +962,17 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	//------------------------------------------------------------------------------------------
 	// Digital Offset Gain
 	//------------------------------------------------------------------------------------------
+#if 0//@@@1
 	{FPGA_DOG_CTRL_ADRS,						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Offset/Gainイネーブル(0xB80)
 	{FPGA_DOG_OFFSET1_ADRS, 					0x00,						CAMERA_SAVE_MODE_REG_REF},		// Offset 1st(0xB88)
 	{FPGA_DOG_GAIN_ADRS, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Gain(0xB90)
 	{FPGA_DOG_OFFSET2_ADRS,		 				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Offset 2nd(0xB98)
-
+#else//@@@1
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xBA0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xBA8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xBB0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xBB8)
+#endif//@@@1
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xBA0)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xBA8)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xBB0)
@@ -846,7 +993,8 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	//------------------------------------------------------------------------------------------
 	// Bining
 	//------------------------------------------------------------------------------------------
-#if defined (MODE_BINNING)
+//@@@1#if defined (MODE_BINNING)
+#if 0	//@@@1
 	{FPGA_BINNING_CTRL_ADRS, 					0x00,						CAMERA_SAVE_MODE_REG_REF},		// Binning(0xC00)
 	{FPGA_BINNING_DIVIDE_ADRS, 					0x00,						CAMERA_SAVE_MODE_REG_REF},		// Binning Divide(0xC08)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0xC10)
@@ -951,7 +1099,8 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	//------------------------------------------------------------------------------------------
 	// CXP
 	//------------------------------------------------------------------------------------------
-#if defined (MODE_CXP)
+//@@@1#if defined (MODE_CXP)
+#if 0//@@@1
 	{FIRM_DATA_CXP_COMPLIANCE_TEST_MODE_ADRS,	0x00,						CAMERA_SAVE_MODE_DATA},			// Copmliance Test(0xD20)
 	{FIRM_DATA_CXP_CONNECTION_CONFIG,	DEFAULT_CONNECTION_CONFIG_DEFAULT,	CAMERA_SAVE_MODE_DATA},			// Copmliance Test(0xD28)
 #else
@@ -1004,22 +1153,22 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 
 #else // #if defined (MODE_SPECTRUM)
 
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xD80)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xD88)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xD90)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xD98)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xDA0)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xDA8)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xDB0)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xDB8)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xDC0)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xDC8)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xDD0)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xDD8)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xDE0)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xDE8)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xDF0)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_REG_REF},		// Reserve(0xDF8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xD80)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xD88)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xD90)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xD98)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xDA0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xDA8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xDB0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xDB8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xDC0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xDC8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xDD0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xDD8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xDE0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xDE8)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},				// Reserve(0xDF0)
+	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},		// Reserve(0xDF8)
 
 #endif // #if defined (MODE_SPECTRUM)
 

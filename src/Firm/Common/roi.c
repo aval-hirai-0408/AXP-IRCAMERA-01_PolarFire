@@ -540,7 +540,7 @@ int aoiSetWidth (int size)
 	int rOffset, rSize;
 	int offset;
 	int valid;
-	int mode = MODE_DISABLE;
+	int binnningNum = 1;
 #if defined (MODE_CXP)
 	int cxpPort = 0;
 #endif
@@ -554,58 +554,35 @@ int aoiSetWidth (int size)
 	//OUT32(FPGA_CXP_S0_DSIZE_ADRS, (size*8/32));
 	OUT32(FPGA_CXP_S0_DSIZE_ADRS, (size/4));
 	
+#if 0   //@@@1
 	rOffset = IN32(FPGA_CXP_TEST_PATTERN_WIDTH_HEIGHT_ADRS);
 	rOffset &= 0xffff0000;
 	rOffset |= size;
 	OUT32(FPGA_CXP_TEST_PATTERN_WIDTH_HEIGHT_ADRS, rOffset);
-	
+#endif//@@@1
 	goto _DONE;
 	//@@@1
-	
-	
+
 	// Width Min取得
-	widthMinSize = ROI_WIDTH_ALIGH;
+	widthMinSize = WidthMin();
 
 	// Width Max取得
 	widthMaxSize = WidthMax();
 
-
 #if defined(MODE_BINNING)
-	if ((status = aoiGetBinningX (&mode)) != AVAL_STATUS_SUCCESS)
+	if ((status = aoiGetBinningX (&binnningNum)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	if (mode != MODE_DISABLE)
-		size *= mode;
+	size *= binnningNum;
 #endif
 
-	if (mode == MODE_DISABLE)
-		binningNum = 1;
-	else
-		binningNum = mode;
-
-#if defined (MODE_CXP)
-	if (gInterFaceID == INTERFACE_CXP)
+	// Check size Parameter
+	if (((size/binningNum) < widthMinSize) || (size > widthMaxSize))
 	{
-		// Check size Parameter
-		if ((size < CXP_WIDTH_MIN) || (size > widthMaxSize))
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Width Set Size(%d) Parameter Error.(Min:%d / Max:%d)\n", size / binningNum, CXP_WIDTH_MIN, widthMaxSize / binningNum);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-	}
-	else
-#endif // #if defined (MODE_CXP)
-	{
-		// Check size Parameter
-		if (((size/binningNum) < widthMinSize) || (size > widthMaxSize))
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Width Set Size(%d) Parameter Error.(Min:%d / Max:%d)\n", size / binningNum, widthMinSize, widthMaxSize / binningNum);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Width Set Size(%d) Parameter Error.(Min:%d / Max:%d)\n", size / binningNum, widthMinSize, widthMaxSize / binningNum);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
 	}
 
 	// Check size Align Parameters
@@ -618,80 +595,13 @@ int aoiSetWidth (int size)
 	}
 
 	// Check size Align Parameters
-	if (((size/binningNum) % ROI_FPGA_WIDTH_SIZE_ALIGH) != 0)
+	if (((size/binningNum) % (ROI_FPGA_WIDTH_SIZE_ALIGH/binningNum)) != 0)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Width Set Size Align(%d) Parameter Error. Align = %d.\n", size / binningNum, ROI_FPGA_WIDTH_SIZE_ALIGH);
+		sprintf (gLogMsgBuff, "Width Set Size Align(%d) Parameter Error. Align = %d.\n", size / binningNum, ROI_FPGA_WIDTH_SIZE_ALIGH / binningNum);
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
-
-#if defined(MODE_BINNING)
-	if (gInterFaceID != INTERFACE_CXP)
-	{
-		// Check size Even number Parameters
-		if ((size % 2) != 0)
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Width Set Even number(%d) Parameter Error.\n", size);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-	}
-#endif
-
-#if defined (MODE_CXP)
-	if (gInterFaceID == INTERFACE_CXP)
-	{
-		// Check Size
-		if (size < CXP_WIDTH_MIN)
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Width Set Size(%d) Parameter Error. (Min:%d / Max:%d)\n", size / binningNum, CXP_WIDTH_MIN, widthMaxSize / binningNum);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-
-		// CXPは32画素単位にする
-		if ((size % CXP_WIDTH_ALIGH) != 0)
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Width Set Size Align(%d) Parameter Error. Align = %d.\n",  size / binningNum, CXP_WIDTH_ALIGH);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-
-
-	#if defined(MODE_BINNING)
-		// 最小画素は128はCXP側の制限。
-		// ビニング時は2倍した256が最小。
-		// センサは256画素の画素を取得し、ビニングで128画素に縮小。
-		// CXPで転送する最小サイズは128画素となるのでビニング時は2倍。
-
-		if(mode == MODE_ENABLE)
-		{
-			// Check Size
-			if (size < (CXP_WIDTH_MIN * binningNum))
-			{
-				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "Width Set Size(%d) Parameter Error.(Min:%d / Max:%d)\n", size / binningNum, CXP_WIDTH_MIN * binningNum, widthMaxSize / binningNum);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-				goto _DONE;
-			}
-
-			// ビニング時はbinningNum画素単位にする
-			if ((size % (CXP_WIDTH_ALIGH * binningNum)) != 0)
-			{
-				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "Width Set Size Align(%d) Parameter Error. Align = %d.\n", size / binningNum, CXP_WIDTH_ALIGH * binningNum);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-				goto _DONE;
-			}
-
-		}
-	#endif	// #if defined(MODE_BINNING)
-	}
-#endif
 
 	// WidthはSelector=0のみ
 	selector = 0;
@@ -702,13 +612,9 @@ int aoiSetWidth (int size)
 
 	// オフセット格納
 	if (rOffset < IMG_WIDTH_OFFSET)
-	{
 		rOffset = 0;
-	}
 	else
-	{
 		rOffset -= IMG_WIDTH_OFFSET;
-	}
 
 	// オフセット設定
 	offset = rOffset;
@@ -739,11 +645,8 @@ int aoiSetWidth (int size)
 	if (gInterFaceID == INTERFACE_CXP)
 	{
 		#if defined(MODE_BINNING)
-		if(mode != MODE_DISABLE)
-		{
-			size /= mode;
-			offset /= mode;
-		}
+		size /= binnningNum;
+		offset /= binnningNum;
 		#endif // #if defined(MODE_BINNING)
 
 		// CXP Port取得
@@ -781,7 +684,7 @@ int aoiGetWidth (int *pSize)
 	int rOffset, rSize;
 	int valid;
 #if defined(MODE_BINNING)
-	int mode = MODE_DISABLE;
+	int binningNum = 1;
 #endif
 
 	//@@@1
@@ -793,7 +696,7 @@ int aoiGetWidth (int *pSize)
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Width Get pSize NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Width Get NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -809,22 +712,18 @@ int aoiGetWidth (int *pSize)
 	*pSize = rSize;
 
 #if defined(MODE_BINNING)
-
-	if ((status = aoiGetBinningX (&mode)) != AVAL_STATUS_SUCCESS)
+	// Get BinningX
+	if ((status = aoiGetBinningX (&binningNum)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	if(mode != MODE_DISABLE)
-	{
-		// rSizeはスルー
-		if(rSize <= (mode-1))
-			goto _DONE;
+	// rSizeはスルー
+	if(rSize <= (binningNum-1))
+		goto _DONE;
 
-		if((rSize % mode) == 0)
-			*pSize /= mode;
-		else
-			*pSize = (rSize & ~(mode - 1)) / mode;
-	}
-
+	if((rSize % binningNum) == 0)
+		*pSize /= binningNum;
+	else
+		*pSize = (rSize & ~(binningNum - 1)) / binningNum;
 #endif
 
 _DONE:
@@ -850,7 +749,7 @@ int aoiSetWidthOffset (int offset)
 	int size;
 	int valid;
 	int mode = MODE_DISABLE;
-	int binningNum;
+	int binningNum = 1;
 #if defined(MODE_BINNING) && defined (MODE_CXP)
 	int offsetHalf, maxSizeHalf;
 #endif
@@ -862,97 +761,22 @@ int aoiSetWidthOffset (int offset)
 	widthMaxSize = WidthMax();
 
 #if defined(MODE_BINNING)
-	if ((status = aoiGetBinningX (&mode)) != AVAL_STATUS_SUCCESS)
+	if ((status = aoiGetBinningX (&binningNum)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	//ビニング有効時の設定値は倍
-	if(mode != MODE_DISABLE)
-		offset *= mode;
+	offset *= binningNum;
 #endif
 
-	if (mode == MODE_DISABLE)
-		binningNum = 1;
-	else
-		binningNum = mode;
-
-#if defined (MODE_CXP)
 	// Check offset Parameter
-	if (gInterFaceID == INTERFACE_CXP)
+	if ((offset < 0) || (offset > (widthMaxSize-ROI_FPGA_WIDTH_SIZE_ALIGH*binningNum)))
 	{
-		if ((offset < 0) || (offset > widthMaxSize-CXP_WIDTH_MIN))
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Width Set Offset(%d) Parameter Error.(Min:%d / Max:%d)\n", offset / binningNum, 0, (widthMaxSize / binningNum) - CXP_WIDTH_MIN);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
+		sprintf (gLogMsgBuff, "Width Set Offset(%d) Parameter Error.(Min:%d / Max:%d)\n", offset / binningNum, 0, (widthMaxSize / binningNum) - ROI_FPGA_WIDTH_SIZE_ALIGH);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
+		goto _DONE;
 	}
-	else
-#endif
-	{
-		if ((offset < 0) || (offset > (widthMaxSize-ROI_FPGA_WIDTH_SIZE_ALIGH*binningNum)))
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Width Set Offset(%d) Parameter Error.(Min:%d / Max:%d)\n", offset / binningNum, 0, (widthMaxSize / binningNum) - ROI_FPGA_WIDTH_SIZE_ALIGH);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-	}
-
-#if defined(MODE_BINNING)
-	if (gInterFaceID != INTERFACE_CXP)
-	{
-		// Check size Even number Parameters
-		if ((offset % mode) != 0)
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Width Set Offset Even number(%d) Parameter Error.\n", offset / binningNum);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}		
-	}
-#endif // #if defined(MODE_BINNING)
-
-#if defined (MODE_CXP)
-	if (gInterFaceID == INTERFACE_CXP)
-	{
-		#if defined(MODE_BINNING)
-		if(mode != MODE_DISABLE)
-		{
-			// Check offset Parameter
-			offsetHalf = offset / mode;
-			maxSizeHalf = (widthMaxSize/mode) - CXP_WIDTH_MIN;
-
-			if (offsetHalf > maxSizeHalf)
-			{
-				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "Width Set Offset(%d) Parameter Error.(Min:%d / Max:%d)\n", offsetHalf, 0, maxSizeHalf);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-				goto _DONE;
-			}
-
-			// CXPは64画素単位にする
-			if ((offset % (CXP_WIDTH_ALIGH * binningNum)) != 0)
-			{
-				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "Width Set Offset Align(%d) Parameter Error. Align = %d.\n", offset / binningNum, CXP_WIDTH_ALIGH);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-				goto _DONE;
-			}
-		}
-		#endif // #if defined(MODE_BINNING)
-
-		// CXPは32画素単位にする
-		if ((offset % (CXP_WIDTH_ALIGH)) != 0)
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Width Set Offset Align(%d) Parameter Error. Align = %d.\n", offset / binningNum, CXP_WIDTH_ALIGH);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-	}
-#endif	// #if defined (MODE_CXP)
-
+	
 	// Check offset Align Parameters
 	if (((offset / binningNum) % ROI_FPGA_WIDTH_OFFSET_ALIGH) != 0)
 	{
@@ -988,14 +812,11 @@ int aoiSetWidthOffset (int offset)
 	if (gInterFaceID == INTERFACE_CXP)
 	{
 		#if defined(MODE_BINNING)
-		if(mode != MODE_DISABLE)
-		{
-			size /= mode;
-			offset /= mode;
-		}
+		size /= binningNum;
+		offset /= binningNum;
 		#endif // #if defined(MODE_BINNING)
 
-		// CXp Port取得
+		// CXP Port取得
 		if ((status = cxpGetPort (&cxpPort)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
@@ -1030,14 +851,14 @@ int aoiGetWidthOffset (int *pOffset)
 	int rOffset, rSize, tmpOffset;
 	int valid;
 #if defined(MODE_BINNING)
-	int mode = MODE_DISABLE;
+	int binningNum = 1;
 #endif
 
 	// Check pOffset Parameter
 	if (pOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Width Get pOffset NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Width Get NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1051,31 +872,24 @@ int aoiGetWidthOffset (int *pOffset)
 
 	// オフセット格納
 	if (rOffset < IMG_WIDTH_OFFSET)
-	{
 		tmpOffset = 0;
-	}
 	else
-	{
 		tmpOffset = rOffset - IMG_WIDTH_OFFSET;
-	}
 
 	*pOffset = tmpOffset;
 
 #if defined(MODE_BINNING)
-	if ((status = aoiGetBinningX (&mode)) != AVAL_STATUS_SUCCESS)
+	if ((status = aoiGetBinningX (&binningNum)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	if(mode != MODE_DISABLE)
-	{
-		if(tmpOffset <= 0)
-			goto _DONE;
+	if(tmpOffset <= 0)
+		goto _DONE;
 
-		if(tmpOffset % mode == 0)
-			*pOffset = tmpOffset / mode;
-		else
-			//奇数なら-1
-			*pOffset = (tmpOffset & ~(mode - 1)) / mode;
-	}
+	if((tmpOffset % binningNum) == 0)
+		*pOffset = tmpOffset / binningNum;
+	else
+		//奇数なら-1
+		*pOffset = (tmpOffset & ~(binningNum - 1)) / binningNum;
 #endif
 
 _DONE:
@@ -1185,8 +999,7 @@ int aoiSetHeight (int size)
 	int rOffset, rSize;
 	int offset;
 	int valid;
-	int mode = MODE_DISABLE;
-	int binningNum;
+	int binningNum = 1;
 	int startMode = 0;
 #if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
 	int abMode = AUTO_BRIGHT_TARGET_AREA_ALL_RANGE;
@@ -1209,11 +1022,12 @@ int aoiSetHeight (int size)
 //@@@1
 	OUT32 (FPGA_CXP_S0_YSIZE_OFFSET_ADRS, size);
 	
+#if 0//@@1
 	rOffset = IN32(FPGA_CXP_TEST_PATTERN_WIDTH_HEIGHT_ADRS);
 	rOffset &= 0xffff;
 	rOffset |= (size << 16);
 	OUT32(FPGA_CXP_TEST_PATTERN_WIDTH_HEIGHT_ADRS, rOffset);
-	
+#endif //@@@1
 
 	goto _DONE;
 //@@@1
@@ -1246,26 +1060,13 @@ int aoiSetHeight (int size)
 	// Height Max取得
 	heightMaxSize = HeightMax();
 
-	// Height Max取得
-	//heightMaxSize = HeightMax();
-
 #if defined(MODE_BINNING)
-	if ((status = aoiGetBinningY (&mode)) != AVAL_STATUS_SUCCESS)
+	if ((status = aoiGetBinningY (&binningNum)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	//ビニング有効時の設定値は倍
-	if(mode != MODE_DISABLE)
-		size *= mode;
+	size *= binningNum;
 #endif
-
-	if (mode == MODE_DISABLE)
-	{
-		binningNum = 1;
-	}
-	else
-	{
-		binningNum = mode;
-	}
 
 	// Check size Parameter
 	if ((size < heightMinSize) || (size > heightMaxSize))	// height = 0はエラーとしない。マルチroi時に削除する場合がある為
@@ -1276,6 +1077,7 @@ int aoiSetHeight (int size)
 		goto _DONE;
 	}
 
+	#if 0
 	// Check size Align Parameters
 	if ((size % ROI_FPGA_HEIGHT_SIZE_ALIGH) != 0)
 	{
@@ -1284,38 +1086,21 @@ int aoiSetHeight (int size)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
+	#endif
 
-#if defined (MODE_CXP)
-	if (gInterFaceID == INTERFACE_CXP)
+#if defined(MODE_BINNING)
+	if (IN32 (FIRM_DATA_HIGHSPPED_INIT2_ADRS) == 0)
 	{
-		// Check size 4Line単位
-		if ((size % CXP_HEIGHT_ALIGH) != 0)
+		// ビニング時は4 * mode Line単位にする
+		if ((size % (CXP_HEIGHT_ALIGH * binningNum)) != 0)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
 			sprintf (gLogMsgBuff, "Height Set Size Align(%d) Parameter Error. Align = %d.\n", size / binningNum, CXP_HEIGHT_ALIGH);
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 			goto _DONE;
 		}
-
-	#if defined(MODE_BINNING)
-		if(mode != MODE_DISABLE)
-		{
-			if (IN32 (FIRM_DATA_HIGHSPPED_INIT2_ADRS) == 0)
-			{
-				// ビニング時は4 * mode Line単位にする
-				if ((size % (CXP_HEIGHT_ALIGH * binningNum)) != 0)
-				{
-					status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-					sprintf (gLogMsgBuff, "Height Set Size Align(%d) Parameter Error. Align = %d.\n", size / binningNum, CXP_HEIGHT_ALIGH);
-					cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-					goto _DONE;
-				}
-			}
-		}
-	#endif	// #if defined(MODE_BINNING)
-
 	}
-#endif
+#endif	// #if defined(MODE_BINNING)
 
 #if defined (MODE_FRAMERATE_HIGH_SPEED)
 	// High Speed Mode取得
@@ -1377,21 +1162,10 @@ int aoiSetHeight (int size)
 
 	// オフセット設定
 	offset = rOffset;
-	
-	// まだ未設定?
-	//if ((rOffset == 0) && (rSize == 0))
-	//{
-		//rOffset = 0;
-		//rSize = heightMaxSize;
-	//}
 
 	// rOffset取得値異常
 	if ((offset < 0) || (offset > heightMaxSize - ROI_FPGA_HEIGHT_OFFSET_ALIGH))
 		offset = 0;
-
-	// rSize取得値異常
-	//if ((rSize < 0) || (rSize > heightMaxSize))
-		//rSize = heightMaxSize;
 
 	// Check Offset
 	if ((size + offset) > heightMaxSize)
@@ -1437,7 +1211,15 @@ int aoiSetHeight (int size)
 		else
 			tges = SENSOR_READOUT_TIME_LNINE2_HIGH_SPEED;
 
-		if ((status = tgSetTges (tges)) != AVAL_STATUS_SUCCESS)
+		// Disable Trg Control
+		if ((status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+
+		if ((status = tgSetTges2 (tges)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+
+		// Enable Trg Control
+		if ((status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		// FFC Correction Mode取得
@@ -1514,7 +1296,7 @@ int aoiGetHeight (int *pSize)
 	int rOffset, rSize;
 	int valid;
 #if defined(MODE_BINNING)
-	int mode = MODE_DISABLE;
+	int binningNum = 1;
 #endif
 
 //@@@1
@@ -1527,7 +1309,7 @@ int aoiGetHeight (int *pSize)
 	if (pSize == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Height Get pSize NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Height Get NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1543,33 +1325,29 @@ int aoiGetHeight (int *pSize)
 	*pSize = rSize;
 
 #if defined(MODE_BINNING)
-
-	if ((status = aoiGetBinningY (&mode)) != AVAL_STATUS_SUCCESS)
+	// Get BinningY
+	if ((status = aoiGetBinningY (&binningNum)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	if(mode != MODE_DISABLE)
+	//1以下はスルー
+	if(rSize <= (binningNum-1))
+		goto _DONE;
+
+	if(binningNum == 3)
 	{
-		//1以下はスルー
-		if(rSize <= (mode-1))
-			goto _DONE;
-
-		if(mode == 3)
-		{
-			// 切り上げ
-			*pSize= (rSize + 2) / 3;
-			*pSize += (rSize % 3) != 0 ? 1 : 0;
-		}
-		else
-		{
-			//偶数なら半分
-			if((rSize % mode) == 0)
-				*pSize = rSize / mode;
-			else
-				//奇数なら-1
-				*pSize = (rSize & ~(mode -1)) / mode;
-		}
+		// 切り上げ
+		*pSize = (rSize + 2) / 3;
+		*pSize += (rSize % 3) != 0 ? 1 : 0;
 	}
-
+	else
+	{
+		//偶数なら半分
+		if((rSize % binningNum) == 0)
+			*pSize = rSize / binningNum;
+		else
+			//奇数なら-1
+			*pSize = (rSize & ~(binningNum -1)) / binningNum;
+	}
 #endif
 
 _DONE:
@@ -1604,22 +1382,12 @@ int aoiSetHeightOffset (int offset)
 	heightMaxSize = HeightMax();
 
 #if defined(MODE_BINNING)
-	if ((status = aoiGetBinningY (&mode)) != AVAL_STATUS_SUCCESS)
+	if ((status = aoiGetBinningY (&binningNum)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	//ビニング有効時設定値は倍
-	if(mode != MODE_DISABLE)
-		offset *= mode;
+	offset *= binningNum;
 #endif
-
-	if (mode == MODE_DISABLE)
-	{
-		binningNum = 1;
-	}
-	else
-	{
-		binningNum = mode;
-	}
 
 	// Check offset Parameter
 	if ((offset < 0) || (offset > heightMaxSize-ROI_FPGA_HEIGHT_SIZE_ALIGH))
@@ -1630,6 +1398,7 @@ int aoiSetHeightOffset (int offset)
 		goto _DONE;
 	}
 
+	#if 0
 	// Check offset Align Parameters
 	if ((offset % ROI_FPGA_HEIGHT_OFFSET_ALIGH) != 0)
 	{
@@ -1638,34 +1407,7 @@ int aoiSetHeightOffset (int offset)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
-
-#if defined (MODE_CXP)
-	if (gInterFaceID == INTERFACE_CXP)
-	{
-		// Check size 4Line単位
-		if ((offset % CXP_HEIGHT_ALIGH) != 0)
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Height Set Offset Align(%d) Parameter Error. Align = %d.\n", offset / binningNum, CXP_HEIGHT_ALIGH);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-
-	#if defined(MODE_BINNING)
-		if(mode != MODE_DISABLE)
-		{
-			// ビニング時は4 * modeLine単位にする
-			if ((offset% (CXP_HEIGHT_ALIGH * binningNum)) != 0)
-			{
-				status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-				sprintf (gLogMsgBuff, "Height Set Offset Align(%d) Parameter Error. Align = %d.\n", offset / binningNum,  CXP_HEIGHT_ALIGH);
-				cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-				goto _DONE;
-			}
-		}
-	#endif	// #if defined(MODE_BINNING)
-	}
-#endif
+	#endif
 
 	// Get Selector
 	if ((status = roiGetSelector (&selector)) != AVAL_STATUS_SUCCESS)
@@ -1675,19 +1417,8 @@ int aoiSetHeightOffset (int offset)
 	if ((status = memRoiGetCameraHeight (selector, &rOffset, &rSize, &valid)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	// まだ未設定?
-	//if ((rOffset == 0) && (rSize == 0))
-	//{
-		//rOffset = 0;
-		//rSize = heightMaxSize;
-	//}
-
 	// サイズ設定
 	size = rSize;
-
-	// rOffset取得値異常
-	//if ((rOffset < 0) || (rOffset > heightMaxSize - ROI_FPGA_HEIGHT_OFFSET_ALIGH))
-		//rOffset = 0;
 
 	// rSize取得値異常
 	if ((rSize < 0) || (rSize > heightMaxSize))
@@ -1734,14 +1465,14 @@ int aoiGetHeightOffset (int *pOffset)
 	int rOffset, rSize, tmpOffset;
 	int valid;
 #if defined(MODE_BINNING)
-	int mode = MODE_DISABLE;
+	int binningNum = MODE_DISABLE;
 #endif
 
 	// Check pOffset Parameter
 	if (pOffset == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Height Get pOffset NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Height Get NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -1762,36 +1493,30 @@ int aoiGetHeightOffset (int *pOffset)
 	*pOffset = tmpOffset;
 
 #if defined(MODE_BINNING)
-
 	//Binning Y 取得
-	if ((status = aoiGetBinningY (&mode)) != AVAL_STATUS_SUCCESS)
+	if ((status = aoiGetBinningY (&binningNum)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	if(mode != MODE_DISABLE)
+	if(tmpOffset <= 0)
+		goto _DONE;
+
+	if(binningNum == 3)
 	{
-		if(tmpOffset <= 0)
-			goto _DONE;
-
-		if(mode == 3)
-		{
-			if(tmpOffset % mode == 0)
-				*pOffset = (tmpOffset / mode);
-			else
-				// 切りあげ
-				*pOffset= (tmpOffset + 2) / 3;
-		}
+		if(tmpOffset % binningNum == 0)
+			*pOffset = (tmpOffset / binningNum);
 		else
-		{
-			if(tmpOffset % mode == 0)
-				*pOffset = tmpOffset / mode;
-			else
-				//奇数のときは-1
-				*pOffset = (tmpOffset & ~(mode -1)) / mode;
-		}
+			// 切りあげ
+			*pOffset= (tmpOffset + 2) / 3;
 	}
-
+	else
+	{
+		if(tmpOffset % binningNum == 0)
+			*pOffset = tmpOffset / binningNum;
+		else
+			//奇数のときは-1
+			*pOffset = (tmpOffset & ~(binningNum -1)) / binningNum;
+	}
 #endif
-
 
 _DONE:
 	return (status);
@@ -2104,8 +1829,17 @@ _NEXT:
 			tgpd = totalHeight + /*SENSOR_HEIGHT_HIDE_LINE +*/ SENSOR_VINTERVAL_FIX_LINE;
 #endif
 
-			if ((status = tgSetTgpd (tgpd)) != AVAL_STATUS_SUCCESS)
+			// Disable Trg Control
+			if ((status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
+
+			if ((status = tgSetTgpd2 (tgpd)) != AVAL_STATUS_SUCCESS)
+				goto _DONE;
+			
+			// Enable Trg Control
+			if ((status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
+				goto _DONE;
+
 		}
 	}
 

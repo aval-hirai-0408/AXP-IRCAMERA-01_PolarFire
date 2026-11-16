@@ -46,9 +46,6 @@ int timingGeneratorNormalInitalize (void)
 	// 取り込み停止
 	acquisitionAbort ();
 
-	// TG UnLock
-	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_UNLOCK);
-
 	// Disable Trg Control
 	if ((status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
@@ -56,9 +53,6 @@ int timingGeneratorNormalInitalize (void)
 	// Enable Trg Control
 	if ((status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
-	// TG Lock
-	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_LOCK);
 
 	// Acquisition Abort解除
 	OUT32 (GENICAM_ACQUISITION_START_ADRS, 0);
@@ -82,13 +76,17 @@ int timingGeneratorVersion2Initalize (void)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int adrs, data;
 
+	// Disable Trg Control
+	if ((status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
 	// TGSE取得
 	cameraParamUserReadMem (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_TG_VERSION2_TGSE_ADRS, &adrs, &data);
 
 	// TGSE設定
 	if (adrs != 0)
 	{
-		if ((status = tgSetTgse (data)) != AVAL_STATUS_SUCCESS)
+		if ((status = tgSetTgse2 (data)) != AVAL_STATUS_SUCCESS)
 			gTimingGeneratorStatus = status;
 	}
 
@@ -98,7 +96,7 @@ int timingGeneratorVersion2Initalize (void)
 	// TGES設定
 	if (adrs != 0)
 	{
-		if ((status = tgSetTges (data)) != AVAL_STATUS_SUCCESS)
+		if ((status = tgSetTges2 (data)) != AVAL_STATUS_SUCCESS)
 			gTimingGeneratorStatus = status;
 	}
 
@@ -108,10 +106,14 @@ int timingGeneratorVersion2Initalize (void)
 	// TGPD設定
 	if (adrs != 0)
 	{
-		if ((status = tgSetTgpd (data)) != AVAL_STATUS_SUCCESS)
+		if ((status = tgSetTgpd2 (data)) != AVAL_STATUS_SUCCESS)
 			gTimingGeneratorStatus = status;
 	}
 
+	// Enable Trg Control
+	sensorSetTrgControl (MODE_ENABLE);
+
+_DONE:
 	return (gTimingGeneratorStatus);
 }
 
@@ -163,9 +165,6 @@ int tgCtrlEnable2 (void)
 		status = sensorSetTrgControl (MODE_ENABLE);
 #endif
 
-	// TG Lock
-	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_LOCK);
-
 	return (status);
 }
 
@@ -190,9 +189,6 @@ int tgCtrlDisable2 (void)
 	OUT32 (FIRM_DATA_TG_CTRL_MODE, mode);
 	status = sensorSetTrgControl (MODE_DISABLE);
 #endif
-
-	// TG UnLock
-	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_UNLOCK);
 
 	return (status);
 }
@@ -224,19 +220,19 @@ int tgSetTgse (unsigned int data)
 	}
 
 	// Start Status
-	acquisitionGetStartFlag (&startMode);
+	//@@@1acquisitionGetStartFlag (&startMode);
 
 	// 取り込み停止
-	if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//@@@1if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
+		//@@@1goto _DONE;
 
 	// Set TGSE
 	tgSetReg2 (FPGA_TG_TGSE_ADRS, (data & FPGA_TG_TGSE_MASK));
 
 _DONE:
 	// Start?
-	if (startMode != 0)
-		acquisitionStart ();
+	//@@@1if (startMode != 0)
+		//@@@1acquisitionStart ();
 
 	return (status);
 }
@@ -265,14 +261,8 @@ int tgSetTgse2 (unsigned int data)
 		goto _DONE;
 	}
 
-	// TG UnLock
-	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_UNLOCK);
-
 	// Set TGSE
 	OUT32 (FPGA_TG_TGSE_ADRS, (data & FPGA_TG_TGSE_MASK));
-
-	// TG Lock
-	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_LOCK);
 
 _DONE:
 	// Start?
@@ -300,7 +290,7 @@ int tgGetTgse (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGSE pData NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGSE NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -336,19 +326,19 @@ int tgSetTges (unsigned int data)
 	}
 
 	// Start Status
-	acquisitionGetStartFlag (&startMode);
+	//@@@1acquisitionGetStartFlag (&startMode);
 
 	// 取り込み停止
-	if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//@@@1if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
+		//@@@1goto _DONE;
 
 	// Set TGES
 	tgSetReg2 (FPGA_TG_TGES_ADRS, (data & FPGA_TG_TGES_MASK));
 
 _DONE:
 	// Start?
-	if (startMode != 0)
-		acquisitionStart ();
+	//@@@1if (startMode != 0)
+		//@@@1acquisitionStart ();
 
 	return (status);
 }
@@ -376,17 +366,10 @@ int tgSetTges2 (unsigned int data)
 		goto _DONE;
 	}
 
-	// TG UnLock
-	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_UNLOCK);
-
 	// Set TGES
 	OUT32 (FPGA_TG_TGES_ADRS, (data & FPGA_TG_TGES_MASK));
 
-	// TG Lock
-	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_LOCK);
-
 _DONE:
-
 	return (status);
 }
 
@@ -408,7 +391,7 @@ int tgGetTges (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGES pData NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGES NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -444,19 +427,19 @@ int tgSetTgpd (unsigned int data)
 	}
 
 	// Start Status
-	acquisitionGetStartFlag (&startMode);
+	//@@@1acquisitionGetStartFlag (&startMode);
 
 	// 取り込み停止
-	if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//@@@1if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
+		//@@@1goto _DONE;
 
 	// Set TGPD
 	tgSetReg2 (FPGA_TG_TGPD_ADRS, (data & FPGA_TG_TGPD_MASK));
 
 _DONE:
 	// Start?
-	if (startMode != 0)
-		acquisitionStart ();
+	//@@@1if (startMode != 0)
+		//@@@1acquisitionStart ();
 
 	return (status);
 }
@@ -484,14 +467,8 @@ int tgSetTgpd2 (unsigned int data)
 		goto _DONE;
 	}
 
-	// TG UnLock
-	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_UNLOCK);
-
 	// Set TGPD
 	OUT32 (FPGA_TG_TGPD_ADRS, (data & FPGA_TG_TGPD_MASK));
-
-	// TG Lock
-	OUT32 (FPGA_TG_LOCK_ADRS, FPGA_TL_LOCK);
 
 _DONE:
 	return (status);
@@ -515,7 +492,7 @@ int tgGetTgpd (unsigned int *pData)
 	if (pData == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGPD pData NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "TGPD NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -572,8 +549,12 @@ int tgSetSensorTrgRsvCtrl (void)
 
 #endif // #if defined (MODE_SENSOR_IMX992) || defined (MODE_SENSOR_IMX993)
 
+	// Disable Trg Control
+	if ((status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
 	// TGSE設定
-	if ((status = tgSetTgse (expTime)) !=  AVAL_STATUS_SUCCESS)
+	if ((status = tgSetTgse2 (expTime)) !=  AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// 最大レート取得
@@ -600,7 +581,7 @@ int tgSetSensorTrgRsvCtrl (void)
 		tges = 1;
 
 	// TGES設定
-	if ((status = tgSetTges (tges)) !=  AVAL_STATUS_SUCCESS)
+	if ((status = tgSetTges2 (tges)) !=  AVAL_STATUS_SUCCESS)
 		goto _DONE;
 #endif
 
@@ -610,10 +591,13 @@ int tgSetSensorTrgRsvCtrl (void)
 #endif // #if defined (MODE_SENSOR_SHUTTER)
 
 	// TGPD設定
-	if ((status = tgSetTgpd (rateTime)) !=  AVAL_STATUS_SUCCESS)
+	if ((status = tgSetTgpd2 (rateTime)) !=  AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 _DONE:
+	// Enable Trg Control
+	sensorSetTrgControl (MODE_ENABLE);
+
 	return (status);
 }
 
@@ -653,10 +637,14 @@ int tgSetSensorTrgDefault (void)
 		goto _DONE;
 #endif
 
+	// Disable Trg Control
+	if ((status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
 	tgse = SENSOR_TGSE;
 
 	// TGSE設定
-	if ((status = tgSetTgse (tgse)) !=  AVAL_STATUS_SUCCESS)
+	if ((status = tgSetTgse2 (tgse)) !=  AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 #if defined (MODE_FRAMERATE_HIGH_SPEED)
@@ -674,9 +662,6 @@ int tgSetSensorTrgDefault (void)
 		// TGES設定
 		if ((status = sensorGetTgesHighSpeed (totalHeight, (int *)&tges)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-		
-		if ((status = tgSetTges (tges)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
 	}
 	else
 	{
@@ -684,10 +669,6 @@ int tgSetSensorTrgDefault (void)
 			tges = 0;
 		else
 			tges = SENSOR_TGES;
-
-		// TGES設定
-		if ((status = tgSetTges (tges)) !=  AVAL_STATUS_SUCCESS)
-			goto _DONE;
 	}
 
 #else // #if defined (MODE_FRAMERATE_HIGH_SPEED)
@@ -699,11 +680,11 @@ int tgSetSensorTrgDefault (void)
 	#endif // #if defined (MODE_SENSOR_DRRS)
 		tges = SENSOR_TGES;
 
-	// TGES設定
-	if ((status = tgSetTges (tges)) !=  AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
 #endif //#if defined (MODE_FRAMERATE_HIGH_SPEED)
+
+	// TGES設定
+	if ((status = tgSetTges2 (tges)) !=  AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
 	// フレームレートモード取得
 	if ((status = acquisitionGetRateMode (&rateMode)) != AVAL_STATUS_SUCCESS)
@@ -764,10 +745,12 @@ int tgSetSensorTrgDefault (void)
 	}
 
 	// TGPD設定
-	if ((status = tgSetTgpd (tgpd)) != AVAL_STATUS_SUCCESS)
+	if ((status = tgSetTgpd2 (tgpd)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 _DONE:
+	// Enable Trg Control
+	sensorSetTrgControl (MODE_ENABLE);
 	return (status);
 }
 
@@ -785,7 +768,16 @@ int tgSetSensorTrgCheck (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int trgMode, rsvMode;
+	int selector;
 
+	// Trigger Selector取得
+	if ((status = acquisitionGetSelect (&selector)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// Check Selector
+	if (selector != ACQUISITION_TRG_SELECT_EXPOSURE_ACTIVE)
+		goto _DONE;
+	
 	// Frameトリガモード取得
 	if ((status = acquisitionGetFrameTrgMode (&trgMode)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;

@@ -273,8 +273,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Sensor Width取得
 		//----------------------------------------------------------------------------------
 		case SensorWidth:
-			//@@@1value = sensorWidth();
-			value = 8192;
+			value = sensorWidth();
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -288,10 +287,11 @@ u32 get_user_reg (u32 address, u16 *status)
 		// Camera Width Max取得
 		//----------------------------------------------------------------------------------
 		case CameraWidthMax:
-			//@@@@@@@@@@@@@@@@@@@@@@@@@@
-			value = 8192;
+			//@@@1
+			//@@@1 value = WidthMax ();
+			value = 2592;
 			break;
-			//@@@@@@@@@@@@@@@@@@@@@@@@@@
+			//@@@1
 			if ((*status = roiGetAreaSize ((int *)&value2nd)) != AVAL_STATUS_SUCCESS)
 				value2nd = 0;
 
@@ -321,7 +321,8 @@ u32 get_user_reg (u32 address, u16 *status)
 		//----------------------------------------------------------------------------------
 		case CameraHeightMax:
 			//@@@@@@@@@@@@@@@@@@@@@@@@@@
-			value = 2048;
+			//@@@1value = 2048;
+			value = 2056;
 			break;
 			//@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -3036,6 +3037,7 @@ u32 get_user_reg (u32 address, u16 *status)
 			break;
 #endif
 
+		#if 0	//@@@1
 		//--------------------------------------------------------------------------------
 		// FPGA_TG_TGSE_ADRS取得
 		//--------------------------------------------------------------------------------
@@ -3056,6 +3058,7 @@ u32 get_user_reg (u32 address, u16 *status)
 		case FPGA_TG_TGPD_ADRS:
 			*status = tgGetTgpd ((unsigned int *)&value);
 			break;
+		#endif	//@@@1
 
 
 		//====================================================================================
@@ -3373,13 +3376,6 @@ u32 get_user_reg (u32 address, u16 *status)
 			value = (int)IN32 (BOARD_STATUS_CASE_TEMP_ADRS);
 			break;
 
-		//--------------------------------------------------------------------------------
-		// DeviceTemperatureFpgaAlarmCount取得
-		//--------------------------------------------------------------------------------
-		case DeviceTemperatureFpgaAlarmCount:
-			value = (int)IN32 (BOARD_STATUS_FPGA_TEMP_ADRS);
-			break;
-	
 #if defined (MODE_PELTIER_CTRL)
 		//--------------------------------------------------------------------------------
 		// DevicePeltierPowerLevel取得
@@ -7987,27 +7983,61 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			break;
 #endif
 
+		#if 0	//@@@1
 		//--------------------------------------------------------------------------------
 		// FPGA_TG_TGSE_ADRS設定
 		//--------------------------------------------------------------------------------
 		case FPGA_TG_TGSE_ADRS:
-			*status = tgSetTgse (value);
+			// Disable Trg Control
+			if ((*status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+				break;
+
+			// TGSE
+			if ((*status = tgSetTgse2 (value)) != AVAL_STATUS_SUCCESS)
+				break;
+
+			// Enable Trg Control
+			if ((*status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
+				break;
+
 			break;
 
 		//--------------------------------------------------------------------------------
 		// FPGA_TG_TGES_ADRS設定
 		//--------------------------------------------------------------------------------
 		case FPGA_TG_TGES_ADRS:
-			*status = tgSetTges (value);
+			// Disable Trg Control
+			if ((*status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+				break;
+
+			// TGES
+			if ((*status = tgSetTges2 (value)) != AVAL_STATUS_SUCCESS)
+				break;
+
+			// Enable Trg Control
+			if ((*status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
+				break;
+
 			break;
 
 		//--------------------------------------------------------------------------------
 		// FPGA_TG_TGPD_ADRS設定
 		//--------------------------------------------------------------------------------
 		case FPGA_TG_TGPD_ADRS:
-			*status = tgSetTgpd (value);
-			break;
+			// Disable Trg Control
+			if ((*status = sensorSetTrgControl (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+				break;
 
+			// TGPD
+			if ((*status = tgSetTgpd2 (value)) != AVAL_STATUS_SUCCESS)
+				break;
+		
+			// Enable Trg Control
+			if ((*status = sensorSetTrgControl (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
+				break;
+
+			break;
+		#endif //@@@1
 
 		//====================================================================================
 		//
@@ -8149,25 +8179,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			}
 			#endif
 
-			#if defined (MODE_PELTIER_CTRL)
-			if (value == 1)
-			{
-					// Peltier Control Init
-				peltierControlProcsInit ();
-			}
-			#endif
-
 			*status = peltierSetMode (value);
-				
-			#if defined (MODE_PELTIER_CTRL)
-			if (value == 1)
-			{
-				// Peltier Enable Delay
-				//peltierControlProcs ();
-				peltierSetPowerStartFlag (MODE_ENABLE);
-			}
-			#endif
-
 			break;
 #endif
 
@@ -8177,30 +8189,11 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case FPGA_PELTIER_TARGET_ADRS:
 			#if defined (MODE_PELTIER_CTRL)
-			value2nd = 0;
-			*status = peltierGetMode ((int *)&value2nd);
-
-			if (value2nd == 1)
-			{
-				// Peltier Control Init
-				peltierControlProcsInit ();
-			}
-			#endif
-
 			intValue = (int)value;
 			dblValue = (float) intValue;
-			if ((*status = peltierSetTarget(dblValue)) != AVAL_STATUS_SUCCESS)
-				break;
+			*status = peltierSetTarget(dblValue);
+            #endif
 				
-			#if defined (MODE_PELTIER_CTRL)
-			if (value2nd == 1)
-			{
-				// Peltier Enable Delay
-				//peltierControlProcs ();
-				peltierSetPowerStartFlag (MODE_ENABLE);
-			}
-			#endif
-
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -8346,32 +8339,14 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			*status = GEV_STATUS_WRITE_PROTECT;
 			break;
 
-		//--------------------------------------------------------------------------------
-		// DeviceTemperatureFpgaAlarmCount設定
-		//--------------------------------------------------------------------------------
-		case DeviceTemperatureFpgaAlarmCount:
-			*status = GEV_STATUS_WRITE_PROTECT;
-			break;
-
 #if defined (MODE_PELTIER_CTRL)
 		//--------------------------------------------------------------------------------
 		// DevicePeltierPowerLevel設定
 		//--------------------------------------------------------------------------------
 		case DevicePeltierPowerLevel:
-			// Get Pelter Mode
-			peltierGetMode ((int *)&value2nd);
-
-			// Set Peltier Power Level
 			*status = peltierSetPowerLevel(value);
-			
-			if (value2nd == 1)
-			{
-				// Peltier Enable Delay
-				peltierSetPowerStartFlag (MODE_ENABLE);
-			}
 			break;
 #endif
-			
 
 #if defined (MODE_PELTIER_VOLT_CURRENT)
 		//--------------------------------------------------------------------------------

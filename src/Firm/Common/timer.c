@@ -44,7 +44,6 @@ int gTimerStatus = 0;
 unsigned int gTimerCount = 0;
 unsigned int gTickCount = 0;
 unsigned int gTickCountTotal = 0;
-unsigned int gTickCountTotalTempAbnormalCheck = 0;
 unsigned int gTickCountTotalAutoBright= 0;
 
 

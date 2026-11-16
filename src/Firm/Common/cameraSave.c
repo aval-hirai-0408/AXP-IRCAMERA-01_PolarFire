@@ -55,7 +55,7 @@ int cameraParamInitialize (void)
 	gpCameraCommonParameter += (QSPI_FLASH_WRITE_COPY_ADD_SIZE/4);
 #endif
 
-#if 0   //@@@1
+#if 1   //@@@1
 	// 共通パラメータ領域取得
 	if ((status = cameraParamCommonAllRead ()) != AVAL_STATUS_SUCCESS)
 	{
@@ -181,11 +181,20 @@ int cameraParamSetDefault (int userNum)
 	// リスト数取得
 	size = sizeof (saveParamDataList) / sizeof (saveParamDataList[0]);
 
+	//@@@1
+	OUT32 (0x82006200,0);
+	//@@@1
 	if (userNum == CAMERA_FACTORY_NUM)
 	{
 		// Factoryパラメータ取得
 		for (i=1; i<size;i++)
 		{
+		    //@@@1
+		     OUT32 (0x82006200,i);
+		     if (i==0x120)
+	             OUT32 (0x82006204,saveParamDataList[i].regAdrs);
+		    //@@@1
+
 			// Set Register Address
 			pSaveparam[i].regAdrs = saveParamDataList[i].regAdrs;
 

@@ -686,7 +686,7 @@ typedef unsigned char   u8;
 //#define FIRM_DATA_DDR_DIAG_SIZE						(FIRM_DATA_ADRS+0x694)
 
 //@@@1
-#define FIRM_DATA_H_DATA							(FIRM_DATA_ADRS+0x694)
+//@@1#define FIRM_DATA_H_DATA							(FIRM_DATA_ADRS+0x694)
 //@@@1
 #define FIRM_DATA_DIAG_DDR_MODE						(FIRM_DATA_ADRS+0x698)
 #define FIRM_DATA_PIXEL_FORMAT						(FIRM_DATA_ADRS+0x69c)
@@ -699,7 +699,7 @@ typedef unsigned char   u8;
 #define FIRM_DATA_GE_SPEED							(FIRM_DATA_ADRS+0x688)
 #define FIRM_DATA_TEMP_ABNORMAL_STATUS				(FIRM_DATA_ADRS+0x68c)
 #define FIRM_DATA_TEMP_ABNORMAL_COUNT				(FIRM_DATA_ADRS+0x690)
-#define FIRM_DATA_TEMP_ABNORMAL_ACQUISITIONT		(FIRM_DATA_ADRS+0x694)
+//@@@1#define FIRM_DATA_TEMP_ABNORMAL_ACQUISITIONT		(FIRM_DATA_ADRS+0x694)
 #define FIRM_DATA_PELTIER_POWER_LEVEL				(FIRM_DATA_ADRS+0x698)
 #define FIRM_DATA_PELTIER_POWER_INTERVAL			(FIRM_DATA_ADRS+0x69c)
 #define FIRM_DATA_PELTIER_POWER_HIGH_CLIP			(FIRM_DATA_ADRS+0x6a0)
@@ -738,7 +738,7 @@ typedef unsigned char   u8;
 #define BOARD_STATUS_USERSET_ADRS			(BOARD_ERROR_ADRS+0x50)		// UserSet
 #define BOARD_STATUS_SENSOR_TEMP_ADRS		(BOARD_ERROR_ADRS+0x54)		// Sensor Temp
 #define BOARD_STATUS_CASE_TEMP_ADRS			(BOARD_ERROR_ADRS+0x58)		// Case Temp
-#define BOARD_STATUS_FPGA_TEMP_ADRS			(BOARD_ERROR_ADRS+0x5C)		// FPGA Temp
+//#define BOARD_STATUS_FPGA_TEMP_ADRS			(BOARD_ERROR_ADRS+0x5C)		// FPGA Temp
 #define BOARD_STATUS_TEMP_ADRS				(BOARD_ERROR_ADRS+0x60)		// Temp Status
 #define BOARD_STATUS_ENCODER_CONTROL_ADRS	(BOARD_ERROR_ADRS+0x64)		// Encoder Control
 #define BOARD_STATUS_TIMING_GENERATOR_ADRS	(BOARD_ERROR_ADRS+0x68)		// Timing Generator
@@ -1632,7 +1632,6 @@ int cxpLedConnectioned (void);
 int cxpGetLinkCount (unsigned int *pCount);
 int cxpSetRecvIntMode (int mode);
 int cxpIpInitialize (void);
-int cmdInterruptMode (int mode);
 int cmdExecuteInit (void);
 int cmdExecuteDone (void);
 int cmdExecuteDoneOnly (void);
@@ -1669,8 +1668,6 @@ int cxpGetSendCount (unsigned int *pData);
 int cxpGetFifoSizeCount (int port, unsigned int *pCount);
 int cxpCheckFpgaMemAdrs (unsigned int *pAdrs, unsigned int size);
 int cxpSetFifoAdrs (unsigned int adrs);
-int cxpSetDmaAdrs (unsigned int adrs);
-int cxpSetFifoReset (void);
 int cxpSetConectionConfig (unsigned int data);
 int cxpGetConectionConfig (unsigned int *pData);
 int cxpSetPixelFormat (int port, int bit);
@@ -1696,13 +1693,9 @@ int cxpSetPort (int port);
 int cxpGetPort (int *pPort);
 int cxpSetRateData (unsigned int rate);
 int cxpGetRateData (unsigned int *pRate);
-int cxpSetPortDual (int port, int mode);
 int cxpGetRegToSpeed (unsigned int regData, double *pCxpRateBps);
 int cxpGetDataToRegData (unsigned int data, unsigned int *pRegData);
 int cxpGetRegToConnection (unsigned int regData, unsigned int *pCxpConnection);
-int cxpGetPortDual (int port, int *pMode);
-int cxpSetStreamMode (int port, int mode);
-int cxpGetStreamMode (int port, int *pMode);
 int cxpSetLed (int port, int mode);
 int cxpGetLed (int port, int *pMode);
 int cxpGetStreamId (int port, unsigned int *pId);
@@ -2389,11 +2382,6 @@ int peltierInitialize (void);
 int peltierSetMountState (int state);
 int peltierGetMountState (int *pState);
 int peltierCheckMountState (void);
-int peltierSetEnable (int mode);
-int peltierGetEnable (int *pMode);
-int peltierEnable (void);
-int peltierEnable2 (void);
-int peltierDisable (void);
 int peltierSetMode (int mode);
 int peltierGetMode (int *pMode);
 int peltierPowerInitialize (void);
@@ -2428,20 +2416,13 @@ int tempSetAbnormalStatus (unsigned int data);
 int tempGetAbnormalStatus (unsigned int *pData);
 int tempSetAbnormalCount (unsigned int data);
 int tempGetAbnormalCount (unsigned int *pData);
-int tempSetAbnormalAcquisition (unsigned int data);
-int tempGetAbnormalAcquisition (unsigned int *pData);
-int tempAbnormalCheck (void);
 int peltierControlInitiallize (void);
-int peltierControlProcsInit (void);
-int peltierControlProcs (void);
 int peltierGetPowerLevel (int *pLevel);
 int peltierSetPowerLevel (int level);
 int peltierGetPowerInterval (unsigned int *pData);
 int peltierSetPowerInterval (unsigned int data);
 int peltierGetPowerHighClip (unsigned int *pData);
 int peltierSetPowerHighClip (unsigned int data);
-int peltierGetPowerStartFlag (unsigned int *pData);
-int peltierSetPowerStartFlag (unsigned int data);
 int fpgaGetInterrupt (unsigned int *pData);
 int fpgaSetInterrupt (unsigned int data);
 int fpgaGetTemp (double *pTemp);
@@ -2588,6 +2569,7 @@ int sensorInitialize2 (void);
 
 // sensorVendorS.c
 int sensorTimingInitialize (void);
+int sensorVendorSPowerOn (void);
 int sensorVendorSInitialize (void);
 int sensorVendorSInitialize2 (void);
 int sensorResizeModeInitialize(void);
@@ -2595,8 +2577,8 @@ int sensorVendorSHideRegSetting (void);
 int sensorSetRegHold (int regHold);
 int sensorRegWriteByte (unsigned char id, unsigned char adrs, unsigned char data, int acTmg, int regHold);
 int sensorRegReadByte (unsigned char id, unsigned char adrs, unsigned char *pData, int acTmg, int regHold);
-int sensorRegWriteBase (unsigned char *pId, unsigned char *pAdrs, unsigned char *pData, int size, int acTmg);
-int sensorRegReadBase (unsigned char *pId, unsigned char *pAdrs, unsigned char *pData, int size, int acTmg);
+int sensorRegWriteBase (unsigned char id, unsigned char adrs, unsigned char data, int acTmg);
+int sensorRegReadBase (unsigned char id, unsigned char adrs, unsigned char *pData, int acTmg);
 int sensorGetFPGAVersion (unsigned int *pVer);
 int sensorModel(char *pModel);
 int sensorFpgaSetTestPattern (int mode);

@@ -27,7 +27,6 @@
 int gPeltierSensorUpperTempCount = 0;	// センサ温度上限カウント
 int gPeltierSensorLowerTempCount = 0;	// センサ温度下限カウント
 int gPeltierCaseTempCount = 0;			// ケース温度カウント
-int gPeltierFpgaTempCount = 0;			// FPGA温度カウント
 
 // Peltier Status
 int gPeltierStatus = 0;
@@ -66,17 +65,32 @@ int peltierInitialize (void)
 	int powerLevel;
 #endif
 
-	//@@@1
-	DEBUG_PRINT_FORCE("@@@Pertier Star\n");
-	//@@@1
 	cameraLogMsg (MSG_LEVEL_INFO, __FILE__, __func__, __LINE__, status, "Peltier Initialize\n");
 
-#if 0	//@@@1
+	// Interrupt Disable(FPGA Alarm Interrupt)
+    MIV_PLIC_disable_irq (&g_plic, MIV_PLIC_EXT3_IRQn);
+
+	// Interrupt Disable(Sensor/Case Alarm Interrupt)
+    MIV_PLIC_disable_irq (&g_plic, MIV_PLIC_EXT5_IRQn);
+
+#if defined (MODE_TEMP_ABNORMAL_CHECK)
 	// FPGA割り込み無効
 	fpgaSetInterrupt (0);
+#endif
+
+	// 個別割り込み無効
+	if ((status = peltierSetIntEnable (0)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// グローバル割り込み無効
+	if ((status = peltierSetGlobalInt (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
 	// Peltier Disable
-	peltierDisable ();
+	data = IN32 (FPGA_PELTIER_CTRL_ADRS);
+	data |= FPGA_PELTIER_CTRL_FIXED_BIT;
+	data &= ~FPGA_PELTIER_CTRL_ENABLE_BIT;
+	OUT32 (FPGA_PELTIER_CTRL_ADRS, data);
 
 	// Register Data Restore
 	if ((status = cameraParamWriteRegister (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_PELTIER_ADRS, CAMERA_SAVE_PERTIER_SIZE)) != AVAL_STATUS_SUCCESS)
@@ -84,21 +98,6 @@ int peltierInitialize (void)
 		gPeltierStatus = status;
 		goto _DONE;
 	}
-
-#if defined (MODE_PELTIER_CTRL)
-	// Start Flag
-	peltierSetPowerStartFlag (0);
-
-	// Get Power Level
-	peltierGetPowerLevel (&powerLevel);
-
-	// Check Power Level
-	if ((powerLevel < PELTIER_POWER_LEVEL_MIN) || (powerLevel > PELTIER_POWER_LEVEL_MAX))
-		powerLevel = PELTIER_POWER_LEVEL_HIGH;
-
-	// Set Power Level
-	peltierSetPowerLevel (powerLevel);
-#endif
 
 	//------------------------------------------------------------
 	// 温度異常ステータスクリア
@@ -109,9 +108,6 @@ int peltierInitialize (void)
 	
 	// Temp Abnormal Count設定
 	tempSetAbnormalCount (0);
-	
-	// Temp Abnormal Aqquisition設定
-	tempSetAbnormalAcquisition (0);
 #endif
 
 	//------------------------------------------------------------
@@ -122,11 +118,10 @@ int peltierInitialize (void)
 #else
 	peltierState = MODE_DISABLE;
 #endif
-	
+
 	// ペルチェ実装状態
 	if ((status = peltierSetMountState (peltierState)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
 
 	//------------------------------------------------------------
 	// Sensor Alarm
@@ -183,22 +178,13 @@ int peltierInitialize (void)
 
 	// Case Alarm設定
 	peltierSetCaseTempAlarm (tempH, tempL);
-#endif //@@@1
+
 
 	//------------------------------------------------------------
 	// FPGA Alarm
 	//------------------------------------------------------------
-
-	//@@@1
-	DEBUG_PRINT_FORCE("FPGA Alarm\n");
-	//@@@1
-	
-	// FPGA Alarm温度初期化
-	//@@@1cameraParamUserReadMem (CAMERA_SAVE_USER_NUM, CAMERA_SAVE_FPGA_LIMIT_TEMP_ADRS, &adrs, &data);
-
-	//@@1
-	data = (unsigned int)((unsigned int)(DIAG_TEMP_FPGA_MAX * CAMERA_SAVE_TEMP_UNIT)<<16) | (unsigned int)(DIAG_TEMP_FPGA_MIN * CAMERA_SAVE_TEMP_UNIT);
-	//@@1
+#if defined (MODE_TEMP_ABNORMAL_CHECK)
+	data = (unsigned int)((unsigned int)(TEMP_ABNORMAL_FPGA_UPPER_EXT * CAMERA_SAVE_TEMP_UNIT)<<16) | (unsigned int)(TEMP_ABNORMAL_FPGA_LOWER_EXT * CAMERA_SAVE_TEMP_UNIT);
 
 	// 上限温度
 	datai16 = (short)(data >> 16);
@@ -208,23 +194,16 @@ int peltierInitialize (void)
 	datai16 = (short)data;
 	tempL = (double)((double)datai16 / (double)CAMERA_SAVE_TEMP_UNIT);
 
-	//@@@1
-	DEBUG_PRINT_FORCE("Data  = 0x%x\n", data);
-	DEBUG_PRINT_FORCE("tempH = %f\n", tempH);
-	DEBUG_PRINT_FORCE("tempL = %f\n", tempL);
-	//@@@1
-
 	// Alarm設定
 	fpgaSetTempAlarm (tempH, tempL);
 
 	// Set Interrupt Enable
 	fpgaSetInterrupt (FPGA_INT_TEMP_UPPER);
+#endif
 
-#if 0	//@@@1
 	//------------------------------------------------------------
 	// Target温度設定
 	//------------------------------------------------------------
-
 #if defined (MODE_PELTIER)
 	//ペルチェ実装時
 	if (peltierState == MODE_ENABLE)
@@ -247,16 +226,27 @@ int peltierInitialize (void)
 		
 		// Target温度設定
 		peltierSetTarget (temp);
+		
+		// Peltier Enable取得
+		peltierSetMode (MODE_ENABLE);
 	}
 #endif // #if defined (MODE_PELTIER)
 
-	// Peltier Enable
-	//peltierEnable ();	///@@@@1
-	peltierPowerInitialize();
-#endif //@@@1
 
-	// Interrupt Enable
+#if defined (MODE_TEMP_ABNORMAL_CHECK)
+	// Interrupt Enable(FPGA Alarm Interrupt)
     MIV_PLIC_enable_irq (&g_plic, MIV_PLIC_EXT3_IRQn);
+#endif
+
+	// Interrupt Enable(Sensor/Case Alarm Interrupt)
+    MIV_PLIC_enable_irq (&g_plic, MIV_PLIC_EXT5_IRQn);
+
+	// Peltier Interrupt Enable
+	peltierSetIntEnable ((FPGA_PELTIER_IRQ_MASK_CASE_FAIL_BIT | FPGA_PELTIER_IRQ_MASK_TEMP_OVER_BIT));
+
+	// グローバル割り込み有効
+	if ((status = peltierSetGlobalInt (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
 _DONE:
 	return (status);
@@ -264,7 +254,101 @@ _DONE:
 
 
 //**********************************************************************************
-//	ハンドラ
+//	ハンドラ(センサ温度/Case温度Alarm割り込み)
+//----------------------------------------------------------------------------------
+//	[ INPUT ]
+//		-
+//	[ OUTPUT ]
+//		-
+//==================================================================================
+void MIV_PLIC_EXT5_IRQHandler (void)
+{
+	unsigned int intStatus, intEnable;
+	unsigned int tempStatus, abnormalStatus;
+
+	// Get Status
+	intStatus = IN32 (FPGA_PELTIER_IRQ_STATUS_ADRS);
+
+	// Get Interrupt Enable
+	peltierGetIntEnable (&intEnable);
+
+	//@@@1
+	DEBUG_PRINT_FORCE("@@@1 Sensor Case Temp Int = 0x%x / Enable = 0x%x\n", intStatus, intEnable);
+	//@@@1
+
+	// Clear Interrupt
+	//data32 &= intEnable;
+	OUT32 (FPGA_PELTIER_IRQ_STATUS_ADRS, intStatus);
+
+	// 温度上限値異常
+	if (intStatus & FPGA_PELTIER_STATUS_TEMP_OVER_BIT)
+	{
+		// ステータス設定
+		tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
+		OUT32 (BOARD_STATUS_TEMP_ADRS, (tempStatus | SENSOR_TEMP_STATUS));
+
+		// センサ温度上限カウント
+		gPeltierSensorUpperTempCount++;
+
+		// センサ温度上限カウント
+		OUT32 (BOARD_STATUS_SENSOR_TEMP_ADRS, gPeltierSensorUpperTempCount);
+
+		// HW System Error
+		ledHwSystemErrorState ();
+		
+		// Peltier Interrupt Sensor Over Disable / Sensor Under Enable
+		intEnable &= ~FPGA_PELTIER_IRQ_MASK_TEMP_OVER_BIT;
+		intEnable |= FPGA_PELTIER_IRQ_MASK_TEMP_UNDER_BIT;
+		peltierSetIntEnable (intEnable);
+	}
+	
+	// 温度下限値異常
+	if (intStatus & FPGA_PELTIER_STATUS_TEMP_UNDER_BIT)
+	{
+		// センサ温度下限カウント
+		gPeltierSensorLowerTempCount++;
+
+		// Peltier Interrupt Sensor Over Enable / Sensor Under Disable
+		intEnable &= ~FPGA_PELTIER_IRQ_MASK_TEMP_UNDER_BIT;
+		intEnable |= FPGA_PELTIER_IRQ_MASK_TEMP_OVER_BIT;
+		peltierSetIntEnable (intEnable);
+
+		// ステータスクリア
+		tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
+		OUT32 (BOARD_STATUS_TEMP_ADRS, (tempStatus & ~SENSOR_TEMP_STATUS));
+
+		// AbnormalStatusも取得
+		tempGetAbnormalStatus (&abnormalStatus);
+		
+		// HW System ErrorClear
+		if ((tempStatus == 0) && (abnormalStatus == 0))
+			ledConnectStateForce ();
+	}
+
+	// Case温度異常
+	if (intStatus & FPGA_PELTIER_STATUS_CASE_FAIL_BIT)
+	{
+		// ステータス設定
+		tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
+		OUT32 (BOARD_STATUS_TEMP_ADRS, (tempStatus | CASE_TEMP_STATUS));
+
+		// ケース温度カウント
+		gPeltierCaseTempCount++;
+
+		// ケース温度カウント
+		OUT32 (BOARD_STATUS_CASE_TEMP_ADRS, gPeltierCaseTempCount);
+
+		// HW System Error
+		ledHwSystemErrorState ();
+	}
+	
+	return;
+}
+
+
+#if defined (MODE_TEMP_ABNORMAL_CHECK)
+//**********************************************************************************
+//	ハンドラ(FPGA温度Alarm割り込み)
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		-
@@ -276,15 +360,17 @@ void MIV_PLIC_EXT3_IRQHandler (void)
 	unsigned int data32;
 	unsigned int intStatus, intEnable;
 	unsigned int tempStatus;
+	int startMode;
+	unsigned int count;
 
 	// Get Interrupt Status
 	intStatus = IN32 (FPGA_INT_STATUS_ADRS);
 	
-	// Get Interrupt Status
+	// Get Interrupt Enable
 	fpgaGetInterrupt (&intEnable);
 
 //@@@1
-	DEBUG_PRINT_FORCE("@@@1 Temp Int = 0x%x / Enable = 0x%x\n", intStatus, intEnable);
+	DEBUG_PRINT_FORCE("@@@1 FPGA Temp Int = 0x%x / Enable = 0x%x\n", intStatus, intEnable);
 //@@@1
 
 	// Mask
@@ -305,16 +391,27 @@ void MIV_PLIC_EXT3_IRQHandler (void)
 		// Set Interrupt Enable
 		fpgaSetInterrupt (intEnable);
 
-		// ステータス設定
-		tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
-		tempStatus |= FPGA_TEMP_STATUS;
-		OUT32 (BOARD_STATUS_TEMP_ADRS, tempStatus);
-
-		// 温度カウント設定
-		gPeltierFpgaTempCount++;
+		// Temp Abnormal Status設定
+		tempSetAbnormalStatus (1);
+		
+		// Temp Abnormal Count設定
+		tempGetAbnormalCount (&count);
+		tempSetAbnormalCount (count+1);
 
 		// HW System Error
 		ledHwSystemErrorState ();
+		
+		// Start Status
+		acquisitionGetStartFlag (&startMode);
+
+		if (startMode != 0)
+		{
+			// 取り込み停止
+			acquisitionAbort ();
+		}
+
+		// Peltier Off
+		peltierSetMode (MODE_DISABLE);
 	}
 	// FPGA下限値異常
 	else if (intStatus & FPGA_INT_TEMP_LOWER)
@@ -328,76 +425,21 @@ void MIV_PLIC_EXT3_IRQHandler (void)
 		// Set Interrupt Enable
 		fpgaSetInterrupt (intEnable);
 
-		// ステータスクリア
+		// Temp Abnormal Status設定
+		tempSetAbnormalStatus (0);
+
+		// 温度ステータスも取得
 		tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
-		tempStatus &= ~FPGA_TEMP_STATUS;
-		OUT32 (BOARD_STATUS_TEMP_ADRS, tempStatus);
 
 		// HW System ErrorClear
 		if (tempStatus == 0)
 			ledConnectStateForce ();
 	}
-
-#if 0	//@@@1
-	// Clear
-	data = IN32 (FPGA_PELTIER_IRQ_STATUS_ADRS);
-	data &= FPGA_PELTIER_STATUS_MASK;
-	OUT32 (FPGA_PELTIER_IRQ_STATUS_ADRS, data);
-
-	// 温度上限値異常
-	if (data & FPGA_PELTIER_STATUS_TEMP_OVER_BIT)
-	{
-		// ステータス設定
-		tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
-		//@@@1OUT32 (BOARD_STATUS_TEMP_ADRS, (tempStatus | SENSOR_TEMP_OVER_STATUS));
-
-		// センサ温度上限カウント
-		gPeltierSensorUpperTempCount++;
-
-		// センサ温度上限カウント
-		OUT32 (BOARD_STATUS_SENSOR_TEMP_UPPER_ADRS, gPeltierSensorUpperTempCount);
-
-		// HW System Error
-		ledHwSystemErrorState ();
-	}
-	
-	// 温度下限値異常
-	if (data & FPGA_PELTIER_STATUS_TEMP_UNDER_BIT)
-	{
-		// ステータス設定
-		tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
-		//@@@1OUT32 (BOARD_STATUS_TEMP_ADRS, (tempStatus | SENSOR_TEMP_UNDER_STATUS));
-
-		// センサ温度下限カウント
-		gPeltierSensorLowerTempCount++;
-
-		// センサ温度下限カウント
-		OUT32 (BOARD_STATUS_SENSOR_TEMP_LOWER_ADRS, gPeltierSensorLowerTempCount);
-
-		// HW System Error
-		ledHwSystemErrorState ();
-	}
-
-	// Case温度異常
-	if (data & FPGA_PELTIER_STATUS_CASE_FAIL_BIT)
-	{
-		// ステータス設定
-		tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
-		OUT32 (BOARD_STATUS_TEMP_ADRS, (tempStatus | CASE_TEMP_STATUS));
-
-		// ケース温度カウント
-		gPeltierCaseTempCount++;
-
-		// ケース温度カウント
-		OUT32 (BOARD_STATUS_CASE_TEMP_ADRS, gPeltierCaseTempCount);
-
-		// HW System Error
-		ledHwSystemErrorState ();
-	}
-#endif //@@@1
 	
 	return;
 }
+#endif // #if defined (MODE_TEMP_ABNORMAL_CHECK)
+
 
 
 //**********************************************************************************
@@ -490,230 +532,6 @@ _DONE:
 }
 
 
-//**********************************************************************************
-//	Peltier Set Enable/Disable
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		mode				：Peltier Mode(0:無効/1：無効)
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int peltierSetEnable (int mode)
-{
-	int status = AVAL_STATUS_SUCCESS;
-
-	// Check data Parameter
-	if ((mode != MODE_ENABLE) && (mode != MODE_DISABLE))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Enable mode(%d) Parameter Error.(Disable:%d / Enable:%d)\n", mode, MODE_DISABLE, MODE_ENABLE);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	if (mode == MODE_ENABLE)
-	{
-		if ((status = peltierEnable ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-	else
-	{
-		if ((status = peltierDisable ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Peltier Set Enable/Disable
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		pMode				：Peltier Mode(0:無効/1：無効)を格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int peltierGetEnable (int *pMode)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int data;
-
-	// Check pMode Parameter
-	if (pMode == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Get Enable pMode NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// Peltier Enable Mode取得
-	data = IN32 (FPGA_PELTIER_CTRL_ADRS);
-
-	if (data & FPGA_PELTIER_CTRL_FIXED_BIT)
-		*pMode = MODE_DISABLE;
-	else
-		*pMode = MODE_ENABLE;
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Peltier Enable
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int peltierEnable (void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	//unsigned int data;
-#ifdef MODE_PELTIER
-	unsigned int mode;
-	int peltierState = MODE_ENABLE;
-
-	#if defined (MODE_PELTIER_MOUNTING_SWITCH)
-	// Peltier実装状態確認
-	if ((status = peltierGetMountState (&peltierState)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-	#endif
-
-	if(peltierState == MODE_ENABLE)
-	{
-		//------------------------------------------------------------
-		// Peltier Enable
-		//------------------------------------------------------------
-		// Peltier Enable取得
-		mode = IN32 (FPGA_PELTIER_CTRL_ADRS);
-
-		// Clear
-		OUT32 (FPGA_PELTIER_CTRL_ADRS, 0);
-
-		// Peltier Enable
-		mode &= ~FPGA_PELTIER_CTRL_FIXED_BIT;
-		mode |= FPGA_PELTIER_CTRL_ENABLE_BIT;
-		OUT32 (FPGA_PELTIER_CTRL_ADRS, mode);
-	}
-#endif
-
-	//------------------------------------------------------------
-	// Interrupt Enable
-	//------------------------------------------------------------
-
-	// Peltier Interrupt Enable
-	peltierSetIntEnable ((FPGA_PELTIER_IRQ_MASK_CASE_FAIL_BIT | FPGA_PELTIER_IRQ_MASK_TEMP_UNDER_BIT | FPGA_PELTIER_IRQ_MASK_TEMP_OVER_BIT));
-
-	// グローバル割り込み有効
-	if ((status = peltierSetGlobalInt (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Peltier Enable2
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int peltierEnable2 (void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-#ifdef MODE_PELTIER
-	unsigned int mode;
-	int peltierState = MODE_ENABLE;
-
-	#if defined (MODE_PELTIER_MOUNTING_SWITCH)
-	// Peltier実装状態確認
-	if ((status = peltierGetMountState (&peltierState)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-	#endif
-
-	if(peltierState == MODE_ENABLE)
-	{
-		//------------------------------------------------------------
-		// Peltier Enable
-		//------------------------------------------------------------
-		// Peltier Enable取得
-		mode = IN32 (FPGA_PELTIER_CTRL_ADRS);
-
-		// Clear
-		OUT32 (FPGA_PELTIER_CTRL_ADRS, 0);
-
-		// Peltier Enable
-		mode &= ~FPGA_PELTIER_CTRL_FIXED_BIT;
-		//mode |= FPGA_PELTIER_CTRL_ENABLE_BIT;
-		OUT32 (FPGA_PELTIER_CTRL_ADRS, mode);
-	}
-#endif
-
-	//------------------------------------------------------------
-	// Interrupt Enable
-	//------------------------------------------------------------
-
-	// Peltier Interrupt Enable
-	peltierSetIntEnable ((FPGA_PELTIER_IRQ_MASK_CASE_FAIL_BIT | FPGA_PELTIER_IRQ_MASK_TEMP_UNDER_BIT | FPGA_PELTIER_IRQ_MASK_TEMP_OVER_BIT));
-
-	// グローバル割り込み有効
-	if ((status = peltierSetGlobalInt (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Peltier Disable
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int peltierDisable (void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-#ifdef MODE_PELTIER
-	unsigned int mode;
-#endif
-
-#ifdef MODE_PELTIER
-	// Peltier Disable
-	mode = IN32 (FPGA_PELTIER_CTRL_ADRS);
-	//mode |= (FPGA_PELTIER_CTRL_FIXED_BIT | FPGA_PELTIER_CTRL_ENABLE_BIT);
-	mode |= FPGA_PELTIER_CTRL_FIXED_BIT;
-	mode &= ~FPGA_PELTIER_CTRL_ENABLE_BIT;
-	OUT32 (FPGA_PELTIER_CTRL_ADRS, mode);
-#endif
-
-	// 個別割り込み無効
-	if ((status = peltierSetIntEnable (0)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// グローバル割り込み無効
-	if ((status = peltierSetGlobalInt (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-_DONE:
-	return (status);
-}
-
-
 #if defined (MODE_PELTIER)
 //**********************************************************************************
 //	Peltier Mode設定
@@ -748,7 +566,7 @@ int peltierSetMode (int mode)
 	data = IN32 (FPGA_PELTIER_CTRL_ADRS);
 
 	// クリア
-	data &= ~FPGA_PELTIER_CTRL_ENABLE_BIT;
+	data &= ~(FPGA_PELTIER_CTRL_ENABLE_BIT | FPGA_PELTIER_CTRL_FIXED_BIT);
 
 	if (mode == MODE_ENABLE)
 		data |= FPGA_PELTIER_CTRL_ENABLE_BIT;
@@ -795,6 +613,7 @@ _DONE:
 #endif
 
 
+#if 0//@@@1
 #if defined (MODE_PELTIER)
 //**********************************************************************************
 //	Peltier Power Initialize
@@ -815,7 +634,7 @@ int peltierPowerInitialize (void)
 #endif
 
 	// Enable
-	peltierEnable2 ();
+	//@@@1peltierEnable2 ();
 
 	// ペルチェ有効／無効取得
 	data32 = IN32(FIRM_DATA_SENSOR_PERTIER_MODE);
@@ -859,21 +678,13 @@ int peltierPowerInitialize (void)
 	}
 	else
 	{
-		#if defined (MODE_PELTIER_CTRL)
-		peltierControlProcsInit ();
-		#endif
-
 		peltierSetMode (1);
-
-		#if defined (MODE_PELTIER_CTRL)
-		// Peltier Enable Delay
-		peltierControlProcs ();
-		#endif
 	}
 
 	return (status);
 }
 #endif
+#endif //@@@1
 
 
 //**********************************************************************************
@@ -1109,7 +920,7 @@ int peltierGetTarget (double *pTemp)
 	dataD = (double)((double)data32 / (double)(1<<FPGA_PELTIER_VERSION2_TARGET_REAL_SHIFT));
 
 	// 整数計算
-	data32 = (reg32 >> FPGA_PELTIER_VERSION2_TARGET_REAL_SHIFT) & FPGA_PELTIER_VERSION2_TARGET_REAL_MASK ;
+	data32 = (reg32 >> FPGA_PELTIER_VERSION2_TARGET_REAL_SHIFT) & FPGA_PELTIER_VERSION2_TARGET_REAL_MASK;
 
 	// 負数?
 	if (reg32 & FPGA_PELTIER_VERSION2_TARGET_CODE)
@@ -1230,17 +1041,39 @@ int peltierSetSensorTempAlarm (double tempOver, double tempUnder)
 		goto _DONE;
 	}
 
+	//------------------------------------------------------------
+	// 1度MAX/MINに設定しクリアする
+	//------------------------------------------------------------
+
+	// 上限値計算
+	if ((status = peltierSetSensorTempAlarmCalc (tempMax, &dataOver)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// 下限値計算
+	if ((status = peltierSetSensorTempAlarmCalc (tempMin, &dataUnder)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// レジスタ設定
+	data32H = (dataOver & FPGA_PELTIER_SENSOR_ALARM_OVER_REG_MASK) << FPGA_PELTIER_SENSOR_ALARM_OVER_REG_SHIFT;
+	data32L = (dataUnder & FPGA_PELTIER_SENSOR_ALARM_UNDER_REG_MASK) << FPGA_PELTIER_SENSOR_ALARM_UNDER_REG_SHIFT;
+	data32 = data32H | data32L;
+	OUT32 (FPGA_PELTIER_SENSOR_ALM_ADRS, data32);
+
+	//------------------------------------------------------------
+	// ステータスクリア
+	//------------------------------------------------------------
+
 	// センサ温度ステータスクリア
 	tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
 
-	//@@@1if (tempStatus & (SENSOR_TEMP_OVER_STATUS | SENSOR_TEMP_UNDER_STATUS))
+	if (tempStatus & SENSOR_TEMP_STATUS )
 	{
 		// グローバル割り込み無効
 		if ((status = peltierSetGlobalInt (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		// ステータスクリア
-		//@@@1tempStatus &= ~(SENSOR_TEMP_OVER_STATUS | SENSOR_TEMP_UNDER_STATUS);
+		tempStatus &= ~SENSOR_TEMP_STATUS;
 		OUT32 (BOARD_STATUS_TEMP_ADRS, tempStatus);
 
 		// Check Status
@@ -1251,6 +1084,10 @@ int peltierSetSensorTempAlarm (double tempOver, double tempUnder)
 		if ((status = peltierSetGlobalInt (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
+
+	//------------------------------------------------------------
+	// Alarm設定
+	//------------------------------------------------------------
 
 	// 上限値計算
 	if ((status = peltierSetSensorTempAlarmCalc (tempOver, &dataOver)) != AVAL_STATUS_SUCCESS)
@@ -1346,12 +1183,6 @@ int peltierGetSensorTempAlarm (double *pTempOver, double *pTempUnder)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int reg32, data32;
-
-//@@@1
-*pTempOver = 59;
-*pTempUnder = 20;
-goto _DONE;
-//@@@1
 
 	// Check pTempOver Parameter
 	if (pTempOver == NULL)
@@ -1472,9 +1303,6 @@ _DONE:
 int peltierGetSensorTempAlarmMinMax (double *pMinTemp, double *pMaxTemp)
 {
 	int status = AVAL_STATUS_SUCCESS;
-#if defined (MODE_PELTIER_MOUNTING_SWITCH)
-	int peltierState = MODE_ENABLE;
-#endif
 
 	// Check pMinTemp Parameter
 	if (pMinTemp == NULL)
@@ -1545,7 +1373,7 @@ int peltierSetCaseTempAlarm (double tempOver, double tempUnder)
 	}
 
 	//------------------------------------------------------------
-	// 1度下限をクリアする
+	// 1度MAX/MINに設定しクリアする
 	//------------------------------------------------------------
 
 	// Over取得
@@ -1560,10 +1388,13 @@ int peltierSetCaseTempAlarm (double tempOver, double tempUnder)
 	data = FPGA_PELTIER_CASE_ALM_DATA_MAKE (over,under);
 	OUT32 (FPGA_PELTIER_CASE_ALM_ADRS, data);
 
-	// Case温度ステータスクリア(Ver.1.5)
+	//------------------------------------------------------------
+	// ステータスクリア
+	//------------------------------------------------------------
+
+	// Case温度ステータスクリア
 	tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
 	if (tempStatus & CASE_TEMP_STATUS)
-	//if (gPeltierTempStatus & CASE_TEMP_STATUS)
 	{
 		// グローバル割り込み無効
 		if ((status = peltierSetGlobalInt (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
@@ -1581,6 +1412,10 @@ int peltierSetCaseTempAlarm (double tempOver, double tempUnder)
 		if ((status = peltierSetGlobalInt (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
+
+	//------------------------------------------------------------
+	// Alarm設定
+	//------------------------------------------------------------
 
 	// Over取得
 	if ((status = peltierSetCaseTempAlarmCalc (tempOver, &over)) != AVAL_STATUS_SUCCESS)
@@ -1777,9 +1612,8 @@ _DONE:
 }
 
 
-#if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
 //**********************************************************************************
-//	Peltier Sensor温度取得(Ver.1.3)
+//	Peltier Sensor温度取得
 //----------------------------------------------------------------------------------
 //	[ INPUT ]
 //		pTemp					：センサ温度取得
@@ -1793,11 +1627,6 @@ int peltierGetSensorTemp (double *pTemp)
 	unsigned int data;
 	short dataS16;
 
-//@@@1
-	*pTemp = 0;
-	return (0);
-//@@@1
-	
 	// Check pTemp Parameter
 	if (pTemp == NULL)
 	{
@@ -1827,7 +1656,6 @@ _DONE:
 
 	return (status);
 }
-#endif // #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
 
 
 //**********************************************************************************
@@ -1875,12 +1703,12 @@ int peltierGetCaseTemp (double *pTemp)
 		dataS32 = (int)(FPGA_PELTIER_VERSION2_CASE_TEMP_SIGNED_MASK | data32);
 
 		// 小数点加算
-		dataD =  (double)((double)dataS32 - dataD);
+		dataD = (double)((double)dataS32 - dataD);
 	}
 	else
 	{
 		// 小数点加算
-		dataD =   (double)(double)(data32 + dataD);
+		dataD = (double)(double)(data32 + dataD);
 	}
 
 	// 温度設定
@@ -1913,7 +1741,7 @@ int peltierGetTempAlarmStatus (unsigned int *pStatus)
 	if (pStatus == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Temp Alarm Status pStatus NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Temp Alarm Status NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
@@ -2024,12 +1852,12 @@ int peltierGetMakeTempAlarmStatus (unsigned int *pStatus)
 	temp = 0;
 
 	// Sensor Over?
-	//@@@1if (data & FPGA_PELTIER_STATUS_TEMP_OVER_BIT)
-		//@@@1temp |= SENSOR_TEMP_OVER_STATUS;
+	if (data & FPGA_PELTIER_STATUS_TEMP_OVER_BIT)
+		temp |= SENSOR_TEMP_STATUS;
 
 	// Sensor Under?
-	//@@@1if (data & FPGA_PELTIER_STATUS_TEMP_UNDER_BIT)
-		//@@@1temp |= SENSOR_TEMP_UNDER_STATUS;
+	if (data & FPGA_PELTIER_STATUS_TEMP_UNDER_BIT)
+		temp |= SENSOR_TEMP_STATUS;
 
 	// Case Over?
 	if (data & FPGA_PELTIER_STATUS_CASE_FAIL_BIT)
@@ -2313,257 +2141,10 @@ int tempGetAbnormalCount (unsigned int *pData)
 _DONE:
 	return (status);
 }
-
-
-//**********************************************************************************
-//	Temp Abnormal Acquisition設定
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		data				：カウント
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int tempSetAbnormalAcquisition (unsigned int data)
-{
-	int status = AVAL_STATUS_SUCCESS;
-
-	// 設定
-	OUT32 (FIRM_DATA_TEMP_ABNORMAL_ACQUISITIONT, data);
-
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Temp Abnormal Acquisition取得
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		pData				：カウントを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int tempGetAbnormalAcquisition (unsigned int *pData)
-{
-	int status = AVAL_STATUS_SUCCESS;
-
-	// Check pData Parameter
-	if (pData == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Temp Abnormal Acquisition NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// 取得
-	*pData = IN32 (FIRM_DATA_TEMP_ABNORMAL_ACQUISITIONT);
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Temp Check Abnorma
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int tempAbnormalCheck (void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	double fpgaTemp, fpgaTempMax, fpgaTempMin;
-	unsigned int tempStatus;
-	unsigned int count;
-	int startMode;
-	unsigned int powerSupply;
-
-	// FPGA温度
-	if ((status = fpgaGetTemp (&fpgaTemp)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	//	Temp Abnormal Status取得
-	if ((status = tempGetAbnormalStatus (&tempStatus)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// Get Power Supply
-	if ((status = cameraPowerSupply (&powerSupply)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	if (tempStatus == 0)
-	{
-		// 電源供給もとにより、FPGA温度MAX値が異なる
-		if (powerSupply & FPGA_POWER_STATUS_POWER_CONNECTOR)
-			fpgaTempMax = TEMP_ABNORMAL_FPGA_UPPER_EXT;
-		else
-			fpgaTempMax = TEMP_ABNORMAL_FPGA_UPPER_PO;
-		
-		// FPGA上限温度異常？
-		if (fpgaTemp >= fpgaTempMax)
-		{
-			// Temp Abnormal Status設定
-			tempSetAbnormalStatus (1);
-			
-			// Temp Abnormal Count設定
-			tempGetAbnormalCount (&count);
-			tempSetAbnormalCount (count+1);
-			
-			// HW System Error
-			ledHwSystemErrorState ();
-			
-			// Start Status
-			acquisitionGetStartFlag (&startMode);
-
-			// Set Start Status
-			tempSetAbnormalAcquisition (startMode);
-			
-			if (startMode != 0)
-			{
-				// 取り込み停止
-				if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
-					goto _DONE;
-			}
-
-			// Peltier Off
-			if ((status = peltierSetMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-		}
-	}
-	else
-	{
-		// 電源供給もとにより、FPGA温度MIN値が異なる
-		if (powerSupply & FPGA_POWER_STATUS_POWER_CONNECTOR)
-			fpgaTempMin = TEMP_ABNORMAL_FPGA_LOWER_EXT;
-		else
-			fpgaTempMin = TEMP_ABNORMAL_FPGA_LOWER_PO;
-		
-		// FPGA下限温度異常？
-		if (fpgaTemp <= fpgaTempMin)
-		{
-			// Temp Abnormal Status設定
-			tempSetAbnormalStatus (0);
-
-			// LED
-			ledConnectStateForce();
-		}
-	}
-
-_DONE:
-	return (status);
-}
 #endif// #if defined (MODE_TEMP_ABNORMAL_CHECK)
 
 
 #if defined (MODE_PELTIER_CTRL)
-//**********************************************************************************
-//	Peltier Control Initialize
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		pData				：カウントを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int peltierControlInitiallize (void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Peltier Control Procs
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int peltierControlProcsInit (void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int low, high;
-	
-	// Get Clip
-	if ((status = peltierGetClip (&low, &high)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-		
-	// Set Clip
-	if ((status = peltierSetClip (low, 0x00)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// Set Gigh Clip(DDR)
-	if ((status = peltierSetPowerHighClip (high)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-	
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Peltier Control Procs
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		-
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int peltierControlProcs (void)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int low, high, highSave;
-
-	// Get Clip
-	if ((status = peltierGetClip (&low, &high)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// Set Gigh Clip(DDR)
-	if ((status = peltierGetPowerHighClip (&highSave)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// 設定値の80%
-	high = highSave * 0.8;
-
-	for (; high<highSave; high+=0x4)
-	{
-		// Delay
-		msDelay (100);
-		
-		if (high > highSave)
-			high = highSave;
-
-		// Set Clip
-		if ((status = peltierSetClip (low, high)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-	
-	// Get Clip
-	if ((status = peltierGetClip (&low, &high)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	if (highSave != high)
-	{
-		// Delay
-		msDelay (100);
-
-		// Set Clip
-		if ((status = peltierSetClip (low, highSave)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-	
-_DONE:
-	return (status);
-}
-
-
 //**********************************************************************************
 //	Peltier Power Level取得
 //----------------------------------------------------------------------------------
@@ -2666,10 +2247,6 @@ int peltierSetPowerLevel (int level)
 
 	if (peltierMode == MODE_ENABLE)
 	{
-		// Peltier Control Initialize
-		if ((status = peltierControlProcsInit ()) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
 		// Peltier Enable
 		if ((status = peltierSetMode (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
@@ -2727,66 +2304,6 @@ int peltierSetPowerHighClip (unsigned int data)
 
 	return (status);
 }
-
-
-//**********************************************************************************
-//	Peltier Power Start Flag取得
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		pData				：StartFlagを格納するポインタ
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int peltierGetPowerStartFlag (unsigned int *pData)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	
-	// Check pData Parameter
-	if (pData == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Peltier Power Start Flag NULL Parameter Error.\n");
-		goto _DONE;
-	}
-
-	// データ取得
-	*pData = IN32 (FIRM_DATA_PELTIER_POWER_START_FLAG);
-
-_DONE:
-	return (status);
-}
-
-
-//**********************************************************************************
-//	Peltier Power Start Flag設定
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		data				：StartFlag
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int peltierSetPowerStartFlag (unsigned int data)
-{
-	int status = AVAL_STATUS_SUCCESS;
-
-	// Check mode Parameter
-	if ((data != MODE_ENABLE) && (data != MODE_DISABLE))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Peltier Power Start Flag(%d) Parameter Error.(Disable:%d / Enable:%d)\n", data, MODE_DISABLE, MODE_ENABLE);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// データ設定
-	OUT32 (FIRM_DATA_PELTIER_POWER_START_FLAG, data);
-
-_DONE:
-	return (status);
-}
-
 #endif // #if defined (MODE_PELTIER_CURRENT_LIMIT_CTRL)
 
 
@@ -2918,7 +2435,6 @@ int fpgaCalcRegToTemp (unsigned int data, double *pTemp)
 	int dataI, dataI2;
 	double dataD;
 	
-
 	// Check pTemp Parameter
 	if (pTemp == NULL)
 	{
@@ -3114,6 +2630,26 @@ int fpgaSetTempAlarm (double tempOver, double tempUnder)
 		goto _DONE;
 	}
 
+	//------------------------------------------------------------
+	// 1度MAX/MINに設定しクリアする
+	//------------------------------------------------------------
+
+	// 上限値計算
+	if ((status = fpgaCalcTempToReg (FPGA_TEMP_MAX, &dataOver)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// 下限値計算
+	if ((status = fpgaCalcTempToReg (FPGA_TEMP_MIN, &dataUnder)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// レジスタ設定
+	data32 = (dataOver << 16) | dataUnder;
+	OUT32 (FPGA_TEMP_ALARM_ADRS, data32);
+
+	//------------------------------------------------------------
+	// ステータスクリア
+	//------------------------------------------------------------
+
 	// 温度ステータスクリア
 	tempStatus = IN32 (BOARD_STATUS_TEMP_ADRS);
 
@@ -3135,6 +2671,10 @@ int fpgaSetTempAlarm (double tempOver, double tempUnder)
 		if ((status = fpgaSetInterrupt (FPGA_INT_TEMP_UPPER)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
+
+	//------------------------------------------------------------
+	// Alarm設定
+	//------------------------------------------------------------
 
 	// 上限値計算
 	if ((status = fpgaCalcTempToReg (tempOver, &dataOver)) != AVAL_STATUS_SUCCESS)

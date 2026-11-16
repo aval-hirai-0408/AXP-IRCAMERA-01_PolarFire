@@ -16,12 +16,6 @@
 #include "../Common/common.h"
 
 
-//----------------------------------------------------------------------------------
-// externs
-//----------------------------------------------------------------------------------
-extern unsigned int gTickCountTotalTempAbnormalCheck;
-
-
 //**********************************************************************************
 //	GigE Main
 //----------------------------------------------------------------------------------
@@ -49,34 +43,6 @@ int gigeMain (void)
 		// Check Console
 		//------------------------------------------------------------
 		firmCheckConsole ();
-
-
-		//------------------------------------------------------------
-		// 温度異常check
-		//------------------------------------------------------------
-#if defined (MODE_TEMP_ABNORMAL_CHECK)
-		if (gTickCountTotalTempAbnormalCheck > TEMP_ABNORMAL_CHECK_INTERVAL)
-		{
-			tempAbnormalCheck ();
-			gTickCountTotalTempAbnormalCheck = 0;
-		}
-#endif // MODE_TEMP_ABNORMAL_CHECK
-
-
-		//------------------------------------------------------------
-		// Peltierコントロール
-		//------------------------------------------------------------
-#if defined (MODE_PELTIER_CTRL)
-		// Get Start Flag
-		peltierGetPowerStartFlag (&peltierStartFlag);
-
-		if (peltierStartFlag == MODE_ENABLE)
-		{
-			peltierControlProcs ();
-			peltierSetPowerStartFlag (MODE_DISABLE);
-		}
-#endif // MODE_PELTIER_CTRL
-
 
 		//------------------------------------------------------------
 		// GigE コマンド処理

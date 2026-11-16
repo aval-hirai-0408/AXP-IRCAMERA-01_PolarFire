@@ -55,8 +55,6 @@ extern int gPeltierSensorUpperTempCount;	// センサ温度上限カウント
 extern int gPeltierSensorLowerTempCount;	// センサ温度下限カウント
 extern int gPeltierCaseTempCount;			// ケース温度カウント
 
-extern int gSpectrumType;					// Spectrum Type
-
 
 //**********************************************************************************
 //	Camera Status初期化
@@ -227,11 +225,10 @@ int cameraSetStatusAll (void)
 	// Timing Generator
 	OUT32 (BOARD_STATUS_TIMING_GENERATOR_ADRS, gTimingGeneratorStatus);
 
-	if (gSpectrumType == CAMERA_TYPE_SPECTRUM)
-	{
-		// Spectrum
-		OUT32 (BOARD_STATUS_SPECTRUM_ADRS, gSpectrumStatus);
-	}
+#if defined (MODE_SPECTRUM)
+	// Spectrum
+	OUT32 (BOARD_STATUS_SPECTRUM_ADRS, gSpectrumStatus);
+#endif
 	
 	// I2C
 	OUT32 (BOARD_STATUS_I2C_ADRS, gI2cPsStatus);
@@ -473,15 +470,14 @@ int cameraStatusShow (void)
 	//------------------------------------------------------------
 	// Spectrum Status
 	//------------------------------------------------------------
-	if (gSpectrumType == CAMERA_TYPE_SPECTRUM)
-	{
-		DEBUG_PRINT_FORCE ("   Spectrum                   ");
-		errno = IN32(BOARD_STATUS_SPECTRUM_ADRS);
-		if (errno == 0)
-			DEBUG_PRINT_FORCE ("[OK]\n");
-		else
-			DEBUG_PRINT_FORCE ("[ERROR] : Dev = %d / Error = %d\n", MAKE_DEVICE_STATUS(errno), MAKE_ERRNUM_STATUS(errno));
-	}
+#if defined (MODE_SPECTRUM)
+	DEBUG_PRINT_FORCE ("   Spectrum                   ");
+	errno = IN32(BOARD_STATUS_SPECTRUM_ADRS);
+	if (errno == 0)
+		DEBUG_PRINT_FORCE ("[OK]\n");
+	else
+		DEBUG_PRINT_FORCE ("[ERROR] : Dev = %d / Error = %d\n", MAKE_DEVICE_STATUS(errno), MAKE_ERRNUM_STATUS(errno));
+#endif
 
 	//------------------------------------------------------------
 	// I2C Status

@@ -103,6 +103,7 @@
 //#define MODE_IEEE1588_PTP					// IEE1588 PTP
 #define MODE_LUT_NUMBER_FIX					// Lut Number Fix Mode
 //#define MODE_UPDATE_ALL_MULTI				// Update All Multi
+//#define MODE_CXP_CRC_SOFT					// CoaxPress CRC Soft Mode
 
 
 //----------------------------------------------------------------------------------
@@ -173,8 +174,8 @@
 #define SENSOR_NUM							(1)
 
 // Width/Height
-#define CAMERA_WIDTH_MIN					(8)
-#define CAMERA_HEIGHT_MIN					(8)
+#define CAMERA_WIDTH_MIN					(128)
+#define CAMERA_HEIGHT_MIN					(4)
 #define CAMERA_WIDTH_MAX					(2560)
 #define CAMERA_HEIGHT_MAX					(2048)
 
@@ -613,17 +614,13 @@
 #define ROI_SENSOR_HEIGHT_SIZE_ALIGH		(8)
 
 // Align FPGA
-#define ROI_FPGA_WIDTH_OFFSET_ALIGH			(4)
-#define ROI_FPGA_WIDTH_SIZE_ALIGH			(4)
-#define ROI_FPGA_HEIGHT_OFFSET_ALIGH		(1)
-#define ROI_FPGA_HEIGHT_SIZE_ALIGH			(1)
+#define ROI_FPGA_WIDTH_OFFSET_ALIGH			(32)
+#define ROI_FPGA_WIDTH_SIZE_ALIGH			(32)
+#define ROI_FPGA_HEIGHT_OFFSET_ALIGH		(4)
+#define ROI_FPGA_HEIGHT_SIZE_ALIGH			(4)
 
 // CXP Height Aligh
 #define CXP_HEIGHT_ALIGH					(4)
-
-// CXP Width
-#define CXP_WIDTH_ALIGH						(32)
-#define CXP_WIDTH_MIN						(128)
 
 // Sensor DPC Adjust
 #define IMG_WIDTH_DPC_ADJUST_OFFSET			(2)

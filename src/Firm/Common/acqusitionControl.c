@@ -278,10 +278,10 @@ int acquisitionStart (void)
 		goto _DONE;
 
 	// Pixel
-	OUT32 (FPGA_CXP_TEST_PATTERN_PIXEL_ADRS, 8);
+	//@@@2OUT32 (FPGA_CXP_TEST_PATTERN_PIXEL_ADRS, 8);
 
 	// Frame Blank
-	OUT32 (FPGA_CXP_TEST_PATTERN_FRAME_BLANK_ADRS, 0xFE7F);
+	//@@@2OUT32 (FPGA_CXP_TEST_PATTERN_FRAME_BLANK_ADRS, 0xFE7F);
 
 	// Line Blank
 	if (wSize == 2560)
@@ -291,10 +291,10 @@ int acquisitionStart (void)
 	else
 		data32 = 0x4bfb;
 	
-	OUT32 (FPGA_CXP_TEST_PATTERN_LINE_BLANK_ADRS, data32);
+	//@@@2OUT32 (FPGA_CXP_TEST_PATTERN_LINE_BLANK_ADRS, data32);
 	
 	// Test Pattern
-	OUT32 (FPGA_CXP_TEST_PATTERN_MODE_ADRS, 1);
+	//@@@2OUT32 (FPGA_CXP_TEST_PATTERN_MODE_ADRS, 1);
 //@@@@@@@@@@@@@@@@@@@@@@
 	
 #if defined (MODE_TEMP_ABNORMAL_CHECK)
@@ -362,8 +362,8 @@ int acquisitionAbort (void)
 		if ((state1 == 0) && (state2 == 0))
 			break;
 
-		// 1ms
-		msDelay (1);
+		// 2us
+		usDelay (2);
 	}
 
 	// Timeout
@@ -389,7 +389,7 @@ _DONE:
 	usDelay(100);
 	
 	// Test Pattern Off
-    OUT32 (FPGA_CXP_TEST_PATTERN_MODE_ADRS, 0);
+	//@@@2 OUT32 (FPGA_CXP_TEST_PATTERN_MODE_ADRS, 0);
 //@@@@@@@@@@@@@@@@@@@@@@
 	return (status);
 }

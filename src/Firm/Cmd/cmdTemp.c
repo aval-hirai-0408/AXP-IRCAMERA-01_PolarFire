@@ -23,7 +23,7 @@
 extern int gPeltierSensorUpperTempCount;	// センサ温度上限カウント
 extern int gPeltierSensorLowerTempCount;	// センサ温度下限カウント
 extern int gPeltierCaseTempCount;			// ケース温度カウント
-extern int gPeltierFpgaTempCount;			// FPGA温度カウント
+
 
 //**********************************************************************************
 //	温度情報表示
@@ -286,13 +286,6 @@ int cmdTempAlarm (void *str)
 		DEBUG_PRINT_FORCE ("Over = %.2f / Under = %.2f\n", tempOver, tempUnder);
 	}
 
-	// FPGA温度上限／下限値取得
-	if ((status = fpgaGetTempAlarm (&tempOver, &tempUnder)) == AVAL_STATUS_SUCCESS)
-	{
-		DEBUG_PRINT_FORCE ("   FPGA                      ");
-		DEBUG_PRINT_FORCE ("Over = %.2f / Under = %.2f\n", tempOver, tempUnder);
-	}
-
 #ifdef MODE_PELTIER
 	// Target温度取得
 	if ((status = peltierGetTarget (&target)) == AVAL_STATUS_SUCCESS)
@@ -342,13 +335,6 @@ int cmdTempAlarmStatusShow (void *str)
 	else
 		DEBUG_PRINT_FORCE ("OK\n");
 
-    // FPGA温度ステータス
-    DEBUG_PRINT_FORCE ("   FPGA Temp                 ");
-    if (tempStatus & FPGA_TEMP_STATUS)
-        DEBUG_PRINT_FORCE ("NG\n");
-    else
-        DEBUG_PRINT_FORCE ("OK\n");
-
 	DEBUG_PRINT_FORCE ("\n");
 
 	return (AVAL_STATUS_SUCCESS);
@@ -372,16 +358,12 @@ int cmdTempAlarmCount (void *str)
 	DEBUG_PRINT_FORCE ("[Temperature Alarm Count information]\n");
 
 	// センサ上限温度カウント
-	DEBUG_PRINT_FORCE ("   Sensor Upper Temp         ");
+	DEBUG_PRINT_FORCE ("   Sensor Temp               ");
 	DEBUG_PRINT_FORCE ("%d\n", gPeltierSensorUpperTempCount);
 
 	//  ケース温度カウント
 	DEBUG_PRINT_FORCE ("   Case Temp                 ");
 	DEBUG_PRINT_FORCE ("%d\n", gPeltierCaseTempCount);
-
-	//  FPGA温度カウント
-	DEBUG_PRINT_FORCE ("   FPGA Temp                 ");
-	DEBUG_PRINT_FORCE ("%d\n", gPeltierFpgaTempCount);
 
 	DEBUG_PRINT_FORCE ("\n");
 
@@ -983,9 +965,6 @@ int cmdPeltierTarget (void *str)
 	int status = AVAL_STATUS_SUCCESS;
 	int argc;
 	double temp;
-#if defined (MODE_PELTIER_CTRL)
-	int mode;
-#endif
 
 	// Get Argument
 	argc = cmdCheckArg (str);
@@ -1017,30 +996,9 @@ int cmdPeltierTarget (void *str)
 			goto _DONE;
 		}
 		
-		#if defined (MODE_PELTIER_CTRL)
-		if ((status = peltierGetMode (&mode)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-		
-		if (mode == 1)
-		{
-			// Peltier Comntrol Init
-			if ((status = peltierControlProcsInit ()) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-		}
-		#endif
-
 		// Target温度設定
 		if ((status = peltierSetTarget (temp)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-		
-		#if defined (MODE_PELTIER_CTRL)
-		if (mode == 1)
-		{
-			// Peltier Enable Delay
-			if ((peltierControlProcs ()) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-		}
-		#endif
 	}
 	else
 	{
@@ -1302,27 +1260,9 @@ int cmdPeltierEnable (void *str)
 		}
 		#endif
 
-		#if defined (MODE_PELTIER_CTRL)
-		if (mode == 1)
-		{
-			// Peltier Comntrol Init
-			if ((status = peltierControlProcsInit ()) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-		}
-		#endif
-
 		// Peltier Mode設定
 		if ((status = peltierSetMode (mode)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-		
-		#if defined (MODE_PELTIER_CTRL)
-		if (mode == 1)
-		{
-			// Peltier Enable Delay
-			if ((peltierControlProcs ()) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-		}
-		#endif
 	}
 	else
 	{
@@ -1765,17 +1705,6 @@ int cmdPeltierPowerLevel (void *str)
 		// Peltier Power Level設定
 		if ((status = peltierSetPowerLevel (level)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-		
-		// Peltier Mode取得
-		if ((status = peltierGetMode (&mode)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		if (mode == 1)
-		{
-			// Peltier Control
-			if ((peltierControlProcs ()) != AVAL_STATUS_SUCCESS)
-				goto _DONE;
-		}
 	}
 	else
 	{

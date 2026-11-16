@@ -122,7 +122,7 @@ _DONE:
 	return (status);
 }
 
-#define UPDATE_ALL_TIMEOUT		(5000000)
+#define UPDATE_ALL_TIMEOUT		(25000)	// 5sec
 
 #if defined (MODE_UPDATE_ALL_MULTI)
 //**********************************************************************************
