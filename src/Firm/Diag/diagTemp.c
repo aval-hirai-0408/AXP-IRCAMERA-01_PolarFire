@@ -32,7 +32,10 @@
 
 extern int gPeltierSensorUpperTempCount;	// センサ温度上限カウント
 extern int gPeltierSensorLowerTempCount;	// センサ温度下限カウント
-extern int gPeltierCaseTempCount;			// ケース温度カウント
+extern int gPeltierCaseUpperTempCount;		// ケース温度上限カウント
+extern int gPeltierCaseLowerTempCount;		// ケース温度下限カウント
+extern int gPeltierFpgaUpperTempCount;		// FPGA温度上限カウント
+extern int gPeltierFpgaLowerTempCount;		// FPGA温度下限カウント
 
 
 //**********************************************************************************
@@ -146,7 +149,8 @@ int cmdDiagSensorTempMain (void *str)
 #endif
 
 	// センサ温度上限／下限値取得
-	peltierGetSensorTempAlarm (&sensorTempHigh, &sensorTempLow);
+	if ((status = peltierGetSensorTempAlarm (&sensorTempHigh, &sensorTempLow)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
 MORE:
 	for (tloop=0; tloop<loop; tloop++)
@@ -243,8 +247,6 @@ MORE:
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "\nSensor Temp Upper Alarm Timeout Error.\n");
 			goto _DONE;
 		}
-
-		DEBUG_PRINT ("Sensor Temp Alarm Under Check..\n");
 
 		//--------------------------------------------------------------------------------
 		// センサ温度割り込み(下限)
@@ -391,6 +393,7 @@ int cmdDiagCaseTempMain (void *str)
 	double temp;
 	unsigned int timeout;
 	unsigned int saveIntCount;
+	double tempHigh, tempLow;
 
 	// 検査回数取得
 	if (sscanf (str, "%d", &loop) != 1)
@@ -399,6 +402,10 @@ int cmdDiagCaseTempMain (void *str)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
 		goto _DONE;
 	}
+
+	// Case温度上限／下限値取得
+	if ((status = peltierGetCaseTempAlarm (&tempHigh, &tempLow)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
 MORE:
 	for (tloop=0; tloop<loop; tloop++)
@@ -424,12 +431,12 @@ MORE:
 		DEBUG_PRINT ("%.2f\n", temp);
 
 		//--------------------------------------------------------------------------------
-		// ケース温度割り込み
+		// ケース温度割り込み(上限)
 		//--------------------------------------------------------------------------------
-		DEBUG_PRINT ("Case Temp Alarm Check..\n");
+		DEBUG_PRINT ("Case Temp Alarm Upper Check..\n");
 
 		// 現在の割り込みカウント取得
-		saveIntCount = gPeltierCaseTempCount;
+		saveIntCount = gPeltierCaseUpperTempCount;
 
 		// ケース温度上限／下限値設定
 		if ((status = peltierSetCaseTempAlarm (DIAG_TEMP_CASE_UPPER_ALARM, DIAG_TEMP_CASE_UNDER_ALARM_NORMAL)) != AVAL_STATUS_SUCCESS)
@@ -438,7 +445,7 @@ MORE:
 		// 割り込み発生待ち
 		for (timeout = 0; timeout<DIAG_TEMP_INT_TIMEOUT; timeout++)
 		{
-			if (saveIntCount < gPeltierCaseTempCount)
+			if (saveIntCount < gPeltierCaseUpperTempCount)
 				break;
 
 			msDelay (10);
@@ -448,23 +455,46 @@ MORE:
 		if (timeout >= DIAG_TEMP_INT_TIMEOUT)
 		{
 			status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_TIMEOUT);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Case Temp Alarm Timeout Error.\n");
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Case Temp Upper Alarm Timeout Error.\n");
 			goto _DONE;
 		}
 
-		// ケース温度上限／下限値設定(下限値を下回るようにする)
-		if ((status = peltierSetCaseTempAlarm (DIAG_TEMP_CASE_MAX, DIAG_TEMP_CASE_MAX-0.1)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
+		//--------------------------------------------------------------------------------
+		// ケース温度割り込み(下限)
+		//--------------------------------------------------------------------------------
+		DEBUG_PRINT ("Case Temp Alarm Under Check..\n");
 
-		msDelay (1000);
+		// 現在の割り込みカウント取得
+		saveIntCount = gPeltierCaseLowerTempCount;
+
+		// ケース温度上限／下限値設定
+		if ((status = peltierSetCaseTempAlarm (DIAG_TEMP_CASE_UPPER_ALARM_NORMAL, DIAG_TEMP_CASE_UNDER_ALARM)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+		
+		// 割り込み発生待ち
+		for (timeout = 0; timeout<DIAG_TEMP_INT_TIMEOUT; timeout++)
+		{
+			if (saveIntCount < gPeltierCaseLowerTempCount)
+				break;
+
+			msDelay (10);
+		}
+
+		// Check Timeout
+		if (timeout >= DIAG_TEMP_INT_TIMEOUT)
+		{
+			status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_TIMEOUT);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "Case Temp Lower Alarm Timeout Error.\n");
+			goto _DONE;
+		}
 	}
 
 	if (loop == 0xffffffff)
 		goto MORE;
 
 _DONE:
-	// センサ温度上限／下限値設定（通常設定）
-	peltierSetCaseTempAlarm (DIAG_TEMP_CASE_UPPER_ALARM_NORMAL, DIAG_TEMP_CASE_UNDER_ALARM_NORMAL);
+	// Case温度上限／下限値設定（通常設定）
+	peltierSetCaseTempAlarm (tempHigh, tempLow);
 
 	return (status);
 }
@@ -559,6 +589,9 @@ int cmdDiagFpgaTempMain (void *str)
 	unsigned int loop, tloop;
 	char *dev = (char *)"FPGA Temp";
 	double temp;
+	unsigned int timeout;
+	unsigned int saveIntCount;
+	double tempHigh, tempLow;
 
 	// 検査回数取得
 	if (sscanf (str, "%d", &loop) != 1)
@@ -567,6 +600,10 @@ int cmdDiagFpgaTempMain (void *str)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
 		goto _DONE;
 	}
+
+	// FPGA温度上限／下限値取得
+	if ((status = fpgaGetTempAlarm (&tempHigh, &tempLow)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
 
 MORE:
 	for (tloop=0; tloop<loop; tloop++)
@@ -590,12 +627,73 @@ MORE:
 
 		DEBUG_PRINT ("FPGA Temp            ");
 		DEBUG_PRINT ("%.2f\n", temp);
+
+		//--------------------------------------------------------------------------------
+		// FPGA温度割り込み(上限)
+		//--------------------------------------------------------------------------------
+		DEBUG_PRINT ("FPGA Temp Alarm Upper Check..\n");
+
+		// 現在の割り込みカウント取得
+		saveIntCount = gPeltierFpgaUpperTempCount;
+
+		// FPGA温度上限／下限値設定
+		if ((status = fpgaSetTempAlarm (DIAG_TEMP_FPGA_UPPER_ALARM, DIAG_TEMP_FPGA_UNDER_ALARM_NORMAL)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+
+		// 割り込み発生待ち
+		for (timeout = 0; timeout<DIAG_TEMP_INT_TIMEOUT; timeout++)
+		{
+			if (saveIntCount < gPeltierFpgaUpperTempCount)
+				break;
+
+			msDelay (10);
+		}
+
+		// Check Timeout
+		if (timeout >= DIAG_TEMP_INT_TIMEOUT)
+		{
+			status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_TIMEOUT);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "\nFPGA Temp Upper Alarm Timeout Error.\n");
+			goto _DONE;
+		}
+
+		//--------------------------------------------------------------------------------
+		// FPGA温度割り込み(下限)
+		//--------------------------------------------------------------------------------
+		DEBUG_PRINT ("FPGA Temp Alarm Under Check..\n");
+
+		// 現在の割り込みカウント取得
+		saveIntCount = gPeltierFpgaLowerTempCount;
+
+		// FPGA温度上限／下限値設定
+		if ((status = fpgaSetTempAlarm (DIAG_TEMP_FPGA_UPPER_ALARM_NORMAL, DIAG_TEMP_FPGA_UNDER_ALARM)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+
+		// 割り込み発生待ち
+		for (timeout = 0; timeout<DIAG_TEMP_INT_TIMEOUT; timeout++)
+		{
+			if (saveIntCount < gPeltierFpgaLowerTempCount)
+				break;
+
+			msDelay (10);
+		}
+
+		// Check Timeout
+		if (timeout >= DIAG_TEMP_INT_TIMEOUT)
+		{
+			status = MAKE_ERROR_STATUS (AVAL_STATUS_PELTIER, AVAL_STATUS_TIMEOUT);
+			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "FPGA Temp Under Alarm Timeout Error.\n");
+			goto _DONE;
+		}
 	}
 
 	if (loop == 0xffffffff)
 		goto MORE;
 
 _DONE:
+	// FPGA温度上限／下限値設定
+	fpgaSetTempAlarm (tempHigh, tempLow);
+
 	return (status);
 }
 

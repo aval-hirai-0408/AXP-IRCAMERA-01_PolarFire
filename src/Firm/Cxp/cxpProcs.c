@@ -29,6 +29,7 @@
 //----------------------------------------------------------------------------------
 unsigned int ElectricalComplianceTest_Led = 0;
 int gCxpAckDoneFlag = 0;
+int gCxpWaitAck = 0;
 //@@@@@@@@@@@@@@@@
 unsigned int gCxpAllRecvCount = 0;
 //@@@@@@@@@@@@@@@@
@@ -212,6 +213,9 @@ int cxpInitialize2 (void)
 
 	// Connection Config Default設定
 	ConnectionConfigDefault_st = ConnectionConfig_st;
+//@@@1
+	DEBUG_PRINT_FORCE("ConnectionConfigDefault_st = 0x%x\n", ConnectionConfigDefault_st);
+//@@@1
 	
 	// Connection Configは上記で3Gbpsに設定
 	ConnectionConfig_st &= ~0xffff;
@@ -686,6 +690,9 @@ int cxpProcs (int port)
 		
 		// Ack返信済Flag初期化
 		gCxpAckDoneFlag = 0;
+		
+		// Wait AckFlag初期化
+		gCxpWaitAck = 0;
 
 		// パラメータ設定
 		status = cxpSetUser (port, &cxpPaket);
@@ -693,7 +700,7 @@ int cxpProcs (int port)
 		//------------------------------------------------------------
 		// Execute系はAck返信済でgCxpAckDoneFlag=1になる(cxpSetUser関数でAck返信)
 		//------------------------------------------------------------
-		if (gCxpAckDoneFlag == 0)
+		if ((gCxpAckDoneFlag == 0) && (gCxpWaitAck == 0))
 		{
 			// status設定
 			cxpPaket.status = status;
@@ -783,7 +790,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 	unsigned int *ptrL;
 	unsigned int saveAckSize;
 
-	#if 1
+	#if 0
 	if ((gDipsw == 3) || (IN32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS) == 1))
 	{
 		sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x\n", pCxpSt->adrs, pCxpSt->size, status);
@@ -1574,13 +1581,53 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			//------------------------------------------------------------
 			if ((adrs == FPGA_AOI_BITWIDTH_ADRS) 				||
 				(adrs == FPGA_XFLIP_CTRL_ADRS_FPGA)				||
-				(adrs == FPGA_XFLIP_CTRL_ADRS_FPGA)				||
-				(adrs == SensorGradComp8BitConvert)				||
-				(adrs == (DeviceVendorNameOnEEPROM + 28))		||
-				(adrs == (DeviceModelNameOnEEPROM + 28))		||
-				(adrs == (DeviceManufacturerInfoOnEEPROM + 44))
-				)
+				(adrs == SensorGradComp8BitConvert))
 			{
+				if (adrs == FPGA_AOI_BITWIDTH_ADRS)
+				{
+					if ((status = cameraGetBitWidthGigE ((int *)&data1)) == AVAL_STATUS_SUCCESS)
+					{
+						if (data1 == *pDataRecv)
+						{
+							goto _NEXT;
+						}
+					}
+				}
+				else if (adrs == FPGA_XFLIP_CTRL_ADRS_FPGA)
+				{
+					if ((status = aoiGetXflip ((int *)&data1)) == AVAL_STATUS_SUCCESS)
+					{
+						#if defined (MODE_XFLIP_INVERT)
+						if (data1 == XFLIP_ENABLE)
+							data1 = XFLIP_DISABLE;
+						else
+							data1 = XFLIP_ENABLE;
+						#endif
+
+						if (data1 == *pDataRecv)
+						{
+							goto _NEXT;
+						}
+					}
+				}
+				else if (adrs == SensorGradComp8BitConvert)
+				{
+					if ((status = aoiGetBitWidth ((int *)&data1)) == AVAL_STATUS_SUCCESS)
+					{
+						if (data1 == 8)
+							data1 = sensorGradationCompGetModeDDR ();
+						else
+							data1 = 1;
+						
+						if (data1 == *pDataRecv)
+						{
+							goto _NEXT;
+						}
+					}
+				}
+				
+				gCxpWaitAck = 1;
+
 				// wait status設定
 				pCxpSt->status = CXP_ACK_CODE_WAIT;
 
@@ -1716,6 +1763,7 @@ int cxpSetUser (int port, CXP_PACKET_ST *pCxpSt)
 			break;
 	}
 
+_NEXT:
 	if ((gDipsw == 3) || (IN32 (FIRM_DATA_UART_CONSOLE_MODE_ADRS) == 1))
 	{
 		sprintf (gLogMsgBuff,"adrs=0x%08x, size=0x%08x, data=0x%08x, status=%d, flag=%d\n", pCxpSt->adrs, pCxpSt->size, *pCxpSt->pData, status, gCxpIntProcsFlag);
@@ -2480,7 +2528,7 @@ int cxpGetUser (int port, CXP_PACKET_ST *pCxpSt)
 
 				// オフセット
 				offset = adrs - adrs2;
-
+				
 				// サイズがオーバーしている?
 				if ((adrs + pCxpSt->ackSize) > (adrs + CXP_XML_URL_SIZE))
 					pCxpSt->ackSize = CXP_XML_URL_SIZE - offset;
@@ -4589,7 +4637,7 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 	int widthSize, heightSize;
 
 	// 取り込み停止
-	//@@@1acquisitionAbort ();
+	acquisitionAbort ();
 
 	// Get Width
 	if ((status = aoiGetWidth (&widthSize)) != AVAL_STATUS_SUCCESS)
@@ -4599,19 +4647,12 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 	if ((status = aoiGetHeight (&heightSize)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	//--------------------------------------------------------------------------------
-	// IPレジスタ設定値取得
-	//--------------------------------------------------------------------------------
-	data1 = configData & 0xffff;
-	if ((status = cxpGetDataToRegData (data1, &data2)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
 
-#if 0	//@@@1
 	//--------------------------------------------------------------------------------
 	// 現在のフレームレート/露光時間設定取得
 	//--------------------------------------------------------------------------------
 	data1 = IN32 (FIRM_DATA_FRAME_RATE_DEFAULT);
-
+	
 	if (data1 == 0)
 	{
 		if ((status = acquisitionGetFrameRate (&dbFrameRate))!= AVAL_STATUS_SUCCESS)
@@ -4628,33 +4669,27 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 		// 露光時間取得
 		uiExp = IN32 (FIRM_DATA_EXPOSURE_DEFAULT);
 	}
-#endif //@@@1
-	
+
+	//--------------------------------------------------------------------------------
+	// IPレジスタ設定値取得
+	//--------------------------------------------------------------------------------
+	data1 = configData & 0xffff;
+	if ((status = cxpGetDataToRegData (data1, &data2)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
 	//--------------------------------------------------------------------------------
 	// CXP Rate設定
 	//--------------------------------------------------------------------------------
 	if ((status = cxpSetRateReg (data2)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	
 	//--------------------------------------------------------------------------------
 	// UpLink設定
 	//--------------------------------------------------------------------------------
-	// 受信FIFO Disable
-	//@@@1data3 = IN32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL));
-	//@@@1OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data3 & ~FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
-
-	// Up Link Rate変更
 	if ((data1 == CXP_RATE_10_000GBPS) || (data1 == CXP_RATE_12_500GBPS))
 		OUT32 (FPGA_CXP_LSUC_SPEED_MODE_ADRS, FPGA_CXP_LSUC_LINK_SPEED_41M);
 	else
 		OUT32 (FPGA_CXP_LSUC_SPEED_MODE_ADRS, 0);
-
-	// 受信FIFO Reset
-	//@@@1OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data3 | FPGA_CXP_RX_CMD_FIFO_CTRL_RESET));
-
-	// 受信FIFO ENABLE
-	//@@@1OUT32 ((FPGA_CXP_RX_CMD_FIFO_CTRL_ADRS + port * FPGA_CXP_REGISTER_PORT_INTERVAL), (data3 | FPGA_CXP_RX_CMD_FIFO_CTRL_ENABLE));
 
 	//--------------------------------------------------------------------------------
 	// ConnectionConfig設定
@@ -4666,6 +4701,7 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 	if ((status = cxpSetRateData (configData)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
+
 //@@@@@@@@@@@@
 	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, widthSize);
 	OUT32(FPGA_CXP_S0_YSIZE_OFFSET_ADRS, heightSize);
@@ -4674,20 +4710,19 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 //@@@@@@@@@@@@	
 	
 
-#if 0 //@@@1
 	//--------------------------------------------------------------------------------
 	// Set H Interval
 	//--------------------------------------------------------------------------------
 	// センサ有効?
-	if ((status = sensorGetValidMode ((int *)&data3)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
+	//@@@1if ((status = sensorGetValidMode ((int *)&data3)) != AVAL_STATUS_SUCCESS)
+		//@@@1goto _DONE;
 
-	if (data3 == MODE_ENABLE)
+	//@@@1if (data3 == MODE_ENABLE)
 	{
 		// Get Bit
 		if ((status = aoiGetBitWidth (&dataI1)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
-	
+
 		// Set H Interval
 		if ((status = sensorSetHInterval (dataI1))!= AVAL_STATUS_SUCCESS)
 		goto _DONE;
@@ -4699,7 +4734,7 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 	// 最大レート取得
 	if ((status = rateMax (&dbFrameRateMax)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-	
+
 	if (dbFrameRate > dbFrameRateMax)
 		dbFrameRate = dbFrameRateMax;
 	
@@ -4708,8 +4743,7 @@ int cxpSetConnectionConfig (int port, unsigned int configData)
 
 	if ((status = acquisitionSetExposure (uiExp))!= AVAL_STATUS_SUCCESS)
 		goto _DONE;
-#endif //@@@1
-
+	
 _DONE:
 	return (status);
 }

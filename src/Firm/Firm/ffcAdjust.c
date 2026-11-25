@@ -181,17 +181,6 @@ _DPC_SKIP:
 #endif
 
 	//----------------------------------------------------------------------
-	// Auto Bright Mode 無効設定
-	//----------------------------------------------------------------------
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	if ((status = autoBrightSetExposureMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	if ((status = autoBrightSetGainMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-#endif
-
-	//----------------------------------------------------------------------
 	// Binning 無効設定
 	//----------------------------------------------------------------------
 #if defined(MODE_BINNING)
@@ -683,17 +672,6 @@ int ffcWhite (FFC_PARAM ffcParam)
 
 #if defined (MODE_FFC_SHADING_LINE)
 _DPC_SKIP:
-#endif
-
-	//----------------------------------------------------------------------
-	// Auto Bright Mode 無効設定
-	//----------------------------------------------------------------------
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	if ((status = autoBrightSetExposureMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	if ((status = autoBrightSetGainMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
 #endif
 
 	//----------------------------------------------------------------------

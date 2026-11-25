@@ -102,100 +102,6 @@
 	#define FPGA_POWER_STATUS_IF_OK									(1<<2)
 //@@@1
 
-//@@@@@1まだ
-//----------------------------------------------------------------------
-// GPIO
-//----------------------------------------------------------------------
-#define FPGA_GPIO_ADRS												(FPGA_BASE_ADRS_COMMON+0x02000)
-
- #define FPGA_GPIO_GPI_CTRL_ADRS									(FPGA_GPIO_ADRS+0x00)
-	#define GPI_GET_DATA(x)											(x&FPGA_GPI_CTRL_GPI0_BIT)
-	#define FPGA_GPI_CTRL_GPI0_BIT									(1<<0)
-	#define FPGA_GPI_CTRL_GPI1_BIT									(1<<1)
- #define FPGA_GPIO_GPO_CTRL_ADRS									(FPGA_GPIO_ADRS+0x04)
-	#define GPO_GP0													(1<<0)
-	#define GPO_GP1													(1<<1)
-	#define GPO_GP2													(1<<2)
-	#define GPO_SET_DATA(x)											((x<<24)&FPGA_GPO_CTRL_OR_MASK)
-	#define GPO_GET_DATA(x)											((x&FPGA_GPO_CTRL_OR_MASK)>>24)
-	#define FPGA_GPO_CTRL_AND_MASK									(3<<28)
-	#define FPGA_GPO_CTRL_OR_MASK									(3<<24)
-	#define FPGA_GPO_CTRL_GP0_OR									(1<<24)
-	#define FPGA_GPO_CTRL_GP1_OR									(1<<25)
-	#define FPGA_GPO_CTRL_GP0_ACTIVE								(1<<16)
-	#define FPGA_GPO_CTRL_GP1_ACTIVE								(1<<17)
-	#define FPGA_GPO_CTRL_GP1_DIR									(1<<9)
-	#define FPGA_GPO_CTRL_GP0_DIR									(1<<8)
- #define FPGA_GPIO_DNF0_ADRS										(FPGA_GPIO_ADRS+0x08)
- #define FPGA_GPIO_DNF1_ADRS										(FPGA_GPIO_ADRS+0x0c)
-	#define GPIO_DNF_MODE_MIN										(GPIO_DNF_MODE0)
-	#define GPIO_DNF_MODE_MAX										(GPIO_DNF_MODE0)
-	#define GPIO_DNF_MODE0											(0)
-	#define GPIO_DNF_MODE1											(1)
-	#define GPIO_DNF_MODE3											(3)
-	#define GPIO_DNF_MAX											(0xffff)
-	#define GPIO_DNF_MASK											(0xffff)
-	#define GET_DNF_HIGH_DATA(x)									((x>>16)&GPIO_DNF_MASK)
-	#define GET_DNF_LOW_DATA(x)										(x&GPIO_DNF_MASK)
-	#define SET_DNF_DATA(high,low)									(((high&GPIO_DNF_MASK)<<16)|(low&GPIO_DNF_MASK))
- #define FPGA_GPIO_GPI0_PULSE_H_ADRS								(FPGA_GPIO_ADRS+0x0c)
- #define FPGA_GPIO_GPI0_PULSE_L_ADRS								(FPGA_GPIO_ADRS+0x10)
- #define FPGA_GPIO_GPO0_PULSE_H_ADRS								(FPGA_GPIO_ADRS+0x14)
- #define FPGA_GPIO_GPO0_PULSE_L_ADRS								(FPGA_GPIO_ADRS+0x18)
- #define FPGA_GPIO_GPO1_PULSE_H_ADRS								(FPGA_GPIO_ADRS+0x1c)
- #define FPGA_GPIO_GPO1_PULSE_L_ADRS								(FPGA_GPIO_ADRS+0x20)
- #define FPGA_GPIO_PULSE_OVER_BIT									(1<<31)
- #define FPGA_GPIO_PULSE_MASK										(0x7fffffff)
- #define FPGA_GPIO_PULSE_CLOCK_HZ									(50)
- #define FPGA_GPIO_PULSE_CLOCK_UNIT									(1000000)
- #define FPGA_GPIO_PULSE_FREQ(reg)									((FPGA_GPIO_PULSE_CLOCK_HZ * FPGA_GPIO_PULSE_CLOCK_UNIT)/(reg & ~FPGA_GPIO_PULSE_OVER_BIT))
- #define FPGA_GPIO_PULSE_TIME(reg)									((data & ~FPGA_GPIO_PULSE_OVER_BIT)/FPGA_GPIO_PULSE_CLOCK_HZ)
- #define GPI_PULSE_MODE_MIN											(GPI_PULSE_MODE0)
- #define GPI_PULSE_MODE_MAX											(GPI_PULSE_MODE0)
- #define GPO_PULSE_MODE_MIN											(GPO_PULSE_MODE1)
- #define GPO_PULSE_MODE_MAX											(GPO_PULSE_MODE2)
- #define GPI_PULSE_MODE0											(0)
- #define GPI_PULSE_MODE1											(1)
- #define GPI_PULSE_MODE3											(3)
-
- #define GPO_PULSE_MODE0											(0)
- #define GPO_PULSE_MODE1											(1)
- #define GPO_PULSE_MODE2											(2)
- #define GPO_PULSE_MODE4											(4)
- #define GPO_PULSE_MODE5											(5)
- 
-	#define FPGA_GPIO_GPO_0_SEL_ADR									(FPGA_GPIO_ADRS+0x24)
-	#define FPGA_GPIO_GPO_0_SEL_FVAL								(0)
-	#define FPGA_GPIO_GPO_0_SEL_LVAL								(1)
-	#define FPGA_GPIO_GPO_0_SEL_MSP									(2)
-	#define FPGA_GPIO_GPO_0_SEL_STROBE								(3)
-	#define FPGA_GPIO_GPO_0_SEL_GENICAM								(4)
-	#define FPGA_GPIO_GPO_1_SEL_ADR										(FPGA_GPIO_ADRS+0x28)
-	#define FPGA_GPIO_GPO_1_SEL_FVAL								(0)
-	#define FPGA_GPIO_GPO_1_SEL_LVAL								(1)
-	#define FPGA_GPIO_GPO_1_SEL_MSP									(2)
-	#define FPGA_GPIO_GPO_1_SEL_STROBE								(3)
-	#define FPGA_GPIO_GPO_1_SEL_GENICAM								(4)
-
-	#define FPGA_EXT_GPIO_GPI_CTRL_ADRS								(FPGA_GPIO_ADRS+0x30)
-	#define FPGA_EXT_GPIO_GPO_CTRL_ADRS								(FPGA_GPIO_ADRS+0x34)
-	#define FPGA_EXT_GPIO_DNF_ADRS									(FPGA_GPIO_ADRS+0x38)
-	#define FPGA_EXT_GPIO_GPI0_PULSE_H_ADRS							(FPGA_GPIO_ADRS+0x3c)
-	#define FPGA_EXT_GPIO_GPI0_PULSE_L_ADRS							(FPGA_GPIO_ADRS+0x40)
-	#define FPGA_EXT_GPIO_GPO0_PULSE_H_ADRS							(FPGA_GPIO_ADRS+0x44)
-	#define FPGA_EXT_GPIO_GPO0_PULSE_L_ADRS							(FPGA_GPIO_ADRS+0x48)
-	#define FPGA_EXT_GPIO_GPO1_PULSE_H_ADRS							(FPGA_GPIO_ADRS+0x4C)
-	#define FPGA_EXT_GPIO_GPO1_PULSE_L_ADRS							(FPGA_GPIO_ADRS+0x50)
-	#define FPGA_EXT_GPIO_GPO0_SEL_ADRS								(FPGA_GPIO_ADRS+0x54)
-	#define FPGA_EXT_GPIO_GPO1_SEL_ADRS								(FPGA_GPIO_ADRS+0x58)
-
- #define FPGA_GPIO_DEBUG_SW_ADRS									(FPGA_GPIO_ADRS+0x40)
-	#define DEBUG_SW_DEBUG_PORT										(0)
-	#define DEBUG_SW_COOL_UNIT										(1)
-	#define FPGA_GPIO_DEBUG_SW_MASK									(0x01)
-	#define FPGA_GPIO_DEBUG_SW_MIN									(DEBUG_SW_DEBUG_PORT)
-	#define FPGA_GPIO_DEBUG_SW_MAX									(DEBUG_SW_COOL_UNIT)
-//@@@1
 
 //@@@1まだ
 //----------------------------------------------------------------------
@@ -258,7 +164,9 @@
   #define FPGA_SENSOR_IMG_CTRL_OUTPUT_BIT							(1<<0)
 #define FPGA_SENSOR_IMG_CTRL_BIT_ADRS								(FPGA_SENSOR_IMAGE_ADRS+0x04)
   #define FPGA_SENSOR_IMG_CTRL_8BIT									(0x00)
+  #define FPGA_SENSOR_IMG_CTRL_10BIT								(0x01)
   #define FPGA_SENSOR_IMG_CTRL_12BIT								(0x02)
+  #define FPGA_SENSOR_IMG_CTRL_14BIT								(0x03)
   #define FPGA_SENSOR_IMG_CTRL_BIT_MASK								(0x03)
 #define FPGA_SENSOR_SERDES_CTRL_ADRS								(FPGA_SENSOR_IMAGE_ADRS+0x020)
 #define FPGA_SENSOR_SERDES_SETTING_ADRS								(FPGA_SENSOR_IMAGE_ADRS+0x024)
@@ -482,46 +390,11 @@
 	#define	PELRIER_SET_SENSOR_ALARM_TEMP_UNDER(x) 					((double)((x+FPGA_PERTIER_SENSOR_TEMP_OFFSET)/FPGA_PERTIER_SENSOR_TEMP_DIV))		// 温度 => レジスタ値(四捨五入なし)
 	#define	PELRIER_GET_SENSOR_ALARM_TEMP(x) 						((double)((x*FPGA_PERTIER_SENSOR_TEMP_DIV)-FPGA_PERTIER_SENSOR_TEMP_OFFSET))		// レジスタ値 => 温度
 
-#define FPGA_PELTIER_CASE_ALM_ADRS									(FPGA_PELTIER_ADRS + 0x38)
-	#define PELTIER_CASE_ALM_MIN_TEMP								(CASE_TEMP_ALRAM_MIN)
-	#define PELTIER_CASE_ALM_MAX_TEMP								(CASE_TEMP_ALRAM_MAX)
-	#define FPGA_PELTIER_CASE_ALM_OVER_MASK							(0x1fff)
-	#define FPGA_PELTIER_CASE_ALM_UNDER_MASK						(0x1fff)
-	#define FPGA_PELTIER_CASE_ALM_DATA_MAKE(over,under)				(((over&FPGA_PELTIER_CASE_ALM_OVER_MASK)<<16)|(under&FPGA_PELTIER_CASE_ALM_UNDER_MASK))
-	#define FPGA_PELTIER_GET_CASE_TEMP_OVER_ALM(x)					((x>>16)&FPGA_PELTIER_CASE_ALM_OVER_MASK)
-	#define FPGA_PELTIER_GET_CASE_TEMP_UNDER_ALM(x)					(x&FPGA_PELTIER_CASE_ALM_UNDER_MASK)
-	#define FPGA_PELTIER_SET_CASE_TEMP(x)							(((double)x*(double)FPGA_PELTIER_CASE_TEMP_DIV)+0.5)	// 温度=>レジスタ値 Ver.1.3
-
-	#define FPGA_PELTIER_CASE_ALARM_OVER_REG_MASK					(0xffff)
-	#define FPGA_PELTIER_CASE_ALARM_UNDER_REG_MASK					(0xffff)
-	#define FPGA_PELTIER_CASE_ALARM_OVER_REG_SHIFT					(16)
-	#define FPGA_PELTIER_CASE_ALARM_UNDER_REG_SHIFT					(0)
-
-	#define FPGA_PELTIER_VERSION2_CASE_ALARM_DECIMAL_MASK			(0x07)
-	#define FPGA_PELTIER_VERSION2_CASE_ALARM_DECIMAL_DATA			(0.0125)	// 3bit = 1/8
-
-	#define FPGA_PELTIER_VERSION2_CASE_ALARM_MASK					(0xff)
-	#define FPGA_PELTIER_VERSION2_CASE_ALARM_REAL_SHIFT				(3)
-	#define FPGA_PELTIER_VERSION2_CASE_ALARM_CODE					(1<<11)
-	#define FPGA_PELTIER_VERSION2_CASE_ALARM_SIGNED_MASK			(0xffffff00)
-
-
 #define FPGA_PELTIER_SENSOR_AVG_ADRS								(FPGA_PELTIER_ADRS + 0x3c)
 	#define FPGA_PELTIER_SENSOR_TEMP_MASK							(0xfff)
 	#define FPGA_PELTIER_GET_SENSOR_TEMP(x)							((double)((x*FPGA_PERTIER_SENSOR_TEMP_DIV)-FPGA_PERTIER_SENSOR_TEMP_OFFSET))	// Ver.1.3
 
 #define FPGA_PELTIER_SENSOR_TEMP_ADRS								(FPGA_PELTIER_ADRS + 0x40)
-#define FPGA_PELTIER_CASE_TEMP_ADRS									(FPGA_PELTIER_ADRS + 0x44)
-	#define FPGA_PELTIER_CASE_TEMP_MASK								(0x1fff)
-	#define FPGA_PELTIER_CASE_TEMP_DIV								(16.0)
-
-	#define FPGA_PELTIER_VERSION2_CASE_TEMP_MASK					(0xfff)
-	#define FPGA_PELTIER_VERSION2_CASE_TEMP_DECIMAL_MASK			(0x7)
-	#define FPGA_PELTIER_VERSION2_CASE_TEMP_DECIMAL_DATA			(0.0125)	// 3bit = 1/8
-	#define FPGA_PELTIER_VERSION2_CASE_TEMP_REAL_MASK				(0x1ff)
-	#define FPGA_PELTIER_VERSION2_CASE_TEMP_CODE					(1<<11)
-	#define FPGA_PELTIER_VERSION2_CASE_TEMP_REAL_SHIFT				(3)
-	#define FPGA_PELTIER_VERSION2_CASE_TEMP_SIGNED_MASK				(0xffffff00)
 
 #define FPGA_PELTIER_CLIP_ADRS										(FPGA_PELTIER_ADRS + 0x80)
 	#define FPGA_PELTIER_CLIP_MASK									(0x3ff)
@@ -549,7 +422,75 @@
 	#define FPGA_PELTIER_I2C_CTRL_ENABLE_STATUS_BIT					(1<<1)
 //@@@1まだ
 
+//----------------------------------------------------------------------
+// GPIO
+//----------------------------------------------------------------------
+#define FPGA_GPIO_ADRS												(FPGA_BASE_ADRS_COMMON + 0x3000)
+ #define FPGA_GPIO_INT_ENABLE_ADRS									(FPGA_GPIO_ADRS + 0x00)
+	#define FPGA_GPIO_INT_CASE_HIGH_BIT								(1<<1)
+	#define FPGA_GPIO_INT_CASE_LOW_BIT								(1<<0)
+	#define FPGA_GPIO_INT_CASE_MASK									(0x03)
+ #define FPGA_GPIO_INT_STATUS_ADRS									(FPGA_GPIO_ADRS + 0x04)
+	#define FPGA_GPIO_STATUS_CASE_HIGH_BIT							(1<<1)
+	#define FPGA_GPIO_STATUS_CASE_LOW_BIT							(1<<0)
+ #define FPGA_GPIO_IF_I2C_CTRL_ADRS									(FPGA_GPIO_ADRS + 0x10)
+	#define FPGA_GPIO_IF_I2C_LTC_ENABLE_BIT							(1<<4)
+	#define FPGA_GPIO_IF_I2C_TCA_ENABLE_BIT							(1<<0)
+ #define FPGA_GPIO_LTC_ACES_INTERVAL_ADRS							(FPGA_GPIO_ADRS + 0x14)
+ #define FPGA_GPIO_DIPSW_ADRS										(FPGA_GPIO_ADRS + 0x20)
+	#define FPGA_GPIO_DIPSW_VALUE_MASK								(3)
+	#define FPGA_GPIO_DIPSW_VALUE_SHIFT								(4)
+	#define FPGA_GPIO_DIPSW_READEND_BIT								(1<<1)
+	#define FPGA_GPIO_DIPSW_REQEST_BIT								(1<<0)
+ #define FPGA_GPIO_RS422_PIN_SETTING_ADRS							(FPGA_GPIO_ADRS + 0x24)
+ #define FPGA_GPIO_LED_ADRS											(FPGA_GPIO_ADRS + 0x30)
+#define FPGA_PELTIER_CASE_TEMP_ADRS									(FPGA_GPIO_ADRS + 0x40)
+	#define FPGA_PELTIER_VERSION2_CASE_TEMP_MASK					(0x1fff)
+	#define FPGA_PELTIER_VERSION2_CASE_TEMP_DECIMAL_MASK			(0xf)
+	#define FPGA_PELTIER_VERSION2_CASE_TEMP_REAL_MASK				(0x1ff)
+	#define FPGA_PELTIER_VERSION2_CASE_TEMP_CODE					(1<<12)
+	#define FPGA_PELTIER_VERSION2_CASE_TEMP_REAL_SHIFT				(4)
+	#define FPGA_PELTIER_VERSION2_CASE_TEMP_SIGNED_MASK				(0xfffffe00)
 
+ #define FPGA_PELTIER_CASE_ALM_ADRS									(FPGA_GPIO_ADRS + 0x44)
+	#define PELTIER_CASE_ALM_MIN_TEMP								(CASE_TEMP_ALRAM_MIN)
+	#define PELTIER_CASE_ALM_MAX_TEMP								(CASE_TEMP_ALRAM_MAX)
+	#define FPGA_PELTIER_CASE_ALM_OVER_MASK							(0x1fff)
+	#define FPGA_PELTIER_CASE_ALM_UNDER_MASK						(0x1fff)
+	#define FPGA_PELTIER_CASE_ALM_DATA_MAKE(over,under)				(((over&FPGA_PELTIER_CASE_ALM_OVER_MASK)<<16)|(under&FPGA_PELTIER_CASE_ALM_UNDER_MASK))
+	#define FPGA_PELTIER_GET_CASE_TEMP_OVER_ALM(x)					((x>>16)&FPGA_PELTIER_CASE_ALM_OVER_MASK)
+	#define FPGA_PELTIER_GET_CASE_TEMP_UNDER_ALM(x)					(x&FPGA_PELTIER_CASE_ALM_UNDER_MASK)
+
+	#define FPGA_PELTIER_CASE_ALARM_OVER_REG_MASK					(0xffff)
+	#define FPGA_PELTIER_CASE_ALARM_UNDER_REG_MASK					(0xffff)
+	#define FPGA_PELTIER_CASE_ALARM_OVER_REG_SHIFT					(16)
+	#define FPGA_PELTIER_CASE_ALARM_UNDER_REG_SHIFT					(0)
+
+ #define FPGA_GPIO_VOLT0_ADRS										(FPGA_GPIO_ADRS + 0x50)
+ #define FPGA_GPIO_VOLT1_ADRS										(FPGA_GPIO_ADRS + 0x54)
+ #define FPGA_GPIO_VOLT2_ADRS										(FPGA_GPIO_ADRS + 0x58)
+
+
+//@@@1暫定
+ #define FPGA_GPIO_DNF0_ADRS										(FPGA_GPIO_ADRS+0x08)
+ #define FPGA_GPIO_DNF1_ADRS										(FPGA_GPIO_ADRS+0x0c)
+	#define GPIO_DNF_MODE_MIN										(GPIO_DNF_MODE0)
+	#define GPIO_DNF_MODE_MAX										(GPIO_DNF_MODE0)
+	#define GPIO_DNF_MODE0											(0)
+	#define GPIO_DNF_MODE1											(1)
+	#define GPIO_DNF_MODE3											(3)
+	#define GPIO_DNF_MAX											(0xffff)
+	#define GPIO_DNF_MASK											(0xffff)
+	#define GET_DNF_HIGH_DATA(x)									((x>>16)&GPIO_DNF_MASK)
+	#define GET_DNF_LOW_DATA(x)										(x&GPIO_DNF_MASK)
+	#define SET_DNF_DATA(high,low)									(((high&GPIO_DNF_MASK)<<16)|(low&GPIO_DNF_MASK))
+
+#define FPGA_GPIO_PULSE_OVER_BIT									(1<<31)
+  #define FPGA_GPIO_PULSE_TIME(reg)									((data & ~FPGA_GPIO_PULSE_OVER_BIT)/FPGA_GPIO_PULSE_CLOCK_HZ)
+#define FPGA_GPIO_PULSE_CLOCK_HZ									(50)
+ #define FPGA_GPIO_PULSE_CLOCK_UNIT									(1000000)
+ //@@@1暫定
+ 
 //@@@1まだ
 //----------------------------------------------------------------------
 // IPU Common
@@ -602,30 +543,15 @@
 //@@@1まだ
 
 
-//@@@1まだ
 //----------------------------------------------------------------------
 // DPC
 //----------------------------------------------------------------------
-#define FPGA_DPC_ADRS												(FPGA_BASE_ADRS_IPU+0x2000)
-#define FPGA_DPC_CTRL_ADRS											(FPGA_ROI_ADRS+0xA4)
+#define FPGA_DPC_ADRS												(FPGA_BASE_ADRS_IPU+0x3000)
+
+#define FPGA_DPC_CTRL_ADRS											(FPGA_DPC_ADRS+0x04)
 	#define FPGA_DPC_CTRL_ENABLE_BIT								(0x01)
-	#define DPC_ENABLE												(1)
-	#define DPC_DISABLE												(0)
-#define FPGA_DPC_DMA_ADRS											(FPGA_DPC_ADRS+0x04)
- #define FPGA_DPC_DMA_SIZE_ADRS										(FPGA_DPC_ADRS+0x08)
- #define FPGA_DPC_DMA_WAIT_ADRS										(FPGA_DPC_ADRS+0x0c)
-#define FPGA_DPC_DMA_ABORT_ADRS										(FPGA_DPC_ADRS+0x100)
- #define FPGA_DPC_DMA_STATUS_ADRS									(FPGA_DPC_ADRS+0x104)
- #define FPGA_DPC_FIRST_DEFECT_XY_ADRS								(FPGA_DPC_ADRS+0x108)
- #define FPGA_DPC_XY_FIFO_ADRS										(FPGA_DPC_ADRS+0x10c)
- #define FPGA_DPC_COL0_FIFO_CTRL_ADRS								(FPGA_DPC_ADRS+0x110)
- #define FPGA_DPC_COL1_FIFO_CTRL_ADRS								(FPGA_DPC_ADRS+0x114)
- #define FPGA_DPC_COL2_FIFO_CTRL_ADRS								(FPGA_DPC_ADRS+0x118)
- #define FPGA_DPC_COL3_FIFO_CTRL_ADRS								(FPGA_DPC_ADRS+0x11c)
- #define FPGA_DPC_COL4_FIFO_CTRL_ADRS								(FPGA_DPC_ADRS+0x120)
- #define FPGA_DPC_DIV_FIFO_CTRL_ADRS								(FPGA_DPC_ADRS+0x124)
- #define FPGA_DPC_MEM_ADRS											(FPGA_DPC_ADRS+0x800)
-//@@@1まだ
+#define FPGA_DPC_DMA_ADRS											(FPGA_DPC_ADRS+0x08)
+#define FPGA_DPC_DMA_SIZE_ADRS										(FPGA_DPC_ADRS+0x0C)
 
 
 //@@@1まだ
@@ -688,8 +614,6 @@
 	#define FPGA_AOI_TP_MASK 										(0x0f)
 	#define AOI_TP_MIN_AREA											(AOI_TP_SENSOR)
 	#define AOI_TP_MAX_AREA											(AOI_TP_GREY_DIAGONAL_MOVE)
-	#define AOI_TP_MIN_LINE											(AOI_TP_SENSOR)
-	#define AOI_TP_MAX_LINE											(AOI_TP_GREY_VERTICAL_RAMP)
 	#define AOI_TP_SENSOR											(0)
 	#define AOI_TP_WHITE											(1)
 	#define AOI_TP_BLACK											(2)

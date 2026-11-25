@@ -21,9 +21,7 @@
 //----------------------------------------------------------------------------------
 char gInfoBuff[CONSOLE_BUFF_SIZE];
 
-//@@@1
-extern unsigned int gDipsw;
-//@@@1
+
 //**********************************************************************************
 //	DIPSW取得コマンド
 //----------------------------------------------------------------------------------
@@ -60,18 +58,6 @@ int cmdDipsw (void *str)
 		
 		DEBUG_PRINT_FORCE ("%x ", dipsw);
 	}
-	//@@1
-	else if (argc == 2)
-	{
-		if (sscanf (gCmdArg[1], "%d", &dipsw) != 1)
-		{
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
-			goto _DONE;
-		}
-
-		gDipsw = dipsw;
-	}
-	//@@@1
 	else
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_ARGUMENT);

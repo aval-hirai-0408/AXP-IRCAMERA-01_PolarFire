@@ -114,7 +114,7 @@ int cmdDpcMapInfo (void *str)
 	int status = AVAL_STATUS_SUCCESS;
 	int argc;
 	int dpcNum;
-	unsigned int memAdrs, size, dmaWait;
+	unsigned int memAdrs, size;
 	int mode;
 	unsigned int dpcCount;
 
@@ -144,7 +144,7 @@ int cmdDpcMapInfo (void *str)
 		}
 
 		// Get DPC parameter
-		if ((status = dpcGetParam (&memAdrs, &size, &dmaWait, &mode)) != AVAL_STATUS_SUCCESS)
+		if ((status = dpcGetParam (&memAdrs, &size, &mode)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 #if defined (MODE_DPC_GRID_UPDATE)
@@ -219,7 +219,7 @@ int cmdDpcMapInfoAdmin (void *str)
 	int status = AVAL_STATUS_SUCCESS;
 	int argc;
 	int dpcNum;
-	unsigned int memAdrs, size, dmaWait;
+	unsigned int memAdrs, size;
 	int mode;
 	unsigned int dpcCount;
 
@@ -249,7 +249,7 @@ int cmdDpcMapInfoAdmin (void *str)
 		}
 
 		// Get DPC parameter
-		if ((status = dpcGetParam (&memAdrs, &size, &dmaWait, &mode)) != AVAL_STATUS_SUCCESS)
+		if ((status = dpcGetParam (&memAdrs, &size, &mode)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
 		// DPC情報表示

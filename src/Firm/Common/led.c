@@ -85,6 +85,7 @@ int setLed (int number, int mode)
 int setLedMain (int number, int mode)
 {
 	int status = AVAL_STATUS_SUCCESS;
+	unsigned int data32;
 
 	// Check number Parameter
 	if ((number < LED_NUM_MIN) || (number > LED_NUM_MAX))
@@ -104,13 +105,28 @@ int setLedMain (int number, int mode)
 		goto _DONE;
 	}
 
-	// Set LED
-	OUT32 ((FPGA_LED_CTRL_LED0_ADRS + number*4), mode);
+	data32 = IN32 (FPGA_GPIO_LED_ADRS);
 
+	if (number == LED_POWER)
+	{
+		data32 &= ~0x0f;
+		data32 |= mode;
+	}
+	else if (number == LED_STATE)
+	{
+		data32 &= ~0xf0;
+		data32 |= (mode<<4);
+	}
 #if defined (MODE_CXP)
-	if (gInterFaceID == INTERFACE_CXP)
-		OUT32 (FIRM_DATA_CXP_LED1_ADRS, mode);
+	else
+	{
+		data32 &= ~0xf0000;
+		data32 |= (mode<<16);
+	}
 #endif
+
+	// Set LED
+	OUT32 (FPGA_GPIO_LED_ADRS, data32);
 
 _DONE:
 	return (status);
@@ -132,6 +148,7 @@ _DONE:
 int getLed (int number, int *pMode)
 {
 	int status = AVAL_STATUS_SUCCESS;
+	unsigned int data32;
 
 	// Check number Parameter
 	if ((number < LED_NUM_MIN) || (number > LED_NUM_MAX))
@@ -146,12 +163,32 @@ int getLed (int number, int *pMode)
 	if (pMode == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LED pMode NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "LED NULL Parameter Error.\n");
 		goto _DONE;
 	}
 
 	// Get LED
-	*pMode = IN32 ((FPGA_LED_CTRL_LED0_ADRS + number*4));
+	data32 = IN32 (FPGA_GPIO_LED_ADRS);
+
+	if (number == LED_POWER)
+	{
+		data32 &= 0x0f;
+	}
+	else if (number == LED_STATE)
+	{
+		data32 >>= 4;
+		data32 &= 0x0f;
+	}
+#if defined (MODE_CXP)
+	else
+	{
+		data32 >>= 16;
+		data32 &= 0x0f;
+	}
+#endif
+	
+	// Get LED
+	*pMode = data32;
 
 _DONE:
 	return (status);
@@ -299,9 +336,6 @@ int ledDiagnosticState (void)
 	getLed (LED_STATE2, &saveLedPattern);
 	setLed (LED_STATE2, LED_DIAG);
 
-//@@@1
-	saveLedPattern = 1;
-//@@@1
 	return (saveLedPattern);
 }
 

@@ -1885,9 +1885,6 @@ int cameraParamRestoreRegister (int userNum)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int *pCommonAdrs;
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	int expMode;
-#endif
 
 	// 保存パラメータ取得
 	if ((status = cameraParamUserAllRead (userNum)) != AVAL_STATUS_SUCCESS)
@@ -1909,30 +1906,6 @@ int cameraParamRestoreRegister (int userNum)
 
 	// ユーザー領域番号の書き換え
 	pCommonAdrs[(CAMERA_SAVE_COMMON_USER_PARAM_MODE_ADRS/4)] = userNum;
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	// Get Auto Exposure Mode
-	if ((status = autoBrightGetExposureMode (&expMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	if (expMode != MODE_DISABLE)
-	{
-		// Auto Exposure Disable
-		if ((status = autoBrightSetExposureMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-
-	// Get Auto Gain Mode
-	if ((status = autoBrightGetGainMode (&expMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	if (expMode != MODE_DISABLE)
-	{
-		// Auto Gain Disable
-		if ((status = autoBrightSetGainMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-#endif // #if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
 
 	// 取り込み停止
 	if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)

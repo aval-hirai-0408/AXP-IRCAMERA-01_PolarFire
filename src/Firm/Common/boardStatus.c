@@ -46,14 +46,11 @@ extern int gI2cPsStatus;					// I2C PS Status
 extern int gBoardVoltStatus;				// Board Voltage Status
 extern int gSensorTmgStatus;				// Sensor LVDS Status
 extern int gSensorStatus;					// Sensor Status
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-extern int gAutoBrightStatus;				// Auto Bright Status
-#endif
 
 // 温度割り込みカウント
 extern int gPeltierSensorUpperTempCount;	// センサ温度上限カウント
 extern int gPeltierSensorLowerTempCount;	// センサ温度下限カウント
-extern int gPeltierCaseTempCount;			// ケース温度カウント
+extern int gPeltierCaseUpperTempCount;		// ケース温度上限カウント
 
 
 //**********************************************************************************
@@ -217,7 +214,7 @@ int cameraSetStatusAll (void)
 	//@@@1OUT32 (BOARD_STATUS_SENSOR_TEMP_LOWER_ADRS, gPeltierSensorLowerTempCount);
 
 	// ケース温度カウント
-	OUT32 (BOARD_STATUS_CASE_TEMP_ADRS, gPeltierCaseTempCount);
+	OUT32 (BOARD_STATUS_CASE_TEMP_ADRS, gPeltierCaseUpperTempCount);
 
 	// Encoder Control
 	OUT32 (BOARD_STATUS_ENCODER_CONTROL_ADRS, gEncoderStatus);
@@ -241,11 +238,6 @@ int cameraSetStatusAll (void)
 
 	// Sensor
 	OUT32 (BOARD_STATUS_SENSOR_ADRS, gSensorStatus);
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	// Auto Bright
-	OUT32 (BOARD_STATUS_AUTO_BRIGHT_ADRS, gAutoBrightStatus);
-#endif
 
 	return (AVAL_STATUS_SUCCESS);
 }

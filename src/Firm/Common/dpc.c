@@ -269,9 +269,9 @@ int dpcSetMode (int mode)
 		if ((status = dpcGetMode (&currentMode)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
-		if (currentMode != DPC_DISABLE)
+		if (currentMode != MODE_DISABLE)
 		{
-			if ((status = dpcSetEnableMode (DPC_DISABLE)) != AVAL_STATUS_SUCCESS)
+			if ((status = dpcSetEnableMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
 				goto _DONE;
 		}
 
@@ -315,9 +315,9 @@ int dpcGetMode (int *pMode)
 
 	// Get DPC
 	if (data & FPGA_DPC_CTRL_ENABLE_BIT)
-		*pMode = DPC_ENABLE;
+		*pMode = MODE_ENABLE;
 	else
-		*pMode = DPC_DISABLE;
+		*pMode = MODE_DISABLE;
 
 _DONE:
 	return (status);
@@ -805,13 +805,12 @@ _DONE:
 //	[ INPUT ]
 //		pMemAdrs			：DPCメモリアドレスを格納するポインタ
 //		pSize				：DPCサイズを格納するポインタ
-//		pDmaWait			：DPC DMA設定を格納するポインタ
 //		pMode				：DPC有効/無効状態を格納するポインタ(0=無効/1=有効)
 //	[ OUTPUT ]
 //		AVAL_STATUS_SUCCESS	：正常終了
 //		上記以外				：異常終了
 //==================================================================================
-int dpcGetParam (unsigned int *pMemAdrs, unsigned int *pSize, unsigned int *pDmaWait, int *pMode)
+int dpcGetParam (unsigned int *pMemAdrs, unsigned int *pSize, int *pMode)
 {
 	int status = AVAL_STATUS_SUCCESS;
 
@@ -831,14 +830,6 @@ int dpcGetParam (unsigned int *pMemAdrs, unsigned int *pSize, unsigned int *pDma
 		goto _DONE;
 	}
 
-	// Check pDmaWait Parameter
-	if (pDmaWait == NULL)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_DPC, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DPC Param pDmaWait pSize Error.\n");
-		goto _DONE;
-	}
-
 	// Check pMode Parameter
 	if (pMode == NULL)
 	{
@@ -855,9 +846,6 @@ int dpcGetParam (unsigned int *pMemAdrs, unsigned int *pSize, unsigned int *pDma
 
 	// Get DPC Size
 	*pSize = IN32 (FPGA_DPC_DMA_SIZE_ADRS);
-
-	// Get DPC DMA Wait Threshold
-	*pDmaWait = IN32 (FPGA_DPC_DMA_WAIT_ADRS);
 
 _DONE:
 	return (status);
@@ -1191,7 +1179,7 @@ int dpcDataUpload (void)
 		goto _DONE;
 
 	// DPC OFF
-	if ((status = dpcSetMode (DPC_DISABLE)) != AVAL_STATUS_SUCCESS)
+	if ((status = dpcSetMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// メモリリクエスト
@@ -3679,7 +3667,7 @@ _DONE:
 int dpcGetMapInfoIndex2 (int index, int *pX, int *pY)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned int memAdrs, size, dmaWait;
+	unsigned int memAdrs, size;
 	int mode;
 	GRID_XY *ptrGrid;
 	int number, numberIndex;
@@ -3728,7 +3716,7 @@ int dpcGetMapInfoIndex2 (int index, int *pX, int *pY)
 	}
 
 	// Get DPC parameter
-	if ((status = dpcGetParam (&memAdrs, &size, &dmaWait, &mode)) != AVAL_STATUS_SUCCESS)
+	if ((status = dpcGetParam (&memAdrs, &size, &mode)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// DPC Map情報取得

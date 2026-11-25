@@ -49,6 +49,7 @@ int fpgaRegMap (void)
 	DEBUG_PRINT_FORCE("  Generic                 : 0x%08x\n", FPGA_GENERIC_ADRS);
 	DEBUG_PRINT_FORCE("  SPI                     : 0x%08x\n", CORESPI_BASE_ADDR);
 	DEBUG_PRINT_FORCE("  Timer                   : 0x%08x\n", CORETIMER0_BASE_ADDR);
+	DEBUG_PRINT_FORCE("  GPIO                    : 0x%08x\n", FPGA_GPIO_ADRS);
 
 	DEBUG_PRINT_FORCE("  Sensor Image            : 0x%08x\n", FPGA_SENSOR_IMAGE_ADRS);
 	DEBUG_PRINT_FORCE("  Sensor Other            : 0x%08x\n", FPGA_SENSOR_OTHER_ADRS);

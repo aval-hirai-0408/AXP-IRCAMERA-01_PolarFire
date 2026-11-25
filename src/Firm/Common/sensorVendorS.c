@@ -1241,7 +1241,7 @@ int sensorVendorSInitialize (void)
 	if ((status = sensorRegWriteByte (id, 0x04, 3, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	if ((status = sensorRegWriteByte (id, 0x24, 0x20, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
+	if ((status = sensorRegWriteByte (id, 0x24, 0x80, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	if ((status = sensorRegWriteByte (id, 0x25, 0x0a, acTmg, regHold)) != AVAL_STATUS_SUCCESS)
@@ -2633,19 +2633,11 @@ int sensorStandByCancel (void)
 	// 仕様上は29ms
 	msDelay (30);
 
-//@@@1
-DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@3\n");
-//@@@1
-	
 	//------------------------------------------------------------
 	// H Interval
 	//------------------------------------------------------------
 	if (drrsMode == MODE_DISABLE)
 	{
-//@@@1
-DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@4\n");
-//@@@1
-
 		// H Interval保存
 		if ((status = irvGetHIntervalClock (&saveHInterval)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
@@ -2659,11 +2651,6 @@ DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@4\n");
 	}
 	else	// DRRS Enable
 	{
-		
-//@@@1
-DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@5\n");
-//@@@1
-
 		//------------------------------------------------------------
 		// フレームレート設定=>DRRS時はフレームレートが決まれば露光時間も決まる
 		//------------------------------------------------------------
@@ -2681,10 +2668,6 @@ DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@5\n");
 		if ((status = sensorSetHIntervalReg (hInterval)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
-
-//@@@1
-DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@6\n");
-//@@@1
 
 #if 0	//@@@1
 	//------------------------------------------------------------
@@ -2714,20 +2697,12 @@ DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@6\n");
 	}
 #endif //@@@1
 
-//@@@1
-DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@7\n");
-//@@@1
-
 	//------------------------------------------------------------
 	// Get Shutter Mode
 	//------------------------------------------------------------
 	if ((status = sensorGetShutterMode (&shutterMode)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-
-//@@@1
-DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@8\n");
-//@@@1
 
 	//@@@1#if defined (MODE_SENSOR_MASTER)
 	//------------------------------------------------------------
@@ -2749,10 +2724,6 @@ DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@8\n");
 		goto _DONE;
 	#endif
 
-//@@@1
-DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@9\n");
-//@@@1
-
 	//------------------------------------------------------------
 	// Sensor Temp Auto Refresh Enable
 	//------------------------------------------------------------
@@ -2764,9 +2735,6 @@ DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@9\n");
 	//------------------------------------------------------------
 	if ((status = sensorSetHvGen (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-//@@@1
-DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@10\n");
-//@@@1
 
 	//------------------------------------------------------------
 	// Enable Trg Control
@@ -2777,8 +2745,9 @@ DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@10\n");
 	sensorSetTrgControl (MODE_ENABLE);	//@@@1
 #endif // #if defined (MODE_SENSOR_MASTER)
 
+
 //@@@1
-DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@11\n");
+goto _DONE;
 //@@@1
 
 	//------------------------------------------------------------
@@ -2858,9 +2827,6 @@ DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@11\n");
 		saveFrameRateTime = IN32 (GENICAM_ACQUISITION_FRAMERATE_ADRS) & GENICAM_ACQUISITION_FRAMERATE_MASK;
 		OUT32 (GENICAM_ACQUISITION_FRAMERATE_ADRS, (frameRateTime & GENICAM_ACQUISITION_FRAMERATE_MASK));
 	}
-//@@@1
-DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@11\n");
-//@@@1
 
 	//------------------------------------------------------------
 	// トリガセレクタ取得
@@ -2964,6 +2930,10 @@ DEBUG_PRINT_FORCE("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@11\n");
 
 _DONE:
 	usDelay(200);	//@@@1
+
+	//@@@1
+	msDelay(1000);	//@@@1
+	//@@@1
 
 	//------------------------------------------------------------
 	// Check Sensor Training

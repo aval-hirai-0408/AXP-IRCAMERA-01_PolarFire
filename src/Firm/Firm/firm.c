@@ -36,13 +36,13 @@ int gConsolePassword = 0;
 int main (void)
 {
 	// 起動状態
-	//@@@1ledBootState ();
+	ledBootState ();
 
 	// HW Initialize
 	hwInitialize (0);
 
 	// Connect状態
-	//@@@1ledConnectState ();
+	ledConnectState ();
 	
 	// CameraLinkのみ
 	if (gInterFaceID == INTERFACE_CAMERALINK)

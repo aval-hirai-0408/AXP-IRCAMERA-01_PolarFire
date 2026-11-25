@@ -644,12 +644,12 @@ u32 get_user_reg (u32 address, u16 *status)
 			{
 				video_pixfmt = value;
 //@@@@@@@@@@@@@@@@				
-				value = video_pixfmt = GVSP_PIX_MONO8;
+				//value = video_pixfmt = GVSP_PIX_MONO8;
 //@@@@@@@@@@@@@@@@				
 			}
 			else
 			{
-				//@@@@@*status = GEV_STATUS_INVALID_PARAMETER;
+				*status = GEV_STATUS_INVALID_PARAMETER;
 				value = video_pixfmt = GVSP_PIX_MONO8;
 			}
 
@@ -3463,129 +3463,6 @@ u32 get_user_reg (u32 address, u16 *status)
 
 		//====================================================================================
 		//
-		// Group: Auto Bright
-		// Note:
-		//
-		//====================================================================================
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-		//----------------------------------------------------------------------------------
-		// Auto Bright Exposure Mode取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_EXPOSURE_MODE:
-			*status = autoBrightGetExposureMode ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Exposure Once Status取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_EXPOSURE_STATUS:
-			*status = autoBrightGetExposureStatus ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Exposure Min取得
-		//----------------------------------------------------------------------------------
-		//case AUTO_BRIGHT_EXPOSURE_MIN:
-			//*status = autoBrightGetExposureMin ((int *)&value);
-			//break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Exposure Max取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_EXPOSURE_MAX:
-			*status = autoBrightGetExposureMax ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Gain Mode取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_GAIN_MODE:
-			*status = autoBrightGetGainMode ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Gain Once Status取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_GAIN_STATUS:
-			*status = autoBrightGetGainStatus ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Gain Min取得
-		//----------------------------------------------------------------------------------
-		//case AUTO_BRIGHT_GAIN_MIN:
-			//*status = autoBrightGetGainMin ((double *)&dblValue);
-			//value = (int)dblValue;
-			//break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Gain Max取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_GAIN_MAX:
-			*status = autoBrightGetGainMax ((double *)&dblValue);
-			value = (int)dblValue;
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Area取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_OVERLAY:
-			*status = autoBrightGetDetectArea ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Target取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_TARGET:
-			*status = autoBrightGetTarget ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Average取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_AVERAGE:
-			*status = autoBrightGetAverage ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Area取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_TARGET_AREA:
-			*status = autoBrightGetTargetArea ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Width Size取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_WIDTH_SIZE:
-			*status = autoBrightGetWidthSize ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Height Size取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_HEIGHT_SIZE:
-			*status = autoBrightGetHeightSize ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Width Offset取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_WIDTH_OFFSET:
-			*status = autoBrightGetWidthOffset ((int *)&value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Height Offset取得
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_HEIGHT_OFFSET:
-			*status = autoBrightGetHeightOffset ((int *)&value);
-			break;
-#endif // #if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-
-
-		//====================================================================================
-		//
 		// Group: Binning
 		// Note:
 		//
@@ -4925,7 +4802,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case FPGA_AOI_BITWIDTH_ADRS:
 			//@@@1
-			break;
+			//@@@1break;
 			//@@@1
 			switch (value)
 			{
@@ -5596,6 +5473,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		case DeviceVendorNameOnEEPROM + 28:
 			value2nd = SWAP_L(value);
 			memcpy((void*) (FIRM_DATA_VENDOR_ADRS + (address - DeviceVendorNameOnEEPROM)), &value2nd, 4);
+			#if defined (IF_GIGE)
 			if ((DeviceVendorNameOnEEPROM + 28) == address)
 			{
 				//executeCommandVendorName((u8*) FIRM_DATA_VENDOR_ADRS);
@@ -5604,15 +5482,13 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 					break;
 
-				memset((void *)FIRM_DATA_VENDOR_ADRS, 0, GIGE_EEPROM_CUST_VENDOR_SIZE);
-				sprintf((char*) FIRM_DATA_VENDOR_ADRS, "%s", (char*) value);
-
 				// Set Vendor
 				*status = setVendor ((char *)FIRM_DATA_VENDOR_ADRS);
 				
 				// Cmd Done
 				cmdExecuteDone ();
 			}
+			#endif //@@@1
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -5628,6 +5504,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		case DeviceModelNameOnEEPROM + 28:
 			value2nd = SWAP_L(value);
 			memcpy((void*) (FIRM_DATA_MODEL_ADRS + (address - DeviceModelNameOnEEPROM)),&value2nd,4);
+			#if defined (IF_GIGE)
 			if ((DeviceModelNameOnEEPROM + 28) == address)
 			{
 				//executeCommandModelName((u8*) FIRM_DATA_MODEL_ADRS);
@@ -5635,16 +5512,13 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				// Cmd Initialze
 				if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 					break;
-				
-				memset((void *)FIRM_DATA_MODEL_ADRS, 0, GIGE_EEPROM_CUST_MODEL_SIZE);
-				sprintf((char*) FIRM_DATA_MODEL_ADRS, "%s", (char*) value);
-
 				// Set Model
 				*status = setModel ((char *)FIRM_DATA_MODEL_ADRS);
 		
 				// Cmd Done
 				cmdExecuteDone ();
 			}
+			#endif //@@@1
 			break;
 
 		//--------------------------------------------------------------------------------
@@ -5664,6 +5538,7 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		case DeviceManufacturerInfoOnEEPROM + 44:
 			value2nd = SWAP_L(value);
 			memcpy((void*) (FIRM_DATA_MANUFACTURE_ADRS + (address - DeviceManufacturerInfoOnEEPROM)), &value2nd, 4);
+			#if defined (IF_GIGE)
 			if ((DeviceManufacturerInfoOnEEPROM + 44) == address)
 			{
 				//executeCommandManufactureInfo((u8*) FIRM_DATA_MANUFACTURE_ADRS);
@@ -5672,15 +5547,13 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 				if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 					break;
 			
-				memset((void *)FIRM_DATA_MANUFACTURE_ADRS, 0, GIGE_EEPROM_CUST_MANUFACTURER_SIZE);
-				sprintf((char*) FIRM_DATA_MANUFACTURE_ADRS, "%s", (char*) value);
-
 				// Set Manufacture
 				*status = setManufacture ((char *)FIRM_DATA_MANUFACTURE_ADRS);
 				
 				// Cmd Done
 				cmdExecuteDone ();
 			}
+			#endif //@@@1
 			break;
 
 		//----------------------------------------------------------------------------------
@@ -5692,9 +5565,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			// Cmd Initialze
 			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
-
-			memset((void *)FIRM_DATA_VENDOR_ADRS, 0, GIGE_EEPROM_CUST_VENDOR_SIZE);
-			sprintf((char*) FIRM_DATA_VENDOR_ADRS, "%s", (char*) value);
 
 			// Set Vendor
 			*status = setVendor ((char *)FIRM_DATA_VENDOR_ADRS);
@@ -5714,9 +5584,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
 
-			memset((void *)FIRM_DATA_MODEL_ADRS, 0, GIGE_EEPROM_CUST_MODEL_SIZE);
-			sprintf((char*) FIRM_DATA_MODEL_ADRS, "%s", (char*) value);
-
 			// Set Model
 			*status = setModel ((char *)FIRM_DATA_MODEL_ADRS);
 
@@ -5734,9 +5601,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			// Cmd Initialze
 			if ((*status = cmdExecuteInit ()) != AVAL_STATUS_SUCCESS)
 				break;
-
-			memset((void *)FIRM_DATA_MANUFACTURE_ADRS, 0, GIGE_EEPROM_CUST_MANUFACTURER_SIZE);
-			sprintf((char*) FIRM_DATA_MANUFACTURE_ADRS, "%s", (char*) value);
 
 			// Set Manufacture
 			*status = setManufacture ((char *)FIRM_DATA_MANUFACTURE_ADRS);
@@ -8179,7 +8043,25 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			}
 			#endif
 
+			#if defined (MODE_PELTIER_CTRL)
+			if (value == 1)
+			{
+					// Peltier Control Init
+				peltierControlProcsInit ();
+			}
+			#endif
+
 			*status = peltierSetMode (value);
+		
+			#if defined (MODE_PELTIER_CTRL)
+			if (value == 1)
+			{
+				// Peltier Enable Delay
+				//peltierControlProcs ();
+				peltierSetPowerStartFlag (MODE_ENABLE);
+			}
+			#endif
+
 			break;
 #endif
 
@@ -8189,10 +8071,30 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		//--------------------------------------------------------------------------------
 		case FPGA_PELTIER_TARGET_ADRS:
 			#if defined (MODE_PELTIER_CTRL)
+			value2nd = 0;
+			*status = peltierGetMode ((int *)&value2nd);
+
+			if (value2nd == 1)
+			{
+				// Peltier Control Init
+				peltierControlProcsInit ();
+			}
+			#endif
+		
 			intValue = (int)value;
 			dblValue = (float) intValue;
-			*status = peltierSetTarget(dblValue);
-            #endif
+			if ((*status = peltierSetTarget(dblValue)) != AVAL_STATUS_SUCCESS)
+				break;
+
+			#if defined (MODE_PELTIER_CTRL)
+			if (value2nd == 1)
+			{
+				// Peltier Enable Delay
+				//peltierControlProcs ();
+				peltierSetPowerStartFlag (MODE_ENABLE);
+			}
+			#endif
+
 				
 			break;
 
@@ -8344,7 +8246,16 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 		// DevicePeltierPowerLevel設定
 		//--------------------------------------------------------------------------------
 		case DevicePeltierPowerLevel:
+			// Get Pelter Mode
+			peltierGetMode ((int *)&value2nd);
+
 			*status = peltierSetPowerLevel(value);
+		
+			if (value2nd == 1)
+			{
+				// Peltier Enable Delay
+				peltierSetPowerStartFlag (MODE_ENABLE);
+			}
 			break;
 #endif
 
@@ -8436,128 +8347,6 @@ void set_user_reg(u32 address, u32 value, u16 *status)
 			*status = GEV_STATUS_WRITE_PROTECT;
 			break;
 #endif
-
-
-		//====================================================================================
-		//
-		// Group: Auto Bright
-		// Note:
-		//
-		//====================================================================================
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-		//----------------------------------------------------------------------------------
-		// Auto Bright Exposure Mode設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_EXPOSURE_MODE:
-			*status = autoBrightSetExposureMode (value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Exposure Once Status設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_EXPOSURE_STATUS:
-			*status = GEV_STATUS_WRITE_PROTECT;
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Exposure Min設定
-		//----------------------------------------------------------------------------------
-		//case AUTO_BRIGHT_EXPOSURE_MIN:
-			//*status = autoBrightSetExposureMin (value);
-			//break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Exposure Max設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_EXPOSURE_MAX:
-			*status = autoBrightSetExposureMax (value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Gain Mode設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_GAIN_MODE:
-			*status = autoBrightSetGainMode (value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Gain Once Status設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_GAIN_STATUS:
-			*status = GEV_STATUS_WRITE_PROTECT;
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Gain Min設定
-		//----------------------------------------------------------------------------------
-		//case AUTO_BRIGHT_GAIN_MIN:
-			//dblValue = (double)((double)value / (double)AUTO_GAIN_UNIT);
-			//*status = autoBrightSetGainMin ((double)value);
-			//break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Gain Max設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_GAIN_MAX:
-			*status = autoBrightSetGainMax ((double)value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Area設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_OVERLAY:
-			*status = autoBrightSetDetectArea (value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Target設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_TARGET:
-			*status = autoBrightSetTarget (value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Average設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_AVERAGE:
-			*status = GEV_STATUS_WRITE_PROTECT;
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Area設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_TARGET_AREA:
-			*status =  autoBrightSetTargetArea (value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Width Size設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_WIDTH_SIZE:
-			*status = autoBrightSetWidthSize (value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Height Size設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_HEIGHT_SIZE:
-			*status = autoBrightSetHeightSize (value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Width Offset設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_WIDTH_OFFSET:
-			*status = autoBrightSetWidthOffset (value);
-			break;
-
-		//----------------------------------------------------------------------------------
-		// Auto Bright Height Offset設定
-		//----------------------------------------------------------------------------------
-		case AUTO_BRIGHT_HEIGHT_OFFSET:
-			*status = autoBrightSetHeightOffset (value);
-			break;
-#endif // #if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
 
 
 		//====================================================================================
@@ -9655,20 +9444,6 @@ void user_init(u32* status)
 		value2nd = GVSP_PIX_MONO12;
 	}
 	
-
-	#if 0
-	#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-
- 	//autoBrightGetExposureMax(&data32);
-    //set_user_reg(FPGA_AOI_BITWIDTH_ADRS,value2nd,(u16*)status);
-    //set_user_reg(GENICAM_ACQUISITION_EXPOSURE_ADRS,DEFAULT_EXPOSURE,(u16*)status);
-
-	#else
- 	set_user_reg(FPGA_AOI_BITWIDTH_ADRS,value2nd,(u16*)status);
-	#endif
-
-	#endif
-
 	set_user_reg(FPGA_AOI_BITWIDTH_ADRS,value2nd,(u16*)status);
 
     /*
@@ -12064,9 +11839,6 @@ int gigeSetConnectionConfig (void)
 	unsigned int uiExp;
 	int dataI1;
 	unsigned int intFrameRate;
-#if defined(MODE_AUTO_EXPOSURE)
-	int expMaxTime;
-#endif
 
 	// 取り込み停止
 	acquisitionAbort ();
@@ -12099,14 +11871,6 @@ int gigeSetConnectionConfig (void)
 		goto _DONE;
 	}
 
-#if defined(MODE_AUTO_EXPOSURE)
-	//--------------------------------------------------------------------------------
-	// Exposure Max取得
-	//--------------------------------------------------------------------------------
-	if ((status = autoBrightGetExposureMax (&expMaxTime)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-#endif
-
 	//--------------------------------------------------------------------------------
 	// 現在のフレームレート/露光時間設定
 	//--------------------------------------------------------------------------------
@@ -12126,16 +11890,6 @@ int gigeSetConnectionConfig (void)
 
 	if ((status = acquisitionSetExposure (uiExp)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
-#if defined(MODE_AUTO_EXPOSURE)
-	//--------------------------------------------------------------------------------
-	// Exposure Max再設定
-	//--------------------------------------------------------------------------------
-	if (autoBrightCheckExposureMinMax (expMaxTime) == AVAL_STATUS_SUCCESS)
-	{
-		autoBrightSetExposureMax (expMaxTime);
-	}
-#endif
 
 _DONE:
 	return (status);

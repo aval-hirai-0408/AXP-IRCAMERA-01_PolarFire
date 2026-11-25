@@ -18,6 +18,12 @@
 
 
 //----------------------------------------------------------------------------------
+// defines
+//----------------------------------------------------------------------------------
+#define DIPSW_TIMEOUT (10000)	// 1s
+
+
+//----------------------------------------------------------------------------------
 // globals
 //----------------------------------------------------------------------------------
 int gInterFaceID = 0;
@@ -140,19 +146,44 @@ int getDipsw (unsigned int *pDipsw)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int data;
+	int i;
 
 	// Check pDipsw Parameter
 	if (pDipsw == NULL)
 	{
 		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DIPSW pDipsw NULL Parameter Error.\n");
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DIPSW NULL Parameter Error.\n");
+		goto _DONE;
+	}
+
+	// Clear Read End
+	OUT32 (FPGA_GPIO_DIPSW_ADRS, FPGA_GPIO_DIPSW_READEND_BIT);
+
+	// Reqest
+	OUT32 (FPGA_GPIO_DIPSW_ADRS, FPGA_GPIO_DIPSW_REQEST_BIT);
+	
+	// Check Read End
+	for (i=0; i<DIPSW_TIMEOUT; i++)
+	{
+		data = IN32 (FPGA_GPIO_DIPSW_ADRS);
+		if (data & FPGA_GPIO_DIPSW_READEND_BIT)
+			break;
+		
+		usDelay (100);
+	}
+	
+	if (i >= DIPSW_TIMEOUT)
+	{
+		status = MAKE_ERROR_STATUS (AVAL_STATUS_I2C, AVAL_STATUS_TIMEOUT);
+		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, "DIPSW Timeout Error.\n");
 		goto _DONE;
 	}
 
 	// Get Dipsw
-	//@@@1data = IN32 (ZYNQ_ULTRASCALE_GPIO_DIPSW_ADRS);
-	//@@@1*pDipsw = ZYNQ_GPIO_DIPSW_MASK (data);
-	*pDipsw = 0;
+	data = IN32 (FPGA_GPIO_DIPSW_ADRS);
+	data >>= FPGA_GPIO_DIPSW_VALUE_SHIFT;
+	
+	*pDipsw = ~data & FPGA_GPIO_DIPSW_VALUE_MASK;
 	
 _DONE:
 	return (status);

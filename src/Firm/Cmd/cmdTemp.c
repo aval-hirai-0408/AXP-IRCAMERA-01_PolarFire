@@ -21,8 +21,7 @@
 // externs
 //----------------------------------------------------------------------------------
 extern int gPeltierSensorUpperTempCount;	// センサ温度上限カウント
-extern int gPeltierSensorLowerTempCount;	// センサ温度下限カウント
-extern int gPeltierCaseTempCount;			// ケース温度カウント
+extern int gPeltierCaseUpperTempCount;		// ケース温度上限カウント
 
 
 //**********************************************************************************
@@ -363,7 +362,7 @@ int cmdTempAlarmCount (void *str)
 
 	//  ケース温度カウント
 	DEBUG_PRINT_FORCE ("   Case Temp                 ");
-	DEBUG_PRINT_FORCE ("%d\n", gPeltierCaseTempCount);
+	DEBUG_PRINT_FORCE ("%d\n", gPeltierCaseUpperTempCount);
 
 	DEBUG_PRINT_FORCE ("\n");
 
@@ -965,6 +964,9 @@ int cmdPeltierTarget (void *str)
 	int status = AVAL_STATUS_SUCCESS;
 	int argc;
 	double temp;
+#if defined (MODE_PELTIER_CTRL)
+	int mode;
+#endif
 
 	// Get Argument
 	argc = cmdCheckArg (str);
@@ -995,10 +997,31 @@ int cmdPeltierTarget (void *str)
 			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, CMD_ERROR_INVALID_PARAM);
 			goto _DONE;
 		}
+
+		#if defined (MODE_PELTIER_CTRL)
+		if ((status = peltierGetMode (&mode)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
 		
+		if (mode == 1)
+		{
+			// Peltier Comntrol Init
+			if ((status = peltierControlProcsInit ()) != AVAL_STATUS_SUCCESS)
+				goto _DONE;
+		}
+		#endif
+
 		// Target温度設定
 		if ((status = peltierSetTarget (temp)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
+
+		#if defined (MODE_PELTIER_CTRL)
+		if (mode == 1)
+		{
+			// Peltier Enable Delay
+			if ((peltierControlProcs ()) != AVAL_STATUS_SUCCESS)
+				goto _DONE;
+		}
+		#endif
 	}
 	else
 	{
@@ -1260,9 +1283,27 @@ int cmdPeltierEnable (void *str)
 		}
 		#endif
 
+		#if defined (MODE_PELTIER_CTRL)
+		if (mode == 1)
+		{
+			// Peltier Comntrol Init
+			if ((status = peltierControlProcsInit ()) != AVAL_STATUS_SUCCESS)
+				goto _DONE;
+		}
+		#endif
+
 		// Peltier Mode設定
 		if ((status = peltierSetMode (mode)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
+
+		#if defined (MODE_PELTIER_CTRL)
+		if (mode == 1)
+		{
+			// Peltier Enable Delay
+			if ((peltierControlProcs ()) != AVAL_STATUS_SUCCESS)
+				goto _DONE;
+		}
+		#endif
 	}
 	else
 	{
@@ -1705,6 +1746,17 @@ int cmdPeltierPowerLevel (void *str)
 		// Peltier Power Level設定
 		if ((status = peltierSetPowerLevel (level)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
+
+		// Peltier Mode取得
+		if ((status = peltierGetMode (&mode)) != AVAL_STATUS_SUCCESS)
+			goto _DONE;
+
+		if (mode == 1)
+		{
+			// Peltier Control
+			if ((peltierControlProcs ()) != AVAL_STATUS_SUCCESS)
+				goto _DONE;
+		}
 	}
 	else
 	{

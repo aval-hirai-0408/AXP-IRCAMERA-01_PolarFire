@@ -346,7 +346,7 @@ int acquisitionAbort (void)
 	OUT32 (GENICAM_ACQUISITION_ABORT_ADRS, GENICAM_ACQUISITION_ABORT_BIT);
 
 //@@@1
-#if 0
+#if 1
 
 
 	// ステータスCheck
@@ -375,6 +375,7 @@ int acquisitionAbort (void)
 	}
 #endif
 //@@@1
+
 	// 取り込み中断解除
 	OUT32 (GENICAM_ACQUISITION_ABORT_ADRS, 0);
 
@@ -551,9 +552,6 @@ int irSetFrameRate (double frameRate)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int frameRateTime;
 	unsigned int frameRateTime2;
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	unsigned int frameRateTime3;
-#endif
 	unsigned int expTime;
 	double rate;
 	double rMax;
@@ -570,11 +568,6 @@ int irSetFrameRate (double frameRate)
 	double hTimeD;
 	double frameRateTimeD;
 	int rateMode;
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	int readOutTime;
-	int expTimeMax, saveExpTimeMax;
-	int autoExpMode = MODE_DISABLE;
-#endif
 #if defined (MODE_FRAMERATE_HIGH_SPEED)
 	int hsMode, heightSize;
 #endif
@@ -601,18 +594,6 @@ int irSetFrameRate (double frameRate)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	//auto exposure mode
-	autoBrightGetExposureMode(&autoExpMode);
-
-	if (autoExpMode == MODE_ENABLE)
-	{
-		//自動露光停止
-		if ((status = autoBrightSetExposureMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-#endif
 
 	// Start Status
 	acquisitionGetStartFlag (&startMode);
@@ -755,33 +736,6 @@ int irSetFrameRate (double frameRate)
 	OUT32 (FIRM_DATA_FRAME_RATE, (frameRateTime2 * hTimeD));
 	
 
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-
-	// センサRead Out Time取得
-	if ((status = sensoreGetReadOut (&readOutTime)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// 今回のフレームレートで設定できる最大露光時間
-	frameRateTime3 = frameRateTime2 * hTimeD;	// 1フレームのH単位で割る
-
-	//expTimeMax = frameRateTime - readOutTime;
-	expTimeMax = frameRateTime3 - readOutTime;
-
-	// Get Exposure Max
-	if ((status = autoBrightGetExposureMax (&saveExpTimeMax)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// expTimeMaxは今までの設定値に合わせる
-	if (expTimeMax > saveExpTimeMax)
-		expTimeMax = saveExpTimeMax;
-	
-	// Set Exposure Max
-	if ((status = autoBrightSetExposureMax (expTimeMax)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-#endif // #if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-
-
 #if defined (MODE_TRG_RESERVED_ADJUST)
 	// Timing Generator調整
 	if ((status = tgSetSensorTrgCheck2 ()) != AVAL_STATUS_SUCCESS)
@@ -789,12 +743,6 @@ int irSetFrameRate (double frameRate)
 #endif
 
 _DONE:
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	if(autoExpMode == MODE_ENABLE)
-		autoBrightSetExposureMode (MODE_ENABLE);
-#endif
-
 	if (startMode != 0)
 		acquisitionStart ();
 
@@ -1563,9 +1511,6 @@ _DONE:
 int acquisitionSetExposureMode (int mode)
 {
 	int status = AVAL_STATUS_SUCCESS;
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	int autoMode;
-#endif
 
 	// Check mode Parameter
 	if ((mode < ACQUISITION_EXPOSURE_MODE_MIN) || (mode > ACQUISITION_EXPOSURE_MODE_MAX))
@@ -1575,25 +1520,6 @@ int acquisitionSetExposureMode (int mode)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	// Timedでない場合
-	if (mode != ACQUISITION_EXPOSURE_TIMED)
-	{
-		// Auto Bright Mode取得
-		if ((status = autoBrightGetExposureMode (&autoMode)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-		// Auto Bright Mode有効?
-		if (autoMode == MODE_ENABLE)
-		{
-			status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-			sprintf (gLogMsgBuff, "Acquisition Exposure Mode(%d) Auto Bright Enable Error.\n", mode);
-			cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-			goto _DONE;
-		}
-	}
-#endif
 
 	// Exposure Mode設定
 	OUT32 (GENICAM_ACQUISITION_EXPOSURE_MODE_ADRS, (mode & ACQUISITION_EXPOSURE_MODE_MASK));
@@ -1684,45 +1610,6 @@ _DONE:
 }
 
 
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-//**********************************************************************************
-//	露光時間設定
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		expTime				：露光時間(us単位)
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int acquisitionSetExposureSimple (unsigned int expTime)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	int shutterMode = SHUTTER_MODE_TRIGGER;
-
-	#if defined (MODE_SENSOR_SHUTTER)
-	if ((status = sensorGetShutterMode (&shutterMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-	#endif
-
-	if (shutterMode == SHUTTER_MODE_TRIGGER)
-	{
-		if ((status = irSetExposureSimple (expTime)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-	else
-	{
-		#if defined (MODE_SENSOR_SHUTTER)
-		if ((status = irSetExposureSimpleShutterNormal (expTime)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-		#endif
-	}
-
-_DONE:
-	return (status);
-}
-#endif
-
-
 #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
 //**********************************************************************************
 //	露光時間設定
@@ -1738,9 +1625,6 @@ int irSetExposure (unsigned int expTime)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int frameRateTime, frameRateTime2;
 	double frameRate;
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	int autoExpMode = MODE_DISABLE;
-#endif
 	unsigned int hIntervalClock;
 	double intervalD;
 	double hTimeD;
@@ -1771,20 +1655,6 @@ int irSetExposure (unsigned int expTime)
 		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
 		goto _DONE;
 	}
-
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	//auto exposure mode
-	if ((status = autoBrightGetExposureMode(&autoExpMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	if(autoExpMode == MODE_ENABLE)
-	{
-		//自動露光停止
-		if ((status = autoBrightSetExposureMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-#endif
 
 	// Start Status
 	acquisitionGetStartFlag (&startMode);
@@ -1905,12 +1775,6 @@ int irSetExposure (unsigned int expTime)
 #endif
 
 _DONE:
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	if (autoExpMode == MODE_ENABLE)
-		autoBrightSetExposureMode (MODE_ENABLE);
-#endif
-
 	if (startMode != 0)
 		acquisitionStart ();
 
@@ -1992,90 +1856,6 @@ _DONE:
 }
 #endif // #if defined (MODE_SENSOR_DRRS)
 #endif // #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S)
-
-
-#if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S) && defined (MODE_AUTO_EXPOSURE)
-//**********************************************************************************
-//	露光時間設定
-//----------------------------------------------------------------------------------
-//	[ INPUT ]
-//		expTime				：露光時間(us単位)
-//	[ OUTPUT ]
-//		AVAL_STATUS_SUCCESS	：正常終了
-//		上記以外				：異常終了
-//==================================================================================
-int irSetExposureSimple (unsigned int expTime)
-{
-	int status = AVAL_STATUS_SUCCESS;
-	unsigned int frameRateTime;
-	double frameRate;
-	unsigned int hIntervalClock;
-	double intervalD;
-	double hTimeD;
-	double tempD;
-	double expD;
-#if defined (MODE_SENSOR_MASTER)
-	unsigned int vInterval;
-#endif
-
-	// Check expTime Parameter
-	if ((expTime < MIN_EXPOSURE_TIME) || (expTime > MAX_EXPOSURE_TIME))
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Acquisition Exposure Time(%d) Parameter Error.(Min:%d / Max:%d)\n", expTime, MIN_EXPOSURE_TIME, MAX_EXPOSURE_TIME);
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// H Interval
-	if ((status = irvGetHIntervalClock (&hIntervalClock)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// H時間
-	hTimeD = (double)hIntervalClock * SENSOR_H_TIME;
-
-	// フレームレート取得
-	if ((status = acquisitionGetFrameRate (&frameRate)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// 現在設定されているフレームレートで設定可能な露光時間かをCheck
-	tempD = 1.0 / frameRate;
-	frameRateTime = (unsigned int)(tempD * ACQUISITION_FRAMERATE_UINIT);
-
-	// 設定可能なフレーム時間を算出(TGES)
-	// TGES:露光完了から次のフレームの開始までの時間
-	intervalD = (SENSOR_TGES + SENSOR_TGES_MARGIN) * hTimeD;
-	if ((int)((int)frameRateTime - (int)expTime) < intervalD)
-	{
-		status = MAKE_ERROR_STATUS (AVAL_STATUS_CAMERA, AVAL_STATUS_INVALID_PARAMETER);
-		sprintf (gLogMsgBuff, "Acquisition Exposure Time(%d) Over Error.(Min:%d / Max:%d)\n", expTime, MIN_EXPOSURE_TIME, (int)((int)frameRateTime - (int)expTime));
-		cameraLogMsg (MSG_LEVEL_ERROR, __FILE__, __func__, __LINE__, status, gLogMsgBuff);
-		goto _DONE;
-	}
-
-	// 露光時間再設定
-	expD = (double)((double)expTime / hTimeD);
-	expD += 0.5;	// 四捨五入
-	expTime = (unsigned int)expD;
-
-	if (expTime == 0)
-		expTime = 1;
-
-	#if defined (MODE_SENSOR_IMX992) || defined (MODE_SENSOR_IMX993)
-	if (expTime == 1)
-		expTime++;
-	else if (expTime & 0x01)
-		expTime--;
-	#endif
-
-	OUT32 (GENICAM_ACQUISITION_EXPOSURE_ADRS, (expTime & GENICAM_ACQUISITION_EXPOSURE_MASK));
-
-	// 露光時間DDRに設定(us単位)
-	OUT32 (FIRM_DATA_EXPOSURE_TIME, (expTime * hTimeD));
-
-_DONE:
-	return (status);
-}
 
 
 #if defined (MODE_SENSOR_SHUTTER)
@@ -2161,7 +1941,6 @@ _DONE:
 	return (status);
 }
 #endif // #if defined (MODE_SENSOR_SHUTTER)
-#endif // #if (MODE_SENSOR_VENDOR == SENSOR_VENDOR_S) || defined (MODE_AUTO_EXPOSURE)
 
 
 //**********************************************************************************
@@ -2798,12 +2577,12 @@ _DONE:
 //==================================================================================
 int rateMin (double *pRate)
 {
-    int status;
+ 	int status = AVAL_STATUS_SUCCESS;
 #if defined (MODE_SENSOR_DRRS)
 	int height;
 	int drrsMode = MODE_DISABLE;
 #endif
-	
+
 	// Check pRate Parameter
 	if (pRate == NULL)
 	{
@@ -2971,14 +2750,6 @@ int rateGetSensorMax (double *pRate)
 
 	// 最大フレームレート
 	*pRate = SENSOR_H_CLOCK * 1000 * 1000 / hIntervalClock / (height + SENSOR_VINTERVAL_FIX_LINE);
-
-//@@@@@@@@@@@@@@@@@@
-#if 0
-	DEBUG_PRINT_FORCE("hIntervalClock = %d\n", hIntervalClock);
-	DEBUG_PRINT_FORCE("height = %d\n", height);
-	DEBUG_PRINT_FORCE("*pRate = %f\n", *pRate);
-#endif
-//@@@@@@@@@@@@@@@@@@
 
 #endif // #if defined (MODE_FRAMERATE_HIGH_SPEED)
 
@@ -3232,7 +3003,7 @@ int rateGetCxpMax (double *pRate)
 	// Sensor Total Height
 	if ((status = fpgaRoiGetSensorHeightTotalSize (&height)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
+	
 	// センサフレームレート取得
 	if ((status = rateGetSensorMax (&rateSensorD)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
@@ -3250,8 +3021,8 @@ int rateGetCxpMax (double *pRate)
 		goto _DONE;
 
 	// Dual?
-	//@@@1if (connection == CXP_PORT_DUAL)
-		//@@@1cxpRateGbps *= 2;
+	//if (connection == CXP_PORT_DUAL)
+		//cxpRateGbps *= 2;
 
 	// 8b10b実効帯域補正
 	cxpRateGbps *= 1000 * 1000 * 1000 /10 * 8;
@@ -3275,18 +3046,6 @@ int rateGetCxpMax (double *pRate)
 	frameTimeDouble *= (double)_1US;
 	frameTimeFloat = (float)frameTimeDouble;
 	OUTF (FIRM_DATA_MAX_FRAME_RATE_TIME, frameTimeFloat);
-
-//@@@@@@@@@@@@@@@@@@
-#if 0
-	DEBUG_PRINT_FORCE("Bit = %d\n", bit);
-	DEBUG_PRINT_FORCE("width = %d\n", width);
-	DEBUG_PRINT_FORCE("height = %d\n", height);
-	DEBUG_PRINT_FORCE("rateSensorD = %f\n", rateSensorD);
-	DEBUG_PRINT_FORCE("cxpRate = %d\n", cxpRate);
-	DEBUG_PRINT_FORCE("cxpRateGbps = %f\n", cxpRateGbps);
-	DEBUG_PRINT_FORCE("*pRate  = %f\n", *pRate );
-#endif
-//@@@@@@@@@@@@@@@@@@
 
 _DONE:
 	return (status);

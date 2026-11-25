@@ -120,6 +120,7 @@ int cxpMain (void)
 {
 	int status = AVAL_STATUS_SUCCESS;
 	int port = 0;
+	char fpgaVer[FPGA_VERSION_SIZE+1];
 
 	//------------------------------------------------------------
 	// CPU1 Boot Flag
@@ -130,7 +131,8 @@ int cxpMain (void)
 	// Make the version string of the camera
 	//------------------------------------------------------------
 	sprintf (deviceVersion,"%s",MAIN_VERSION);
-	sprintf (deviceFirmwareVersion,"%s;%s;%s",FIRM_VERSION,"1.0"/*FPGA*/,FIRM_DATA_BOARD_VERSION_ADRS);
+	fpgaVersion (fpgaVer);
+	sprintf (deviceFirmwareVersion,"%s;%s;%s",FIRM_VERSION,fpgaVer,FIRM_DATA_BOARD_VERSION_ADRS);
 
 	//------------------------------------------------------------
 	// CPU1 Boot Flag

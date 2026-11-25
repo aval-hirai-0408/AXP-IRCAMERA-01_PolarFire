@@ -170,9 +170,6 @@ _DONE:
 int aoiSetBitWidth (int bit)
 {
 	int status = AVAL_STATUS_SUCCESS;
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	int autoGainMode, autoExpMode;
-#endif //defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
 	int startMode = 0;
 
 	// Start Status
@@ -181,54 +178,14 @@ int aoiSetBitWidth (int bit)
 	// 取り込み停止
 	if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
+	
 	// StandByモード移行
 	if ((status = sensorStandBy ()) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	// 自動露光が実行されていたら一回停止
-	if ((status = autoBrightGetExposureMode (&autoExpMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	if (autoExpMode == MODE_ENABLE)
-	{
-		if ((status = autoBrightSetExposureMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-
-	// 自動露ゲインが実行されていたら一回停止
-	if ((status = autoBrightGetGainMode (&autoGainMode)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-
-	if (autoGainMode == MODE_ENABLE)
-	{
-		if ((status = autoBrightSetGainMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-#endif //defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-
-
+	// Bit設定
 	if ((status = irSetBitWidth (bit) != AVAL_STATUS_SUCCESS))
 		goto _DONE;
-
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	//イネーブルなら再開
-	if (autoExpMode == MODE_ENABLE)
-	{
-		if ((status = autoBrightSetExposureMode (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-
-	//イネーブルなら再開
-	if (autoGainMode == MODE_ENABLE)
-	{
-		if ((status = autoBrightSetGainMode (MODE_ENABLE)) != AVAL_STATUS_SUCCESS)
-			goto _DONE;
-	}
-#endif //defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
 
 	// StandByモード解除
 	if ((status = sensorStandByCancel ()) != AVAL_STATUS_SUCCESS)
@@ -263,7 +220,6 @@ int irSetBitWidth (int bit)
 	double rMax, rMin, frameRate;
 	unsigned int fpgaBit;
 	unsigned int expTime;
-	//int startMode = 0;
 	int expMin, expMax;
 #if defined (MODE_SENSOR_GRADATION_COMPRESS)
 	int gcModeCurrent, gcModeReqest = 0;
@@ -318,7 +274,7 @@ _NEXT:
 	// Check Bit Parameter
 	if (bit == 0)
 	{
-		fpgaBit = FPGA_AOI_BITWIDTH_8BIT;
+		fpgaBit = FPGA_SENSOR_IMG_CTRL_8BIT;
 		adc = GC_SENSOR_AD_BIT;
 		output = SENSOR_REG_OD_8BIT;
 		black = SENSOR_REG_BLACKLEVEL_10BIT;
@@ -331,7 +287,7 @@ _NEXT:
 	// Check Bit Parameter
 	if (bit == 8)
 	{
-		fpgaBit = FPGA_AOI_BITWIDTH_8BIT;
+		fpgaBit = FPGA_SENSOR_IMG_CTRL_8BIT;
 		adc = SENSOR_REG_AD_8BIT;
 		output = SENSOR_REG_OD_8BIT;
 		black = SENSOR_REG_BLACKLEVEL_8BIT;
@@ -339,7 +295,7 @@ _NEXT:
 	}
 	else if (bit == 10)
 	{
-		fpgaBit = FPGA_AOI_BITWIDTH_10BIT;
+		fpgaBit = FPGA_SENSOR_IMG_CTRL_10BIT;
 		adc = SENSOR_REG_AD_10BIT;
 		output = SENSOR_REG_OD_10BIT;
 		black = SENSOR_REG_BLACKLEVEL_10BIT;
@@ -347,7 +303,7 @@ _NEXT:
 	}
 	else if (bit == 12)
 	{
-		fpgaBit = FPGA_AOI_BITWIDTH_12BIT;
+		fpgaBit = FPGA_SENSOR_IMG_CTRL_12BIT;
 		adc = SENSOR_REG_AD_12BIT;
 		output = SENSOR_REG_OD_12BIT;
 		black = SENSOR_REG_BLACKLEVEL_12BIT;
@@ -385,7 +341,7 @@ _DONE_ERROR:
 		goto _DONE;
 
 	// Set Bit Width
-	OUT32 (FPGA_AOI_BITWIDTH_ADRS, fpgaBit);
+	OUT32 (FPGA_SENSOR_IMG_CTRL_BIT_ADRS, fpgaBit);
 
 	// Shutterモード取得
 	if ((status = sensorGetShutterMode (&shutterMode)) != AVAL_STATUS_SUCCESS)
@@ -518,6 +474,7 @@ _DONE_ERROR:
 		goto _DONE;
 #endif
 
+
 #if defined (MODE_CXP)
 	if (gInterFaceID == INTERFACE_CXP)
 	{
@@ -602,21 +559,21 @@ int irGetBitWidth (int *pBit)
 		goto _DONE;
 	}
 
-	data = IN32 (FPGA_AOI_BITWIDTH_ADRS) & FPGA_AOI_BITWIDTH_MASK;
+	data = IN32 (FPGA_SENSOR_IMG_CTRL_BIT_ADRS) & FPGA_SENSOR_IMG_CTRL_BIT_MASK;
 
-	if (data == FPGA_AOI_BITWIDTH_8BIT)
+	if (data == FPGA_SENSOR_IMG_CTRL_8BIT)
 	{
 		*pBit = 8;
 	}
-	else if (data == FPGA_AOI_BITWIDTH_10BIT)
+	else if (data == FPGA_SENSOR_IMG_CTRL_10BIT)
 	{
 		*pBit = 10;
 	}
-	else if (data == FPGA_AOI_BITWIDTH_12BIT)
+	else if (data == FPGA_SENSOR_IMG_CTRL_12BIT)
 	{
 		*pBit = 12;
 	}
-	else if (data == FPGA_AOI_BITWIDTH_14BIT)
+	else if (data == FPGA_SENSOR_IMG_CTRL_14BIT)
 	{
 		*pBit = 14;
 	}
@@ -656,7 +613,7 @@ int cameraGetBitWidthGigE (int *pBit)
 		goto _DONE;
 	}
 
-	data = IN32 (FPGA_AOI_BITWIDTH_ADRS) & FPGA_AOI_BITWIDTH_MASK;
+	data = IN32 (FPGA_SENSOR_IMG_CTRL_BIT_ADRS) & FPGA_SENSOR_IMG_CTRL_BIT_MASK;
 
 	if (data == FPGA_AOI_BITWIDTH_8BIT)
 		*pBit = GVSP_PIX_MONO8;
@@ -800,18 +757,18 @@ int aoiSetPatternMain (int index)
 				goto _DONE;
 		}
 	}
-	else if ((index >= (AOI_TP_MIN_AREA+1)) || (index <= AOI_TP_MAX_AREA))
+	else if ((index >= (AOI_TP_MIN_AREA+1)) && (index <= AOI_TP_MAX_AREA))
 	{
 		if ((status = aoiSetPattern (index)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 	}
-	else if  ((index >= AOI_TP_SENSOR_MIN) || (index <= AOI_TP_SENSOR_MAX))
+	else if  ((index >= AOI_TP_SENSOR_MIN) && (index <= AOI_TP_SENSOR_MAX))
 	{
 		// FFC設定
 		if ((status = ffcSetMode (0, 0)) != AVAL_STATUS_SUCCESS)
 			goto _DONE;
 
-		if (index = AOI_TP_SENSOR_SEQUENCE_PATTERN)
+		if (index == AOI_TP_SENSOR_SEQUENCE_PATTERN)
 			sensorMode = 1;
 		else
 			sensorMode = 3;
@@ -867,6 +824,7 @@ int aoiSetPattern (int index)
 
 	// Set Index
 	OUT32 (FPGA_AOI_TP_INDEX_ADRS, (index & FPGA_AOI_TP_MASK));
+	OUT32 (FIRM_DATA_TEST_PATTERN, index);
 
 	if (startMode != 0)
 		acquisitionStart ();
@@ -1573,11 +1531,6 @@ int aoiSetBinningX (int mode)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int data32;
 	int startMode;
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	int widthSize, offsetSize;
-#endif
-
 #if defined (MODE_CXP)
 	int cxpWidth, cxpOffset, currentMode;
 #endif
@@ -1604,24 +1557,6 @@ int aoiSetBinningX (int mode)
 	// 取り込み停止
 	if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	// AutoBrightWidth再設定
-	if ((status = autoBrightGetWidthSize (&widthSize)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// AutoBrightWidth再設定
-	if ((status = autoBrightSetWidthSize (widthSize)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// AutoBrightWidthOffset再設定
-	if ((status = autoBrightGetWidthOffset (&offsetSize)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// AutoBrightWidthOffset再設定
-	if ((status = autoBrightSetWidthOffset (offsetSize)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-#endif
 
 	//------------------------------------------------------------
 	// CXPサイズ設定
@@ -1745,9 +1680,6 @@ int aoiSetBinningY (int mode)
 	int status = AVAL_STATUS_SUCCESS;
 	unsigned int data32;
 	int startMode;
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	int heightSize, offsetSize;
-#endif
 #if defined (MODE_CXP)
 	int cxpHeight, cxpOffset, currentMode;
 #endif
@@ -1794,25 +1726,6 @@ int aoiSetBinningY (int mode)
 	// 取り込み停止
 	if ((status = acquisitionAbort ()) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	// AutoBrightHeight再設定
-	if ((status = autoBrightGetHeightSize (&heightSize)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// AutoBrightHeight再設定
-	if ((status = autoBrightSetHeightSize (heightSize)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// AutoBrightHeightOffset再設定
-	if ((status = autoBrightGetHeightOffset (&offsetSize)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// AutoBrightHeightOffset再設定
-	if ((status = autoBrightSetHeightOffset (offsetSize)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-#endif
-
 
 	//------------------------------------------------------------
 	// CXPサイズ設定

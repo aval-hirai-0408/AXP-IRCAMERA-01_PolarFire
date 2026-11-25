@@ -60,14 +60,6 @@ int cmdAcquisitionGcp (void *str)
 		// AOI
 		//--------------------------------------------------
 		aoi ();
-
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-		//--------------------------------------------------
-		// Auto Bright
-		//--------------------------------------------------
-		autoBrightInformation ();
-#endif
 	}
 	else
 	{

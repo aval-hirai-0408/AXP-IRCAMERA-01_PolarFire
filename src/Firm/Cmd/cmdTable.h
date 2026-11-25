@@ -145,9 +145,9 @@ CMD_TBL mainCmdTbl [] =
 	{ (char *)"tpinc",			 			(CMDFUNC)cmdAoiTpInc,					(CMDFUNC)cmdAoiTpIncHelp, 						OPT_NONE},
 	{ (char *)"tpposition",					(CMDFUNC)cmdAoiTpPosition,				(CMDFUNC)cmdAoiTpPositionHelp, 					OPT_NONE},
 
-	{ (char *)"tpmodesensor",				(CMDFUNC)cmdSensorTpMode,				(CMDFUNC)cmdSensorTpModeHelp, 					OPT_NONE},
-	{ (char *)"tpincsensor",				(CMDFUNC)cmdSensorTpInc,				(CMDFUNC)cmdSensorTpIncHelp, 					OPT_NONE},
-	{ (char *)"tpdatasensor",				(CMDFUNC)cmdSensorTpData,				(CMDFUNC)cmdSensorTpDataHelp, 					OPT_NONE},
+	{ (char *)"tpmodesensor",				(CMDFUNC)cmdSensorTpMode,				(CMDFUNC)cmdSensorTpModeHelp, 					OPT_NONE},	//@@@1
+	{ (char *)"tpincsensor",				(CMDFUNC)cmdSensorTpInc,				(CMDFUNC)cmdSensorTpIncHelp, 					OPT_NONE},	//@@@1
+	{ (char *)"tpdatasensor",				(CMDFUNC)cmdSensorTpData,				(CMDFUNC)cmdSensorTpDataHelp, 					OPT_NONE},	//@@@1
 
 
 //============================================================================================================================================
@@ -440,28 +440,18 @@ CMD_TBL mainCmdTbl [] =
 #endif
 
 	
-#if 0	//@@@1
 //============================================================================================================================================
 // Voltage IF Board
 //============================================================================================================================================
 #if defined (MODE_VOLTAGE_IF_BOARD)
 	{ (char *)"voltifshow",					(CMDFUNC)cmdVoltIfShow,					(CMDFUNC)cmdVoltIfShowHelp, 					OPT_NONE},
-	{ (char *)"voltif105vd",				(CMDFUNC)cmdVoltIf105vd,				(CMDFUNC)cmdVoltIf105vdHelp, 					OPT_NONE},
-	{ (char *)"voltif105va",				(CMDFUNC)cmdVoltIf105va,				(CMDFUNC)cmdVoltIf105vaHelp, 					OPT_NONE},
-	{ (char *)"voltif125vd",				(CMDFUNC)cmdVoltIf125vd,				(CMDFUNC)cmdVoltIf125vdHelp, 					OPT_NONE},
-	{ (char *)"voltif18vd",					(CMDFUNC)cmdVoltIf18vd,					(CMDFUNC)cmdVoltIf18vdHelp, 					OPT_NONE},
-	{ (char *)"voltif25vf",					(CMDFUNC)cmdVoltIf25vf,					(CMDFUNC)cmdVoltIf25vfHelp, 					OPT_NONE},
-	{ (char *)"voltif33vd",					(CMDFUNC)cmdVoltIf33vd,					(CMDFUNC)cmdVoltIf33vdHelp, 					OPT_NONE},
-	{ (char *)"voltif90va",					(CMDFUNC)cmdVoltIf90va,					(CMDFUNC)cmdVoltIf90vaHelp, 					OPT_NONE},
-	{ (char *)"voltif065v",					(CMDFUNC)cmdVoltIf065v,					(CMDFUNC)cmdVoltIf065vHelp, 					OPT_NONE},
-	{ (char *)"voltif085va",				(CMDFUNC)cmdVoltIf085va,				(CMDFUNC)cmdVoltIf085vaHelp, 					OPT_NONE},
-	{ (char *)"voltif23va",					(CMDFUNC)cmdVoltIf230va,				(CMDFUNC)cmdVoltIf230vaHelp, 					OPT_NONE},
-	{ (char *)"voltif33v",					(CMDFUNC)cmdVoltIf330v,					(CMDFUNC)cmdVoltIf330vHelp, 					OPT_NONE},
-	{ (char *)"voltif12vp",					(CMDFUNC)cmdVoltIf120vp,				(CMDFUNC)cmdVoltIf120vpHelp, 					OPT_NONE},
-	{ (char *)"voltif24v",					(CMDFUNC)cmdVoltIf240v,					(CMDFUNC)cmdVoltIf240vHelp, 					OPT_NONE},
-	{ (char *)"voltiftemp",					(CMDFUNC)cmdVoltIfTemp,					(CMDFUNC)cmdVoltIfTempHelp, 					OPT_NONE},
+	{ (char *)"voltif5",					(CMDFUNC)cmdVoltIfV5_0,					(CMDFUNC)cmdVoltIfV5_0Help, 					OPT_NONE},
+	{ (char *)"voltif24",					(CMDFUNC)cmdVoltIfV24_0,				(CMDFUNC)cmdVoltIfV24_0Help, 					OPT_NONE},
+	{ (char *)"voltif18",					(CMDFUNC)cmdVoltIfV1_8,					(CMDFUNC)cmdVoltIfV1_8Help, 					OPT_NONE},
+	{ (char *)"voltif33",					(CMDFUNC)cmdVoltIfV3_3,					(CMDFUNC)cmdVoltIfV3_3Help, 					OPT_NONE},
+	{ (char *)"voltif125",					(CMDFUNC)cmdVoltIfV1_25,				(CMDFUNC)cmdVoltIfV1_25Help, 					OPT_NONE},
 #endif // #if defined (MODE_VOLTAGE_IF_BOARD)
-#endif //@@@1
+
 
 //============================================================================================================================================
 // Line
@@ -577,30 +567,6 @@ CMD_TBL mainCmdTbl [] =
 	{ (char *)"iof", 						(CMDFUNC)cmdIof,						(CMDFUNC)cmdIoXHelp, 							OPT_NONE},
 
 
-//============================================================================================================================================
-// Auto Exposure / Gain Command
-//============================================================================================================================================
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	{ (char *)"exposureauto",				(CMDFUNC)cmdAutoBrightExposureMode,		(CMDFUNC)cmdAutoBrightExposureModeHelp, 		OPT_NONE},
-	{ (char *)"exposureautostatus",			(CMDFUNC)cmdAutoBrightExposureStatus,	(CMDFUNC)cmdAutoBrightExposureStatusHelp, 		OPT_NONE},
-	{ (char *)"exposureautomax",			(CMDFUNC)cmdAutoBrightExposureMax,		(CMDFUNC)cmdAutoBrightExposureMaxHelp, 			OPT_NONE},
-
-	{ (char *)"gainauto",					(CMDFUNC)cmdAutoBrightGainMode,			(CMDFUNC)cmdAutoBrightGainModeHelp, 			OPT_NONE},
-	{ (char *)"gainautostatus",				(CMDFUNC)cmdAutoBrightGainStatus,		(CMDFUNC)cmdAutoBrightGainStatusHelp, 			OPT_NONE},
-	{ (char *)"gainautomax",				(CMDFUNC)cmdAutoBrightGainMax,			(CMDFUNC)cmdAutoBrightGainMaxHelp, 				OPT_NONE},
-
-	{ (char *)"autobrightoverlay",			(CMDFUNC)cmdAutoBrightDetectArea,		(CMDFUNC)cmdAutoBrightDetectAreaHelp, 			OPT_NONE},
-	{ (char *)"autobrighttarget",			(CMDFUNC)cmdAutoBrightTarget,			(CMDFUNC)cmdAutoBrightTargetHelp, 				OPT_NONE},
-	{ (char *)"autobrightaverage",		    (CMDFUNC)cmdAutoBrightAverage,			(CMDFUNC)cmdAutoBrightAverageHelp, 				OPT_NONE},
-
-	{ (char *)"autobrightwidth",			(CMDFUNC)cmdAutoBrightWidthSize,		(CMDFUNC)cmdAutoBrightWidthSizeHelp, 			OPT_NONE},
-	{ (char *)"autobrightheight",			(CMDFUNC)cmdAutoBrightHeightSize,		(CMDFUNC)cmdAutoBrightHeightSizeHelp, 			OPT_NONE},
-	{ (char *)"autobrightoffsetx",		    (CMDFUNC)cmdAutoBrightWidthOffset,		(CMDFUNC)cmdAutoBrightWidthOffsetHelp, 			OPT_NONE},
-	{ (char *)"autobrightoffsety",	    	(CMDFUNC)cmdAutoBrightHeightOffset,		(CMDFUNC)cmdAutoBrightHeightOffsetHelp, 		OPT_NONE},
-	{ (char *)"autobrighttargetarea",	   	(CMDFUNC)cmdAutoBrigtTargetArea,		(CMDFUNC)cmdAutoBrigtTargetAreaHelp, 			OPT_NONE},
-#endif
-
-		
 //============================================================================================================================================
 // CXP Command
 //============================================================================================================================================

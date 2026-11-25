@@ -130,6 +130,9 @@ int hwInitialize (int cpuType)
 	
 	// Cmd Execute Flag Clear
 	cmdExecuteDone ();
+	
+	// Test Pattern
+	OUT32 (FIRM_DATA_TEST_PATTERN, 0);
 
 	//------------------------------------------------------------
 	// Get Type
@@ -248,6 +251,19 @@ int hwInitialize (int cpuType)
 	if ((status = cameraInformationInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
 	
+//@@@1
+	{
+	int h, w;
+		// DPC初期化
+		for (h=0; h<IMG_HEIGHT; h++)
+		{
+			for (w=0; w<DPC_WIDTH_DATA_ALIGH; w+=4)
+			{
+				OUT32 ((DPC_MEMORY_ADRS + w + (h * DPC_WIDTH_DATA_ALIGH)), 0xffffffff);
+			}
+		}
+	}
+//@@@1
 	
 #if 0 //@@@1
 	//------------------------------------------------------------
@@ -381,6 +397,14 @@ int hwInitialize2 (int mode)
 
 	
 #if 0	//@@@1
+#if defined (MODE_PELTIER_CTRL)
+	//------------------------------------------------------------
+	// Peltier Control Initialize
+	//------------------------------------------------------------
+	if ((status = peltierControlInitiallize ()) != AVAL_STATUS_SUCCESS)
+		firmErrorAttention (status);
+#endif
+
 	//------------------------------------------------------------
 	// Timing Generator Version2初期化
 	//------------------------------------------------------------
@@ -396,13 +420,15 @@ int hwInitialize2 (int mode)
 		if ((status = specialInitialize ()) != AVAL_STATUS_SUCCESS)
 			firmErrorAttention (status);
 	}
+#endif //@@@1
 
 	//------------------------------------------------------------
 	// Acquisition Control Initialize
 	//------------------------------------------------------------
 	if ((status = acquisitionInit ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
-
+	
+#if 0	//@@@1
 	//------------------------------------------------------------
 	// AOI Initialize
 	//------------------------------------------------------------
@@ -494,13 +520,15 @@ int hwInitialize2 (int mode)
 	//------------------------------------------------------------
 	if ((status = sensorInitialize2 ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
-
+#endif //@@@1
+	
 	//------------------------------------------------------------
 	// Acquisition Control Initialize
 	//------------------------------------------------------------
 	if ((status = acquisitionInit2 ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
 
+#if 0	//@@@1
 	//------------------------------------------------------------
 	// ROI Initialize
 	//------------------------------------------------------------
@@ -512,14 +540,6 @@ int hwInitialize2 (int mode)
 	//------------------------------------------------------------
 #if defined(MODE_SPECTRUM_BANDGAIN_FILTER)
 	if ((status = bandGainFilterInitialize ()) != AVAL_STATUS_SUCCESS)
-		firmErrorAttention (status);
-#endif
-
-	//------------------------------------------------------------
-	// Auto Bright Initialize
-	//------------------------------------------------------------
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	if ((status = autoBrightInitialize ()) != AVAL_STATUS_SUCCESS)
 		firmErrorAttention (status);
 #endif
 
@@ -614,11 +634,6 @@ int hwInitializeNormal (void)
 
 	// 取り込み停止
 	acquisitionAbort ();
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	// Set Exposure Max
-	autoBrightSetExposureMax (1000);
-#endif
 
 	// フレームレート設定
 	if ((status = acquisitionSetFrameRate (DEFAULT_FRAMERATE)) != AVAL_STATUS_SUCCESS)

@@ -112,15 +112,6 @@ const char GIGE_FILL=                   0xFF; 						// The character of null ter
 const unsigned short GIGE_FILL16=       0xFFFF;		 				// The character of null termination
 const unsigned int   GIGE_FILL32=       0xFFFFFFFF; 				// The character of null termination
 
-//----------------------------------------------------------------------------------
-// externs
-//----------------------------------------------------------------------------------
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-extern unsigned int gTickCountTotalTempCheck;
-extern unsigned int gTickCountTotalAutoBright;
-#endif //#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-
-
 // Unused simulated EEPROM image
 volatile u8 *EEPROM;
 
@@ -135,9 +126,6 @@ volatile u32 timer_log_us_prev = 0;
 int main()
 {
 	u32 status = 0,value=0;
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	int startMode;
-#endif
 	unsigned int timeout;
 	unsigned int data32;
 	int cpu1RunnningMode;
@@ -430,29 +418,6 @@ int main()
 		{
 			// 冷却システムCase温度通知
 			coolSystemHandler();
-		}
-#endif
-
-		//------------------------------------------------------------
-		// Auto Bright制御
-		//------------------------------------------------------------
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-		if (IN32 (FPGA_AUTO_BRIGHT_TYPE_ADRS) == 1)
-		{
-			if (gTickCountTotalAutoBright > AUTO_BRIGHT_ADJUST_TIME_INTERVAL)
-			{
-
-				// Start Status
-				acquisitionGetStartFlag (&startMode);
-
-				//スタートしていたら自動露光/ゲイン実行
-				if(startMode != 0)
-				{
-					autoBrightMain ();
-				}
-				// タイマクリア
-				gTickCountTotalAutoBright = 0;
-			}
 		}
 #endif
 

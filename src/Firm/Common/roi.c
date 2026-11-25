@@ -545,9 +545,6 @@ int aoiSetWidth (int size)
 	int cxpPort = 0;
 #endif
 	int binningNum;
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	int abMode = AUTO_BRIGHT_TARGET_AREA_ALL_RANGE;
-#endif
 
 	//@@@1
 	OUT32(FPGA_CXP_S0_XSIZE_OFFSET_ADRS, size);
@@ -630,16 +627,6 @@ int aoiSetWidth (int size)
 	// 設定
 	if ((status = roiSetWidthMain (offset, size)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	// Get TargetArea
-	if((status = autoBrightGetTargetArea (&abMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// Set TargetArea
-	if((status = autoBrightSetTargetArea (abMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-#endif
 
 #if defined (MODE_CXP)
 	if (gInterFaceID == INTERFACE_CXP)
@@ -1001,9 +988,6 @@ int aoiSetHeight (int size)
 	int valid;
 	int binningNum = 1;
 	int startMode = 0;
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	int abMode = AUTO_BRIGHT_TARGET_AREA_ALL_RANGE;
-#endif
 #if defined (MODE_FRAMERATE_HIGH_SPEED)
 	int hsMode, tges;
 	int heightCurrent, lineStart;
@@ -1174,18 +1158,6 @@ int aoiSetHeight (int size)
 	// 設定
 	if ((status = roiSetHeightMain (offset, size)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
-
-
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	// Get TargetArea
-	if((status = autoBrightGetTargetArea (&abMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	// Set TargetArea
-	if((status = autoBrightSetTargetArea (abMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-#endif
-
 
 #if defined (MODE_CXP)
 	if (gInterFaceID == INTERFACE_CXP)
@@ -1638,7 +1610,7 @@ int roiSetHeightMain (int offset, int size)
 			goto _DONE;
 	}
 
-	// selector情報を取得
+	// 現在のselectorのサイズ情報を取得
 	if ((status = memRoiGetCameraHeight (selector, &currentOffset, &currentSize, &valid)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
@@ -1750,10 +1722,6 @@ _NEXT:
 	if ((status = fpgaRoiGetSensorHeightTotalSize (&totalHeight)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
-	// フレームレートモード取得
-	if ((status = acquisitionGetRateMode (&rateMode)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
 #if defined (MODE_SENSOR_DRRS)
 	if (drrsMode == MODE_ENABLE)
 	{
@@ -1786,6 +1754,10 @@ _NEXT:
 
 	// 最大フレームレート取得(内部で最大フレームレートを再計算)
 	if ((status = rateMax (&frameMax)) != AVAL_STATUS_SUCCESS)
+		goto _DONE;
+
+	// フレームレートモード取得
+	if ((status = acquisitionGetRateMode (&rateMode)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	if (rateMode == MODE_EXTEND)
@@ -3384,7 +3356,7 @@ int roiGetAreaGridOffset (int *pX, int *pY)
 		goto _DONE;
 	}
 
-	// Check Area MOde
+	// Check Area Mode
 	if ((status = roiGetAreaFlag (&areaMode)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
@@ -3719,7 +3691,7 @@ int roiCheckMultiMode (int *pMode)
 				break;
 			}
 		}
-		else	// Selector0以外ののValidは有効?
+		else	// Selector0以外のValidは有効?
 		{
 			if (valid == 1)
 			{

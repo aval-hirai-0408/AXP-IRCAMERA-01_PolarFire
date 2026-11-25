@@ -62,7 +62,7 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	#if defined (MODE_PELTIER_CTRL)
 	{FIRM_DATA_SENSOR_PERTIER_MODE,				0x01,						CAMERA_SAVE_MODE_DATA},			// センサペルチェモード(0xA0)
 	{FIRM_DATA_PELTIER_POWER_LEVEL, 			PELTIER_POWER_LEVEL,		CAMERA_SAVE_MODE_DATA},			// ペルチェパワーモード(0xA8)
-	{FPGA_PELTIER_CLIP_ADRS, 					0x00,						CAMERA_SAVE_MODE_REG_REF},		// ペルチェHigh Clip(0xB0)
+	{FPGA_PELTIER_CLIP_ADRS, 					(PELTIER_POWER_LEVEL_HIGH_CLIP<<16),CAMERA_SAVE_MODE_DATA},	// ペルチェHigh Clip(0xB0)
 	#else
 	{CAMERA_SAVE_RESERVE,		 				0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA0)
 	{CAMERA_SAVE_RESERVE,		 				0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xA8)
@@ -263,7 +263,7 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 
 	#endif//@@@1
 
-#if 0	//@@@1
+#if 1	//@@@1
 	//------------------------------------------------------------------------------------------
 	// Acquisition Control
 	//------------------------------------------------------------------------------------------
@@ -919,27 +919,8 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 
 
 	//------------------------------------------------------------------------------------------
-	// Auto Bright
+	// Auto Bright(Reserved)
 	//------------------------------------------------------------------------------------------
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	{FIRM_DATA_AUTO_BRIGHT_EXP_MODE_ADRS, 		DEFAULT_AUTO_BRIGHT_MODE,	CAMERA_SAVE_MODE_DATA},			// Exposure Mode(0xB00)
-	{FPGA_AUTO_BRIGHT_CTRL_ADRS, 				DEFAULT_AUTO_BRIGHT_TARGET,	CAMERA_SAVE_MODE_DATA},			// Target Bright(0xB08)
-	{FPGA_AUTO_BRIGHT_OFFSET_ADRS, 				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Offset(0xB10)
-	//{FPGA_AUTO_BRIGHT_SIZE_ADRS, 				0x00,						CAMERA_SAVE_MODE_REG_REF},		// Size(0xB18)
-	{FPGA_AUTO_BRIGHT_SIZE_ADRS, 				DEFAULT_AUTO_WIDTH_HEIGHT,	CAMERA_SAVE_MODE_DATA},			// Size(0xB18)
-	{FIRM_DATA_AUTO_BRIGHT_EXPOSUER_MIN, 		DEFAULT_AUTO_BRIGHT_EXP_MIN,CAMERA_SAVE_MODE_DATA},			// ExposureMin(0xB20)
-	{FIRM_DATA_AUTO_BRIGHT_EXPOSUER_MAX, 		DEFAULT_AUTO_BRIGHT_EXP_MAX,CAMERA_SAVE_MODE_DATA},			// ExposureMax(0xB28)
-	{FIRM_DATA_AUTO_BRIGHT_GAIN_MODE_ADRS, 		DEFAULT_AUTO_BRIGHT_MODE,	CAMERA_SAVE_MODE_DATA},			// Gain Mode(0xB30)
-	{FIRM_DATA_AUTO_BRIGHT_GAIN_MIN, 			DEFAULT_AUTO_BRIGHT_GAIN_MIN,CAMERA_SAVE_MODE_DATA},		// GainMin(0xB38)
-	{FIRM_DATA_AUTO_BRIGHT_GAIN_MAX,	 		DEFAULT_AUTO_BRIGHT_GAIN_MAX,CAMERA_SAVE_MODE_DATA},		// GaineMax(0xB40)
-	{FIRM_DATA_AUTO_BRIGHT_TARGET_AREA, 	 	DEFAULT_AUTO_BRIGHT_TAEGET_AREA,CAMERA_SAVE_MODE_DATA},		// Target Area(0xB48)
-	{FIRM_DATA_AUTO_BRIGHT_USERSET_SIZE, 		0x00,						CAMERA_SAVE_MODE_DATA},			// Size(0xB50)
-	{FIRM_DATA_AUTO_BRIGHT_USERSET_OFFSET, 		0x00,						CAMERA_SAVE_MODE_DATA},			// Offset(0xB58)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0xB60)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0xB68)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0xB70)
-	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserved(0xB78)
-#else
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xB00)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xB08)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xB10)
@@ -957,7 +938,7 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xB68)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xB70)
 	{CAMERA_SAVE_RESERVE, 						0x00,						CAMERA_SAVE_MODE_NONE},			// Reserve(0xB78)
-#endif
+
 
 	//------------------------------------------------------------------------------------------
 	// Digital Offset Gain
@@ -1099,8 +1080,7 @@ SAVE_PARAM_MODE saveParamDataList[] = {
 	//------------------------------------------------------------------------------------------
 	// CXP
 	//------------------------------------------------------------------------------------------
-//@@@1#if defined (MODE_CXP)
-#if 0//@@@1
+#if defined (MODE_CXP)
 	{FIRM_DATA_CXP_COMPLIANCE_TEST_MODE_ADRS,	0x00,						CAMERA_SAVE_MODE_DATA},			// Copmliance Test(0xD20)
 	{FIRM_DATA_CXP_CONNECTION_CONFIG,	DEFAULT_CONNECTION_CONFIG_DEFAULT,	CAMERA_SAVE_MODE_DATA},			// Copmliance Test(0xD28)
 #else

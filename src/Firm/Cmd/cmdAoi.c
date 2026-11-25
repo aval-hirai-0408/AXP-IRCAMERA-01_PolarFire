@@ -1213,6 +1213,8 @@ int cmdAoiTpModeHelp (void *str)
 	DEBUG_PRINT_FORCE ("  6 = Height Graduation Image(Moving)\n");
 	DEBUG_PRINT_FORCE ("  7 = Slanting Graduation Image(Stop)\n");
 	DEBUG_PRINT_FORCE ("  8 = Slanting Graduation Image(Moving)\n");
+	DEBUG_PRINT_FORCE ("  9 = Sensor Sequence Pattern\n");
+	DEBUG_PRINT_FORCE (" 10 = Sensor Gradation Pattern\n");
 	DEBUG_PRINT_FORCE ("\n");
 
 	return (AVAL_STATUS_SUCCESS);

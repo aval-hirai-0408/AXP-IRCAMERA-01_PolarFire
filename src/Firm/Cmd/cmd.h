@@ -855,40 +855,6 @@ int cmdFirmVersionHelp (void *str);
 int cmdBootVersion (void *str);
 int cmdBootVersionHelp (void *str);
 
-// cmdVoltIfBoard.c
-int cmdVoltIfShow (void *str);
-int cmdVoltIfShowHelp (void *str);
-int cmdVoltIfTemp (void *str);
-int cmdVoltIfTempHelp (void *str);
-
-int cmdVoltIf105vd (void *str);
-int cmdVoltIf105vdHelp (void *str);
-int cmdVoltIf105va (void *str);
-int cmdVoltIf105vaHelp (void *str);
-int cmdVoltIf125vd (void *str);
-int cmdVoltIf125vdHelp (void *str);
-int cmdVoltIf18vd (void *str);
-int cmdVoltIf18vdHelp (void *str);
-int cmdVoltIf25vf (void *str);
-int cmdVoltIf25vfHelp (void *str);
-int cmdVoltIf33vd (void *str);
-int cmdVoltIf33vdHelp (void *str);
-int cmdVoltIf90va (void *str);
-int cmdVoltIf90vaHelp (void *str);
-
-int cmdVoltIf065v (void *str);
-int cmdVoltIf065vHelp (void *str);
-int cmdVoltIf085va (void *str);
-int cmdVoltIf085vaHelp (void *str);
-int cmdVoltIf230va (void *str);
-int cmdVoltIf230vaHelp (void *str);
-int cmdVoltIf330v (void *str);
-int cmdVoltIf330vHelp (void *str);
-int cmdVoltIf120vp (void *str);
-int cmdVoltIf120vpHelp (void *str);
-int cmdVoltIf240v (void *str);
-int cmdVoltIf240vHelp (void *str);
-
 // cmdVoltFpgaBoard.c
 int cmdVoltFpgaShow(void *str);
 int cmdVoltFpgaShowHelp (void *str);
@@ -898,6 +864,20 @@ int cmdVoltFpgaV1_0 (void *str);
 int cmdVoltFpgaV1_0Help (void *str);
 int cmdVoltFpgaV2_5 (void *str);
 int cmdVoltFpgaV2_5Help (void *str);
+
+// cmdVoltIfBoard.c
+int cmdVoltIfShow (void *str);
+int cmdVoltIfShowHelp (void *str);
+int cmdVoltIfV5_0 (void *str);
+int cmdVoltIfV5_0Help (void *str);
+int cmdVoltIfV24_0 (void *str);
+int cmdVoltIfV24_0Help (void *str);
+int cmdVoltIfV1_8 (void *str);
+int cmdVoltIfV1_8Help (void *str);
+int cmdVoltIfV3_3 (void *str);
+int cmdVoltIfV3_3Help (void *str);
+int cmdVoltIfV1_25 (void *str);
+int cmdVoltIfV1_25Help (void *str);
 
 #endif  // __CMD_H__
 

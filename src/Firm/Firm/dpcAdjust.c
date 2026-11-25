@@ -275,18 +275,6 @@ int dpcMainBatch1 (DPC_PARAM dpcParam)
 	//----------------------------------------------------------------------
 	gDpcBrightCount = 0;
 
-	//----------------------------------------------------------------------
-	// Auto Bright Mode 無効設定
-	//----------------------------------------------------------------------
-#if defined (MODE_AUTO_EXPOSURE) || defined (MODE_AUTO_GAIN)
-	if ((status = autoBrightSetExposureMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-
-	if ((status = autoBrightSetGainMode (MODE_DISABLE)) != AVAL_STATUS_SUCCESS)
-		goto _DONE;
-#endif
-
-
 _DONE:
 	// ステータス設定
 	dpcSetError (status);

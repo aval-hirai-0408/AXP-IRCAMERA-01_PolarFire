@@ -18,13 +18,13 @@
 //----------------------------------------------------------------------------------
 
 // Firmware Version
-#define FIRM_VERSION						"0.3"
+#define FIRM_VERSION						"0.1"
 
 // Main Version
-#define MAIN_VERSION						"0.3"
+#define MAIN_VERSION						"0.1"
 
 // HW Version
-#define HW_VERSION							"0.3"
+#define HW_VERSION							"0.1"
 
 
 //----------------------------------------------------------------------------------
@@ -451,17 +451,6 @@
 #define DMA_WIDTH_DATA_ALIGH				(8192)
 #define DMA_WIDTH_DATA_ALIGH_PIXEL			(DMA_WIDTH_DATA_ALIGH/2)
 
-// Black Pixel Width
-#define BLACK_PIXEL_WIDTH					(88)
-
-// Line Black
-#define LINE_BLACK_UPLOAD_SIZE				(1024*1024)
-#define LINE_BLACK_DATA_SIZE				(IMG_HEIGHT*FPGA_LINE_BLACK_AUTO_MEM_ALIGH)
-#define LINE_BLACK_DATA_ASCII_SIZE			(IMG_HEIGHT*FPGA_LINE_BLACK_AUTO_MEM_ALIGH*2+IMG_HEIGHT*4)
-
-// IPU Count
-#define IPU_COUNT							(2)
-
 
 //----------------------------------------------------------------------------------
 // FFC
@@ -717,10 +706,12 @@
 #define PELTIER_CONTROL_CHECK_INTERVAL		(5000)		// 5s
 
 // FPGA温度異常上限(外部電源)
-#define TEMP_ABNORMAL_FPGA_UPPER_EXT		(95)
+//@@@1#define TEMP_ABNORMAL_FPGA_UPPER_EXT		(95)
+#define TEMP_ABNORMAL_FPGA_UPPER_EXT		(85)
 
 // FPGA温度異常下限(外部電源)
-#define TEMP_ABNORMAL_FPGA_LOWER_EXT		(90)
+//@@@1#define TEMP_ABNORMAL_FPGA_LOWER_EXT		(90)
+#define TEMP_ABNORMAL_FPGA_LOWER_EXT		(80)
 
 // FPGA温度異常上限(PO)
 #define TEMP_ABNORMAL_FPGA_UPPER_PO			(70)
@@ -807,11 +798,13 @@
 //----------------------------------------------------------------------------------
 
 // Target Default
-#define PELTIER_DEFAULT_TEMP				(15*CAMERA_SAVE_TEMP_UNIT)
+#define PELTIER_DEFAULT_TEMP				(20*CAMERA_SAVE_TEMP_UNIT)
 
 // Sensor Alarm
-#define SENSOR_DEFAULT_LOW_TEMP				(30*CAMERA_SAVE_TEMP_UNIT)
-#define SENSOR_DEFAULT_HIGH_TEMP			(35*CAMERA_SAVE_TEMP_UNIT)
+//@@@1#define SENSOR_DEFAULT_LOW_TEMP		(30*CAMERA_SAVE_TEMP_UNIT)
+//@@@1#define SENSOR_DEFAULT_HIGH_TEMP		(35*CAMERA_SAVE_TEMP_UNIT)
+#define SENSOR_DEFAULT_LOW_TEMP				(20*CAMERA_SAVE_TEMP_UNIT)
+#define SENSOR_DEFAULT_HIGH_TEMP			(21*CAMERA_SAVE_TEMP_UNIT)
 
 // Case Limit
 #define CASE_DEFAULT_LOW_TEMP				(80*CAMERA_SAVE_TEMP_UNIT)
@@ -943,6 +936,15 @@
 
 // ケース温度異常値
 #define DIAG_TEMP_CASE_UPPER_ALARM					(15.0)
+#define DIAG_TEMP_CASE_UNDER_ALARM					(49.0)
+
+// FPGA温度正常値
+#define DIAG_TEMP_FPGA_UPPER_ALARM_NORMAL			(95.0)
+#define DIAG_TEMP_FPGA_UNDER_ALARM_NORMAL			(0.0)
+
+// FPGA温度異常値
+#define DIAG_TEMP_FPGA_UPPER_ALARM					(15.0)
+#define DIAG_TEMP_FPGA_UNDER_ALARM					(49.0)
 
 // ケース温度範囲
 #define DIAG_TEMP_CASE_MIN							(PELTIER_CASE_ALM_MIN_TEMP)

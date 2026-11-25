@@ -46,13 +46,13 @@ int dpc (void)
 int cmdDpcShow (void *str)
 {
 	int status = AVAL_STATUS_SUCCESS;
-	unsigned int memAdrs, size, dmaWait;
+	unsigned int memAdrs, size;
 	int mode;
 	unsigned int flashAdrs, flashData;
 	int dpcNum;
 
 	// Get DPC parameter
-	if ((status = dpcGetParam (&memAdrs, &size, &dmaWait, &mode)) != AVAL_STATUS_SUCCESS)
+	if ((status = dpcGetParam (&memAdrs, &size, &mode)) != AVAL_STATUS_SUCCESS)
 		goto _DONE;
 
 	// Get Flash Address
@@ -76,7 +76,7 @@ int cmdDpcShow (void *str)
 	DEBUG_PRINT_FORCE ("0x%x\n", memAdrs);
 
 	DEBUG_PRINT_FORCE ("   DPC Mode                  ");
-	if (mode == DPC_ENABLE)
+	if (mode == MODE_ENABLE)
 		DEBUG_PRINT_FORCE ("%d(Enable)\n", mode);
 	else
 		DEBUG_PRINT_FORCE ("%d(Disable)\n", mode);
@@ -178,8 +178,8 @@ int cmdDpcHelp (void *str)
 	DEBUG_PRINT_FORCE ("\n");
 
 	DEBUG_PRINT_FORCE ("[Mode]\n");
-	DEBUG_PRINT_FORCE ("  %d : Disable\n", DPC_DISABLE);
-	DEBUG_PRINT_FORCE ("  %d : Enable\n\n", DPC_ENABLE);
+	DEBUG_PRINT_FORCE ("  %d : Disable\n", MODE_DISABLE);
+	DEBUG_PRINT_FORCE ("  %d : Enable\n\n", MODE_ENABLE);
 
 	return (AVAL_STATUS_SUCCESS);
 }
